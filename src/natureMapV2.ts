@@ -17,7 +17,7 @@ export function applyNatureStyle(map:GameMap){
    if(source==='water'){map.setPaintProperty(layer.id,'fill-color','#73B6B3');map.setPaintProperty(layer.id,'fill-opacity',1);}
    else if(source==='landcover'){map.setPaintProperty(layer.id,'fill-color',['match',['get','class'],'wood','#63996C','grass','#B8D384','wetland','#94BEA1','sand','#E7D5A0','ice','#D9E5DF','#B5CD91']);if(/wood/.test(layer.id))map.setPaintProperty(layer.id,'fill-pattern','bb-forest');else if(/grass/.test(layer.id))map.setPaintProperty(layer.id,'fill-pattern','bb-grass');}
    else if(source==='park'){map.setPaintProperty(layer.id,'fill-color','#ACCC75');map.setPaintProperty(layer.id,'fill-opacity',.9);map.setPaintProperty(layer.id,'fill-pattern','bb-grass');}
-   else if(source==='building'){map.setPaintProperty(layer.id,'fill-color','#D4CAAA');map.setPaintProperty(layer.id,'fill-outline-color','#BABD97');}
+   else if(source==='building'){map.setPaintProperty(layer.id,'fill-color','#D4CAAA');map.setPaintProperty(layer.id,'fill-outline-color','#BABD97');map.setLayerZoomRange?.(layer.id,layer.minzoom??0,24);}
    else if(source==='landuse'){map.setPaintProperty(layer.id,'fill-color',['match',['get','class'],'residential','#CCD7A5','industrial','#CBD1B0','commercial','#CED5B0','farmland','#CAD896','grass','#BAD586','cemetery','#A9C592','pitch','#A6C780','#C2D39B']);}
   }else if(layer.type==='line'&&source==='transportation')map.setPaintProperty(layer.id,'line-color',/casing|outline/.test(layer.id)?'#B3C39A':'#F4EED6');
  }catch{}}
@@ -58,7 +58,11 @@ function windowFrame(){return combined([[0,.59,1.18,.13],[0,-.59,1.18,.13],[-.53
 
 export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat:number)=>THREE.Vector3){
  const group=new THREE.Group(),roofGroup=new THREE.Group();group.add(roofGroup);scene.add(group);
- const resources=new Set<{dispose:()=>void}>(),matrix=new THREE.Object3D(),instances:THREE.InstancedMesh[]=[];let signature='',last=0;
+ const resources=new Set<{dispose:()=>void}>(),matrix=new THREE.Object3D(),instances:THREE.InstancedMesh[]=[];let signature='',last=-Infinity,dirty=true,removed=false,revision=0;
+ const invalidate=()=>{if(!removed){dirty=true;map.triggerRepaint?.();}};
+ const sourceChanged=(event:{sourceId?:string;sourceDataType?:string})=>{if(event.sourceId==='openmaptiles'&&event.sourceDataType!=='idle')invalidate();};
+ const listen=typeof map.on==='function'&&typeof map.off==='function';
+ if(listen){map.on('move',invalidate);map.on('sourcedata',sourceChanged);}
  const material=(color:number)=>{const m=new THREE.MeshStandardMaterial({color,roughness:1,flatShading:true});resources.add(m);return m;};
  const instanced=(name:string,geometry:THREE.BufferGeometry,color:number,count:number,shadow=false)=>{
   const m=shadow?new THREE.MeshBasicMaterial({color,transparent:true,opacity:.12,depthWrite:false}):material(color),mesh=new THREE.InstancedMesh(geometry,m,count);
@@ -87,10 +91,11 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
   if(mesh.count>=mesh.instanceMatrix.count)return;matrix.position.copy(pos);matrix.scale.copy(scale);matrix.rotation.set(0,rotation,0);matrix.updateMatrix();mesh.setMatrixAt(mesh.count++,matrix.matrix);
  }
  function refresh(fix:Fix){
-  if(Date.now()-last<5000)return;last=Date.now();const all=features(map),key=Math.round(fix.lat*5000)+':'+Math.round(fix.lng*5000)+':'+all.length;if(key===signature)return;signature=key;
-  const greens=all.filter(f=>areaBiome(f)),origin=local(fix.lng,fix.lat);for(const m of instances)m.count=0;
-  const points:{lat:number;lng:number;x:number;y:number;d:number}[]=[],stepLat=14/111320,stepLng=14/(111320*Math.cos(fix.lat*Math.PI/180)),cx=Math.round(fix.lng/stepLng),cy=Math.round(fix.lat/stepLat);
-  for(let y=cy-17;y<=cy+17;y++)for(let x=cx-17;x<=cx+17;x++){const random=hash(x,y),p={lng:(x+(random-.5)*.65)*stepLng,lat:(y+(hash(y,x)-.5)*.65)*stepLat},d=Math.hypot((p.lng-fix.lng)/stepLng,(p.lat-fix.lat)/stepLat);if(d<18)points.push({...p,x,y,d});}points.sort((a,b)=>a.d-b.d);
+  const now=Date.now();if(removed||now-last<1000)return;last=now;
+  const view=map.getCenter?.()??fix,key=[view.lat,view.lng,fix.lat,fix.lng].map(n=>Math.round(n*5000)).join(':');if(!dirty&&key===signature)return;dirty=false;signature=key;
+  const all=features(map),greens=all.filter(f=>areaBiome(f)),origin=local(view.lng,view.lat);for(const m of instances)m.count=0;
+  const points:{lat:number;lng:number;x:number;y:number;d:number}[]=[],stepLat=14/111320,stepLng=14/(111320*Math.cos(view.lat*Math.PI/180)),cx=Math.round(view.lng/stepLng),cy=Math.round(view.lat/stepLat);
+  for(let y=cy-17;y<=cy+17;y++)for(let x=cx-17;x<=cx+17;x++){const random=hash(x,y),p={lng:(x+(random-.5)*.65)*stepLng,lat:(y+(hash(y,x)-.5)*.65)*stepLat},d=Math.hypot((p.lng-view.lng)/stepLng,(p.lat-view.lat)/stepLat);if(d<18)points.push({...p,x,y,d});}points.sort((a,b)=>a.d-b.d);
   for(const p of points){
    const r=hash(p.x,p.y),biome=biomeAt(p,greens),at=local(p.lng,p.lat),forest=greens.some(f=>areaBiome(f)==='forest'&&contains(p,f.geometry)),meadow=greens.some(f=>areaBiome(f)==='meadow'&&contains(p,f.geometry));
    if((forest&&r>.3||meadow&&r>.94)&&trunks.count<SCENERY_LIMITS.trees&&scenerySpot(p,all,fix,5.2,'tree')){
@@ -103,7 +108,7 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
     const s=.65+r*.5;place(shrubs,at.clone().add(new THREE.Vector3(0,.5,0)),new THREE.Vector3(s,.6*s,s),r*6);place(shadows,at.clone().add(new THREE.Vector3(0,.03,0)),new THREE.Vector3(1.8*s,1,1.4*s));
    }else if(meadow&&r<.65&&scenerySpot(p,all,fix,2.3,'low')){
     for(let i=0;i<3&&stems.count<SCENERY_LIMITS.flowers;i++){
-     const offset={lng:p.lng+(i-1)*1.1/111320/Math.cos(fix.lat*Math.PI/180),lat:p.lat+(i%2)*.8/111320};if(!scenerySpot(offset,all,fix,.6,'low'))continue;
+     const offset={lng:p.lng+(i-1)*1.1/111320/Math.cos(view.lat*Math.PI/180),lat:p.lat+(i%2)*.8/111320};if(!scenerySpot(offset,all,fix,.6,'low'))continue;
      const pos=local(offset.lng,offset.lat),s=.7+hash(p.x+i,p.y)*.55;place(grass,pos,new THREE.Vector3(s,s,s),r*6);place(stems,pos.clone().add(new THREE.Vector3(0,.4*s,0)),new THREE.Vector3(s,s,s));place(flowers[Math.floor(hash(p.y+i,p.x)*3)],pos.clone().add(new THREE.Vector3(0,.85*s,0)),new THREE.Vector3(s,s,s),r*6);
     }
    }else if(biome==='wetland'&&all.some(f=>(f.layer==='water'||f.layer==='waterway')&&edgeDistance(p,f.geometry)<14)&&scenerySpot(p,all,fix,1.2,'low')){
@@ -142,7 +147,7 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
   for(let i=0;i<4;i++)for(const [batch,materials] of [[wallBatches,wallMaterials],[roofBatches,roofMaterials]] as const){if(!batch[i].length)continue;const geometry=combined(batch[i]);roofGroup.add(new THREE.Mesh(geometry,materials[i]));}
   if(shadowBatch.length)roofGroup.add(new THREE.Mesh(combined(shadowBatch),shadowMaterial));
   for(const mesh of instances)mesh.instanceMatrix.needsUpdate=true;
-  Object.assign(map.getCanvas().dataset,{sceneryBuildings:String(buildings.length),sceneryTrees:String(trunks.count),sceneryConifers:String(pines.reduce((n,m)=>n+m.count,0)),sceneryShrubs:String(shrubs.count),sceneryFlowers:String(stems.count),sceneryReeds:String(reeds.count),sceneryWindows:String(windows.count)});
+  Object.assign(map.getCanvas().dataset,{sceneryCenter:JSON.stringify({lat:view.lat,lng:view.lng}),sceneryRevision:String(++revision),sceneryBuildings:String(buildings.length),sceneryTrees:String(trunks.count),sceneryConifers:String(pines.reduce((n,m)=>n+m.count,0)),sceneryShrubs:String(shrubs.count),sceneryFlowers:String(stems.count),sceneryReeds:String(reeds.count),sceneryWindows:String(windows.count)});
  }
- return {update:refresh,dispose(){scene.remove(group);for(const child of roofGroup.children)(child as THREE.Mesh).geometry.dispose();for(const m of instances)m.dispose();resources.forEach(r=>r.dispose());}};
+ return {update:refresh,dispose(){removed=true;if(listen){map.off('move',invalidate);map.off('sourcedata',sourceChanged);}scene.remove(group);for(const child of roofGroup.children)(child as THREE.Mesh).geometry.dispose();for(const m of instances)m.dispose();resources.forEach(r=>r.dispose());}};
 }

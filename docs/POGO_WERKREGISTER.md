@@ -4,6 +4,14 @@ Bijgewerkt: 20 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog
 
 ## ACTUELE CHECKPOINT
 
+**BB-51: kaartdekking bij verder rondkijken hersteld en op acht echte kaartlocaties gecontroleerd.**
+- Sol 6.1 `g1_g3_map`: 3D-bebouwing/natuur volgt het bekeken kaartcentrum; GPS blijft uitsluitend de spelpositie en plantvrije ruimte bepalen. Nieuwe brondata vernieuwt decor ook bij hetzelfde objectaantal. Gebundelde updates, bestaande aantalslimieten en eventopruiming behouden.
+- De oorspronkelijke vlakke gebouwlaag stopte bij zoom 14 terwijl de oorspronkelijke 3D-laag verborgen was. Gebouwfootprints blijven nu tot zoom 24 zichtbaar, ook buiten de 100 gedetailleerde 3D-gebouwen. `world_surface_finish` voegde het passende dag-/nachtpalet toe.
+- Browser — `/root`: Utrecht/Neude, Amsterdam/Vondelpark, Rotterdam/Blaak, Veluwe, Brussel, Antwerpen, New York/Central Park en Tokio/Meiji. **42 tegelverzoeken met HTTP 200, geen kaartverzoek- of browserfouten**; ontvangen vectorbestanden ook gedecodeerd op echte wegen, gebouwen, natuur en water. Geen garantie over ieder wereldwijd kaartvak of over volledigheid van OSM.
+- Stad/bos: vrij pannen over **762/763 meter**, nieuwe tegels en decor, 2D/3D en hercentreren; gameplay-GPS bleef gelijk. Echte UI-vangst in Utrecht/Brussel voegt bug/stof toe en verbruikt voorraad; server weigert een te verre encounter zonder extra bug. Normale animatie bij een gesimuleerde wandeling van 20 m: trainer/camera volgen, precies 20 m voortgang. Vondelpark op 320/390/430 px zonder horizontale overflow.
+- **13/13 gerichte kaarttests, TypeScript en webbuild groen**: `.local/real-map-tests.log`, `.local/real-map-typecheck.log`, `.local/real-map-web-build.log`. [Browserresultaten](../../bugbaas-real-locations/checks.json), [ontvangen kaartlagen](../../bugbaas-real-locations/actual-tile-layers.json), [bewegingscontrole](../../bugbaas-real-locations/walking-check.json).
+- Echte externe kaart-/weergegevens met verse **gesimuleerde browser-GPS** en eigen QA-accounts; geen fysieke wandeling of Android-prestatiebewijs. Postenbron bleef op alle acht locaties `unavailable`; geen fictieve posten toegevoegd. Preview op 8087 bijgewerkt; spelerdata behouden, geen productiepublicatie.
+
 **BB-50: 3D-wereld verder afgewerkt; zevendaagse vangstreeks toegevoegd.**
 - Natuur/gevels — Sol 6.1: bladbomen en coniferen, struiken/bloemen/riet en contactschaduwen; warme daken, dakranden, ramen en deuren. Echte Polygon/MultiPolygon-footprints en binnenhoven behouden. Instancing/batching met vaste limieten; geen begroeiing op wegen, water of gebouwen, hoge begroeiing vrij rond trainer.
 - 3D-personages — Sol 6.1-opvolger `world_actors_finish`: cosmetisch vloeiende GPS-beweging en kijkrichting, buddy, echte beschikbare insectclips, kleine idlebeweging en postcooldownkleuren. Ranger heeft alleen een idle-`Animation`, geen nieuwe loopclip. Alleen werkelijk geladen soorten schakelen hun fallbackportret uit. Dag/nachtbelichting en opruiming van gedeelde resources bijgewerkt.
@@ -37,7 +45,7 @@ Vorige afgeronde spelonderdelen:
 | BB-20 | Dex/collectie/detail/evolutie | Web gebouwd: #001–030 en rups → mot; uitgebreid zoeken en CP-grenswaarschuwing getest. Native detail nog 2D-fallback. |
 | BB-30 | 3D-bugs en shiny-art | 30 soorten en 60 portretten gebouwd; eerdere artcontrole beschikbaar. |
 | BB-40 | Tas/dagtaken/trainer/buddy/vrienden/PvP | Web gebouwd; stempelboek, cadeaus, vriendschap en zevendaagse vangstreeks getest. PvP-regels behouden. |
-| BB-50 | Webkaart/GPS/vangen | Werelddecor, geveldetails, beweging, dag/nacht, camera en GPS-overgang bijgewerkt; vier biomen op drie telefoonbreedtes browsergetest. |
+| BB-50 | Webkaart/GPS/vangen | Werelddecor/camera bijgewerkt; verder pannen en volledige vlakke bebouwing hersteld. Acht echte kaartlocaties, twee vangsten en gesimuleerde wandeling gecontroleerd; zie BB-51. |
 | BB-60 | Android | GPS-start/stop-race opgelost, 7 gerichte tests groen. Echte uitvoering geblokkeerd door Java-loopback en ADB unauthorized. Fysieke wandeling/GPU/accu open. |
 | BB-70 | Posten/routes | Cache/foutafhandeling verbeterd, 10 gerichte tests groen. Toegestane betrouwbare live bron en veilige buitenroute open; providerblokkade niet omzeilen. |
 | BB-80 | Nesten/raids | Later, niet gebouwd. |

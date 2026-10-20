@@ -2,9 +2,17 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import type {Map as GameMap} from 'maplibre-gl';
-import {addMapNature,buildingFootprints,footprintShape,scenerySpot,SCENERY_LIMITS} from '../src/natureMapV2';
+import {addMapNature,applyNatureStyle,buildingFootprints,footprintShape,scenerySpot,SCENERY_LIMITS} from '../src/natureMapV2';
 import type {AreaFeature} from '../game/habitatsV2';
 const square=(x:number)=>[[x,0],[x+.0001,0],[x+.0001,.0001],[x,.0001],[x,0]];
+
+test('building footprint fallback remains visible above zoom 14 without changing other layer ranges',()=>{
+ const layers=[{id:'building',type:'fill','source-layer':'building',minzoom:13,maxzoom:14},{id:'park',type:'fill','source-layer':'park',minzoom:5,maxzoom:15},{id:'building-3d',type:'fill-extrusion','source-layer':'building',minzoom:14,maxzoom:24}],ranges:unknown[][]=[],paint:unknown[][]=[];
+ const adapter={getStyle:()=>({layers}),hasImage:()=>true,setPaintProperty:(...args:unknown[])=>paint.push(args),setLayoutProperty:()=>{},setLayerZoomRange:(...args:unknown[])=>ranges.push(args)};
+ applyNatureStyle(adapter as unknown as GameMap);assert.deepEqual(ranges,[['building',13,24]]);assert.ok(paint.some(args=>args[0]==='building'&&args[1]==='fill-color'));
+ // Lightweight adapters can omit the setter while retaining all paint updates.
+ const {setLayerZoomRange,...withoutZoomSetter}=adapter;paint.length=0;applyNatureStyle(withoutZoomSetter as unknown as GameMap);assert.ok(paint.some(args=>args[0]==='building'&&args[1]==='fill-color'));assert.ok(paint.some(args=>args[0]==='building'&&args[1]==='fill-outline-color'));
+});
 
 test('city scenery renders every building in a MultiPolygon instead of only the first footprint',()=>{
  const dataset:Record<string,string>={},scene=new THREE.Scene(),feature={properties:{render_height:10},geometry:{type:'MultiPolygon',coordinates:[[square(0)],[square(.0005)],[square(.001)]]}};
@@ -46,4 +54,44 @@ test('meadow flowers and every building group remain bounded for mobile renderin
  const meadow=feature('landcover',rectangle(-300,-300,600,600),{class:'grass'}),{scene,nature,dataset}=scenery([meadow]);try{assert.ok(Number(dataset.sceneryFlowers)>0);assert.ok(Number(dataset.sceneryFlowers)<=SCENERY_LIMITS.flowers);assert.ok(Number(dataset.sceneryShrubs)<=SCENERY_LIMITS.shrubs);assert.ok(scene.children[0].children.filter(o=>o instanceof THREE.InstancedMesh).length<30);}finally{nature.dispose();}
  const buildings:AreaFeature={layer:'building',properties:{},geometry:{type:'MultiPolygon',coordinates:Array.from({length:121},(_,i)=>[rectangle(i%11*15,Math.floor(i/11)*15,4,4)])}};
  assert.equal(buildingFootprints([buildings],local,new THREE.Vector3()).length,SCENERY_LIMITS.buildings);
+});
+
+function movingScenery(initial:AreaFeature[]){
+ let all=initial,center={lng:0,lat:0},queries=0,repaints=0;const listeners=new Map<string,Set<(event:Record<string,unknown>)=>void>>(),scene=new THREE.Scene(),dataset:Record<string,string>={};
+ const map={getCenter:()=>center,querySourceFeatures:(_source:string,o:{sourceLayer:string})=>{queries++;return all.filter(f=>f.layer===o.sourceLayer);},getCanvas:()=>({dataset}),triggerRepaint:()=>{repaints++;},on:(event:string,listener:(event:Record<string,unknown>)=>void)=>{if(!listeners.has(event))listeners.set(event,new Set());listeners.get(event)!.add(listener);},off:(event:string,listener:(event:Record<string,unknown>)=>void)=>listeners.get(event)?.delete(listener)} as unknown as GameMap;
+ const nature=addMapNature(map,scene,local);
+ return {scene,dataset,nature,listeners,queries:()=>queries,repaints:()=>repaints,setFeatures:(value:AreaFeature[])=>{all=value;},setCenter:(meters:number)=>{center={lng:coord(meters),lat:0};},emit:(event:string,data:Record<string,unknown>={})=>listeners.get(event)?.forEach(listener=>listener(data))};
+}
+
+test('panning more than 500 meters moves buildings and forest sampling to the viewed map while preserving GPS',t=>{
+ let now=10000;t.mock.method(Date,'now',()=>now);
+ const wood=(x:number)=>feature('landcover',rectangle(x-300,-300,600,600),{class:'wood'}),building=(x:number)=>feature('building',rectangle(x,-10,12,20),{render_height:10}),fix={lat:0,lng:0,accuracy:8},before={...fix},h=movingScenery([wood(0),building(30)]);
+ try{
+  h.nature.update(fix);assert.equal(h.dataset.sceneryBuildings,'1');assert.ok(Number(h.dataset.sceneryTrees)>0);assert.equal(h.dataset.sceneryRevision,'1');assert.deepEqual(JSON.parse(h.dataset.sceneryCenter),{lat:0,lng:0});
+  h.setCenter(800);h.setFeatures([wood(800),building(830)]);h.emit('move');now+=1000;h.nature.update(fix);
+  assert.equal(h.dataset.sceneryRevision,'2');assert.deepEqual(JSON.parse(h.dataset.sceneryCenter),{lat:0,lng:coord(800)});
+  const buildings=h.scene.children[0].children[0],bounds=new THREE.Box3().setFromObject(buildings);assert.ok(bounds.min.x>=829,'old GPS-area building is replaced');assert.ok(bounds.max.x>=842);
+  const trunks=h.scene.getObjectByName('scenery-tree-trunks') as THREE.InstancedMesh,matrix=new THREE.Matrix4(),pos=new THREE.Vector3();assert.ok(trunks.count>0&&trunks.count<=SCENERY_LIMITS.trees);
+  for(let i=0;i<trunks.count;i++){trunks.getMatrixAt(i,matrix);pos.setFromMatrixPosition(matrix);assert.ok(pos.x>500&&pos.x<1100,'trees follow viewed terrain over 500m away');}
+  assert.deepEqual(fix,before,'view movement never changes gameplay GPS');
+ }finally{h.nature.dispose();}
+});
+
+test('new source content replaces equal-count features and coalesces tile events without frame-by-frame queries',t=>{
+ let now=10000;t.mock.method(Date,'now',()=>now);const a=feature('building',rectangle(30,0,10,10)),b=feature('building',rectangle(140,0,10,10)),fix={lat:0,lng:0,accuracy:8},h=movingScenery([a]);
+ try{
+  h.nature.update(fix);const initialQueries=h.queries();assert.equal(initialQueries,7);
+  for(let i=0;i<50;i++){now+=20;h.nature.update(fix);}assert.equal(h.queries(),initialQueries);assert.equal(h.dataset.sceneryRevision,'1');
+  h.setFeatures([b]);h.emit('sourcedata',{sourceId:'catch-radius',sourceDataType:'content'});now+=1000;h.nature.update(fix);assert.equal(h.queries(),initialQueries,'unrelated source does not rebuild scenery');
+  for(let i=0;i<20;i++)h.emit('sourcedata',{sourceId:'openmaptiles',sourceDataType:'content'});
+  now+=999;h.nature.update(fix);assert.equal(h.queries(),initialQueries);now++;h.nature.update(fix);assert.equal(h.queries(),initialQueries+7);assert.equal(h.dataset.sceneryRevision,'2');
+  const bounds=new THREE.Box3().setFromObject(h.scene.children[0].children[0]);assert.ok(bounds.min.x>=139&&bounds.max.x>=150,'changed footprints render despite unchanged count and camera');
+  const queries=h.queries();h.emit('sourcedata',{sourceId:'openmaptiles',sourceDataType:'idle'});now+=1000;h.nature.update(fix);assert.equal(h.queries(),queries,'idle notifications do not start rebuild loops');
+ }finally{h.nature.dispose();}
+ const queries=h.queries(),repaints=h.repaints();assert.ok([...h.listeners.values()].every(list=>list.size===0));h.emit('move');h.emit('sourcedata',{sourceId:'openmaptiles',sourceDataType:'content'});now+=1000;h.nature.update(fix);assert.equal(h.queries(),queries);assert.equal(h.repaints(),repaints);assert.equal(h.scene.children.length,0);
+});
+
+test('minimal map adapters without events still follow their optional center on the throttled update',t=>{
+ let now=10000;t.mock.method(Date,'now',()=>now);let center={lng:0,lat:0};const scene=new THREE.Scene(),dataset:Record<string,string>={},all=[feature('building',rectangle(800,0,12,12))],map={getCenter:()=>center,querySourceFeatures:(_source:string,o:{sourceLayer:string})=>all.filter(f=>f.layer===o.sourceLayer),getCanvas:()=>({dataset})} as unknown as GameMap,nature=addMapNature(map,scene,local);
+ try{nature.update({lat:0,lng:0,accuracy:8});assert.equal(dataset.sceneryBuildings,'0');center={lng:coord(800),lat:0};now+=1000;nature.update({lat:0,lng:0,accuracy:8});assert.equal(dataset.sceneryBuildings,'1');}finally{nature.dispose();}
 });
