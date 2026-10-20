@@ -18,7 +18,7 @@ Geen nieuwe planningsronde of toestemming voor normale fixes. Geen afgeronde fun
 | 3 | **Android (BB-60)** | APK bouwt en draait in de aparte testomgeving; GPS, terug en achtergrond gecontroleerd. Java/ADB-blokkade alleen opnieuw proberen bij een aantoonbare nieuwe oplossing. |
 | 4 | **Releasecontrole (BB-90)** | Relevante tests groen, echte Android-wandeling en veilig cloudherstel bewezen. Productie vraagt afzonderlijk akkoord. |
 
-**Begin nu bij BB-50: de ontbrekende bebouwing op de webkaart.** De overige onderdelen lopen mee zodra ze uitvoerbaar zijn.
+**BB-50 is afgerond en browsergetest.** GPS-opruiming (BB-60) en providerfouten/cache (BB-70) zijn ook verbeterd en getest. De live bron, echte Android-uitvoering en cloudherstel blijven open; zie het werkregister voor de concrete blokkades.
 
 ## Testen zonder onnodig werk
 - Schermwijziging: TypeScript en alleen het betrokken scherm plus terugnavigatie op een telefoonformaat.

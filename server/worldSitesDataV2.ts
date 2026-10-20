@@ -4,7 +4,6 @@ import type {Fix} from '../game/walkingV2';
 import type {WorldSites,FieldPost,FieldRoute} from '../game/worldSitesV2';
 
 type Element={type:string;id:number;lat?:number;lon?:number;tags?:Record<string,string|undefined>;geometry?:{lat:number;lon:number}[]};
-const cache=new Map<string,{until:number;data:Element[];available:boolean;at:number;pending?:Promise<Element[]>}>();
 const allowed=(e:Element)=>!['private','no','customers','permit'].includes(e.tags?.access??'')&&!['private','no'].includes(e.tags?.foot??'');
 const id=(prefix:string,source:string)=>prefix+createHash('sha256').update(source).digest('hex').slice(0,20);
 export function buildWorldSites(elements:Element[],fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean):WorldSites{
@@ -22,11 +21,48 @@ export function buildWorldSites(elements:Element[],fix:Fix,walkable:(p:{lat:numb
  }
  return {posts,routes:routes.sort((a,b)=>distance(fix,a.points[0])-distance(fix,b.points[0])).slice(0,3)};
 }
-export async function getWorldSites(fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean,waitForNetwork=false):Promise<WorldSites>{
- const lat=Math.round(fix.lat*100)/100,lng=Math.round(fix.lng*100)/100,key=lat+','+lng;let entry=cache.get(key);
- if(!entry||entry.until<Date.now()){
-  const dy=.012,dx=.012/Math.max(.15,Math.cos(lat*Math.PI/180)),box=[lat-dy,lng-dx,lat+dy,lng+dx].join(','),query=`[out:json][timeout:8];(node["tourism"~"^(artwork|information|viewpoint|picnic_site)$"](${box});node["historic"~"^(memorial|monument)$"](${box});node["amenity"="drinking_water"](${box});way["highway"~"^(footway|path|pedestrian|steps)$"](${box}););out geom;`;
-  entry={until:Date.now()+900000,data:entry?.data??[],available:entry?.available??false,at:entry?.at??0};const current=entry;entry.pending=(async()=>{try{const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:new URLSearchParams({data:query}),headers:{'User-Agent':'BugBaas-Preview/0.1','Content-Type':'application/x-www-form-urlencoded'},signal:AbortSignal.timeout(12000)});if(!r.ok)throw new Error();const body=await r.text();if(body.length>6000000)throw new Error();const json=JSON.parse(body);if(!Array.isArray(json.elements))throw new Error();current.data=json.elements.filter((e:Element)=>e&&Number.isSafeInteger(e.id)&&['node','way'].includes(e.type));current.available=true;current.at=Date.now();}catch{current.until=Date.now()+60000;}finally{delete current.pending;}return current.data;})();cache.set(key,entry);if(cache.size>64)cache.delete(cache.keys().next().value!);
+type CacheEntry={until:number;data:Element[];available:boolean;at:number;pending?:Promise<void>};
+const CACHE_MS=900000,MIN_REQUEST_MS=30000,MAX_BODY_BYTES=6000000;
+const coordinate=(lat:unknown,lon:unknown)=>typeof lat==='number'&&Number.isFinite(lat)&&Math.abs(lat)<=90&&typeof lon==='number'&&Number.isFinite(lon)&&Math.abs(lon)<=180;
+function parseElements(body:string):Element[]{
+ const json=JSON.parse(body);
+ // Overpass can return HTTP 200 with a runtime-error remark and partial elements.
+ if(!json||typeof json!=='object'||json.remark||!Array.isArray(json.elements))throw new Error('Incomplete world data');
+ for(const e of json.elements){
+  if(!e||!Number.isSafeInteger(e.id)||e.id<=0||!['node','way'].includes(e.type)||!e.tags||typeof e.tags!=='object'||Array.isArray(e.tags)||Object.values(e.tags).some(v=>typeof v!=='string'))throw new Error('Invalid world element');
+  if(e.type==='node'?!coordinate(e.lat,e.lon):!Array.isArray(e.geometry)||e.geometry.length<2||e.geometry.some((p:{lat?:unknown;lon?:unknown}|null)=>!p||!coordinate(p.lat,p.lon)))throw new Error('Invalid world geometry');
  }
- const data=waitForNetwork&&entry.pending?await entry.pending:entry.data,available=entry.available&&Date.now()-entry.at<86400000;return {...(available?buildWorldSites(data,fix,walkable):{posts:[],routes:[]}),available,dataAt:entry.at};
+ return json.elements;
 }
+async function responseText(response:Response){
+ if(Number(response.headers.get('content-length'))>MAX_BODY_BYTES){await response.body?.cancel();throw new Error('World data too large');}
+ const reader=response.body?.getReader();if(!reader)throw new Error('Missing world data');
+ const decoder=new TextDecoder();let bytes=0,text='';
+ try{for(;;){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>MAX_BODY_BYTES)throw new Error('World data too large');text+=decoder.decode(value,{stream:true});}return text+decoder.decode();}
+ finally{await reader.cancel().catch(()=>{});reader.releaseLock();}
+}
+export function createWorldSitesProvider(request:typeof fetch=fetch,clock:()=>number=Date.now){
+ const cache=new Map<string,CacheEntry>();let busy=false,nextRequestAt=0,blocked=false,failures=0;
+ return async function(fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean,waitForNetwork=false):Promise<WorldSites>{
+  const lat=Math.round(fix.lat*100)/100,lng=Math.round(fix.lng*100)/100,key=lat+','+lng;let entry=cache.get(key);
+  if((!entry||entry.until<=clock())&&!entry?.pending&&!blocked&&!busy&&clock()>=nextRequestAt){
+   const dy=.012,dx=.012/Math.max(.15,Math.cos(lat*Math.PI/180)),box=[lat-dy,lng-dx,lat+dy,lng+dx].join(','),query=`[out:json][timeout:8];(node["tourism"~"^(artwork|information|viewpoint|picnic_site)$"](${box});node["historic"~"^(memorial|monument)$"](${box});node["amenity"="drinking_water"](${box});way["highway"~"^(footway|path|pedestrian|steps)$"](${box}););out geom;`;
+   entry={until:0,data:entry?.data??[],available:false,at:entry?.at??0};const current=entry;busy=true;nextRequestAt=clock()+MIN_REQUEST_MS;
+   current.pending=(async()=>{try{
+    const r=await request('https://overpass-api.de/api/interpreter',{method:'POST',body:new URLSearchParams({data:query}),headers:{'User-Agent':'BugBaas-Preview/0.1','Content-Type':'application/x-www-form-urlencoded'},signal:AbortSignal.timeout(12000)});
+    if(!r.ok){
+     // A refusal is not a reason to rotate endpoints or identity. Stop until restart.
+     if(r.status===403||r.status===406)blocked=true;
+     if(r.status===429){const value=r.headers.get('retry-after'),seconds=value===null?NaN:Number(value),until=Number.isFinite(seconds)?clock()+Math.max(0,seconds)*1000:Date.parse(value??'');nextRequestAt=Math.max(nextRequestAt,clock()+60000,Number.isFinite(until)?until:0);}
+     await r.body?.cancel();throw new Error('World provider unavailable');
+    }
+    const data=parseElements(await responseText(r));current.data=data;current.available=true;current.at=clock();current.until=clock()+CACHE_MS;failures=0;
+   }catch{failures++;nextRequestAt=Math.max(nextRequestAt,clock()+Math.min(CACHE_MS,60000*2**Math.min(failures-1,4)));current.until=nextRequestAt;current.available=false;
+   }finally{busy=false;delete current.pending;}})();cache.set(key,current);if(cache.size>64)cache.delete(cache.keys().next().value!);
+  }
+  if(waitForNetwork&&entry?.pending)await entry.pending;
+  const available=!!entry?.available&&clock()-entry.at<CACHE_MS;
+  return {...(available?buildWorldSites(entry!.data,fix,walkable):{posts:[],routes:[]}),available,dataAt:entry?.at??0};
+ };
+}
+export const getWorldSites=createWorldSitesProvider();

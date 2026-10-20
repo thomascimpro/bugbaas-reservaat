@@ -2,6 +2,31 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {runInNewContext} from 'node:vm';
 import {NATIVE_GPS_SHIM,nativeFieldURL,parseNativeFieldRequest} from '../src/nativeFieldProtocolV2';
+import {createNativeGPSWatches} from '../src/nativeGPSWatchesV2';
+
+test('native clearWatch cancels a pending Expo subscription and removes its late result',async()=>{
+ const watches=createNativeGPSWatches(),request=watches.begin(1);let removed=0,complete!:(value:{remove:()=>void})=>void;
+ const pending=new Promise<{remove:()=>void}>(resolve=>{complete=resolve;}).then(request.attach);
+ watches.clear(1);assert.equal(request.current(),false);
+ complete({remove:()=>{removed++;}});await pending;assert.equal(removed,1);
+ watches.stop();assert.equal(removed,1);
+});
+
+test('native background stop invalidates pending watches even after a new watch reuses the id',()=>{
+ const watches=createNativeGPSWatches(),old=watches.begin(1);let oldRemoved=0,newRemoved=0;
+ watches.stop();const resumed=watches.begin(1);resumed.attach({remove:()=>{newRemoved++;}});
+ old.attach({remove:()=>{oldRemoved++;}});
+ assert.equal(old.current(),false);assert.equal(resumed.current(),true);assert.equal(oldRemoved,1);assert.equal(newRemoved,0);
+ watches.stop();assert.equal(resumed.current(),false);assert.equal(newRemoved,1);
+});
+
+test('native replacing an active watch removes it and clear remains idempotent',()=>{
+ const watches=createNativeGPSWatches(),first=watches.begin(1);let firstRemoved=0,secondRemoved=0;
+ first.attach({remove:()=>{firstRemoved++;}});const second=watches.begin(1);
+ assert.equal(first.current(),false);assert.equal(firstRemoved,1);
+ second.attach({remove:()=>{secondRemoved++;}});watches.clear(1);watches.clear(1);watches.stop();
+ assert.equal(second.current(),false);assert.equal(firstRemoved,1);assert.equal(secondRemoved,1);
+});
 
 test('native map bridge accepts only field actions and rejects type overrides, account operations and oversized messages',()=>{
  const message={kind:'command',id:'test-1',command:'worldLocate',params:{fix:{lat:52,lng:5,accuracy:8,timestamp:1}}};

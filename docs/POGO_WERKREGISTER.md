@@ -4,13 +4,16 @@ Bijgewerkt: 20 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog
 
 ## ACTUELE CHECKPOINT
 
-**BB-01a klaar.** QA-bewijsregistratie staat in commit `4181c33bdb3f8994e077c1364520b3b2941bb085`, branch `codex/bb-01a-qa-records`.
-- Gebouwd: `scripts/qa/record.ts`, `tests/qaRecord.test.ts`, `qa/runs.jsonl`.
-- Getest: **8/8 nieuwe tests, 191/191 volledige unit-tests en TypeScript groen**. Direct uitgevoerd met Node 24.16.0 / tsx 4.23.15; run-ID's en inputvingerafdrukken staan in `qa/runs.jsonl`, logs in `.local/bb01a-20261020135421-034bec20-*.log`.
-- Bouwer/tester van integratie en aanvullingen: Codex GPT-6 `/root`. De gelijktijdig overgenomen implementatie is behouden; geen onbekende auteur ingevuld. Geen onafhankelijke review claimen.
-- De andere schrijvende chat heeft op verzoek van de gebruiker een stopbericht ontvangen. De drie Sol 6.1-agents vielen uit met `Your workspace is out of credits`; geen appwijzigingen van hen samengevoegd.
+**BB-50 kaartfix klaar; BB-60 GPS- en BB-70 providerfix samengevoegd.** Branch `codex/bb-01a-qa-records`.
+- Kaart — Codex `/root`: alle gebouwen uit gegroepeerde MultiPolygon-kaartdata worden meegenomen, binnen het bestaande maximum van 100. Voorheen werd alleen het eerste gebouw per groep gelezen.
+- Android GPS — Sol 6.1 `g4_android`: vertraagd gestarte GPS-watchers worden ook na achtergrond, herladen, fout of sluiten direct opgeruimd. Ze kunnen geen oude locatiecallbacks blijven sturen.
+- Locatiebron — Sol 6.1 `g5_live_world`: gedeelde cache en aanvragen, wachttijd bij fouten/429, stoppen bij 403/406 en onvolledige antwoorden weigeren. Bron en identiteit niet gewisseld.
+- Getest: **201/201 functietests, TypeScript en webbuild groen**. Logs: `.local/bb50-70-integrated-tests.log`, `.local/bb50-70-typecheck.log`, `.local/bb50-web-build.log`.
+- Browser: stad **100 gebouwen**, bos **160 bomen**; 320/390/430 px breed, terugnavigatie en geen browserfouten. [Screenshots en resultaten](../../bugbaas-map-fix-browser/checks.json). Afzonderlijke QA-accounts en gesimuleerde browserlocatie; geen echte wandeling.
+- Sol 6.1 `g1_g3_map` hielp met kaartdiagnose en las de twee agentfixes na: geen blokkerende bevinding.
+- BB-01a blijft klaar in commit `4181c33bdb3f8994e077c1364520b3b2941bb085` (8 registratietests; destijds 191 volledige tests).
 
-**Volgende taak: BB-50 — ontbrekende bebouwing op de webkaart onderzoeken en gericht oplossen.** Extra testselectie/runner/CI bouwen we nu niet. Werk volgens het [eenvoudige plan](superpowers/plans/2026-10-20-bugbaas-selectieve-qa-en-tracking.md).
+**Resterende concrete blokkade: BB-70 — toegestane werkende live bron voor posten/routes.** Bestaande providerweigering niet opnieuw blijven proberen. Androidbouw blijft apart geblokkeerd door Java-loopback. Extra testselectie/runner/CI bouwen we nu niet; zie het [eenvoudige plan](superpowers/plans/2026-10-20-bugbaas-selectieve-qa-en-tracking.md).
 
 ## Stand per onderdeel
 | ID | Onderdeel | Stand / resterend |
@@ -22,15 +25,15 @@ Bijgewerkt: 20 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog
 | BB-20 | Dex/collectie/detail/evolutie | Web gebouwd: #001–030 en rups → mot; native detail is nog 2D-fallback. |
 | BB-30 | 3D-bugs en shiny-art | 30 soorten en 60 portretten gebouwd; eerdere artcontrole beschikbaar. |
 | BB-40 | Tas/dagtaken/trainer/buddy/vrienden/PvP | Web gebouwd; eerdere schermchecks beschikbaar. |
-| BB-50 | Webkaart/GPS/vangen | Gebouwd en eerder getest; ontbrekende stadsbebouwing is de eerstvolgende concrete verbetering. |
-| BB-60 | Android | Brug gesimuleerd getest; echte uitvoering geblokkeerd door Java-loopback en ADB unauthorized. Fysieke wandeling/GPU/accu open. |
-| BB-70 | Posten/routes | Server en webflow getest met synthetische data. Toegestane betrouwbare live bron en veilige buitenroute open; providerblokkade niet omzeilen. |
+| BB-50 | Webkaart/GPS/vangen | Kaartbebouwing hersteld; stad/bos en navigatie op drie telefoonbreedtes browsergetest. |
+| BB-60 | Android | GPS-start/stop-race opgelost, 7 gerichte tests groen. Echte uitvoering geblokkeerd door Java-loopback en ADB unauthorized. Fysieke wandeling/GPU/accu open. |
+| BB-70 | Posten/routes | Cache/foutafhandeling verbeterd, 10 gerichte tests groen. Toegestane betrouwbare live bron en veilige buitenroute open; providerblokkade niet omzeilen. |
 | BB-80 | Nesten/raids | Later, niet gebouwd. |
 | BB-90 | Release/cloudherstel | Lokale QA-restore geslaagd (600 records); echte cloudrestore, Android-wandeling en productieakkoord ontbreken. |
 
 ## Bewijs en regels
 - [Historisch uitvoeringsverslag](POGO_UITVOERING.md): eerdere 28 schermchecks, 13 navigatiechecks, 5 native-brugchecks en 5 synthetische post/routechecks. Dit is geen nieuwe run op iedere wijziging.
-- Nieuwe unit-/TypeScript-runs voor BB-01a staan in `qa/runs.jsonl`. De game/browser is voor die tooling niet opnieuw opgenomen; spelcode en UI zijn niet gewijzigd.
+- Unit-/TypeScript-runs voor BB-01a staan in `qa/runs.jsonl`; de nieuwe spelcontroles staan in bovenstaande logs en screenshots. Geen volledige schermscan herhaald.
 - Browserbrug ≠ echt Android. Synthetische punten ≠ veilige live route. Oude auteurs blijven onbekend als ze niet aantoonbaar zijn.
 - Geen productiepublicatie, reset van spelerdata of remote push uitgevoerd.
 

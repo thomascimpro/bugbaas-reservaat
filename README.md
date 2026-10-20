@@ -11,6 +11,6 @@
 6. [Functioneel Ontwerp](docs/POGO_FO_20261019.md) · [Technisch Ontwerp](docs/POGO_TO_ASSETS_20261019.md) · [Schermschetsen](docs/POGO_SCHERMSCHETSEN_20261019.html).
 
 ## Huidige stap
-BB-00 Git-basis en BB-01a bewijsregistratie zijn klaar (`ab57e80` / `4181c33`). BB-01a is gecontroleerd met 191 unit-tests en TypeScript. Geen productiepublicatie.
+BB-00, BB-01a en de kaartbebouwing zijn klaar. GPS-opruiming en foutafhandeling van de locatiebron zijn verbeterd met Sol 6.1-agents. Gecontroleerd met 201 tests, TypeScript, webbuild en stad/bos op drie telefoonbreedtes. Geen productiepublicatie.
 
-**Volgende speltaak:** BB-50 — ontbrekende bebouwing op de webkaart. Extra QA-automatisering is geparkeerd; zie het [werkregister](docs/POGO_WERKREGISTER.md).
+**Nog open:** werkende toegestane live bron voor posten/routes, echte Android-uitvoering en cloudherstel. Extra QA-automatisering is geparkeerd; zie het [werkregister](docs/POGO_WERKREGISTER.md).
