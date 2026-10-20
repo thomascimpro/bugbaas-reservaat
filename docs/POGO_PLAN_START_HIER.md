@@ -1,10 +1,10 @@
 # Start hier — BugBaas PoGo UI / Bugdex / FO / TO
 
-**VERPLICHT BIJ ELKE NIEUWE PROJECTCHAT: lees [../AGENTS.md](../AGENTS.md), daarna de [actuele BB-00 checkpoint in het werkregister](POGO_WERKREGISTER.md).** Sla afgeronde stappen over; voer geen Git-commando's op de bovenliggende gebruikersrepository uit.
+**VERPLICHT BIJ ELKE NIEUWE PROJECTCHAT: lees [../AGENTS.md](../AGENTS.md), daarna de [actuele checkpoint in het werkregister](POGO_WERKREGISTER.md).** Sla afgeronde stappen over; voer geen Git-commando's op de bovenliggende gebruikersrepository uit.
 
 Onderzoek en klikbare schetsen van 19 oktober 2026. Uitvoering gestart op 20 oktober: [historische uitvoering en testbewijs](POGO_UITVOERING.md). De onderstaande ontwerpen zijn geen bewijs dat een functie al gebouwd of uitgebracht is.
 
-**Vanaf 20 oktober: [CENTRAAL WERKREGISTER](POGO_WERKREGISTER.md)** (wat gebouwd, door wie, welke test, wat nog open), [slimme selectieve testmatrix](POGO_TESTMATRIX.md) (wanneer resultaten hergebruiken) en [concreet uitvoerplan](superpowers/plans/2026-10-20-bugbaas-selectieve-qa-en-tracking.md). **Begin bij het werkregister, niet bij het oorspronkelijke FO/TO alsof de app nog niet gebouwd is.**
+**Vanaf 20 oktober: [CENTRAAL WERKREGISTER](POGO_WERKREGISTER.md)** (wat gebouwd, door wie, welke test, wat nog open), [optionele testmatrix](POGO_TESTMATRIX.md) (wanneer resultaten hergebruiken) en [eenvoudig werkplan](superpowers/plans/2026-10-20-bugbaas-selectieve-qa-en-tracking.md). **Begin bij het werkregister, niet bij het oorspronkelijke FO/TO alsof de app nog niet gebouwd is.**
 
 1. [Visuele audit per scherm](POGO_VISUELE_AUDIT_20261019.md) — bevindingen en schermnummers 01–28, met werkelijke QA-screenshots.
 2. [Functioneel Ontwerp](POGO_FO_20261019.md) — 18 schermen, navigatie, Bugdex #001–#021, evoluties en acceptatiecriteria.

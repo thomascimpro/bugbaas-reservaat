@@ -1,6 +1,6 @@
 # BugBaas — selectieve regressietestmatrix
 
-**Datum:** 20 oktober 2026. **Status:** uitvoerbaar handmatig beslisprotocol; automatische selector is nog niet geïmplementeerd. Dit document voorkomt onnodig opnieuw afspelen van 28 Playwright-schermen terwijl het goedkope kernveiligheidsnet blijft bestaan.
+**Datum:** 20 oktober 2026. Gebruik dit als naslag bij twijfel over testimpact. De eenvoudige werkwijze uit het werkplan gaat voor; extra testselectie/runner/CI is geparkeerd.
 
 ## Beslisregel per wijziging (maximaal vijf minuten werk bij een normale UI-taak)
 1. Noteer `BB-ID`, bouwer, start-revisie en gewijzigde bestanden in [werkregister](POGO_WERKREGISTER.md).
@@ -52,15 +52,8 @@ Een test die vorige week werkte blijft alleen `PASS VOOR DIT RESULTAAT` als de v
 
 Als bovenstaande klopt: schrijf **SKIP-GEREGISTREERD, vorige QA-run X nog geldig**. Historische runs zonder commit/fingerprint dienen als aanwijzing, niet als onaantastbaar bewijs.
 
-## Minimale script-automatisering (BB-01)
-Een eenvoudige change-impact runner is voldoende:
-- `scripts/qa/changed.ts`: `git diff --name-only <base>...HEAD`, normalize paths; niet de bovenliggende huis-repository als project gebruiken.
-- `scripts/qa/impact.ts`: regels bovenstaande in JSON met globpatronen, dependency edges, gerichte testcommands, geen glob/unknown → safe fallback.
-- `scripts/qa/record.ts`: append-only JSONL record met actor, buildSHA, testSHA/fingerprint, command, environment, result, evidence, UTC time.
-- `npm run qa:affected -- --base <sha>`: print **RUN**, **REUSE/SKIP**, **BLOCKED** en reden; voer pas gerichte tests uit indien gewenste vlag `--run` en QA-omgeving gescheiden van productie.
-- Voor browser: `--screens=S05,S06,S07` in bestaande testscript of kleine runner die alleen deze schermentraversals met echte screenshots oplevert. Oud browserbewijsmateriaal blijft onveranderd.
-
-Niet doen: ieder screenshot standaard opnieuw opnemen, stiekem testresultaten overschrijven, een vervallen test alsnog als groen presenteren, een CI-cache als oordeel over realtime GPS gebruiken, of externe service via te veel requests \"valideren\".
+## Automatisering is optioneel
+BB-01a bewijsregistratie bestaat. Automatische testselectie, een extra runner en CI zijn nu geparkeerd. Kies de relevante bestaande test uit de tabel en ga verder met de speltaak; geen nieuw QA-framework nodig.
 
 ## Release blijft uitzondering
 Vóór release **wel** eenmaal: UT-ALL + TS + webbuild, navigatie/essentiële flow, echte Android-GPS en accu, legale live POI/buitenroute, cloudrestore in veilige omgeving, asset/license check en human acceptatie. Deze gates kunnen NIET worden overgeslagen wegens een oude groene browserrun.
