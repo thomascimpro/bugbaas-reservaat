@@ -81,7 +81,7 @@ export class GoServiceV2{
     case 'routeFinish':idle();finishRoute(x,now);break;
     case 'routeCancel':idle();cancelRoute(x);break;
     case 'favorite':{const s=ownedGo(x,c.id);s.favorite=!s.favorite;break;}
-    case 'buddy':idle();ownedGo(x,c.id);x.buddy=c.id as string;g.buddyMeters=f.walk?.meters??0;break;
+    case 'buddy':idle();ownedGo(x,c.id);if(x.buddy!==c.id){x.buddy=c.id as string;g.buddyMeters=f.walk?.meters??0;}break;
     case 'goPower':idle();powerUp(x,c.id);break;
     case 'goSecond':idle();secondAttack(x,c.id,secret);break;
     case 'goTM':idle();teachMove(x,c.id,c.slot,secret);break;

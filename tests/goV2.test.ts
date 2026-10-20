@@ -61,3 +61,20 @@ test('automatic seventh-day capture shares the streak award and reports actual d
   auto.auto(p,NOW,success);assert.equal(p.go!.auto.last!.caught,true);assert.equal(p.go!.dust,dust+600);assert.equal(p.walking!.lastCatch!.nectar,600);assert.equal(p.go!.trainer!.xp,xp+2600);assert.equal(p.go!.trainer!.catchStreak!.days,7);
  }finally{store.close();}
 });
+
+
+test('choosing the same buddy preserves partial distance and replay is inert; switching starts at total walked meters without rewards',async()=>{
+ const store=new SqliteStore(':memory:');try{
+  const p=player('buddy-progress');p.buddy='caught-0';p.go!.buddyMeters=1000;p.field!.walk={meters:1350,dayMeters:350,anchor:null,at:NOW};
+  await store.run(['v2Players:buddy-progress'],d=>d.set('v2Players:buddy-progress',p));
+  const service=new GoServiceV2(store,'local',()=>NOW);let v=await service.state(p.uid);const candy=structuredClone(v.player.go!.candy),xp=v.player.go!.trainer!.xp;
+  const select=(id:string)=>({type:'buddy',id,commandId:randomUUID(),expectedRevision:v.player.revision});
+  const same=select('caught-0');v=await service.command(p.uid,same);assert.equal(v.player.go!.buddyMeters,1000);assert.equal(v.player.field!.walk!.meters-v.player.go!.buddyMeters,350);
+  const revision=v.player.revision;v=await service.command(p.uid,same);assert.equal(v.player.revision,revision);assert.equal(v.player.go!.buddyMeters,1000);
+  v=await service.command(p.uid,select('caught-0'));assert.equal(v.player.go!.buddyMeters,1000);
+  const change=select('caught-1');v=await service.command(p.uid,change);assert.equal(v.player.buddy,'caught-1');assert.equal(v.player.go!.buddyMeters,1350);
+  await store.run(['v2Players:buddy-progress'],d=>{(d.get('v2Players:buddy-progress') as PlayerV2).field!.walk!.meters=1475;});
+  v=await service.command(p.uid,change);assert.equal(v.player.go!.buddyMeters,1350);assert.equal(v.player.field!.walk!.meters-v.player.go!.buddyMeters,125);
+  v=await service.command(p.uid,select('caught-1'));assert.equal(v.player.go!.buddyMeters,1350);assert.deepEqual(v.player.go!.candy,candy);assert.equal(v.player.go!.trainer!.xp,xp);
+ }finally{store.close();}
+});

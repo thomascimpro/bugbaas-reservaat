@@ -12,7 +12,7 @@ import {Button,Counter,Glyph,Help,Label,Panel,Title,useInfo,V} from './uiV2';
 import {FieldArt} from './FieldArtV2';
 import {useActiveMotion} from './WorldEffectsV2';
 
-export type FieldTarget={lat:number;lng:number;name:string;route?:FieldRoute};
+export type FieldTarget={lat:number;lng:number;name:string;route?:FieldRoute;spawnId?:string};
 export function PostArtV2({size=80,available=true}:{size?:number;available?:boolean}){const id='post'+useId().replace(/:/g,'');return <Svg width={size} height={size} viewBox="0 0 100 100"><Defs><LinearGradient id={id} x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor={available?'#DBFFFF':'#E3E5E1'}/><Stop offset=".4" stopColor={available?'#58C7C8':'#B6C2BB'}/><Stop offset="1" stopColor={available?'#307685':'#84958E'}/></LinearGradient></Defs><Ellipse cx={50} cy={89} rx={26} ry={6} fill="#17493B" opacity={.2}/><Path d="M27 85 L47 76 L72 85 L52 94 Z" fill="#4F8F76"/><Path d="M48 40 L55 40 L55 85 L48 88 Z" fill="#A58757"/><Path d="M48 40 L51 41 L51 86 L48 88 Z" fill="#715D3C"/><Path d="M50 4 L79 31 L50 60 L21 31 Z" fill={`url(#${id})`} stroke="#D6E9CF" strokeWidth={2}/><Path d="M26 31 L50 8 L51 33 L50 55 Z" fill="#E8FFFF" opacity={.32}/><Path d="M38 39 Q33 20 64 20 Q67 45 39 40 M40 40 L58 26" fill="#F1F5CE" stroke="#537F65" strokeWidth={1.6}/></Svg>;}
 
 export function WorldSitesSheetV2({kind,postId,view,run,busy,gpsReady,fix,now,onTarget}:{kind:'post'|'routes';postId?:string;view:GameViewV2;run:RunV2;busy:boolean;gpsReady:boolean;fix:Fix;now:number;onTarget:(target:FieldTarget)=>void}){

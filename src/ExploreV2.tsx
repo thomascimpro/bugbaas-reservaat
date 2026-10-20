@@ -12,7 +12,7 @@ import {useGoBack} from './GoBackV2';
 import {Button,Label,V} from './uiV2';
 
 export const browserExploration=false;
-type Props={view:GameViewV2;run:RunV2;busy:boolean;now:number;open:(name:string)=>void;camera?:React.MutableRefObject<MapCameraV2|null>};
+type Props={view:GameViewV2;run:RunV2;busy:boolean;now:number;open:(name:string,specimenId?:string)=>void;camera?:React.MutableRefObject<MapCameraV2|null>};
 export function ExploreV2(props:Props){
  const web=useRef<WebView>(null),latest=useRef(props),alive=useRef(true),ready=useRef(false),active=useRef(AppState.currentState==='active'),sequence=useRef(0),generation=useRef(0),watches=useRef(createNativeGPSWatches()),backPending=useRef(false),[problem,setProblem]=useState(''),[loading,setLoading]=useState(true);latest.current=props;
  let uri='';try{uri=nativeFieldURL(gameServerURL,__DEV__);}catch{}
@@ -40,7 +40,7 @@ export function ExploreV2(props:Props){
   if(m.kind==='ready'){stop();ready.current=true;setLoading(false);setProblem('');state();send({kind:'active',active:active.current});await permission();}
   else if(m.kind==='geo')await gps(m.action,m.id);
   else if(m.kind==='command'){if(!active.current){send({kind:'result',id:m.id,ok:false});return;}const ok=await latest.current.run(m.command,m.params);state();send({kind:'result',id:m.id,ok});}
-  else if(m.kind==='navigate'){if(m.camera&&latest.current.camera)latest.current.camera.current=m.camera;latest.current.open(m.name);}
+  else if(m.kind==='navigate'){if(m.camera&&latest.current.camera)latest.current.camera.current=m.camera;latest.current.open(m.name,m.specimenId);}
   else if(m.kind==='backResult'&&backPending.current){backPending.current=false;if(!m.handled)BackHandler.exitApp();}
  }
  if(!uri)return <View style={{flex:1,justifyContent:'center',padding:24}}><Label>De beveiligde kaartverbinding is nog niet ingesteld.</Label></View>;

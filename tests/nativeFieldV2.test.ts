@@ -45,6 +45,14 @@ test('native map camera accepts finite viewport values without allowing remote a
  assert.ok(parseNativeFieldRequest(JSON.stringify(m)));
  for(const camera of [{...m.camera,zoom:100},{...m.camera,pitch:-1},{...m.camera,center:[190,52]},{...m.camera,center:['5',52]}])assert.equal(parseNativeFieldRequest(JSON.stringify({...m,camera})),null);
 });
+test('native catch navigation can select a specimen only within the collection destination',()=>{
+ const message={kind:'navigate',name:'team',specimenId:'wild-a123456789abcdef-2',camera:{center:[5.13,52.09],zoom:18,pitch:56,bearing:-20}};
+ assert.deepEqual(parseNativeFieldRequest(JSON.stringify(message)),message);
+ assert.ok(parseNativeFieldRequest(JSON.stringify({kind:'navigate',name:'team'})),'ordinary collection navigation stays compatible');
+ for(const specimenId of ['',7,{},'x'.repeat(161),'../../private','<script>'])assert.equal(parseNativeFieldRequest(JSON.stringify({...message,specimenId})),null);
+ for(const name of ['map','profile','account','ranked'])assert.equal(parseNativeFieldRequest(JSON.stringify({...message,name})),null);
+ assert.equal(parseNativeFieldRequest(JSON.stringify({...message,token:'private'})),null);
+});
 test('GPS bridge forwards exact native timestamps once, deduplicates Android delivery and changes permission only once',async()=>{
  const outgoing:unknown[]=[],window=new EventTarget() as EventTarget&Record<string,any>,document=new EventTarget() as EventTarget&Record<string,any>,navigator={} as Record<string,any>;
  window.ReactNativeWebView={postMessage:(raw:string)=>outgoing.push(JSON.parse(raw))};

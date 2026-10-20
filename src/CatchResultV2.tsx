@@ -25,6 +25,6 @@ export function CatchResultV2({result,demo,newSpecies,onContinue,onCollection}:{
    </View>
    {result.held&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:6,borderTopWidth:1,borderColor:'#D7CDAE',paddingTop:6}}><Glyph name={HELD[result.held].icon} size={28}/><Label small bold>+1 {HELD[result.held].name}</Label></View>}
   </View>)}
-  <View style={{flexDirection:'row',gap:8}}>{caught&&!demo&&onCollection&&<View style={{flex:1}}><Button small secondary icon="book" accessibilityLabel="Bekijk vangsten" onPress={onCollection}>Bugs</Button></View>}<View style={{flex:1}}><Button small icon={caught?'check':'refresh'} onPress={onContinue}>{finished?'Verder':'Opnieuw'}</Button></View></View>
+  <View style={{flexDirection:'row',gap:8}}>{caught&&!demo&&onCollection&&<View style={{flex:1}}><Button small secondary icon="book" accessibilityLabel="Bekijk gevangen bug" onPress={onCollection}>Bekijk bug</Button></View>}<View style={{flex:1}}><Button small icon={caught?'check':'refresh'} onPress={onContinue}>{finished?'Verder':'Opnieuw'}</Button></View></View>
  </View></RevealV2>;
 }
