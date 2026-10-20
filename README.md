@@ -11,6 +11,6 @@
 6. [Functioneel Ontwerp](docs/POGO_FO_20261019.md) · [Technisch Ontwerp](docs/POGO_TO_ASSETS_20261019.md) · [Schermschetsen](docs/POGO_SCHERMSCHETSEN_20261019.html).
 
 ## Huidige stap
-BB-00, BB-01a en de kaartbebouwing zijn klaar. GPS-opruiming en foutafhandeling van de locatiebron zijn verbeterd met Sol 6.1-agents. Gecontroleerd met 201 tests, TypeScript, webbuild en stad/bos op drie telefoonbreedtes. Geen productiepublicatie.
+BB-00, BB-01a en de kaartbebouwing zijn klaar. GPS-opruiming en foutafhandeling van de locatiebron zijn verbeterd met Sol 6.1-agents. Nu ook uitgebreid collectiezoeken, zeven onderzoeksstempels, cadeaus/vriendschapsharten en nieuwe vangstfeedback. Gecontroleerd met 219 tests, TypeScript, webbuild en gerichte browserflows op drie telefoonbreedtes. Geen productiepublicatie.
 
 **Nog open:** werkende toegestane live bron voor posten/routes, echte Android-uitvoering en cloudherstel. Extra QA-automatisering is geparkeerd; zie het [werkregister](docs/POGO_WERKREGISTER.md).

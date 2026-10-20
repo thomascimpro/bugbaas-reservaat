@@ -91,6 +91,6 @@ export function ExploreV2({view,run,busy,now,open,camera}:{camera?:React.Mutable
   <FieldHomeV2 {...{view,run,busy,spawns,fix,open,now}} onGPS={()=>void showGPS()} gpsReady={precise&&!tooFast} onSelect={chooseBug} postSelection={postSelection} onTarget={setTarget} />
 
  {target&&<View style={{position:'absolute',bottom:175,left:20,right:20,padding:10,borderRadius:20,backgroundColor:'#FAF6E8EF',flexDirection:'row',alignItems:'center',gap:8}}><Glyph name="compass" size={25}/><View style={{flex:1}}><Label small bold>{target.name}</Label><Label small>{Math.round(distance(fix,target))} m</Label></View><IconButton name="close" label="Sluit kaartdoel" onPress={()=>{setTarget(null);setCenterPulse(v=>v+1);}}/></View>}
- {selected&&<CatchV2 {...{view,run,busy,now,fix,ensureGPS}} spawn={selected} demo={false} onClose={()=>setSelected(null)} onRemoved={()=>{}}/>}
+ {selected&&<CatchV2 {...{view,run,busy,now,fix,ensureGPS}} spawn={selected} demo={false} onClose={()=>setSelected(null)} onRemoved={()=>{}} onCollection={()=>{setSelected(null);open('team');}}/>}
  </View>;
 }

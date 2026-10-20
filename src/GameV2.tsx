@@ -13,7 +13,8 @@ import {accountEmail,commandV2,connectV2,loginV2,refreshV2,ApiError} from './cli
 import {Scene,SpriteView,Ground} from './artV2';
 import {BrandMark} from './gameUiArt';
 import {isNewerV2} from './stateV2';
-import {GoCollectionV2,GoDexV2,GoBuddyV2,GoFriendsV2} from './GoCollectionV2';
+import {GoCollectionV2,GoDexV2,GoBuddyV2} from './GoCollectionV2';
+import {GoFriendsV2} from './GoFriendsV2';
 
 import {GoBattleV2} from './GoBattleV2';
 

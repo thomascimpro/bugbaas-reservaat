@@ -1,6 +1,7 @@
 import type {PlayerV2} from './typesV2';
 import {checkV2 as check} from './shopV2';
-export type TrainerProgress={xp:number;claimedLevel:number;catchDay:string};
+export type ResearchStampBook={stamps:number;lastDay:string;breakthroughs:number};
+export type TrainerProgress={xp:number;claimedLevel:number;catchDay:string;research?:ResearchStampBook};
 export const levelXP=(level:number)=>500*(Math.max(1,Math.min(40,level))-1)**2;
 export const trainerLevel=(xp:number)=>Math.min(40,1+Math.floor(Math.sqrt(Math.max(0,xp)/500)));
 export function ensureTrainer(p:PlayerV2){if(!p.go!.trainer){const xp=Math.min(levelXP(40),Math.max(0,p.field?.total.catches??0)*100);p.go!.trainer={xp,claimedLevel:trainerLevel(xp),catchDay:''};}return p.go!.trainer;}

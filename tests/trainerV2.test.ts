@@ -4,7 +4,7 @@ import {freshV2} from '../game/safariV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo,rollGoBug,transferManyGo} from '../game/goV2';
 import {catchXP,claimTrainer,ensureTrainer,grantXP,levelXP,trainerLevel} from '../game/trainerV2';
-import {claimGoDaily} from '../game/dailyResearchV2';
+import {claimGoDaily,GO_BREAKTHROUGH} from '../game/dailyResearchV2';
 const NOW=Date.UTC(2026,9,20,14);
 function player(){const p=freshV2('trainer','TRAIN123',NOW);ensureField(p,NOW);ensureGo(p,NOW);return p;}
 test('trainer XP grows to level 40, historical catches receive no retroactive resource claim, and level rewards claim once',()=>{
@@ -15,6 +15,43 @@ test('active catch skill earns more XP; first/new species bonuses are factual an
 });
 test('daily research checks server progress and cannot be claimed twice or without completing the requirement',()=>{
  const p=player();for(const id of ['catch','walk','skill'])assert.throws(()=>claimGoDaily(p,id));p.field!.walk={meters:500,dayMeters:500,anchor:null,at:NOW};const basic=p.field!.inventory.basic;claimGoDaily(p,'walk');assert.equal(p.field!.inventory.basic,basic+5);assert.equal(p.go!.dust,150);assert.equal(p.go!.trainer!.xp,300);assert.throws(()=>claimGoDaily(p,'walk'));p.field!.daily.skilled=1;claimGoDaily(p,'skill');assert.equal(p.go!.dust,350);assert.throws(()=>claimGoDaily(p,'fake'));
+});
+
+function stamp(p:ReturnType<typeof player>,day:number){ensureField(p,NOW+day*86400000);p.field!.daily.skilled=1;claimGoDaily(p,'skill');}
+
+test('research grants one stamp for the first claimed task per server day, never for login or unfinished research',()=>{
+ const p=player();assert.equal(p.go!.trainer?.research,undefined);assert.throws(()=>claimGoDaily(p,'skill'));assert.equal(p.go!.trainer?.research,undefined);
+ stamp(p,0);p.field!.daily.catches=3;p.field!.walk={meters:500,dayMeters:500,anchor:null,at:NOW};claimGoDaily(p,'catch');claimGoDaily(p,'walk');
+ assert.deepEqual(p.go!.trainer!.research,{stamps:1,lastDay:'2026-10-20',breakthroughs:0});
+});
+
+test('research stamps survive missed server days without a streak reset',()=>{
+ const p=player();stamp(p,0);ensureField(p,NOW+5*86400000);assert.equal(p.go!.trainer!.research!.stamps,1);stamp(p,5);
+ assert.deepEqual(p.go!.trainer!.research,{stamps:2,lastDay:'2026-10-25',breakthroughs:0});
+});
+
+test('seven stamped days grant exactly one fixed breakthrough bundle and no specimen',()=>{
+ const p=player(),dust=p.go!.dust,nets=p.field!.inventory.basic,lures=p.field!.inventory.pollen,tms=p.go!.fastTMs,owned=structuredClone(p.specimens);
+ for(let day=0;day<6;day++)stamp(p,day*2);
+ assert.equal(p.go!.trainer!.research!.breakthroughs,0);assert.equal(p.go!.fastTMs,tms);
+ stamp(p,12);assert.equal(p.go!.trainer!.research!.stamps,7);assert.equal(p.go!.trainer!.research!.breakthroughs,1);
+ assert.equal(p.go!.dust,dust+7*200+GO_BREAKTHROUGH.dust);assert.equal(p.field!.inventory.basic,nets+GO_BREAKTHROUGH.nets);assert.equal(p.field!.inventory.pollen,lures+GO_BREAKTHROUGH.lures);assert.equal(p.go!.fastTMs,tms+1);assert.deepEqual(p.specimens,owned);assert.equal(p.go!.trainer!.xp,7*300);
+});
+
+test('research breakthrough is safe on retries, further same-day claims and later books',()=>{
+ const p=player();for(let day=0;day<7;day++)stamp(p,day);const awarded=structuredClone(p);
+ assert.throws(()=>claimGoDaily(p,'skill'));assert.deepEqual(p,awarded);
+ p.field!.daily.catches=3;claimGoDaily(p,'catch');assert.equal(p.go!.trainer!.research!.stamps,7);assert.equal(p.go!.trainer!.research!.breakthroughs,1);assert.equal(p.go!.fastTMs,awarded.go!.fastTMs);
+ // Even a reset of the daily claim list cannot stamp the same day again.
+ p.field!.daily.claimed=[];claimGoDaily(p,'skill');assert.equal(p.go!.trainer!.research!.stamps,7);assert.equal(p.go!.fastTMs,awarded.go!.fastTMs);
+ for(let day=7;day<14;day++)stamp(p,day);
+ assert.equal(p.go!.trainer!.research!.stamps,14);assert.equal(p.go!.trainer!.research!.breakthroughs,2);assert.equal(p.go!.fastTMs,awarded.go!.fastTMs+1);
+});
+
+test('old trainer profiles retain XP, catch day, inventory and claimed research without retroactive stamps',()=>{
+ const p=player();p.go!.trainer={xp:1234,claimedLevel:2,catchDay:'2026-10-19'};p.field!.daily.claimed=['catch'];p.field!.daily.skilled=1;const before=structuredClone(p);
+ claimGoDaily(p,'skill');assert.equal(p.go!.trainer!.xp,1534);assert.equal(p.go!.trainer!.claimedLevel,2);assert.equal(p.go!.trainer!.catchDay,'2026-10-19');assert.equal(p.go!.trainer!.research,undefined);assert.equal(p.go!.dust,before.go!.dust+200);assert.equal(p.field!.inventory.basic,before.field!.inventory.basic);assert.equal(p.field!.inventory.pollen,before.field!.inventory.pollen);assert.deepEqual(p.specimens,before.specimens);
+ stamp(p,1);assert.equal(p.go!.trainer!.research!.stamps,1);assert.equal(p.go!.trainer!.xp,1834);assert.equal(p.go!.trainer!.catchDay,'2026-10-19');
 });
 test('batch release validates every owned specimen before changing anything and preserves favorite/shiny/buddy/team bugs',()=>{
  const p=player();for(let i=0;i<3;i++)p.specimens.push({id:'batch-'+i,species:'ant',go:rollGoBug('ant','batch'+i),level:1,source:'walking',shiny:false,favorite:false,hearts:0,item:null,obtainedAt:NOW});const a=p.specimens.find(s=>s.id==='batch-0')!,b=p.specimens.find(s=>s.id==='batch-1')!;const original=p.specimens.length,candy=p.go!.candy.ant??0;
