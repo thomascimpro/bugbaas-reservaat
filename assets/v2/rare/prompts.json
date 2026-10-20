@@ -1,0 +1,26 @@
+{
+  "tool": "image_gen",
+  "transparentBackground": true,
+  "assets": [
+    {
+      "id": "ambermantis",
+      "name": "Barnsteenbidsprinkhaan",
+      "prompt": "Use case: stylized-concept. Create ONE finished transparent-background game creature sprite for BugBaas, a polished mature insect collecting and tactical battle game. Premium semi-realistic 3D natural-history rendering, anatomical insect proportions, detailed chitin and believable wings, tasteful luminous material accents, elegant and collectible, strong readable silhouette at 100px, soft studio key light, complete body and every leg/antenna fully in frame with 12% clear padding, three-quarter view facing slightly right, square canvas. Real transparent alpha, no floor, no scene, no text, no UI, no frame, no symbols, no cartoon face, no enormous eyes, no weapons or clothing. The subject is a rare fantasy colour form of a recognisable insect, not a humanoid monster. Subject: an elegant amber praying mantis, translucent warm amber chitin on its abdomen, restrained gold edges on folded raptorial forelegs, olive and bronze joint details, slim poised body, a subtle inner amber sheen. Distinctive endgame collector specimen, intimidating but beautiful."
+    },
+    {
+      "id": "crystalstag",
+      "name": "Kristalhertkever",
+      "prompt": "Use case: stylized-concept. Create ONE finished transparent-background game creature sprite for BugBaas, a polished mature insect collecting and tactical battle game. Premium semi-realistic 3D natural-history rendering, anatomical insect proportions, detailed chitin and believable wings, tasteful luminous material accents, elegant and collectible, strong readable silhouette at 100px, soft studio key light, complete body and every leg/antenna fully in frame with 12% clear padding, three-quarter view facing slightly right, square canvas. Real transparent alpha, no floor, no scene, no text, no UI, no frame, no symbols, no cartoon face, no enormous eyes, no weapons or clothing. The subject is a rare fantasy colour form of a recognisable insect, not a humanoid monster. Subject: a powerful stag beetle, deep midnight-teal iridescent shell and massive believable branching mandibles with translucent aquamarine crystal tips. Faceted highlights integrated into the shell, intricate insect legs. Its rare icy turquoise reflections contrast with dark metallic blue armour."
+    },
+    {
+      "id": "glasswing",
+      "name": "Glasvleugeljuffer",
+      "prompt": "Use case: stylized-concept. Create ONE finished transparent-background game creature sprite for BugBaas, a polished mature insect collecting and tactical battle game. Premium semi-realistic 3D natural-history rendering, anatomical insect proportions, detailed chitin and believable wings, tasteful luminous material accents, elegant and collectible, strong readable silhouette at 100px, soft studio key light, complete body and every leg/antenna fully in frame with 12% clear padding, three-quarter view facing slightly right, square canvas. Real transparent alpha, no floor, no scene, no text, no UI, no frame, no symbols, no cartoon face, no enormous eyes, no weapons or clothing. The subject is a rare fantasy colour form of a recognisable insect, not a humanoid monster. Subject: a delicate damselfly with long slender silver and petrol-blue abdomen, four extended translucent glass-like wings with opalescent green, blue and pale violet edge highlights, highly detailed wing venation. A striking fast aerial scout, full insect visible, elegantly hovering."
+    },
+    {
+      "id": "cometmoth",
+      "name": "Komeetvlinder",
+      "prompt": "Use case: stylized-concept. Create ONE finished transparent-background game creature sprite for BugBaas, a polished mature insect collecting and tactical battle game. Premium semi-realistic 3D natural-history rendering, anatomical insect proportions, detailed chitin and believable wings, tasteful luminous material accents, elegant and collectible, strong readable silhouette at 100px, soft studio key light, complete body and every leg/antenna fully in frame with 12% clear padding, three-quarter view facing slightly right, square canvas. Real transparent alpha, no floor, no scene, no text, no UI, no frame, no symbols, no cartoon face, no enormous eyes, no weapons or clothing. The subject is a rare fantasy colour form of a recognisable insect, not a humanoid monster. Subject: a magnificent comet moth, four broad ivory and pale lavender wings with subtle plum eyespots and exceptionally long slender trailing hindwing tails, warm pearl and rose-gold sheen, realistic fuzzy moth thorax and feathered antennae. Both long tails entirely inside canvas. Serene rare night insect, sophisticated pearl iridescence."
+    }
+  ]
+}

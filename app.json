@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "BugBaas Reservaat - Preview",
+    "slug": "bugbaas-reservaat",
+    "version": "0.1.3",
+    "orientation": "portrait",
+    "scheme": "bugbaas-reservaat",
+    "plugins": [
+      "./plugins/withReleaseConfig",
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": false,
+          "microphonePermission": false
+        }
+      ],
+      "expo-asset",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "BugBaas gebruikt je locatie om bugs in de buurt te tonen en je wandelafstand te meten.",
+          "isAndroidBackgroundLocationEnabled": false,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ]
+    ],
+    "icon": "./assets/art/crest.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "nl.cimpro.bugbaas.reservaat.preview",
+      "versionCode": 4,
+      "permissions": [],
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "output": "single",
+      "name": "BugBaas Reservaat",
+      "favicon": "./assets/art/crest.png"
+    },
+    "splash": {
+      "backgroundColor": "#12382e"
+    }
+  }
+}

@@ -1,0 +1,1242 @@
+{
+  "version": "bugbaas-standard-2.0.0",
+  "species": [
+    {
+      "id": "ladybug",
+      "name": "Lieveheersbeestje",
+      "tier": 1,
+      "attack": 2,
+      "health": 3,
+      "ability": {
+        "trigger": "faint",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 2,
+        "health": 1
+      },
+      "text": "Valt uit: geef een vriend +2/+1.",
+      "habitat": 0,
+      "art": 0
+    },
+    {
+      "id": "bee",
+      "name": "Honingbij",
+      "tier": 1,
+      "attack": 2,
+      "health": 2,
+      "ability": {
+        "trigger": "faint",
+        "effect": "summon",
+        "target": "self",
+        "token": "larva",
+        "attack": 1,
+        "health": 1
+      },
+      "text": "Valt uit: roep een larve van 1/1 op.",
+      "habitat": 1,
+      "art": 1
+    },
+    {
+      "id": "beetle",
+      "name": "Pantserkever",
+      "tier": 1,
+      "attack": 1,
+      "health": 5,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "ahead",
+        "health": 2
+      },
+      "text": "Start: geef je voorste buur +2 leven.",
+      "habitat": 2,
+      "art": 2
+    },
+    {
+      "id": "dragonfly",
+      "name": "Libelle",
+      "tier": 1,
+      "attack": 3,
+      "health": 2,
+      "ability": {
+        "trigger": "start",
+        "effect": "damage",
+        "target": "randomEnemy",
+        "amount": 1
+      },
+      "text": "Start: raak een willekeurige vijand voor 1.",
+      "habitat": 3,
+      "art": 3
+    },
+    {
+      "id": "ant",
+      "name": "Bosmier",
+      "tier": 1,
+      "attack": 2,
+      "health": 2,
+      "ability": {
+        "trigger": "summon",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 1
+      },
+      "text": "Een vriend verschijnt: geef hem +1 aanval.",
+      "habitat": 0,
+      "art": 4
+    },
+    {
+      "id": "cricket",
+      "name": "Veldkrekel",
+      "tier": 1,
+      "attack": 2,
+      "health": 2,
+      "ability": {
+        "trigger": "buy",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 1,
+        "health": 1
+      },
+      "text": "Koop: geef een vriend +1/+1.",
+      "habitat": 1,
+      "art": 5
+    },
+    {
+      "id": "weevil",
+      "name": "Snuitkever",
+      "tier": 1,
+      "attack": 3,
+      "health": 1,
+      "ability": {
+        "trigger": "sell",
+        "effect": "gold",
+        "target": "self",
+        "amount": 1
+      },
+      "text": "Verkoop: verdien 1 extra munt.",
+      "habitat": 2,
+      "art": 6
+    },
+    {
+      "id": "aphid",
+      "name": "Bladluis",
+      "tier": 1,
+      "attack": 1,
+      "health": 2,
+      "ability": {
+        "trigger": "level",
+        "effect": "buff",
+        "target": "friends",
+        "attack": 1,
+        "health": 1
+      },
+      "text": "Level omhoog: geef alle vrienden +1/+1.",
+      "habitat": 3,
+      "art": 7
+    },
+    {
+      "id": "springtail",
+      "name": "Springstaart",
+      "tier": 1,
+      "attack": 1,
+      "health": 3,
+      "ability": {
+        "trigger": "sell",
+        "effect": "buff",
+        "target": "randomFriend",
+        "health": 2,
+        "count": 2
+      },
+      "text": "Verkoop: geef 2 vrienden +2 leven.",
+      "habitat": 0,
+      "art": 8
+    },
+    {
+      "id": "midge",
+      "name": "Dansmug",
+      "tier": 1,
+      "attack": 2,
+      "health": 3,
+      "ability": {
+        "trigger": "sell",
+        "effect": "buff",
+        "target": "shop",
+        "health": 1
+      },
+      "text": "Verkoop: winkelbugs krijgen +1 leven.",
+      "habitat": 1,
+      "art": 9
+    },
+    {
+      "id": "mantis",
+      "name": "Bidsprinkhaan",
+      "tier": 2,
+      "attack": 3,
+      "health": 3,
+      "ability": {
+        "trigger": "attack",
+        "effect": "damage",
+        "target": "lastEnemy",
+        "amount": 1,
+        "limit": 1
+      },
+      "text": "Eerste aanval: raak ook de achterste vijand voor 1.",
+      "habitat": 2,
+      "art": 10
+    },
+    {
+      "id": "moth",
+      "name": "Nachtvlinder",
+      "tier": 2,
+      "attack": 1,
+      "health": 4,
+      "ability": {
+        "trigger": "faint",
+        "effect": "summon",
+        "target": "self",
+        "token": "midgeToken",
+        "attack": 1,
+        "health": 1,
+        "count": 2
+      },
+      "text": "Valt uit: roep 2 mugjes van 1/1 op.",
+      "habitat": 3,
+      "art": 11
+    },
+    {
+      "id": "earwig",
+      "name": "Oorworm",
+      "tier": 2,
+      "attack": 2,
+      "health": 5,
+      "ability": {
+        "trigger": "hurt",
+        "effect": "buff",
+        "target": "self",
+        "attack": 2
+      },
+      "text": "Geraakt: krijg +2 aanval.",
+      "habitat": 0,
+      "art": 12
+    },
+    {
+      "id": "firefly",
+      "name": "Vuurvlieg",
+      "tier": 2,
+      "attack": 2,
+      "health": 4,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "behind",
+        "attack": 3
+      },
+      "text": "Start: geef je achterste buur +3 aanval.",
+      "habitat": 1,
+      "art": 13
+    },
+    {
+      "id": "shieldbug",
+      "name": "Schildwants",
+      "tier": 2,
+      "attack": 1,
+      "health": 6,
+      "ability": {
+        "trigger": "start",
+        "effect": "shield",
+        "target": "self",
+        "amount": 1
+      },
+      "text": "Start: blokkeer de eerste klap.",
+      "habitat": 2,
+      "art": 14
+    },
+    {
+      "id": "grasshopper",
+      "name": "Sprinkhaan",
+      "tier": 2,
+      "attack": 3,
+      "health": 3,
+      "ability": {
+        "trigger": "faint",
+        "effect": "damage",
+        "target": "frontEnemy",
+        "amount": 3
+      },
+      "text": "Valt uit: raak de voorste vijand voor 3.",
+      "habitat": 3,
+      "art": 15
+    },
+    {
+      "id": "caterpillar",
+      "name": "Rups",
+      "tier": 2,
+      "attack": 1,
+      "health": 3,
+      "ability": {
+        "trigger": "end",
+        "effect": "buff",
+        "target": "self",
+        "attack": 1,
+        "health": 1
+      },
+      "text": "Einde winkel: krijg +1/+1.",
+      "habitat": 0,
+      "art": 16
+    },
+    {
+      "id": "lacewing",
+      "name": "Gaasvlieg",
+      "tier": 2,
+      "attack": 2,
+      "health": 3,
+      "ability": {
+        "trigger": "food",
+        "effect": "buff",
+        "target": "self",
+        "attack": 1,
+        "health": 1
+      },
+      "text": "Eet: krijg nog +1/+1.",
+      "habitat": 1,
+      "art": 17
+    },
+    {
+      "id": "woodlouse",
+      "name": "Pissebed",
+      "tier": 2,
+      "attack": 2,
+      "health": 4,
+      "ability": {
+        "trigger": "faint",
+        "effect": "buff",
+        "target": "ahead",
+        "attack": 3,
+        "health": 3
+      },
+      "text": "Valt uit: geef je voorste buur +3/+3.",
+      "habitat": 2,
+      "art": 18
+    },
+    {
+      "id": "dungbeetle",
+      "name": "Mestkever",
+      "tier": 2,
+      "attack": 3,
+      "health": 4,
+      "ability": {
+        "trigger": "buy",
+        "effect": "buff",
+        "target": "shop",
+        "attack": 1,
+        "health": 1
+      },
+      "text": "Koop: winkelbugs krijgen +1/+1.",
+      "habitat": 3,
+      "art": 19
+    },
+    {
+      "id": "wasp",
+      "name": "Wesp",
+      "tier": 3,
+      "attack": 4,
+      "health": 3,
+      "ability": {
+        "trigger": "start",
+        "effect": "damage",
+        "target": "weakEnemy",
+        "amount": 3
+      },
+      "text": "Start: raak de zwakste vijand voor 3.",
+      "habitat": 0,
+      "art": 20
+    },
+    {
+      "id": "butterfly",
+      "name": "Dagpauwoog",
+      "tier": 3,
+      "attack": 3,
+      "health": 5,
+      "ability": {
+        "trigger": "faint",
+        "effect": "buff",
+        "target": "friends",
+        "attack": 1,
+        "health": 2
+      },
+      "text": "Valt uit: geef alle vrienden +1/+2.",
+      "habitat": 1,
+      "art": 21
+    },
+    {
+      "id": "stag",
+      "name": "Vliegend hert",
+      "tier": 3,
+      "attack": 3,
+      "health": 6,
+      "ability": {
+        "trigger": "hurt",
+        "effect": "damage",
+        "target": "frontEnemy",
+        "amount": 2
+      },
+      "text": "Geraakt: raak de voorste vijand voor 2.",
+      "habitat": 2,
+      "art": 22
+    },
+    {
+      "id": "divingbeetle",
+      "name": "Waterkever",
+      "tier": 3,
+      "attack": 3,
+      "health": 5,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 2,
+        "health": 2,
+        "count": 2
+      },
+      "text": "Start: geef 2 vrienden +2/+2.",
+      "habitat": 3,
+      "art": 23
+    },
+    {
+      "id": "waterstrider",
+      "name": "Schaatsenrijder",
+      "tier": 3,
+      "attack": 4,
+      "health": 4,
+      "ability": {
+        "trigger": "attack",
+        "effect": "buff",
+        "target": "behind",
+        "attack": 2,
+        "health": 2,
+        "limit": 2
+      },
+      "text": "Aanval: geef je achterste buur +2/+2 (2×).",
+      "habitat": 0,
+      "art": 24
+    },
+    {
+      "id": "damselfly",
+      "name": "Waterjuffer",
+      "tier": 3,
+      "attack": 2,
+      "health": 5,
+      "ability": {
+        "trigger": "summon",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 2,
+        "health": 1
+      },
+      "text": "Een vriend verschijnt: geef hem +2/+1.",
+      "habitat": 1,
+      "art": 25
+    },
+    {
+      "id": "pillbug",
+      "name": "Rolpissebed",
+      "tier": 3,
+      "attack": 2,
+      "health": 7,
+      "ability": {
+        "trigger": "start",
+        "effect": "shield",
+        "target": "ahead",
+        "amount": 1
+      },
+      "text": "Start: geef je voorste buur een schild.",
+      "habitat": 2,
+      "art": 26
+    },
+    {
+      "id": "clickbeetle",
+      "name": "Kniptor",
+      "tier": 3,
+      "attack": 4,
+      "health": 3,
+      "ability": {
+        "trigger": "faint",
+        "effect": "damage",
+        "target": "enemies",
+        "amount": 1
+      },
+      "text": "Valt uit: raak alle vijanden voor 1.",
+      "habitat": 3,
+      "art": 27
+    },
+    {
+      "id": "silkworm",
+      "name": "Zijderups",
+      "tier": 3,
+      "attack": 2,
+      "health": 4,
+      "ability": {
+        "trigger": "end",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 1,
+        "health": 2,
+        "count": 2
+      },
+      "text": "Einde winkel: geef 2 vrienden +1/+2.",
+      "habitat": 0,
+      "art": 28
+    },
+    {
+      "id": "hoverfly",
+      "name": "Zweefvlieg",
+      "tier": 3,
+      "attack": 3,
+      "health": 4,
+      "ability": {
+        "trigger": "roll",
+        "effect": "buff",
+        "target": "self",
+        "attack": 1,
+        "limit": 3
+      },
+      "text": "Verversen: krijg +1 aanval (3× per ronde).",
+      "habitat": 1,
+      "art": 29
+    },
+    {
+      "id": "hornet",
+      "name": "Hoornaar",
+      "tier": 4,
+      "attack": 6,
+      "health": 4,
+      "ability": {
+        "trigger": "attack",
+        "effect": "damage",
+        "target": "lastEnemy",
+        "amount": 3,
+        "limit": 2
+      },
+      "text": "Aanval: raak de achterste vijand voor 3 (2×).",
+      "habitat": 2,
+      "art": 30
+    },
+    {
+      "id": "rhino",
+      "name": "Neushoornkever",
+      "tier": 4,
+      "attack": 5,
+      "health": 7,
+      "ability": {
+        "trigger": "attack",
+        "effect": "damage",
+        "target": "frontEnemy",
+        "amount": 2,
+        "limit": 2
+      },
+      "text": "Aanval: doe 2 extra schade (2×).",
+      "habitat": 3,
+      "art": 31
+    },
+    {
+      "id": "atlasmoth",
+      "name": "Atlasvlinder",
+      "tier": 4,
+      "attack": 4,
+      "health": 7,
+      "ability": {
+        "trigger": "faint",
+        "effect": "summon",
+        "target": "self",
+        "token": "silkToken",
+        "attack": 3,
+        "health": 3,
+        "count": 2
+      },
+      "text": "Valt uit: roep 2 rupsen van 3/3 op.",
+      "habitat": 0,
+      "art": 32
+    },
+    {
+      "id": "jewelbeetle",
+      "name": "Prachtkever",
+      "tier": 4,
+      "attack": 4,
+      "health": 5,
+      "ability": {
+        "trigger": "end",
+        "effect": "buff",
+        "target": "behind",
+        "attack": 2,
+        "health": 2
+      },
+      "text": "Einde winkel: geef je achterste buur +2/+2.",
+      "habitat": 1,
+      "art": 33
+    },
+    {
+      "id": "leafhopper",
+      "name": "Bladcicade",
+      "tier": 4,
+      "attack": 3,
+      "health": 6,
+      "ability": {
+        "trigger": "food",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 2,
+        "health": 2,
+        "count": 2
+      },
+      "text": "Eet: geef 2 vrienden +2/+2.",
+      "habitat": 2,
+      "art": 34
+    },
+    {
+      "id": "centipede",
+      "name": "Duizendpoot",
+      "tier": 4,
+      "attack": 5,
+      "health": 5,
+      "ability": {
+        "trigger": "hurt",
+        "effect": "buff",
+        "target": "behind",
+        "attack": 3,
+        "health": 3,
+        "limit": 2
+      },
+      "text": "Geraakt: geef je achterste buur +3/+3 (2×).",
+      "habitat": 3,
+      "art": 35
+    },
+    {
+      "id": "millipede",
+      "name": "Miljoenpoot",
+      "tier": 4,
+      "attack": 3,
+      "health": 8,
+      "ability": {
+        "trigger": "friendFaint",
+        "effect": "buff",
+        "target": "self",
+        "attack": 2,
+        "health": 2,
+        "limit": 3
+      },
+      "text": "Vriend valt uit: krijg +2/+2 (3×).",
+      "habitat": 0,
+      "art": 36
+    },
+    {
+      "id": "cicada",
+      "name": "Zangcicade",
+      "tier": 4,
+      "attack": 4,
+      "health": 5,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "friends",
+        "attack": 2
+      },
+      "text": "Start: geef alle vrienden +2 aanval.",
+      "habitat": 1,
+      "art": 37
+    },
+    {
+      "id": "scorpionfly",
+      "name": "Schorpioenvlieg",
+      "tier": 4,
+      "attack": 5,
+      "health": 4,
+      "ability": {
+        "trigger": "start",
+        "effect": "damage",
+        "target": "randomEnemy",
+        "amount": 3,
+        "count": 2
+      },
+      "text": "Start: raak 2 vijanden voor 3.",
+      "habitat": 2,
+      "art": 38
+    },
+    {
+      "id": "silverfish",
+      "name": "Zilvervisje",
+      "tier": 4,
+      "attack": 4,
+      "health": 6,
+      "ability": {
+        "trigger": "buy",
+        "effect": "buff",
+        "target": "friends",
+        "health": 1
+      },
+      "text": "Koop: geef alle vrienden +1 leven.",
+      "habitat": 3,
+      "art": 39
+    },
+    {
+      "id": "emperor",
+      "name": "Keizerlibelle",
+      "tier": 5,
+      "attack": 7,
+      "health": 5,
+      "ability": {
+        "trigger": "start",
+        "effect": "damage",
+        "target": "lastEnemy",
+        "amount": 6
+      },
+      "text": "Start: raak de achterste vijand voor 6.",
+      "habitat": 0,
+      "art": 40
+    },
+    {
+      "id": "goliath",
+      "name": "Goliathkever",
+      "tier": 5,
+      "attack": 7,
+      "health": 8,
+      "ability": {
+        "trigger": "hurt",
+        "effect": "buff",
+        "target": "self",
+        "attack": 3,
+        "health": 1,
+        "limit": 3
+      },
+      "text": "Geraakt: krijg +3/+1 (3×).",
+      "habitat": 1,
+      "art": 41
+    },
+    {
+      "id": "orchidmantis",
+      "name": "Orchideebidsprinkhaan",
+      "tier": 5,
+      "attack": 5,
+      "health": 6,
+      "ability": {
+        "trigger": "faint",
+        "effect": "buff",
+        "target": "friends",
+        "attack": 3
+      },
+      "text": "Valt uit: geef alle vrienden +3 aanval.",
+      "habitat": 2,
+      "art": 42
+    },
+    {
+      "id": "luna",
+      "name": "Lunavlinder",
+      "tier": 5,
+      "attack": 4,
+      "health": 7,
+      "ability": {
+        "trigger": "faint",
+        "effect": "summon",
+        "target": "self",
+        "token": "lunaToken",
+        "attack": 5,
+        "health": 5
+      },
+      "text": "Valt uit: roep een mot van 5/5 op.",
+      "habitat": 3,
+      "art": 43
+    },
+    {
+      "id": "carpenterbee",
+      "name": "Houtbij",
+      "tier": 5,
+      "attack": 5,
+      "health": 6,
+      "ability": {
+        "trigger": "summon",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 3,
+        "health": 3
+      },
+      "text": "Een vriend verschijnt: geef hem +3/+3.",
+      "habitat": 0,
+      "art": 44
+    },
+    {
+      "id": "tigerbeetle",
+      "name": "Zandloopkever",
+      "tier": 5,
+      "attack": 6,
+      "health": 4,
+      "ability": {
+        "trigger": "attack",
+        "effect": "buff",
+        "target": "self",
+        "attack": 3,
+        "limit": 3
+      },
+      "text": "Aanval: krijg +3 aanval (3×).",
+      "habitat": 1,
+      "art": 45
+    },
+    {
+      "id": "stick",
+      "name": "Wandelende tak",
+      "tier": 5,
+      "attack": 3,
+      "health": 9,
+      "ability": {
+        "trigger": "start",
+        "effect": "shield",
+        "target": "behind",
+        "amount": 1,
+        "count": 1
+      },
+      "text": "Start: geef je achterste buur een schild.",
+      "habitat": 2,
+      "art": 46
+    },
+    {
+      "id": "leaf",
+      "name": "Wandelend blad",
+      "tier": 5,
+      "attack": 4,
+      "health": 8,
+      "ability": {
+        "trigger": "end",
+        "effect": "buff",
+        "target": "friends",
+        "health": 1
+      },
+      "text": "Einde winkel: geef alle vrienden +1 leven.",
+      "habitat": 3,
+      "art": 47
+    },
+    {
+      "id": "glowworm",
+      "name": "Glimworm",
+      "tier": 5,
+      "attack": 5,
+      "health": 7,
+      "ability": {
+        "trigger": "friendFaint",
+        "effect": "damage",
+        "target": "randomEnemy",
+        "amount": 3,
+        "limit": 3
+      },
+      "text": "Vriend valt uit: raak een vijand voor 3 (3×).",
+      "habitat": 0,
+      "art": 48
+    },
+    {
+      "id": "dungroller",
+      "name": "Ballenroller",
+      "tier": 5,
+      "attack": 5,
+      "health": 5,
+      "ability": {
+        "trigger": "sell",
+        "effect": "buff",
+        "target": "friends",
+        "attack": 2,
+        "health": 2
+      },
+      "text": "Verkoop: geef alle vrienden +2/+2.",
+      "habitat": 1,
+      "art": 49
+    },
+    {
+      "id": "hercules",
+      "name": "Herculeskever",
+      "tier": 6,
+      "attack": 9,
+      "health": 10,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "ahead",
+        "attack": 5,
+        "health": 5
+      },
+      "text": "Start: geef je voorste buur +5/+5.",
+      "habitat": 2,
+      "art": 50
+    },
+    {
+      "id": "queenant",
+      "name": "Mierenkoningin",
+      "tier": 6,
+      "attack": 6,
+      "health": 8,
+      "ability": {
+        "trigger": "friendFaint",
+        "effect": "summon",
+        "target": "self",
+        "token": "antToken",
+        "attack": 3,
+        "health": 3,
+        "limit": 2
+      },
+      "text": "Vriend valt uit: roep een 3/3 mier op (2×).",
+      "habitat": 3,
+      "art": 51
+    },
+    {
+      "id": "queenbee",
+      "name": "Bijenkoningin",
+      "tier": 6,
+      "attack": 5,
+      "health": 9,
+      "ability": {
+        "trigger": "end",
+        "effect": "buff",
+        "target": "randomFriend",
+        "attack": 3,
+        "health": 3,
+        "count": 3
+      },
+      "text": "Einde winkel: geef 3 vrienden +3/+3.",
+      "habitat": 0,
+      "art": 52
+    },
+    {
+      "id": "giantmantis",
+      "name": "Reuzenbidsprinkhaan",
+      "tier": 6,
+      "attack": 8,
+      "health": 7,
+      "ability": {
+        "trigger": "attack",
+        "effect": "damage",
+        "target": "weakEnemy",
+        "amount": 4,
+        "limit": 2
+      },
+      "text": "Aanval: raak de zwakste vijand voor 4 (2×).",
+      "habitat": 1,
+      "art": 53
+    },
+    {
+      "id": "peacock",
+      "name": "Pauwoogpijlstaart",
+      "tier": 6,
+      "attack": 7,
+      "health": 8,
+      "ability": {
+        "trigger": "faint",
+        "effect": "summon",
+        "target": "self",
+        "token": "mothToken",
+        "attack": 5,
+        "health": 5,
+        "count": 2
+      },
+      "text": "Valt uit: roep 2 motten van 5/5 op.",
+      "habitat": 2,
+      "art": 54
+    },
+    {
+      "id": "scarab",
+      "name": "Gouden scarabee",
+      "tier": 6,
+      "attack": 7,
+      "health": 9,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "friends",
+        "attack": 2,
+        "health": 2
+      },
+      "text": "Start: geef alle vrienden +2/+2.",
+      "habitat": 3,
+      "art": 55
+    },
+    {
+      "id": "elephant",
+      "name": "Olifantskever",
+      "tier": 6,
+      "attack": 8,
+      "health": 10,
+      "ability": {
+        "trigger": "hurt",
+        "effect": "damage",
+        "target": "enemies",
+        "amount": 2,
+        "limit": 2
+      },
+      "text": "Geraakt: raak alle vijanden voor 2 (2×).",
+      "habitat": 0,
+      "art": 56
+    },
+    {
+      "id": "morpho",
+      "name": "Morphovlinder",
+      "tier": 6,
+      "attack": 6,
+      "health": 8,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "behind",
+        "attack": 5,
+        "health": 5
+      },
+      "text": "Start: geef je achterste buur +5/+5.",
+      "habitat": 1,
+      "art": 57
+    },
+    {
+      "id": "robberfly",
+      "name": "Roofvlieg",
+      "tier": 6,
+      "attack": 8,
+      "health": 6,
+      "ability": {
+        "trigger": "start",
+        "effect": "damage",
+        "target": "randomEnemy",
+        "amount": 5,
+        "count": 2
+      },
+      "text": "Start: raak 2 vijanden voor 5.",
+      "habitat": 2,
+      "art": 58
+    },
+    {
+      "id": "jewelwasp",
+      "name": "Juweelwesp",
+      "tier": 6,
+      "attack": 7,
+      "health": 7,
+      "ability": {
+        "trigger": "food",
+        "effect": "buff",
+        "target": "friends",
+        "attack": 1,
+        "health": 1
+      },
+      "text": "Eet: geef alle vrienden +1/+1.",
+      "habitat": 3,
+      "art": 59
+    },
+    {
+      "id": "ambermantis",
+      "name": "Barnsteenbidsprinkhaan",
+      "tier": 7,
+      "attack": 8,
+      "health": 7,
+      "ability": {
+        "trigger": "attack",
+        "effect": "damage",
+        "target": "frontEnemy",
+        "amount": 2,
+        "limit": 2
+      },
+      "text": "Aanval: doe 2 extra schade (2×).",
+      "habitat": 0,
+      "art": 60
+    },
+    {
+      "id": "crystalstag",
+      "name": "Kristalhertkever",
+      "tier": 7,
+      "attack": 6,
+      "health": 10,
+      "ability": {
+        "trigger": "start",
+        "effect": "shield",
+        "target": "self",
+        "amount": 1
+      },
+      "text": "Start: blokkeer de eerste klap.",
+      "habitat": 1,
+      "art": 61
+    },
+    {
+      "id": "glasswing",
+      "name": "Glasvleugeljuffer",
+      "tier": 7,
+      "attack": 7,
+      "health": 7,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "behind",
+        "attack": 3,
+        "health": 2
+      },
+      "text": "Start: versterk je achterste buur.",
+      "habitat": 2,
+      "art": 62
+    },
+    {
+      "id": "cometmoth",
+      "name": "Komeetvlinder",
+      "tier": 7,
+      "attack": 5,
+      "health": 9,
+      "ability": {
+        "trigger": "start",
+        "effect": "buff",
+        "target": "friends",
+        "health": 2
+      },
+      "text": "Start: geef alle vrienden +2 leven.",
+      "habitat": 3,
+      "art": 63
+    }
+  ],
+  "items": [
+    {
+      "id": "leafshield",
+      "name": "Bladschild",
+      "tier": 2,
+      "price": 3,
+      "held": true,
+      "shield": 1,
+      "text": "Blokkeert de eerste klap."
+    },
+    {
+      "id": "pollen",
+      "name": "Stuifmeel",
+      "tier": 1,
+      "price": 3,
+      "held": false,
+      "attack": 1,
+      "health": 1,
+      "text": "Geef één bug blijvend +1/+1."
+    },
+    {
+      "id": "nectarfood",
+      "name": "Nectardruppel",
+      "tier": 1,
+      "price": 3,
+      "held": false,
+      "health": 2,
+      "text": "Geef één bug blijvend +2 leven."
+    },
+    {
+      "id": "seed",
+      "name": "Zaadje",
+      "tier": 2,
+      "price": 3,
+      "held": false,
+      "attack": 2,
+      "text": "Geef één bug blijvend +2 aanval."
+    },
+    {
+      "id": "honey",
+      "name": "Honing",
+      "tier": 1,
+      "price": 3,
+      "held": true,
+      "revive": true,
+      "text": "Valt uit: roep een larve van 1/1 op."
+    },
+    {
+      "id": "thorn",
+      "name": "Doorn",
+      "tier": 2,
+      "price": 3,
+      "held": true,
+      "attack": 3,
+      "text": "Doe 3 extra aanvalsschade."
+    },
+    {
+      "id": "shell",
+      "name": "Dauwpanster",
+      "tier": 3,
+      "price": 3,
+      "held": true,
+      "damage": 2,
+      "text": "Verminder iedere klap met 2 (minimaal 1)."
+    },
+    {
+      "id": "berry",
+      "name": "Bosbes",
+      "tier": 3,
+      "price": 3,
+      "held": false,
+      "attack": 2,
+      "health": 2,
+      "text": "Geef één bug blijvend +2/+2."
+    },
+    {
+      "id": "mushroom",
+      "name": "Paddenstoel",
+      "tier": 4,
+      "price": 3,
+      "held": true,
+      "revive": true,
+      "text": "Roep bij uitvallen een larve op."
+    },
+    {
+      "id": "splash",
+      "name": "Zaadexplosie",
+      "tier": 4,
+      "price": 3,
+      "held": true,
+      "splash": 3,
+      "text": "Raak bij aanval ook de volgende vijand voor 3."
+    },
+    {
+      "id": "apple",
+      "name": "Wilde appel",
+      "tier": 4,
+      "price": 3,
+      "held": false,
+      "attack": 3,
+      "health": 3,
+      "text": "Geef één bug blijvend +3/+3."
+    },
+    {
+      "id": "acorn",
+      "name": "Eikel",
+      "tier": 5,
+      "price": 3,
+      "held": true,
+      "health": 5,
+      "text": "Start met 5 extra leven."
+    },
+    {
+      "id": "sap",
+      "name": "Boomsap",
+      "tier": 5,
+      "price": 3,
+      "held": false,
+      "health": 6,
+      "text": "Geef één bug blijvend +6 leven."
+    },
+    {
+      "id": "rose",
+      "name": "Rozenblad",
+      "tier": 5,
+      "price": 3,
+      "held": false,
+      "attack": 4,
+      "health": 2,
+      "text": "Geef één bug blijvend +4/+2."
+    },
+    {
+      "id": "sunseed",
+      "name": "Zonnezaad",
+      "tier": 6,
+      "price": 3,
+      "held": true,
+      "attack": 6,
+      "text": "Doe 6 extra aanvalsschade."
+    },
+    {
+      "id": "royal",
+      "name": "Koninginnengelei",
+      "tier": 6,
+      "price": 3,
+      "held": false,
+      "attack": 4,
+      "health": 4,
+      "text": "Geef één bug blijvend +4/+4."
+    }
+  ]
+}

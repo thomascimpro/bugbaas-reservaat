@@ -1,0 +1,12 @@
+{
+  "mode": "built-in imagegen",
+  "transparent_background": true,
+  "prompt": "Create ONE production game UI texture atlas, a square transparent PNG sprite sheet in a precisely aligned 3 by 3 grid of nine item icons. Equal square cells, each object centered fully inside its cell with generous 15% transparent padding; nothing crosses a cell. No background, no shadows beyond the object, no frames, no labels, no letters, no numbers. Professional premium creature-collecting game inventory artwork, polished painterly semi-realistic 3D item renders, warm brass and forest green, beautiful sharp silhouettes readable at 40px, restrained highlights, consistent three-quarter lighting, not childish. ROW 1: col1 a simple round insect catching net, wooden handle and cream mesh; col2 improved round insect net, blue metal rim and dark green handle, cream mesh; col3 elite round insect net, purple silk mesh and gold rim, dark handle. ROW 2: col1 legendary enchanted insect net, amber-gold and emerald rim with a small pale glowing gem and fine iridescent mesh; col2 a small golden pollen flower sachet with a bright yellow blossom; col3 a luminous blue dew drop in a tiny leaf cup. ROW 3: col1 an orange-red wild berry with green leaf; col2 a golden blossom pollen sachet distinct from the regular version, radiant golden petal; col3 a silver-blue wild berry with silver leaves. Each net should be diagonally oriented handle down-left and hoop up-right; tools have elegant proportions and detailed mesh. This is a single cohesive item atlas to use directly as a game sprite sheet. The background MUST be truly transparent with alpha.",
+  "source": "exec-eb1ac110-90c5-4c85-b41d-56c502e31a18.png",
+  "grid": [
+    3,
+    3
+  ],
+  "width": 1254,
+  "height": 1254
+}

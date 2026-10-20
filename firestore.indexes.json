@@ -1,0 +1,59 @@
+{
+  // Example (Standard Edition):
+  //
+  // "indexes": [
+  //   {
+  //     "collectionGroup": "widgets",
+  //     "queryScope": "COLLECTION",
+  //     "fields": [
+  //       { "fieldPath": "foo", "arrayConfig": "CONTAINS" },
+  //       { "fieldPath": "bar", "mode": "DESCENDING" }
+  //     ]
+  //   },
+  //
+  //  "fieldOverrides": [
+  //    {
+  //      "collectionGroup": "widgets",
+  //      "fieldPath": "baz",
+  //      "indexes": [
+  //        { "order": "ASCENDING", "queryScope": "COLLECTION" }
+  //      ]
+  //    },
+  //   ]
+  // ]
+  //
+  // Example (Enterprise Edition):
+  //
+  // "indexes": [
+  //   {
+  //     "collectionGroup": "reviews",
+  //     "queryScope": "COLLECTION_GROUP",
+  //     "apiScope": "MONGODB_COMPATIBLE_API",
+  //     "density": "DENSE",
+  //     "multikey": false,
+  //     "fields": [
+  //       { "fieldPath": "baz", "mode": "ASCENDING" }
+  //     ]
+  //   },
+  //   {
+  //     "collectionGroup": "items",
+  //     "queryScope": "COLLECTION_GROUP",
+  //     "apiScope": "MONGODB_COMPATIBLE_API",
+  //     "density": "SPARSE_ANY",
+  //     "multikey": true,
+  //     "fields": [
+  //       { "fieldPath": "baz", "mode": "ASCENDING" }
+  //     ]
+  //   },
+  // ]
+  "indexes": [
+    { "collectionGroup": "v2ChallengeScores", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.day", "order": "ASCENDING" }, { "fieldPath": "payload.rule", "order": "ASCENDING" }, { "fieldPath": "payload.score", "order": "DESCENDING" }] },
+    { "collectionGroup": "v2ArenaGhosts", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.rule", "order": "ASCENDING" }, { "fieldPath": "payload.round", "order": "ASCENDING" }, { "fieldPath": "payload.createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "v2ArenaRanks", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.season", "order": "ASCENDING" }, { "fieldPath": "payload.rating", "order": "DESCENDING" }] },
+    { "collectionGroup": "gameRecords", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "kind", "order": "ASCENDING" }, { "fieldPath": "payload.arena.rating", "order": "DESCENDING" }] },
+    { "collectionGroup": "v2SeasonRanks", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.season", "order": "ASCENDING" }, { "fieldPath": "payload.rating", "order": "DESCENDING" }] },
+    { "collectionGroup": "v2Tickets", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.rule", "order": "ASCENDING" }, { "fieldPath": "payload.status", "order": "ASCENDING" }, { "fieldPath": "payload.rating", "order": "ASCENDING" }] },
+    { "collectionGroup": "v2Tickets", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.status", "order": "ASCENDING" }, { "fieldPath": "payload.expiresAt", "order": "ASCENDING" }] }
+  ],
+  "fieldOverrides": []
+}

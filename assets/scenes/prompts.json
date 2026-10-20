@@ -1,0 +1,21 @@
+{
+  "generator": "Built-in image_gen",
+  "assets": [
+    {
+      "file": "meadow.png",
+      "prompt": "Use case: stylized-concept. Asset type: background for a mobile insect collecting and tactical battle game called BugBaas. Primary request: a beautiful illustrated sunlit miniature wildflower meadow viewed from insect height. Broad soft moss clearing across the middle and bottom for six large insect sprites added by the app, flowering clover and tall blades of grass frame the left and right edges, warm golden sunbeams, dew, charming rich natural detail, a small winding trail towards distant trees. Premium hand-painted cozy adventure game art, gentle three-dimensional depth and crisp attractive foreground. Landscape 3:2 composition, usable when cropped to portrait, central 60 percent kept calm and unobstructed. Emerald greens, warm amber and creamy highlights. No insects, characters, text, logos, buttons, UI, borders, symbols or watermarks."
+    },
+    {
+      "file": "soil.png",
+      "prompt": "Use case: stylized-concept. Asset type: environment background for the same coherent premium mobile insect collecting game BugBaas. Primary request: an intimate forest floor clearing beneath a giant fallen tree trunk, seen at insect height. Soft earthen arena in central and lower area, moss covered roots and mushrooms frame the sides, delicate ferns, amber rays through the woodland above, beautiful natural detail and warm earthy colors. Premium hand-painted cozy adventure game artwork, softly dimensional, emerald green foliage and warm copper soil. Landscape 3:2 composition with central 60 percent calm and clear for separately rendered six insect sprites; usable cropped to portrait. No insects, characters, text, logos, buttons, UI, borders or watermarks."
+    },
+    {
+      "file": "pond.png",
+      "prompt": "Use case: stylized-concept. Asset type: environment background for the same coherent premium mobile insect collecting game BugBaas. Primary request: a luminous blue-green pond bank seen from insect height, with a broad smooth pale mossy stone clearing in the middle and lower foreground for six separately rendered insect sprites. Reeds and large round lily leaves frame the edges; tiny water ripples, sunlit turquoise water and warm shafts of light, woodland on distant shore, a charming miniature nature adventure. Premium hand-painted cozy game artwork, gentle three-dimensional depth. Landscape 3:2 composition with central 60 percent clear, usable cropped to portrait. No insects, characters, text, logos, buttons, UI, borders or watermarks."
+    },
+    {
+      "file": "night.png",
+      "prompt": "Use case: stylized-concept. Asset type: environment background for the same coherent premium mobile insect collecting game BugBaas. Primary request: a magical yet natural moonlit woodland meadow seen from insect height. Broad open moss clearing in central and lower foreground for six separately rendered insect sprites, giant fern silhouettes and soft flowers frame the sides. Silver moonlight, little warm golden specks in the air and on moss, indigo sky glimpsed through dark teal foliage, dreamy tranquil discovery mood. Premium hand-painted cozy adventure game artwork, rich dimensional natural detail with readable deep blue and teal colors. Landscape 3:2 composition, central 60 percent calm and clear, usable cropped to portrait. No insects, characters, text, logos, buttons, UI, borders or watermarks."
+    }
+  ]
+}

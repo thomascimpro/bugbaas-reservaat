@@ -1,0 +1,27 @@
+import type {WorldSites} from './worldSitesV2';
+import type {Geometry} from 'geojson';
+import type {Fix} from './walkingV2';
+
+export type Biome='urban'|'meadow'|'forest'|'wetland'|'unknown';
+export type WeatherKind='sunny'|'cloudy'|'rainy'|'windy'|'fog'|'snowy'|'storm'|'unknown';
+export type FieldWeather={kind:WeatherKind;temperature:number|null;isDay:boolean|null;at:number;stale:boolean};
+export type FieldEnvironment={biome:Biome;mapSource:'osm'|'unavailable';weather:FieldWeather;at:number};
+export type AreaFeature={layer:string;properties:Record<string,unknown>;geometry:Geometry};
+export type HabitatContext={sites?:WorldSites;environment:FieldEnvironment;biomeAt:(fix:Pick<Fix,'lat'|'lng'>)=>Biome;canSpawnAt:(fix:Pick<Fix,'lat'|'lng'>)=>boolean};
+export const BIOMES={urban:{name:'Stad & tuinen',color:'#B8CC91'},meadow:{name:'Bloemenweide',color:'#B8D784'},forest:{name:'Bos',color:'#5B9467'},wetland:{name:'Waterkant',color:'#75B9B2'},unknown:{name:'Natuurdata onbekend',color:'#ADB9A3'}};
+export const WEATHER_NAMES:Record<WeatherKind,string>={sunny:'Zonnig',cloudy:'Bewolkt',rainy:'Regen',windy:'Winderig',fog:'Mist',snowy:'Sneeuw',storm:'Onweer',unknown:'Weer onbekend'};
+export const UNKNOWN_WEATHER:FieldWeather={kind:'unknown',temperature:null,isDay:null,at:0,stale:false};
+type Point=Pick<Fix,'lat'|'lng'>;
+function inRing(p:Point,ring:number[][]){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [x,y]=ring[i],[xx,yy]=ring[j];if((y>p.lat)!==(yy>p.lat)&&p.lng<(xx-x)*(p.lat-y)/(yy-y)+x)inside=!inside;}return inside;}
+export function contains(p:Point,g:Geometry){if(g.type==='Polygon')return inRing(p,g.coordinates[0])&&!g.coordinates.slice(1).some(r=>inRing(p,r));if(g.type==='MultiPolygon')return g.coordinates.some(c=>inRing(p,c[0])&&!c.slice(1).some(r=>inRing(p,r)));return false;}
+function lines(g:Geometry):number[][][]{switch(g.type){case 'Polygon':return g.coordinates;case 'MultiPolygon':return g.coordinates.flat();case 'LineString':return [g.coordinates];case 'MultiLineString':return g.coordinates;default:return [];}}
+export function edgeDistance(p:Point,g:Geometry){const sx=111320*Math.cos(p.lat*Math.PI/180),sy=111320;let best=Infinity;for(const line of lines(g))for(let i=1;i<line.length;i++){const a=line[i-1],b=line[i],x=(a[0]-p.lng)*sx,y=(a[1]-p.lat)*sy,dx=(b[0]-a[0])*sx,dy=(b[1]-a[1])*sy,t=Math.max(0,Math.min(1,-(x*dx+y*dy)/(dx*dx+dy*dy||1)));best=Math.min(best,Math.hypot(x+t*dx,y+t*dy));}return best;}
+export function areaBiome(f:AreaFeature):Biome|null{const kind=String(f.properties.class??'')+' '+String(f.properties.subclass??'');if(f.layer==='water'||f.layer==='waterway'||/wetland|marsh|swamp/.test(kind))return 'wetland';if(/wood|forest/.test(kind))return 'forest';if(f.layer==='park'||/grass|farmland|meadow|garden|recreation_ground|village_green|orchard|vineyard|heath/.test(kind))return 'meadow';return null;}
+export function biomeAt(p:Point,features:AreaFeature[],known=true):Biome{if(!known)return 'unknown';if(features.some(f=>areaBiome(f)==='wetland'&&(contains(p,f.geometry)||edgeDistance(p,f.geometry)<=80)))return 'wetland';if(features.some(f=>areaBiome(f)==='forest'&&contains(p,f.geometry)))return 'forest';if(features.some(f=>areaBiome(f)==='meadow'&&contains(p,f.geometry)))return 'meadow';return 'urban';}
+export function canSpawnAt(p:Point,features:AreaFeature[]){return !features.some(f=>(f.layer==='building'||f.layer==='water')&&contains(p,f.geometry)||f.layer==='transportation'&&/motorway|trunk|rail|runway/.test(String(f.properties.class))&&edgeDistance(p,f.geometry)<12);}
+export function natureSpot(p:Point,features:AreaFeature[]){return canSpawnAt(p,features)&&!features.some(f=>f.layer==='transportation'&&edgeDistance(p,f.geometry)<6);}
+const ONLY:Record<string,Biome[]>={giantwaterbug:['wetland'],mayfly:['wetland'],antlion:['meadow'],divingbeetle:['wetland'],waterstrider:['wetland'],stick:['forest'],leaf:['forest'],hercules:['forest'],butterfly:['meadow'],leafhopper:['meadow']};
+const LIKES:Record<string,Biome[]>={cockroach:['urban'],flea:['urban'],cranefly:['meadow','wetland'],termite:['forest'],tigerbeetle:['meadow'],tortoisebeetle:['meadow','forest'],aphid:['meadow'],weevil:['forest'],moth:['forest'],grasshopper:['meadow'],lacewing:['meadow','wetland'],dungbeetle:['forest'],mantis:['meadow','forest'],hoverfly:['meadow','wetland'],cricket:['meadow'],silverfish:['urban'],caterpillar:['meadow','forest']};
+export function weatherMultiplier(id:string,w?:FieldWeather){if(!w||w.stale||w.kind==='unknown')return 1;if(w.isDay===false&&['moth','cricket','earwig'].includes(id))return 1.7;if(w.kind==='sunny'&&w.isDay!==false&&['butterfly','grasshopper','mantis','hoverfly','leafhopper'].includes(id))return 1.6;if(w.kind==='rainy'&&['divingbeetle','waterstrider','earwig','aphid'].includes(id))return 1.7;if(w.kind==='windy'&&['moth','butterfly','lacewing','hoverfly'].includes(id))return 1.4;if((w.kind==='cloudy'||w.kind==='fog')&&['moth','earwig','cricket'].includes(id))return 1.3;return 1;}
+export function habitatWeight(id:string,base:number,biome?:Biome,weather?:FieldWeather){if(!biome)return base;if(ONLY[id]&&!ONLY[id].includes(biome))return 0;return base*(LIKES[id]?.includes(biome)?2:1)*weatherMultiplier(id,weather);}
+export function unknownHabitat(now:number):HabitatContext{return {environment:{biome:'unknown',mapSource:'unavailable',weather:{...UNKNOWN_WEATHER},at:now},biomeAt:()=> 'unknown',canSpawnAt:()=>true};}

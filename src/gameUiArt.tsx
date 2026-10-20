@@ -1,0 +1,15 @@
+import React,{useState} from 'react';
+import {Image,View} from 'react-native';
+import {fitArt,plateSlices} from './uiGeometryV2';
+const main=require('../assets/v2/ui/ui-main.png'),tools=require('../assets/v2/ui/ui-tools.png'),actions=require('../assets/v2/ui/ui-actions.png');
+const MAIN=['compass','team','swords','nectar','book','profile','friends','gear','heart','shield','leaf','star','cup','clock','gift','coin'] as const;
+const TOOLS=['back','next','refresh','freeze','close','sound','eye','info','bag','level','power','research','settings','lock','check','expedition'] as const;
+const ACTIONS=['attack','sting','burst','venom','crush','heal','cleanse','fortify','itemLeaf','itemThorn','itemHoney','itemWing','itemDew','itemBark','itemMoon','itemSun'] as const;
+export type GameIconName=typeof MAIN[number]|typeof TOOLS[number]|typeof ACTIONS[number];
+export const SKILL_ART={sting:'sting',burst:'burst',venom:'venom',crush:'crush',heal:'heal',cleanse:'cleanse',fortify:'fortify'} as const;
+export const GEAR_ART={leaf:'itemLeaf',thorn:'itemThorn',honey:'itemHoney',wing:'itemWing',dew:'itemDew',bark:'itemBark',moon:'itemMoon',sun:'itemSun'} as const;
+export function GameIcon({name,size=32}:{name:GameIconName;size?:number}){const key=MAIN.includes(name as typeof MAIN[number])?'ui-main':TOOLS.includes(name as typeof TOOLS[number])?'ui-tools':'ui-actions',source=key==='ui-main'?main:key==='ui-tools'?tools:actions,m=metadata[key],frame=m.frames[name],fit=fitArt(frame,size);return <View pointerEvents="none" accessible={false} style={{width:size,height:size,flexShrink:0}}><View style={{position:'absolute',left:fit.left,top:fit.top,width:fit.width,height:fit.height,overflow:'hidden'}}><Image source={source} accessibilityIgnoresInvertColors style={{position:'absolute',width:m.width*fit.scale,height:m.height*fit.scale,left:-frame.x*fit.scale,top:-frame.y*fit.scale}} resizeMode="stretch"/></View></View>;}
+const plates={primary:require('../assets/v2/ui/button-primary.png'),secondary:require('../assets/v2/ui/button-secondary.png')};
+const metadata=require('../assets/v2/ui/metadata.json');
+export function ButtonPlate({secondary=false,small=false}:{secondary?:boolean;small?:boolean}){const [box,setBox]=useState({width:0,height:0}),key=secondary?'button-secondary':'button-primary',m=metadata[key];return <View pointerEvents="none" accessible={false} testID="button-art" onLayout={e=>setBox(e.nativeEvent.layout)} style={{position:'absolute',inset:0}}>{plateSlices(box.width,box.height,m.bounds,m.capWidth,small?46:58).map((slice,i)=><View key={i} style={{position:'absolute',left:slice.left,top:slice.top,width:slice.width,height:slice.height,overflow:'hidden'}}><Image source={plates[secondary?'secondary':'primary']} resizeMode="stretch" style={{position:'absolute',width:m.width*slice.scale,height:m.height*slice.scale,left:-slice.source.x*slice.scale,top:-slice.source.y*slice.scale}}/></View>)}</View>;}
+export function BrandMark({width=120}:{width?:number}){return <Image accessibilityLabel="BugBaas" source={require('../assets/v2/ui/wordmark.png')} resizeMode="contain" style={{width:'100%',maxWidth:width,height:width/2.9}}/>;}

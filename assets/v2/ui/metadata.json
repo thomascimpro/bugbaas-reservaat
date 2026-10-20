@@ -1,0 +1,358 @@
+{
+  "button-primary": {
+    "width": 2172,
+    "height": 724,
+    "bounds": [
+      14,
+      122,
+      2159,
+      571
+    ],
+    "capWidth": 240
+  },
+  "button-secondary": {
+    "width": 2172,
+    "height": 724,
+    "bounds": [
+      28,
+      131,
+      2145,
+      577
+    ],
+    "capWidth": 240
+  },
+  "ui-actions": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      3,
+      1244,
+      1254
+    ],
+    "frames": {
+      "attack": {
+        "x": 24,
+        "y": 30,
+        "width": 294,
+        "height": 284
+      },
+      "sting": {
+        "x": 326,
+        "y": 53,
+        "width": 286,
+        "height": 261
+      },
+      "burst": {
+        "x": 636,
+        "y": 23,
+        "width": 302,
+        "height": 289
+      },
+      "venom": {
+        "x": 1008,
+        "y": 31,
+        "width": 222,
+        "height": 273
+      },
+      "crush": {
+        "x": 23,
+        "y": 324,
+        "width": 287,
+        "height": 300
+      },
+      "heal": {
+        "x": 326,
+        "y": 328,
+        "width": 283,
+        "height": 289
+      },
+      "cleanse": {
+        "x": 636,
+        "y": 331,
+        "width": 297,
+        "height": 287
+      },
+      "fortify": {
+        "x": 960,
+        "y": 329,
+        "width": 273,
+        "height": 293
+      },
+      "itemLeaf": {
+        "x": 31,
+        "y": 635,
+        "width": 265,
+        "height": 295
+      },
+      "itemThorn": {
+        "x": 364,
+        "y": 633,
+        "width": 198,
+        "height": 289
+      },
+      "itemHoney": {
+        "x": 682,
+        "y": 629,
+        "width": 231,
+        "height": 301
+      },
+      "itemWing": {
+        "x": 956,
+        "y": 633,
+        "width": 264,
+        "height": 298
+      },
+      "itemDew": {
+        "x": 34,
+        "y": 947,
+        "width": 260,
+        "height": 280
+      },
+      "itemBark": {
+        "x": 339,
+        "y": 942,
+        "width": 273,
+        "height": 287
+      },
+      "itemMoon": {
+        "x": 659,
+        "y": 948,
+        "width": 260,
+        "height": 276
+      },
+      "itemSun": {
+        "x": 979,
+        "y": 937,
+        "width": 245,
+        "height": 297
+      }
+    }
+  },
+  "ui-main": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      12,
+      1243,
+      1254
+    ],
+    "frames": {
+      "compass": {
+        "x": 20,
+        "y": 12,
+        "width": 274,
+        "height": 301
+      },
+      "team": {
+        "x": 332,
+        "y": 25,
+        "width": 280,
+        "height": 288
+      },
+      "swords": {
+        "x": 649,
+        "y": 34,
+        "width": 283,
+        "height": 277
+      },
+      "nectar": {
+        "x": 993,
+        "y": 31,
+        "width": 226,
+        "height": 281
+      },
+      "book": {
+        "x": 9,
+        "y": 347,
+        "width": 322,
+        "height": 267
+      },
+      "profile": {
+        "x": 335,
+        "y": 323,
+        "width": 283,
+        "height": 281
+      },
+      "friends": {
+        "x": 636,
+        "y": 328,
+        "width": 307,
+        "height": 291
+      },
+      "gear": {
+        "x": 958,
+        "y": 322,
+        "width": 283,
+        "height": 288
+      },
+      "heart": {
+        "x": 20,
+        "y": 640,
+        "width": 288,
+        "height": 245
+      },
+      "shield": {
+        "x": 335,
+        "y": 605,
+        "width": 290,
+        "height": 297
+      },
+      "leaf": {
+        "x": 669,
+        "y": 639,
+        "width": 262,
+        "height": 257
+      },
+      "star": {
+        "x": 966,
+        "y": 620,
+        "width": 259,
+        "height": 268
+      },
+      "cup": {
+        "x": 18,
+        "y": 890,
+        "width": 293,
+        "height": 327
+      },
+      "clock": {
+        "x": 368,
+        "y": 905,
+        "width": 224,
+        "height": 310
+      },
+      "gift": {
+        "x": 644,
+        "y": 913,
+        "width": 284,
+        "height": 308
+      },
+      "coin": {
+        "x": 962,
+        "y": 928,
+        "width": 272,
+        "height": 279
+      }
+    }
+  },
+  "ui-tools": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      15,
+      1240,
+      1254
+    ],
+    "frames": {
+      "back": {
+        "x": 39,
+        "y": 59,
+        "width": 255,
+        "height": 242
+      },
+      "next": {
+        "x": 335,
+        "y": 59,
+        "width": 247,
+        "height": 242
+      },
+      "refresh": {
+        "x": 655,
+        "y": 40,
+        "width": 259,
+        "height": 273
+      },
+      "freeze": {
+        "x": 963,
+        "y": 40,
+        "width": 247,
+        "height": 273
+      },
+      "close": {
+        "x": 46,
+        "y": 353,
+        "width": 241,
+        "height": 247
+      },
+      "sound": {
+        "x": 348,
+        "y": 354,
+        "width": 269,
+        "height": 240
+      },
+      "eye": {
+        "x": 657,
+        "y": 344,
+        "width": 253,
+        "height": 264
+      },
+      "info": {
+        "x": 965,
+        "y": 351,
+        "width": 264,
+        "height": 252
+      },
+      "bag": {
+        "x": 29,
+        "y": 641,
+        "width": 283,
+        "height": 274
+      },
+      "level": {
+        "x": 353,
+        "y": 629,
+        "width": 270,
+        "height": 292
+      },
+      "power": {
+        "x": 667,
+        "y": 649,
+        "width": 253,
+        "height": 269
+      },
+      "research": {
+        "x": 967,
+        "y": 648,
+        "width": 262,
+        "height": 263
+      },
+      "settings": {
+        "x": 32,
+        "y": 935,
+        "width": 284,
+        "height": 274
+      },
+      "lock": {
+        "x": 376,
+        "y": 935,
+        "width": 220,
+        "height": 276
+      },
+      "check": {
+        "x": 651,
+        "y": 953,
+        "width": 273,
+        "height": 241
+      },
+      "expedition": {
+        "x": 921,
+        "y": 937,
+        "width": 309,
+        "height": 270
+      }
+    }
+  },
+  "wordmark": {
+    "width": 2141,
+    "height": 734,
+    "bounds": [
+      0,
+      21,
+      2111,
+      734
+    ]
+  }
+}

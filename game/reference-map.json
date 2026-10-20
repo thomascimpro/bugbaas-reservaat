@@ -1,0 +1,246 @@
+{
+  "version": "bugbaas-standard-2.0.0",
+  "reference": "Original BugBaas content using common auto-battler mechanics. This is not a verified copy of a specific Super Auto Pets pack.",
+  "mapping": [
+    {
+      "id": "ladybug",
+      "role": "faint-buff-randomFriend"
+    },
+    {
+      "id": "bee",
+      "role": "faint-summon-self"
+    },
+    {
+      "id": "beetle",
+      "role": "start-buff-ahead"
+    },
+    {
+      "id": "dragonfly",
+      "role": "start-damage-randomEnemy"
+    },
+    {
+      "id": "ant",
+      "role": "summon-buff-randomFriend"
+    },
+    {
+      "id": "cricket",
+      "role": "buy-buff-randomFriend"
+    },
+    {
+      "id": "weevil",
+      "role": "sell-gold-self"
+    },
+    {
+      "id": "aphid",
+      "role": "level-buff-friends"
+    },
+    {
+      "id": "springtail",
+      "role": "sell-buff-randomFriend"
+    },
+    {
+      "id": "midge",
+      "role": "sell-buff-shop"
+    },
+    {
+      "id": "mantis",
+      "role": "attack-damage-lastEnemy"
+    },
+    {
+      "id": "moth",
+      "role": "faint-summon-self"
+    },
+    {
+      "id": "earwig",
+      "role": "hurt-buff-self"
+    },
+    {
+      "id": "firefly",
+      "role": "start-buff-behind"
+    },
+    {
+      "id": "shieldbug",
+      "role": "start-shield-self"
+    },
+    {
+      "id": "grasshopper",
+      "role": "faint-damage-frontEnemy"
+    },
+    {
+      "id": "caterpillar",
+      "role": "end-buff-self"
+    },
+    {
+      "id": "lacewing",
+      "role": "food-buff-self"
+    },
+    {
+      "id": "woodlouse",
+      "role": "faint-buff-ahead"
+    },
+    {
+      "id": "dungbeetle",
+      "role": "buy-buff-shop"
+    },
+    {
+      "id": "wasp",
+      "role": "start-damage-weakEnemy"
+    },
+    {
+      "id": "butterfly",
+      "role": "faint-buff-friends"
+    },
+    {
+      "id": "stag",
+      "role": "hurt-damage-frontEnemy"
+    },
+    {
+      "id": "divingbeetle",
+      "role": "start-buff-randomFriend"
+    },
+    {
+      "id": "waterstrider",
+      "role": "attack-buff-behind"
+    },
+    {
+      "id": "damselfly",
+      "role": "summon-buff-randomFriend"
+    },
+    {
+      "id": "pillbug",
+      "role": "start-shield-ahead"
+    },
+    {
+      "id": "clickbeetle",
+      "role": "faint-damage-enemies"
+    },
+    {
+      "id": "silkworm",
+      "role": "end-buff-randomFriend"
+    },
+    {
+      "id": "hoverfly",
+      "role": "roll-buff-self"
+    },
+    {
+      "id": "hornet",
+      "role": "attack-damage-lastEnemy"
+    },
+    {
+      "id": "rhino",
+      "role": "attack-damage-frontEnemy"
+    },
+    {
+      "id": "atlasmoth",
+      "role": "faint-summon-self"
+    },
+    {
+      "id": "jewelbeetle",
+      "role": "end-buff-behind"
+    },
+    {
+      "id": "leafhopper",
+      "role": "food-buff-randomFriend"
+    },
+    {
+      "id": "centipede",
+      "role": "hurt-buff-behind"
+    },
+    {
+      "id": "millipede",
+      "role": "friendFaint-buff-self"
+    },
+    {
+      "id": "cicada",
+      "role": "start-buff-friends"
+    },
+    {
+      "id": "scorpionfly",
+      "role": "start-damage-randomEnemy"
+    },
+    {
+      "id": "silverfish",
+      "role": "buy-buff-friends"
+    },
+    {
+      "id": "emperor",
+      "role": "start-damage-lastEnemy"
+    },
+    {
+      "id": "goliath",
+      "role": "hurt-buff-self"
+    },
+    {
+      "id": "orchidmantis",
+      "role": "faint-buff-friends"
+    },
+    {
+      "id": "luna",
+      "role": "faint-summon-self"
+    },
+    {
+      "id": "carpenterbee",
+      "role": "summon-buff-randomFriend"
+    },
+    {
+      "id": "tigerbeetle",
+      "role": "attack-buff-self"
+    },
+    {
+      "id": "stick",
+      "role": "start-shield-behind"
+    },
+    {
+      "id": "leaf",
+      "role": "end-buff-friends"
+    },
+    {
+      "id": "glowworm",
+      "role": "friendFaint-damage-randomEnemy"
+    },
+    {
+      "id": "dungroller",
+      "role": "sell-buff-friends"
+    },
+    {
+      "id": "hercules",
+      "role": "start-buff-ahead"
+    },
+    {
+      "id": "queenant",
+      "role": "friendFaint-summon-self"
+    },
+    {
+      "id": "queenbee",
+      "role": "end-buff-randomFriend"
+    },
+    {
+      "id": "giantmantis",
+      "role": "attack-damage-weakEnemy"
+    },
+    {
+      "id": "peacock",
+      "role": "faint-summon-self"
+    },
+    {
+      "id": "scarab",
+      "role": "start-buff-friends"
+    },
+    {
+      "id": "elephant",
+      "role": "hurt-damage-enemies"
+    },
+    {
+      "id": "morpho",
+      "role": "start-buff-behind"
+    },
+    {
+      "id": "robberfly",
+      "role": "start-damage-randomEnemy"
+    },
+    {
+      "id": "jewelwasp",
+      "role": "food-buff-friends"
+    }
+  ]
+}

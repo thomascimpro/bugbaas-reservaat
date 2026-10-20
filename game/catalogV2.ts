@@ -1,0 +1,98 @@
+import type { Ability, Item, Species } from './typesV2';
+export const RULES = 'bugbaas-standard-2.0.0';
+type Row = [string, string, number, number, Ability, string];
+const rows: Row[] = [
+ ['ladybug','Lieveheersbeestje',2,3,{trigger:'faint',effect:'buff',target:'randomFriend',attack:2,health:1},'Valt uit: geef een vriend +2/+1.'],
+ ['bee','Honingbij',2,2,{trigger:'faint',effect:'summon',target:'self',token:'larva',attack:1,health:1},'Valt uit: roep een larve van 1/1 op.'],
+ ['beetle','Pantserkever',1,5,{trigger:'start',effect:'buff',target:'ahead',health:2},'Start: geef je voorste buur +2 leven.'],
+ ['dragonfly','Libelle',3,2,{trigger:'start',effect:'damage',target:'randomEnemy',amount:1},'Start: raak een willekeurige vijand voor 1.'],
+ ['ant','Bosmier',2,2,{trigger:'summon',effect:'buff',target:'randomFriend',attack:1},'Een vriend verschijnt: geef hem +1 aanval.'],
+ ['cricket','Veenmol',2,2,{trigger:'buy',effect:'buff',target:'randomFriend',attack:1,health:1},'Koop: geef een vriend +1/+1.'],
+ ['weevil','Snuitkever',3,1,{trigger:'sell',effect:'gold',target:'self',amount:1},'Verkoop: verdien 1 extra munt.'],
+ ['aphid','Bladluis',1,2,{trigger:'level',effect:'buff',target:'friends',attack:1,health:1},'Level omhoog: geef alle vrienden +1/+1.'],
+ ['springtail','Springstaart',1,3,{trigger:'sell',effect:'buff',target:'randomFriend',health:2,count:2},'Verkoop: geef 2 vrienden +2 leven.'],
+ ['midge','Dansmug',2,3,{trigger:'sell',effect:'buff',target:'shop',health:1},'Verkoop: winkelbugs krijgen +1 leven.'],
+ ['mantis','Bidsprinkhaan',3,3,{trigger:'attack',effect:'damage',target:'lastEnemy',amount:1,limit:1},'Eerste aanval: raak ook de achterste vijand voor 1.'],
+ ['moth','Nachtvlinder',1,4,{trigger:'faint',effect:'summon',target:'self',token:'midgeToken',attack:1,health:1,count:2},'Valt uit: roep 2 mugjes van 1/1 op.'],
+ ['earwig','Oorworm',2,5,{trigger:'hurt',effect:'buff',target:'self',attack:2},'Geraakt: krijg +2 aanval.'],
+ ['firefly','Vuurvlieg',2,4,{trigger:'start',effect:'buff',target:'behind',attack:3},'Start: geef je achterste buur +3 aanval.'],
+ ['shieldbug','Schildwants',1,6,{trigger:'start',effect:'shield',target:'self',amount:1},'Start: blokkeer de eerste klap.'],
+ ['grasshopper','Sabelsprinkhaan',3,3,{trigger:'faint',effect:'damage',target:'frontEnemy',amount:3},'Valt uit: raak de voorste vijand voor 3.'],
+ ['caterpillar','Rups',1,3,{trigger:'end',effect:'buff',target:'self',attack:1,health:1},'Einde winkel: krijg +1/+1.'],
+ ['lacewing','Gaasvlieg',2,3,{trigger:'food',effect:'buff',target:'self',attack:1,health:1},'Eet: krijg nog +1/+1.'],
+ ['woodlouse','Pissebed',2,4,{trigger:'faint',effect:'buff',target:'ahead',attack:3,health:3},'Valt uit: geef je voorste buur +3/+3.'],
+ ['dungbeetle','Mestkever',3,4,{trigger:'buy',effect:'buff',target:'shop',attack:1,health:1},'Koop: winkelbugs krijgen +1/+1.'],
+ ['wasp','Wesp',4,3,{trigger:'start',effect:'damage',target:'weakEnemy',amount:3},'Start: raak de zwakste vijand voor 3.'],
+ ['butterfly','Zwaluwstaartvlinder',3,5,{trigger:'faint',effect:'buff',target:'friends',attack:1,health:2},'Valt uit: geef alle vrienden +1/+2.'],
+ ['stag','Vliegend hert',3,6,{trigger:'hurt',effect:'damage',target:'frontEnemy',amount:2},'Geraakt: raak de voorste vijand voor 2.'],
+ ['divingbeetle','Waterkever',3,5,{trigger:'start',effect:'buff',target:'randomFriend',attack:2,health:2,count:2},'Start: geef 2 vrienden +2/+2.'],
+ ['waterstrider','Schaatsenrijder',4,4,{trigger:'attack',effect:'buff',target:'behind',attack:2,health:2,limit:2},'Aanval: geef je achterste buur +2/+2 (2×).'],
+ ['damselfly','Waterjuffer',2,5,{trigger:'summon',effect:'buff',target:'randomFriend',attack:2,health:1},'Een vriend verschijnt: geef hem +2/+1.'],
+ ['pillbug','Rolpissebed',2,7,{trigger:'start',effect:'shield',target:'ahead',amount:1},'Start: geef je voorste buur een schild.'],
+ ['clickbeetle','Kniptor',4,3,{trigger:'faint',effect:'damage',target:'enemies',amount:1},'Valt uit: raak alle vijanden voor 1.'],
+ ['silkworm','Zijderups',2,4,{trigger:'end',effect:'buff',target:'randomFriend',attack:1,health:2,count:2},'Einde winkel: geef 2 vrienden +1/+2.'],
+ ['hoverfly','Zweefvlieg',3,4,{trigger:'roll',effect:'buff',target:'self',attack:1,limit:3},'Verversen: krijg +1 aanval (3× per ronde).'],
+ ['hornet','Hoornaar',6,4,{trigger:'attack',effect:'damage',target:'lastEnemy',amount:3,limit:2},'Aanval: raak de achterste vijand voor 3 (2×).'],
+ ['rhino','Neushoornkever',5,7,{trigger:'attack',effect:'damage',target:'frontEnemy',amount:2,limit:2},'Aanval: doe 2 extra schade (2×).'],
+ ['atlasmoth','Atlasvlinder',4,7,{trigger:'faint',effect:'summon',target:'self',token:'silkToken',attack:3,health:3,count:2},'Valt uit: roep 2 rupsen van 3/3 op.'],
+ ['jewelbeetle','Prachtkever',4,5,{trigger:'end',effect:'buff',target:'behind',attack:2,health:2},'Einde winkel: geef je achterste buur +2/+2.'],
+ ['leafhopper','Helmcicade',3,6,{trigger:'food',effect:'buff',target:'randomFriend',attack:2,health:2,count:2},'Eet: geef 2 vrienden +2/+2.'],
+ ['centipede','Duizendpoot',5,5,{trigger:'hurt',effect:'buff',target:'behind',attack:3,health:3,limit:2},'Geraakt: geef je achterste buur +3/+3 (2×).'],
+ ['millipede','Miljoenpoot',3,8,{trigger:'friendFaint',effect:'buff',target:'self',attack:2,health:2,limit:3},'Vriend valt uit: krijg +2/+2 (3×).'],
+ ['cicada','Zangcicade',4,5,{trigger:'start',effect:'buff',target:'friends',attack:2},'Start: geef alle vrienden +2 aanval.'],
+ ['scorpionfly','Schorpioenvlieg',5,4,{trigger:'start',effect:'damage',target:'randomEnemy',amount:3,count:2},'Start: raak 2 vijanden voor 3.'],
+ ['silverfish','Zilvervisje',4,6,{trigger:'buy',effect:'buff',target:'friends',health:1},'Koop: geef alle vrienden +1 leven.'],
+ ['emperor','Keizerlibelle',7,5,{trigger:'start',effect:'damage',target:'lastEnemy',amount:6},'Start: raak de achterste vijand voor 6.'],
+ ['goliath','Goliathkever',7,8,{trigger:'hurt',effect:'buff',target:'self',attack:3,health:1,limit:3},'Geraakt: krijg +3/+1 (3×).'],
+ ['orchidmantis','Orchideebidsprinkhaan',5,6,{trigger:'faint',effect:'buff',target:'friends',attack:3},'Valt uit: geef alle vrienden +3 aanval.'],
+ ['luna','Lunavlinder',4,7,{trigger:'faint',effect:'summon',target:'self',token:'lunaToken',attack:5,health:5},'Valt uit: roep een mot van 5/5 op.'],
+ ['carpenterbee','Houtbij',5,6,{trigger:'summon',effect:'buff',target:'randomFriend',attack:3,health:3},'Een vriend verschijnt: geef hem +3/+3.'],
+ ['tigerbeetle','Zandloopkever',6,4,{trigger:'attack',effect:'buff',target:'self',attack:3,limit:3},'Aanval: krijg +3 aanval (3×).'],
+ ['stick','Wandelende tak',3,9,{trigger:'start',effect:'shield',target:'behind',amount:1,count:1},'Start: geef je achterste buur een schild.'],
+ ['leaf','Wandelend blad',4,8,{trigger:'end',effect:'buff',target:'friends',health:1},'Einde winkel: geef alle vrienden +1 leven.'],
+ ['glowworm','Glimworm',5,7,{trigger:'friendFaint',effect:'damage',target:'randomEnemy',amount:3,limit:3},'Vriend valt uit: raak een vijand voor 3 (3×).'],
+ ['dungroller','Ballenroller',5,5,{trigger:'sell',effect:'buff',target:'friends',attack:2,health:2},'Verkoop: geef alle vrienden +2/+2.'],
+ ['hercules','Herculeskever',9,10,{trigger:'start',effect:'buff',target:'ahead',attack:5,health:5},'Start: geef je voorste buur +5/+5.'],
+ ['queenant','Mierenkoningin',6,8,{trigger:'friendFaint',effect:'summon',target:'self',token:'antToken',attack:3,health:3,limit:2},'Vriend valt uit: roep een 3/3 mier op (2×).'],
+ ['queenbee','Bijenkoningin',5,9,{trigger:'end',effect:'buff',target:'randomFriend',attack:3,health:3,count:3},'Einde winkel: geef 3 vrienden +3/+3.'],
+ ['giantmantis','Reuzenbidsprinkhaan',8,7,{trigger:'attack',effect:'damage',target:'weakEnemy',amount:4,limit:2},'Aanval: raak de zwakste vijand voor 4 (2×).'],
+ ['peacock','Pauwoogpijlstaart',7,8,{trigger:'faint',effect:'summon',target:'self',token:'mothToken',attack:5,health:5,count:2},'Valt uit: roep 2 motten van 5/5 op.'],
+ ['scarab','Gouden scarabee',7,9,{trigger:'start',effect:'buff',target:'friends',attack:2,health:2},'Start: geef alle vrienden +2/+2.'],
+ ['elephant','Olifantskever',8,10,{trigger:'hurt',effect:'damage',target:'enemies',amount:2,limit:2},'Geraakt: raak alle vijanden voor 2 (2×).'],
+ ['morpho','Morphovlinder',6,8,{trigger:'start',effect:'buff',target:'behind',attack:5,health:5},'Start: geef je achterste buur +5/+5.'],
+ ['robberfly','Roofvlieg',8,6,{trigger:'start',effect:'damage',target:'randomEnemy',amount:5,count:2},'Start: raak 2 vijanden voor 5.'],
+ ['jewelwasp','Juweelwesp',7,7,{trigger:'food',effect:'buff',target:'friends',attack:1,health:1},'Eet: geef alle vrienden +1/+1.'],
+ ['ambermantis','Barnsteenbidsprinkhaan',8,7,{trigger:'attack',effect:'damage',target:'frontEnemy',amount:2,limit:2},'Aanval: doe 2 extra schade (2×).'],
+ ['crystalstag','Kristalhertkever',6,10,{trigger:'start',effect:'shield',target:'self',amount:1},'Start: blokkeer de eerste klap.'],
+ ['glasswing','Glasvleugeljuffer',7,7,{trigger:'start',effect:'buff',target:'behind',attack:3,health:2},'Start: versterk je achterste buur.'],
+ ['cometmoth','Komeetvlinder',5,9,{trigger:'start',effect:'buff',target:'friends',health:2},'Start: geef alle vrienden +2 leven.'],
+];
+export const SPECIES: Species[] = rows.map((r,i)=>({id:r[0],name:r[1],tier:Math.floor(i/10)+1,attack:r[2],health:r[3],ability:r[4],text:r[5],habitat:i%4,art:i}));
+// New field species have explicit tiers; existing catalog ordering and stats remain stable.
+export const FIELD_SPECIES:Species[]=[
+ {id:'antlion',name:'Mierenleeuwlarve',tier:4,attack:7,health:3,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'cockroach',name:'Kakkerlak',tier:1,attack:2,health:6,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'cranefly',name:'Langpootmug',tier:1,attack:3,health:3,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'flea',name:'Vlo',tier:2,attack:5,health:2,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'giantwaterbug',name:'Reuzenwaterwants',tier:5,attack:7,health:7,habitat:2,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'mayfly',name:'Eendagsvlieg',tier:2,attack:3,health:2,habitat:2,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'termite',name:'Soldaattermiet',tier:3,attack:5,health:5,habitat:1,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'tortoisebeetle',name:'Schildpadkever',tier:4,attack:3,health:7,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}];
+export const TOKENS: Species[] = ['larva','midgeToken','silkToken','lunaToken','antToken','mothToken'].map((id,i)=>({id,name:['Larve','Mugje','Zijderupsje','Lunamotje','Werkmier','Motje'][i],tier:0,attack:1,health:1,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Tijdelijke hulp in dit gevecht.',habitat:0,art:[16,3,28,11,4,11][i]}));
+export const species = (id:string):Species => { const s=[...SPECIES,...FIELD_SPECIES,...TOKENS].find(s=>s.id===id); if(!s) throw new Error('Onbekende soort.'); return s; };
+export const ITEMS: Item[] = [
+ {id:'leafshield',name:'Bladschild',tier:2,price:3,held:true,shield:1,text:'Blokkeert de eerste klap.'},
+ {id:'pollen',name:'Stuifmeel',tier:1,price:3,held:false,attack:1,health:1,text:'Geef één bug blijvend +1/+1.'},
+ {id:'nectarfood',name:'Nectardruppel',tier:1,price:3,held:false,health:2,text:'Geef één bug blijvend +2 leven.'},
+ {id:'seed',name:'Zaadje',tier:2,price:3,held:false,attack:2,text:'Geef één bug blijvend +2 aanval.'},
+ {id:'honey',name:'Honing',tier:1,price:3,held:true,revive:true,text:'Valt uit: roep een larve van 1/1 op.'},
+ {id:'thorn',name:'Doorn',tier:2,price:3,held:true,attack:3,text:'Doe 3 extra aanvalsschade.'},
+ {id:'shell',name:'Dauwpanster',tier:3,price:3,held:true,damage:2,text:'Verminder iedere klap met 2 (minimaal 1).'},
+ {id:'berry',name:'Bosbes',tier:3,price:3,held:false,attack:2,health:2,text:'Geef één bug blijvend +2/+2.'},
+ {id:'mushroom',name:'Paddenstoel',tier:4,price:3,held:true,revive:true,text:'Roep bij uitvallen een larve op.'},
+ {id:'splash',name:'Zaadexplosie',tier:4,price:3,held:true,splash:3,text:'Raak bij aanval ook de volgende vijand voor 3.'},
+ {id:'apple',name:'Wilde appel',tier:4,price:3,held:false,attack:3,health:3,text:'Geef één bug blijvend +3/+3.'},
+ {id:'acorn',name:'Eikel',tier:5,price:3,held:true,health:5,text:'Start met 5 extra leven.'},
+ {id:'sap',name:'Boomsap',tier:5,price:3,held:false,health:6,text:'Geef één bug blijvend +6 leven.'},
+ {id:'rose',name:'Rozenblad',tier:5,price:3,held:false,attack:4,health:2,text:'Geef één bug blijvend +4/+2.'},
+ {id:'sunseed',name:'Zonnezaad',tier:6,price:3,held:true,attack:6,text:'Doe 6 extra aanvalsschade.'},
+ {id:'royal',name:'Koninginnengelei',tier:6,price:3,held:false,attack:4,health:4,text:'Geef één bug blijvend +4/+4.'},
+];
+export const item = (id:string|null) => ITEMS.find(i=>i.id===id);
+export const HABITATS=[{id:'meadow',name:'Bloemenweide',hint:'Sterke buren helpen je voorste bug.'},{id:'soil',name:'Bodemwereld',hint:'Schilden beschermen tegen een harde eerste klap.'},{id:'pond',name:'Vijverrand',hint:'Spreidschade helpt tegen opgeroepen bugs.'},{id:'night',name:'Nachttuin',hint:'Bescherm de helpers achter je voorste bug.'}];
+export const STARTERS=['ladybug','bee','beetle','dragonfly','ant'];
+export function textFor(id:string,level=1) {const s=species(id);if(level===1)return s.text;return s.text.replace(/\+(\d+)/g,(_,n)=>'+'+Number(n)*level).replace(/voor (\d+)/g,(_,n)=>'voor '+Number(n)*level).replace(/van (\d+)\/(\d+)/g,(_,a,b)=>`van ${Number(a)*level}/${Number(b)*level}`);}
+export function rng(seed:string) { let v=2166136261;for(const c of seed)v=Math.imul(v^c.charCodeAt(0),16777619);return ()=>{v+=0x6D2B79F5;let t=Math.imul(v^v>>>15,1|v);t^=t+Math.imul(t^t>>>7,61|t);return ((t^t>>>14)>>>0)/4294967296;}; }

@@ -1,0 +1,17 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {CATCH_RADIUS,catchWild,distance,locate,SPAWN_LIFETIME,validFix,wildSpawns,WALK_MODELS} from '../game/walkingV2';
+import {freshV2} from '../game/safariV2';
+import {ensureAdventure} from '../game/tacticsV2';
+import {GameServiceV2} from '../server/serviceV2';
+import {SqliteStore} from '../server/sqlite';
+import {SPECIES,FIELD_SPECIES} from '../game/catalogV2';
+const NOW=Date.UTC(2026,9,19,10),FIX={lat:52.0928,lng:5.1339,accuracy:8};
+const player=()=>{const p=freshV2('walker','WALK1234',NOW);ensureAdventure(p,NOW);return p;};
+test('walking fixes reject fabricated and inaccurate coordinates',()=>{for(const f of [null,{...FIX,lat:NaN},{...FIX,lng:181},{...FIX,accuracy:1000},{...FIX,accuracy:-1},{...FIX,reward:100}])assert.throws(()=>validFix(f));assert.deepEqual(validFix(FIX),FIX);});
+test('walking offers match catalog/models and guarantee three bugs in catch range',()=>{for(let n=0;n<100;n++){const bugs=wildSpawns(FIX,'seed-'+n,NOW);assert.equal(bugs.length,7);assert.ok(bugs.every(s=>WALK_MODELS[s.species]&&[...SPECIES,...FIELD_SPECIES].some(p=>p.id===s.species)));assert.ok(bugs.filter(s=>distance(FIX,s)<=CATCH_RADIUS).length>=3);assert.deepEqual(bugs,wildSpawns(FIX,'seed-'+n,NOW));}});
+test('refresh keeps spawn identity and shiny seed; jump and remote captures fail',()=>{const p=player();locate(p,FIX,'original-server-secret',NOW);const original=structuredClone(p.walking);locate(p,FIX,'new-secret',NOW+1000);assert.deepEqual(p.walking?.spawns,original?.spawns);assert.equal(p.walking?.seed,original?.seed);assert.throws(()=>locate(p,{...FIX,lat:53},'secret',NOW+2000));assert.throws(()=>catchWild(p,p.walking!.spawns[6].id,NOW+3000));assert.throws(()=>catchWild(p,'forged-spawn',NOW+3000));});
+test('capture persists a real specimen and nectar once without changing competitive stats',()=>{const p=player(),rating=p.rating;locate(p,FIX,'secret-a',NOW);const spawn=p.walking!.spawns[0],nectar=p.nectar;catchWild(p,spawn.id,NOW+1000);assert.equal(p.specimens.at(-1)?.species,spawn.species);assert.ok(p.nectar>nectar);assert.ok(p.discovered.includes(spawn.species));assert.equal(p.rating,rating);const after=structuredClone(p);assert.throws(()=>catchWild(p,spawn.id,NOW+6000));assert.deepEqual(p,after);});
+test('stale GPS, expired spawns, rate and daily limits cannot grant loot',()=>{const p=player();locate(p,FIX,'secret-b',NOW);const id=p.walking!.spawns[0].id;assert.throws(()=>catchWild(p,id,NOW+46000));p.walking!.at=NOW+SPAWN_LIFETIME;assert.throws(()=>catchWild(p,id,NOW+SPAWN_LIFETIME));locate(p,FIX,'fresh-secret',NOW+SPAWN_LIFETIME+1);p.walking!.count=60;assert.throws(()=>catchWild(p,p.walking!.spawns[0].id,NOW+SPAWN_LIFETIME+1000));locate(p,FIX,'tomorrow',NOW+86400000);assert.equal(p.walking!.count,0);});
+test('service hides walking secrets and rejects the former one-click catch bypass',async()=>{const store=new SqliteStore(':memory:');try{const service=new GameServiceV2(store,'local',()=>NOW);let view=await service.state('walker');view=await service.command('walker',{type:'worldLocate',fix:FIX,commandId:randomUUID(),expectedRevision:view.player.revision});assert.equal(view.player.walking?.seed,undefined);await assert.rejects(()=>service.command('walker',{type:'worldCatch',spawn:view.player.walking!.spawns[0].id,commandId:randomUUID(),expectedRevision:view.player.revision}));}finally{store.close();}});

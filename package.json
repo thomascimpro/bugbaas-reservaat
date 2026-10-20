@@ -1,0 +1,54 @@
+{
+  "name": "bugbaas-reservaat",
+  "version": "0.1.3",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "web:build": "expo export --platform web",
+    "android:prepare": "expo prebuild --platform android --no-install",
+    "api": "tsx server/local.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "gltf:inspect": "gltf-transform inspect",
+    "gltf:optimize": "gltf-transform optimize",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
+  },
+  "dependencies": {
+    "@mapbox/vector-tile": "3.0.0",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "~54.0.37",
+    "expo-asset": "~12.0.13",
+    "expo-audio": "~1.1.1",
+    "expo-location": "~19.0.8",
+    "expo-status-bar": "~3.0.9",
+    "expo-task-manager": "~14.0.9",
+    "firebase": "^12.0.0",
+    "firebase-admin": "^14.2.0",
+    "maplibre-gl": "6.15.0",
+    "pbf": "5.1.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-svg": "15.12.1",
+    "react-native-web": "^0.21.0",
+    "react-native-webview": "13.15.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "4.5.1",
+    "@types/node": "^24.0.0",
+    "@types/react": "~19.1.10",
+    "@types/three": "0.186.0",
+    "sharp": "0.35.5",
+    "tsx": "^4.23.0",
+    "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "jwks-rsa": {
+      "jose": "4.15.9"
+    }
+  }
+}

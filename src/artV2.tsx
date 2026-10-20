@@ -1,0 +1,32 @@
+import React,{useContext,useId,useEffect,useRef,useState} from 'react';
+import {Animated,Easing,Image,Platform,StyleSheet,View} from 'react-native';
+import Svg,{Ellipse,Defs,Image as SvgImage,RadialGradient,Stop} from 'react-native-svg';
+import {species} from '../game/catalogV2';
+import {RARITIES,rarityFor} from '../game/progressionV2';
+import {legacyArt} from './legacyArtV2';
+import {bugPortraits} from './bugPortraitsV2';
+import {Glyph,MotionPrefs,Wash,V} from './uiV2';
+import {AmbientV2,ShinySparklesV2,useActiveMotion} from './WorldEffectsV2';
+const landscape=require('../assets/v2/scenes.png');
+const meadow=require('../assets/v2/worlds/meadow-v2.png');
+const arena=require('../assets/v2/worlds/arena-v2.png');
+function NativeLandscape({index}:{index:number}){
+ const [box,setBox]=useState({width:0,height:0}),scale=Math.max(box.width/512,box.height/512);
+ return <View pointerEvents="none" onLayout={e=>{const {width,height}=e.nativeEvent.layout;setBox(old=>old.width===width&&old.height===height?old:{width,height});}} style={StyleSheet.absoluteFill}>{scale>0&&<Image source={landscape} resizeMode="stretch" style={{position:'absolute',width:1024*scale,height:1536*scale,left:(box.width-512*scale)/2-index%2*512*scale,top:(box.height-512*scale)/2-Math.floor(index/2)*512*scale}}/>}</View>;
+}
+export function Ground({size=80,color='#223B28'}:{size?:number;color?:string}){const id='ground'+useId().replace(/:/g,'');return <View pointerEvents="none" style={{position:'absolute',bottom:size*.08,width:size,height:size*.25}}><Svg width="100%" height="100%" viewBox="0 0 100 25"><Defs><RadialGradient id={id}><Stop offset="0" stopColor={color} stopOpacity={.3}/><Stop offset="1" stopColor={color} stopOpacity={0}/></RadialGradient></Defs><Ellipse cx="50" cy="12" rx="48" ry="10" fill={`url(#${id})`}/></Svg></View>;}
+export function BugPortrait({id,size=70,shiny=false,silhouette=false,selected=false}:{id:string;size?:number;shiny?:boolean;silhouette?:boolean;selected?:boolean}){const rarity=RARITIES[rarityFor(id)];return <View style={{width:size,height:size*1.08,borderRadius:15,overflow:'hidden',backgroundColor:selected?'#D2DEC4':rarity.wash,borderWidth:selected?2:1,borderColor:selected?'#68AF79':rarity.color+'80',alignItems:'center',justifyContent:'flex-end'}}><Wash from={selected?'#D5E4C5':rarity.wash} to={selected?'#AEBE91':rarity.color+'45'}/><View style={{position:'absolute',bottom:0,left:0,right:0,height:'25%',backgroundColor:'#EDE8D780',borderTopLeftRadius:55,borderTopRightRadius:40}}/><Ground size={size*.9}/><SpriteView id={id} size={size*.97} shiny={shiny} silhouette={silhouette}/></View>;}
+const itemSources:Record<string,any>={leafshield:require('../assets/art/items/leaf.png'),pollen:require('../assets/art/items/pollen.png'),nectarfood:require('../assets/art/items/dew.png'),shell:require('../assets/art/items/dew.png'),thorn:require('../assets/art/items/wing.png')};
+export function ItemArt({id,size=44}:{id:string;size?:number}){const source=itemSources[id];return <View style={{width:size,height:size,alignItems:'center',justifyContent:'center'}}>{source?<Image source={source} resizeMode="contain" style={{width:size,height:size}}/>:<View style={{width:size*.8,height:size*.8,borderRadius:size,backgroundColor:'#E0E8C7',borderWidth:1,borderColor:'#B7CA9C',alignItems:'center',justifyContent:'center'}}><Glyph name={['seed','sunseed','splash','acorn'].includes(id)?'star':['honey','royal','sap'].includes(id)?'nectar':'leaf'} color={V.pine} size={size*.48}/></View>}</View>;}
+export function SpriteView({id,size=70,shiny=false,flip=false,silhouette=false,animate=false,ribbon=0}:{id:string;size?:number;shiny?:boolean;flip?:boolean;silhouette?:boolean;animate?:boolean;ribbon?:number}){
+ const active=useActiveMotion(animate&&!silhouette),bob=useRef(new Animated.Value(0)).current,seed=Array.from(id).reduce((n,c)=>n+c.charCodeAt(0),0),flying=/bee|fly|moth|butterfly|hornet|wasp|wing|luna|midge/.test(id);
+ useEffect(()=>{
+  bob.setValue(0);if(!active)return;
+  const duration=(flying?1050:1650)+seed%5*110;
+  const loop=Animated.loop(Animated.sequence([Animated.timing(bob,{toValue:1,duration,easing:Easing.inOut(Easing.sin),useNativeDriver:Platform.OS!=='web'}),Animated.timing(bob,{toValue:0,duration,easing:Easing.inOut(Easing.sin),useNativeDriver:Platform.OS!=='web'})]));
+  loop.start();return()=>loop.stop();
+ },[active,bob,seed,flying]);
+ const kind=species(id),source=bugPortraits[id]?.[shiny?1:0]??legacyArt[id]??legacyArt[['caterpillar','midge','silkworm','luna','ant','moth'][Math.max(0,['larva','midgeToken','silkToken','lunaToken','antToken','mothToken'].indexOf(id))]];
+ return <View accessibilityLabel={silhouette?'Nog niet ontdekt':kind.name+(shiny?', shiny':'')} style={{width:size,height:size,overflow:'hidden',transform:[{scaleX:flip?-1:1}],opacity:silhouette?.16:1}}><Animated.View testID={animate?'living-bug':undefined} style={{width:size,height:size,transform:[{translateY:bob.interpolate({inputRange:[0,1],outputRange:[0,flying?-5:-2]})},{rotate:bob.interpolate({inputRange:[0,1],outputRange:['0deg',(seed%2?1:-1)*(flying?1.8:.7)+'deg']})},{scale:bob.interpolate({inputRange:[0,1],outputRange:[1,flying?1.015:1.025]})}],filter:shiny&&!bugPortraits[id]?[{hueRotate:'100deg'},{saturate:1.25}]:[]}}><Image source={source} resizeMode="contain" style={{width:size,height:size,...(silhouette?{tintColor:'#203E43'}:{})}}/></Animated.View>{ribbon>0&&<View style={{position:'absolute',top:4,left:4,padding:3,borderRadius:12,backgroundColor:ribbon>1?'#ECD48B':'#FFFFFFDD'}}><Glyph name="heart" size={12} color="#277760"/></View>}{shiny&&!silhouette&&<ShinySparklesV2 size={size}/>}</View>;
+}
+export function Scene({index=0,children,dim=0,animated=false}:{index?:number;children?:React.ReactNode;dim?:number;animated?:boolean}){return <View pointerEvents="box-none" style={StyleSheet.absoluteFill}><View pointerEvents="none" style={[StyleSheet.absoluteFill,{overflow:'hidden'}]}>{index===0||index===4||index===5?<Image source={index===4?arena:meadow} blurRadius={index===5?8:0} resizeMode="cover" style={{position:'absolute',left:0,top:0,width:'100%',height:'100%'}}/>:Platform.OS!=='web'?<NativeLandscape index={index}/>:<Svg width="100%" height="100%" viewBox={`${index%2*512} ${Math.floor(index/2)*512} 512 512`} preserveAspectRatio="xMidYMid slice"><SvgImage href={landscape} x={0} y={0} width={1024} height={1536}/></Svg>}{dim>0&&<View style={[StyleSheet.absoluteFill,{backgroundColor:`rgba(10,32,34,${dim})`}]}/>}{animated&&<AmbientV2 night={index===1||index===4}/>}</View>{children}</View>;}

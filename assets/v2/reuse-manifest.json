@@ -1,0 +1,376 @@
+{
+  "sourceProject": "CimPro BugBaas-3.0",
+  "sourceUnmodified": true,
+  "records": [
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\zevenstippelig-lieveheersbeestje.webp",
+      "file": "assets/v2/legacy/ladybug.webp",
+      "sha256": "476bf19a80bac0f83dfe4ed7c98319e25e49a49acd7a335e2c8fb60e5a4dc17c"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\honingbij.webp",
+      "file": "assets/v2/legacy/bee.webp",
+      "sha256": "e06744f55347379477c7bef4934e921313141231492436e4273de2eb9edb71a6"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\vliegend-hert.webp",
+      "file": "assets/v2/legacy/beetle.webp",
+      "sha256": "8d563754019a3eca1e148b893e0e712dfaae1c628044b4a41b9168dfeb158dd3"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\blauwe-glazenmaker.webp",
+      "file": "assets/v2/legacy/dragonfly.webp",
+      "sha256": "3aa6915d847535bc4e6ab47dcacdaf6eae210690ec468a995ca42b0fe6aaac66"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\rode-bosmier.webp",
+      "file": "assets/v2/legacy/ant.webp",
+      "sha256": "f2f0fb671140f363d25578ea788ff9d9713dad4dcdad115e4e4f8379b4ac0584"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\veldkrekel.webp",
+      "file": "assets/v2/legacy/cricket.webp",
+      "sha256": "8daf2f712271ec5db495f1425e9d1151086e961d01bf294de6edbd89f1169188"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\snuitkever.webp",
+      "file": "assets/v2/legacy/weevil.webp",
+      "sha256": "79812afb59f1254f9a74056a835c49d2e12ed05cd0931f088625c662db25a779"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\groene-bladluis.webp",
+      "file": "assets/v2/legacy/aphid.webp",
+      "sha256": "416bcf13eaffd2ce6af8e13922273296024b10a9f3e9242e6f24bfed0e35b86a"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\zwarte-springstaart.webp",
+      "file": "assets/v2/legacy/springtail.webp",
+      "sha256": "f52407815ef53b78d11d2affca9386e59a54128d59690b88e200ee42e91c1ab7"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\dansmug.webp",
+      "file": "assets/v2/legacy/midge.webp",
+      "sha256": "3a0e659cf6059f508f025882639b2d9e859adb3221361df54438f4fbcb81ebee"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\bidsprinkhaan.webp",
+      "file": "assets/v2/legacy/mantis.webp",
+      "sha256": "f652c507ea0a68aa7765535bcb0924b51413a52f71b3e6bdbf81761f9430b8bb"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\nachtpauwoog-mot.webp",
+      "file": "assets/v2/legacy/moth.webp",
+      "sha256": "92b729d721c8c47db1966395e7ecd4ea8e9410cf00b111c14db34ac59df870ca"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\gewone-oorworm.webp",
+      "file": "assets/v2/legacy/earwig.webp",
+      "sha256": "5a588a9784c5fa8167e80ebcba8f4455ea890b21f6c30efa0d3f88f273324a14"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\vuurkever.webp",
+      "file": "assets/v2/legacy/firefly.webp",
+      "sha256": "15d6be7f364f81e3f690658a2868ca26fa9605258983d443688993a1df756bda"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\schildwants.webp",
+      "file": "assets/v2/legacy/shieldbug.webp",
+      "sha256": "3b2bf0231f5683ab752d1e5cb1108871bd252006163ec1b5182de683c84f8d1a"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\sprinkhaan.webp",
+      "file": "assets/v2/legacy/grasshopper.webp",
+      "sha256": "8fbba48bfbd6d3d72b32d6225fb65c4500687d4310731a5faa82e9484bf46608"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\pijlstaartrups.webp",
+      "file": "assets/v2/legacy/caterpillar.webp",
+      "sha256": "5df9ab65279d192a704ab7d0651e5d8cc4acfc1ee8069492046bf98068d3a407"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\gaasvlieg.webp",
+      "file": "assets/v2/legacy/lacewing.webp",
+      "sha256": "bf69bbb13e7af0be37114620617b5eae89f7075ce0c8424a9ee66993d0192f92"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\pissebed.webp",
+      "file": "assets/v2/legacy/woodlouse.webp",
+      "sha256": "26aa68da3981e63cf523b8699389b24a5eee814cdbd5586807e33900396923db"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\mestkever.webp",
+      "file": "assets/v2/legacy/dungbeetle.webp",
+      "sha256": "8c061d9d885feae7c009d68bad72f40882706a7afd725672b1c248fdbdee48e0"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\gewone-wesp.webp",
+      "file": "assets/v2/legacy/wasp.webp",
+      "sha256": "8e339091cf4ca38dcd6fa2b510b72f2336276e8b676e8d50a6a1784f53a0830b"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\dagpauwoog.webp",
+      "file": "assets/v2/legacy/butterfly.webp",
+      "sha256": "89f53721d6f62c50284d62555dded35cd69d9a70dc9b9acf567120d0e8a17216"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\klein-vliegend-hert.webp",
+      "file": "assets/v2/legacy/stag.webp",
+      "sha256": "7c29a03222ded1eed66baf3f0957fa2072a1e998e6387e9551135c4eb62c287e"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\waterkever.webp",
+      "file": "assets/v2/legacy/divingbeetle.webp",
+      "sha256": "44a51d89da1b7541325dacbd9084617d2580de918a231466bccc4d4a8e097806"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\schaatsenrijder.webp",
+      "file": "assets/v2/legacy/waterstrider.webp",
+      "sha256": "4b049506a7a8cb1f6d75c56a0796472f45429f7666813c1dd0ca55c2784edc44"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\azuurjuffer.webp",
+      "file": "assets/v2/legacy/damselfly.webp",
+      "sha256": "456618ea514e29d9b87c58a26a5211e4f72ab090c6211e9d924021f0999c27e2"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\rolpissebed.webp",
+      "file": "assets/v2/legacy/pillbug.webp",
+      "sha256": "da283ce826a4ce472df55450cc1a2c5cf54a64f51d23f054a7f58d6320fe7965"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\kniptor.webp",
+      "file": "assets/v2/legacy/clickbeetle.webp",
+      "sha256": "b44ed7cd961a24a83281f1f16ffef631b9176e159a20b0b79dd0c9cd3d779abc"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\buxusrups.webp",
+      "file": "assets/v2/legacy/silkworm.webp",
+      "sha256": "293d3f25edd8c152798846fd9fe0ad6412407c54afddce3294a56556421e0b5d"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\zweefvlieg.webp",
+      "file": "assets/v2/legacy/hoverfly.webp",
+      "sha256": "2b521574f977fc1a90ef398ab6d754237b4e25fae29f299c5e9e92c7a89cd944"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\europese-hoornaar.webp",
+      "file": "assets/v2/legacy/hornet.webp",
+      "sha256": "6c9bc6a6dc8cdbdd03de42f121afbcde024e32a809c0b26c32a9422985bd1fbb"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\neushoornkever.webp",
+      "file": "assets/v2/legacy/rhino.webp",
+      "sha256": "1cf2e616ae8752460e7b0f50ce084bf6579060c4937db6283c57f07c602eeb44"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\atlasvlinder.webp",
+      "file": "assets/v2/legacy/atlasmoth.webp",
+      "sha256": "1f05ec510a146f2e27e67c441b612728de69988917b15775ea2635a0d4900810"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\goudtor.webp",
+      "file": "assets/v2/legacy/jewelbeetle.webp",
+      "sha256": "28e14c24132507cf5979f04909e7569e20d36fa80d81bd61e226a75d56a01d5e"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\groene-rietcicade.webp",
+      "file": "assets/v2/legacy/leafhopper.webp",
+      "sha256": "a1e6024c1d555cf6419c2a426f0425956bf9f243b18b3f009f26f95ddf5552a9"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\duizendpoot.webp",
+      "file": "assets/v2/legacy/centipede.webp",
+      "sha256": "b42eb983c327de57dad82b9d39be6e2838e40aa3c8945e9b3a1c651e207e8919"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\miljoenpoot.webp",
+      "file": "assets/v2/legacy/millipede.webp",
+      "sha256": "b609fea8dd534228605ff1d84c84f461f33c317e1a1e7a46a225ef4ffefd8d7e"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\cicade.webp",
+      "file": "assets/v2/legacy/cicada.webp",
+      "sha256": "4528d1e82c29b76ad773e7935fb3487a6d1fe092cb944e283b808362433a4da2"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\gewone-schorpioenvlieg.webp",
+      "file": "assets/v2/legacy/scorpionfly.webp",
+      "sha256": "96804fe4691829052c47bf800bec9b06aa12046b1d5ab624c1d4bbf4eef0d4c2"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\zilvervisje.webp",
+      "file": "assets/v2/legacy/silverfish.webp",
+      "sha256": "21f6bf992ce032550875730c706d23bc4c55499ef3590fbcc69cf50c10a04568"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\grote-keizerlibel.webp",
+      "file": "assets/v2/legacy/emperor.webp",
+      "sha256": "a2111420cb77897934c4e3d39b40e0c4a9a73ee50f9314dd07fd1fa3d1ae98d8"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\goliathkever.webp",
+      "file": "assets/v2/legacy/goliath.webp",
+      "sha256": "188215fd784fc92bd19b8507cbc2e41e2afe6c75a5da5e4391249902ae54af1f"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\orchidee-bidsprinkhaan.webp",
+      "file": "assets/v2/legacy/orchidmantis.webp",
+      "sha256": "7432bf1049b32201822778f6130c9a705134eb3ec7fce312f917610e91616beb"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\maanvlinder.webp",
+      "file": "assets/v2/legacy/luna.webp",
+      "sha256": "aaebfcfdff2ca02c3ce05110576b5a8ff5a958d775b956bade019ee8e86f6240"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\blauwe-houtbij.webp",
+      "file": "assets/v2/legacy/carpenterbee.webp",
+      "sha256": "13d90c4566a9bc9d5eea9d04f38eed657ca82230426942b690cf877650f39f52"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\groene-zandloopkever.webp",
+      "file": "assets/v2/legacy/tigerbeetle.webp",
+      "sha256": "e5d7d20bd54d1f407b9c212334d5ed7509b6517c08710ce57933283f544e0cdc"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\wandelende-tak.webp",
+      "file": "assets/v2/legacy/stick.webp",
+      "sha256": "0801cdccb0890274943a8dba8877815917b0f5d1d2d7d67da325903a83eb8eac"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\wandelend-blad.webp",
+      "file": "assets/v2/legacy/leaf.webp",
+      "sha256": "972976b4b1cf91ee952529cc05b8b573b6263b937825e8bf257ea5ca409297b3"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\glimworm.webp",
+      "file": "assets/v2/legacy/glowworm.webp",
+      "sha256": "2fe9ee8fa0bcc59774e9ed11dc4f96735c8bf041ae011dcba544af4dbbc138cb"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\bosmestkever.webp",
+      "file": "assets/v2/legacy/dungroller.webp",
+      "sha256": "09ed5c6d94606267ec0cba1dd2135ffa3afb550df397a9ddb45fa6646c79c4e6"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\herculeskever.webp",
+      "file": "assets/v2/legacy/hercules.webp",
+      "sha256": "0f3f9f5071c7445a4255fc2b0cda86743db8d84be3112124ac5104475bd1161f"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\bloedrode-roofmier.webp",
+      "file": "assets/v2/legacy/queenant.webp",
+      "sha256": "6f029019fb3568b732d9d33fd9711713c89bd74be2c5e368eacfc211671a9a95"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\aardhommel.webp",
+      "file": "assets/v2/legacy/queenbee.webp",
+      "sha256": "42d69ad8046baf3b345a0cd98d7973305d2ef5904aff7d50a205ffcdb10836c6"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\dorbladbidsprinkhaan.webp",
+      "file": "assets/v2/legacy/giantmantis.webp",
+      "sha256": "786619854926694c22d2db9332d97b060e814ac55c7311b9d77b94b7f5136491"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\pauwoogpijlstaart.webp",
+      "file": "assets/v2/legacy/peacock.webp",
+      "sha256": "01ed18ad1734179ac4a5f6ad5940e2dc7c6d649ceba6e9ef344832dad67a2677"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\glorieuze-scarabee.webp",
+      "file": "assets/v2/legacy/scarab.webp",
+      "sha256": "0b4d5aa7ae46bb802c0a549062abaa2b0efd87b47e43e1dd6264d96f42c6d00e"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\olifantskever.webp",
+      "file": "assets/v2/legacy/elephant.webp",
+      "sha256": "5b5dd2314a2b9ee1ddd0e47b1aaff09c0005cd744ef5f59c52e9c1028946dcf5"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\blauwe-morpho.webp",
+      "file": "assets/v2/legacy/morpho.webp",
+      "sha256": "180268bfe7408b738ba2290499f728de77c46ee30b94b6d61003c319a659f4ad"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\roofvlieg.webp",
+      "file": "assets/v2/legacy/robberfly.webp",
+      "sha256": "6daa459dd7fb5c5bb89976200cc34238a01c58dda2fe849bf8ed1c41e7785d22"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\bugdex-webp\\juweelwesp.webp",
+      "file": "assets/v2/legacy/jewelwasp.webp",
+      "sha256": "c2744f77ef4d8d2af0fd32b56a18364512882d015d38e0269d34b7caee8bf7e6"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\leaderboard\\medal-bronze.png",
+      "file": "assets/v2/legacy/bronze.png",
+      "sha256": "bb6e4c21da88f82de21d3e8ed250d1a5de646232fcfdceec71664e179966d7e3"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\leaderboard\\medal-silver.png",
+      "file": "assets/v2/legacy/silver.png",
+      "sha256": "0d86b55299eeee05df4a7afc89b2ceb88b8c239746319099a83073a3cb3fe4f0"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\leaderboard\\medal-gold.png",
+      "file": "assets/v2/legacy/gold.png",
+      "sha256": "8b11ebcbf7d48b5b3bfdd79c92921304914b43ee46781d03cfbc6f175c6e231c"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\generated\\duel_effect_shield_hd.png",
+      "file": "assets/v2/legacy/shieldFx.png",
+      "sha256": "6cf21fe5b5057ef4ee0e4d186e311eebd37d13fa2e19f00b2ae85b5441bef474"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\generated\\duel_effect_slash_hd.png",
+      "file": "assets/v2/legacy/slashFx.png",
+      "sha256": "3f3b8b3d0feb5a9a7859990a254753b274b4a651e9057ea266bfe29ecac38bd6"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\badges\\bugdex-set-buzz-squad.png",
+      "file": "assets/v2/legacy/meadowMedal.png",
+      "sha256": "95920f4a940a6a03c58318b35d40c8257d6cdd03cc201aaea87930732e4f94dd"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\badges\\bugdex-set-beetle-brigade.png",
+      "file": "assets/v2/legacy/soilMedal.png",
+      "sha256": "7fd94762dcb4c78184e23903c6f06d96243ab6bfd7446be7adc6d0346ce51f95"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\badges\\bugdex-set-water-hunters.png",
+      "file": "assets/v2/legacy/pondMedal.png",
+      "sha256": "4fc129b4c91f3114e138fa1e93c15ffb7ea4038b8f7f958650b585a345acb33b"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\badges\\bugdex-set-night-crew.png",
+      "file": "assets/v2/legacy/nightMedal.png",
+      "sha256": "3b2ef232f01dac33b8245bc9b852c6e2a8074a39b8a08eec92a5deeeddcf62f4"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\audio\\bug_rare_unlock.wav",
+      "file": "assets/v2/legacy/shiny.wav",
+      "sha256": "679c7b1705cfd04f4a3f31bc7e0919f95e7494979661a9fa7ee4a9dd73b0b1be"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\audio\\bug_unlock.wav",
+      "file": "assets/v2/legacy/reward.wav",
+      "sha256": "7aba001364ff74b1e6fa5dc92c412559263480266a30396eecdc09d574419e54"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\audio\\bug_hit.wav",
+      "file": "assets/v2/legacy/hit.wav",
+      "sha256": "58c1fbfe36a22c5fd19a90086ecb0341c5a0259d18283fee3d668edc70305cf8"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\audio\\arcade_finish.wav",
+      "file": "assets/v2/legacy/win.wav",
+      "sha256": "250bee7c1d70f4ae2b6106efd99d982a5f47b35efc2f9214ce20c160aa741029"
+    },
+    {
+      "source": "C:\\Users\\thoma.THOMAS\\Documents\\Codex\\CimPro BugBaas-3.0\\assets\\audio\\arcade_pickup.wav",
+      "file": "assets/v2/legacy/buy.wav",
+      "sha256": "de551dc20b6b3f6e6ccfaa3c62d0b18d235a2a80f80b4ef7be02279d4c699da9"
+    }
+  ]
+}

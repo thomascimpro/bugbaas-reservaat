@@ -1,0 +1,9 @@
+node_modules/
+android/
+.expo/
+.local/
+.env*
+dist/
+*.log
+*.keystore
+*.jks

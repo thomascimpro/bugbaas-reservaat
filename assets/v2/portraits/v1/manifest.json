@@ -1,0 +1,337 @@
+{
+  "version": 1,
+  "source": "Gobkit CC0 models and original BugBaas HawkCaterpillar; rendered using src/bugModelV2.ts materials",
+  "species": {
+    "beetle": {
+      "model": "ClickBeetle",
+      "palette": [
+        "#291C42",
+        "#9B4BB7",
+        "#E7AF65"
+      ],
+      "size": 1024,
+      "normal": "beetle.png",
+      "shiny": "beetle-shiny.png"
+    },
+    "ant": {
+      "model": "LeafcutterAnt",
+      "palette": [
+        "#14243D",
+        "#2597B1",
+        "#BCF2E3"
+      ],
+      "size": 1024,
+      "normal": "ant.png",
+      "shiny": "ant-shiny.png"
+    },
+    "aphid": {
+      "model": "Aphid",
+      "palette": [
+        "#4D203E",
+        "#DB78AF",
+        "#FFE0BD"
+      ],
+      "size": 1024,
+      "normal": "aphid.png",
+      "shiny": "aphid-shiny.png"
+    },
+    "weevil": {
+      "model": "GiraffeWeevil",
+      "palette": [
+        "#173B43",
+        "#39B8A0",
+        "#DDF1A4"
+      ],
+      "size": 1024,
+      "normal": "weevil.png",
+      "shiny": "weevil-shiny.png"
+    },
+    "moth": {
+      "model": "HawkMoth",
+      "palette": [
+        "#213D50",
+        "#5BB8CD",
+        "#E4E2FF"
+      ],
+      "size": 1024,
+      "normal": "moth.png",
+      "shiny": "moth-shiny.png"
+    },
+    "earwig": {
+      "model": "Earwig",
+      "palette": [
+        "#173B3A",
+        "#51B79A",
+        "#F2D797"
+      ],
+      "size": 1024,
+      "normal": "earwig.png",
+      "shiny": "earwig-shiny.png"
+    },
+    "grasshopper": {
+      "model": "Katydid",
+      "palette": [
+        "#432744",
+        "#BE76B6",
+        "#F5DAC2"
+      ],
+      "size": 1024,
+      "normal": "grasshopper.png",
+      "shiny": "grasshopper-shiny.png"
+    },
+    "lacewing": {
+      "model": "Lacewing",
+      "palette": [
+        "#433649",
+        "#D19C66",
+        "#FFF1C1"
+      ],
+      "size": 1024,
+      "normal": "lacewing.png",
+      "shiny": "lacewing-shiny.png"
+    },
+    "dungbeetle": {
+      "model": "DungBeetle",
+      "palette": [
+        "#173E48",
+        "#418AB2",
+        "#B9F0DC"
+      ],
+      "size": 1024,
+      "normal": "dungbeetle.png",
+      "shiny": "dungbeetle-shiny.png"
+    },
+    "mantis": {
+      "model": "OrchidMantis",
+      "palette": [
+        "#293B32",
+        "#6EAE83",
+        "#F2DEA8"
+      ],
+      "size": 1024,
+      "normal": "mantis.png",
+      "shiny": "mantis-shiny.png"
+    },
+    "butterfly": {
+      "model": "Swallowtail",
+      "palette": [
+        "#233558",
+        "#668DDB",
+        "#F9D898"
+      ],
+      "size": 1024,
+      "normal": "butterfly.png",
+      "shiny": "butterfly-shiny.png"
+    },
+    "divingbeetle": {
+      "model": "DivingBeetle",
+      "palette": [
+        "#342446",
+        "#A16DC5",
+        "#D4EDFC"
+      ],
+      "size": 1024,
+      "normal": "divingbeetle.png",
+      "shiny": "divingbeetle-shiny.png"
+    },
+    "waterstrider": {
+      "model": "WaterStrider",
+      "palette": [
+        "#253247",
+        "#7A93B4",
+        "#E8C782"
+      ],
+      "size": 1024,
+      "normal": "waterstrider.png",
+      "shiny": "waterstrider-shiny.png"
+    },
+    "hoverfly": {
+      "model": "Hoverfly",
+      "palette": [
+        "#193C3A",
+        "#5FC9BA",
+        "#E5FFE4"
+      ],
+      "size": 1024,
+      "normal": "hoverfly.png",
+      "shiny": "hoverfly-shiny.png"
+    },
+    "leafhopper": {
+      "model": "Treehopper",
+      "palette": [
+        "#382950",
+        "#B48AD9",
+        "#F8DAB8"
+      ],
+      "size": 1024,
+      "normal": "leafhopper.png",
+      "shiny": "leafhopper-shiny.png"
+    },
+    "cricket": {
+      "model": "MoleCricket",
+      "palette": [
+        "#34354A",
+        "#7998C9",
+        "#E2D8B2"
+      ],
+      "size": 1024,
+      "normal": "cricket.png",
+      "shiny": "cricket-shiny.png"
+    },
+    "stick": {
+      "model": "StickInsect",
+      "palette": [
+        "#292E48",
+        "#7D77B8",
+        "#D7E3EC"
+      ],
+      "size": 1024,
+      "normal": "stick.png",
+      "shiny": "stick-shiny.png"
+    },
+    "leaf": {
+      "model": "LeafInsect",
+      "palette": [
+        "#493E23",
+        "#C8A04E",
+        "#F6EDB8"
+      ],
+      "size": 1024,
+      "normal": "leaf.png",
+      "shiny": "leaf-shiny.png"
+    },
+    "silverfish": {
+      "model": "Silverfish",
+      "palette": [
+        "#49332B",
+        "#CF9870",
+        "#F9D8AD"
+      ],
+      "size": 1024,
+      "normal": "silverfish.png",
+      "shiny": "silverfish-shiny.png"
+    },
+    "hercules": {
+      "model": "HerculesBeetle",
+      "palette": [
+        "#20343E",
+        "#639BA3",
+        "#F0CD7C"
+      ],
+      "size": 1024,
+      "normal": "hercules.png",
+      "shiny": "hercules-shiny.png"
+    },
+    "caterpillar": {
+      "model": "HawkCaterpillar",
+      "palette": [
+        "#42374A",
+        "#B291CE",
+        "#F5DEB9"
+      ],
+      "size": 1024,
+      "normal": "caterpillar.png",
+      "shiny": "caterpillar-shiny.png",
+      "source": "Original BugBaas mesh; scripts/generate-hawk-caterpillar.mjs"
+    },
+    "antlion": {
+      "model": "AntlionLarva",
+      "palette": [
+        "#253746",
+        "#5990A8",
+        "#D9EBC9"
+      ],
+      "size": 1024,
+      "normal": "antlion.png",
+      "shiny": "antlion-shiny.png"
+    },
+    "cockroach": {
+      "model": "Cockroach",
+      "palette": [
+        "#183B48",
+        "#428D9C",
+        "#D2E8E5"
+      ],
+      "size": 1024,
+      "normal": "cockroach.png",
+      "shiny": "cockroach-shiny.png"
+    },
+    "cranefly": {
+      "model": "CraneFly",
+      "palette": [
+        "#422C49",
+        "#AF7BBE",
+        "#F1D6B3"
+      ],
+      "size": 1024,
+      "normal": "cranefly.png",
+      "shiny": "cranefly-shiny.png"
+    },
+    "flea": {
+      "model": "Flea",
+      "palette": [
+        "#233A3A",
+        "#6FB5A3",
+        "#D5EFBA"
+      ],
+      "size": 1024,
+      "normal": "flea.png",
+      "shiny": "flea-shiny.png"
+    },
+    "giantwaterbug": {
+      "model": "GiantWaterBug",
+      "palette": [
+        "#43284D",
+        "#AA79B4",
+        "#F1DAA4"
+      ],
+      "size": 1024,
+      "normal": "giantwaterbug.png",
+      "shiny": "giantwaterbug-shiny.png"
+    },
+    "mayfly": {
+      "model": "Mayfly",
+      "palette": [
+        "#233B52",
+        "#79B7D1",
+        "#EFF5D8"
+      ],
+      "size": 1024,
+      "normal": "mayfly.png",
+      "shiny": "mayfly-shiny.png"
+    },
+    "termite": {
+      "model": "SoldierTermite",
+      "palette": [
+        "#313256",
+        "#8A92C5",
+        "#F2DBA8"
+      ],
+      "size": 1024,
+      "normal": "termite.png",
+      "shiny": "termite-shiny.png"
+    },
+    "tigerbeetle": {
+      "model": "TigerBeetle",
+      "palette": [
+        "#3D2945",
+        "#BB6E9A",
+        "#F4CF87"
+      ],
+      "size": 1024,
+      "normal": "tigerbeetle.png",
+      "shiny": "tigerbeetle-shiny.png"
+    },
+    "tortoisebeetle": {
+      "model": "TortoiseBeetle",
+      "palette": [
+        "#293E45",
+        "#53BEB0",
+        "#F2DEA0"
+      ],
+      "size": 1024,
+      "normal": "tortoisebeetle.png",
+      "shiny": "tortoisebeetle-shiny.png"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+const NAMES=['Dauwdal','Klaverpad','Madeliefjesweide','Bramenzoom','Varentuin','Honingheuvel','Bladwachter','Moswoud','Wortelgangen','Schorsvesting','Paddenstoelenring','Mistmoeras','Rietkraag','Zilverbeek','Dauwpoort','Libellenmeer','Kristalstroom','Schemerwoud','Vuurvliegdal','Maanbloesem','Amberkliffen','Nachtoever','Sterrenbos','Glasvleugelhof','Scarabeeëntombe','Komeetvallei','Fluisterruïne','Maanheiligdom','Kroonwortels','De Oerboom'];
+export function zone(stage:number){const n=Math.max(1,Math.min(30,Math.floor(stage)));return {number:n,name:NAMES[n-1],scene:n<8?0:n<14?1:n<18?2:3};}
+export const zoneName=(stage:number)=>zone(stage).name;

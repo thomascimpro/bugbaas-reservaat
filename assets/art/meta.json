@@ -1,0 +1,492 @@
+{
+  "bugs/ant": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      23,
+      1252,
+      1254
+    ]
+  },
+  "bugs/beetle": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      32,
+      23,
+      1232,
+      1254
+    ]
+  },
+  "bugs/bumblebee": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      31,
+      23,
+      1238,
+      1254
+    ]
+  },
+  "bugs/butterfly": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      0,
+      1253,
+      1254
+    ]
+  },
+  "bugs/dragonfly": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      9,
+      1238,
+      1254
+    ]
+  },
+  "bugs/earwig": {
+    "width": 1536,
+    "height": 1024,
+    "bounds": [
+      0,
+      13,
+      1524,
+      1024
+    ]
+  },
+  "bugs/firebug": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      34,
+      1253,
+      1238
+    ]
+  },
+  "bugs/glowworm": {
+    "width": 1448,
+    "height": 1086,
+    "bounds": [
+      0,
+      9,
+      1416,
+      1086
+    ]
+  },
+  "bugs/ladybug": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      4,
+      1238,
+      1254
+    ]
+  },
+  "bugs/mantis": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      17,
+      1234,
+      1254
+    ]
+  },
+  "bugs/moth": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      17,
+      1245,
+      1254
+    ]
+  },
+  "bugs/streamfly": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      15,
+      1235,
+      1254
+    ]
+  },
+  "crest": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      17,
+      1252,
+      1254
+    ]
+  },
+  "frames/panel": {
+    "width": 1448,
+    "height": 1086,
+    "bounds": [
+      0,
+      59,
+      1448,
+      1006
+    ]
+  },
+  "frames/primary": {
+    "width": 2172,
+    "height": 724,
+    "bounds": [
+      29,
+      25,
+      2152,
+      724
+    ]
+  },
+  "frames/secondary": {
+    "width": 2172,
+    "height": 724,
+    "bounds": [
+      0,
+      25,
+      2172,
+      714
+    ]
+  },
+  "icons/account": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      14,
+      1210,
+      1254
+    ]
+  },
+  "icons/arena": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      48,
+      1242,
+      1254
+    ]
+  },
+  "icons/arrow": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      71,
+      1224,
+      1140
+    ]
+  },
+  "icons/attack": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      33,
+      39,
+      1222,
+      1232
+    ]
+  },
+  "icons/book": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      30,
+      19,
+      1254,
+      1254
+    ]
+  },
+  "icons/check": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      29,
+      39,
+      1218,
+      1230
+    ]
+  },
+  "icons/clock": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      32,
+      1142,
+      1190
+    ]
+  },
+  "icons/close": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      21,
+      1222,
+      1254
+    ]
+  },
+  "icons/compass": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      41,
+      24,
+      1240,
+      1254
+    ]
+  },
+  "icons/crown": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      41,
+      1232,
+      1254
+    ]
+  },
+  "icons/heart": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      62,
+      87,
+      1200,
+      1254
+    ]
+  },
+  "icons/info": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      9,
+      1234,
+      1254
+    ]
+  },
+  "icons/meadow": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      17,
+      1226,
+      1216
+    ]
+  },
+  "icons/nectar": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      17,
+      1234,
+      1254
+    ]
+  },
+  "icons/night": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      22,
+      1226,
+      1254
+    ]
+  },
+  "icons/pond": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      0,
+      1236,
+      1232
+    ]
+  },
+  "icons/shield": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      39,
+      9,
+      1240,
+      1228
+    ]
+  },
+  "icons/soil": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      32,
+      1234,
+      1229
+    ]
+  },
+  "icons/spark": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      21,
+      1212,
+      1224
+    ]
+  },
+  "icons/speed": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      37,
+      1226,
+      1250
+    ]
+  },
+  "icons/target": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      65,
+      97,
+      1254,
+      1214
+    ]
+  },
+  "icons/team": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      33,
+      1254,
+      1254
+    ]
+  },
+  "icons/upgrade": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      33,
+      1234,
+      1230
+    ]
+  },
+  "items/dew": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      41,
+      1192,
+      1236
+    ]
+  },
+  "items/leaf": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      43,
+      19,
+      1200,
+      1230
+    ]
+  },
+  "items/none": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      34,
+      1223,
+      1228
+    ]
+  },
+  "items/pollen": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      0,
+      21,
+      1253,
+      1254
+    ]
+  },
+  "items/wing": {
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      33,
+      25,
+      1240,
+      1232
+    ]
+  },
+  "scenes/meadow": {
+    "width": 1536,
+    "height": 1024,
+    "bounds": [
+      0,
+      0,
+      1536,
+      1024
+    ]
+  },
+  "scenes/night": {
+    "width": 1536,
+    "height": 1024,
+    "bounds": [
+      0,
+      0,
+      1536,
+      1024
+    ]
+  },
+  "scenes/pond": {
+    "width": 1536,
+    "height": 1024,
+    "bounds": [
+      0,
+      0,
+      1536,
+      1024
+    ]
+  },
+  "scenes/soil": {
+    "width": 1536,
+    "height": 1024,
+    "bounds": [
+      0,
+      0,
+      1536,
+      1024
+    ]
+  },
+  "wordmark": {
+    "width": 2048,
+    "height": 768,
+    "bounds": [
+      33,
+      24,
+      2017,
+      768
+    ]
+  }
+}

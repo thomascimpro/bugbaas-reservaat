@@ -1,0 +1,12 @@
+{
+  "name": "HawkCaterpillar",
+  "author": "BugBaas",
+  "source": "Original procedural geometry; scripts/generate-hawk-caterpillar.mjs",
+  "created": "2026-10-20",
+  "license": "Original project asset",
+  "anatomy": "12 segments, 3 pairs of true legs, 5 pairs of prolegs, tail horn",
+  "animations": [
+    "idle",
+    "walk"
+  ]
+}

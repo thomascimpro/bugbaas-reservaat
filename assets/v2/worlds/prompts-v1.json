@@ -1,0 +1,13 @@
+{
+  "tool": "image_gen.imagegen",
+  "assets": [
+    {
+      "file": "expedition-camp-v1.png",
+      "prompt": "Create one polished game asset for BugBaas, a professional nature themed insect collecting mobile RPG. A miniature explorer camp made for an insect: curled deep emerald leaf canopy on two twig poles, tiny moss platform, warm amber lantern hanging on the left, rolled trail map and leather satchel beside a dew-filled vial. Isometric three quarter view, full object isolated, real transparent alpha background, no rectangular scene, no text, no letters, no numbers, no logo. Hand painted premium 3D game illustration, refined realistic materials, clean silhouette readable at 150 pixels wide, mature elegant Pokemon GO quality, not childish or cartoon faces. Emerald greens, warm brass and pale sage. Soft ambient shadow directly below only. Wide composition, object centered with 8 percent clear padding. Deliver 1024 pixel image."
+    },
+    {
+      "file": "woodland-loot-v1.png",
+      "prompt": "One isolated premium mobile game inventory illustration for BugBaas, a mature insect collecting nature RPG. An opened small woodland treasure chest made from dark carved acorn wood and aged brass clasps, emerald leaf trim, glowing amber nectar crystals and a tiny polished silver beetle wing charm inside, a few gold pollen motes close to the lid. Full chest seen three quarter view, lid open, very readable single silhouette at 140 pixels. Hand painted high end 3D game asset, realistic wood and metal texture, emerald forest green and warm gold palette, restrained magical glow, sophisticated rather than toy-like. Actual transparent alpha background, no rectangular background, no text, no letters, no numbers, no logo, no UI frame. Centered object with 10 percent clear margin. Soft shadow directly beneath only."
+    }
+  ]
+}
