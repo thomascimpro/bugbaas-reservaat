@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {freshV2} from '../game/safariV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo,rollGoBug,transferManyGo} from '../game/goV2';
-import {catchXP,claimTrainer,ensureTrainer,grantXP,levelXP,trainerLevel} from '../game/trainerV2';
+import {catchXP,catchStreakDays,CATCH_STREAK_BONUS,claimTrainer,ensureTrainer,grantXP,levelXP,trainerLevel} from '../game/trainerV2';
 import {claimGoDaily,GO_BREAKTHROUGH} from '../game/dailyResearchV2';
 const NOW=Date.UTC(2026,9,20,14);
 function player(){const p=freshV2('trainer','TRAIN123',NOW);ensureField(p,NOW);ensureGo(p,NOW);return p;}
@@ -12,6 +12,40 @@ test('trainer XP grows to level 40, historical catches receive no retroactive re
 });
 test('active catch skill earns more XP; first/new species bonuses are factual and shiny has no separate XP advantage',()=>{
  const p=player(),q=player();assert.equal(catchXP(p,true,NOW,'perfect',true),1420);assert.equal(catchXP(q,true,NOW,'perfect',true),1420);assert.equal(catchXP(p,false,NOW),100);assert.equal(catchXP(q,false,NOW,'great'),200);assert.equal(catchXP(p,false,NOW+86400000),600);
+});
+
+test('catch streak advances once per server UTC day and keeps ordinary first-catch XP unchanged',()=>{
+ const p=player(),dust=p.go!.dust,midnight=Date.UTC(2026,9,21);
+ assert.equal(catchXP(p,false,midnight-1),600);assert.equal(catchXP(p,false,midnight-1),100);
+ assert.deepEqual(p.go!.trainer!.catchStreak,{days:1,lastDay:'2026-10-20'});
+ assert.equal(catchXP(p,false,midnight),600);assert.deepEqual(p.go!.trainer!.catchStreak,{days:2,lastDay:'2026-10-21'});
+ const before=structuredClone(p.go!.trainer!.catchStreak);assert.equal(catchXP(p,false,midnight-1),100);assert.deepEqual(p.go!.trainer!.catchStreak,before);assert.equal(p.go!.trainer!.catchDay,'2026-10-21');assert.equal(p.go!.dust,dust);
+});
+
+test('missed catch days reset the next streak while keeping XP and research stamps',()=>{
+ const p=player();p.go!.trainer!.research={stamps:5,lastDay:'2026-10-19',breakthroughs:0};
+ catchXP(p,false,NOW);catchXP(p,false,NOW+86400000);const xp=p.go!.trainer!.xp,research=structuredClone(p.go!.trainer!.research);
+ assert.equal(catchStreakDays(p.go!.trainer!,'2026-10-22'),2);assert.equal(catchStreakDays(p.go!.trainer!,'2026-10-23'),0);
+ ensureField(p,NOW+3*86400000);ensureGo(p,NOW+3*86400000);assert.equal(p.go!.trainer!.xp,xp);assert.deepEqual(p.go!.trainer!.research,research);
+ assert.equal(catchXP(p,false,NOW+3*86400000),600);assert.equal(p.go!.trainer!.catchStreak!.days,1);assert.deepEqual(p.go!.trainer!.research,research);
+});
+
+test('seventh consecutive catch day grants the small bonus once and starts a fresh cycle afterwards',()=>{
+ const p=player(),dust=p.go!.dust;
+ for(let day=0;day<6;day++)assert.equal(catchXP(p,false,NOW+day*86400000),600);
+ assert.equal(p.go!.dust,dust);assert.equal(catchXP(p,false,NOW+6*86400000),2600);assert.equal(p.go!.dust,dust+CATCH_STREAK_BONUS.dust);assert.equal(p.go!.trainer!.catchStreak!.days,7);
+ assert.equal(catchXP(p,false,NOW+6*86400000+1000),100);assert.equal(p.go!.dust,dust+500);
+ assert.equal(catchStreakDays(p.go!.trainer!,'2026-10-26'),7);assert.equal(catchStreakDays(p.go!.trainer!,'2026-10-27'),0);
+ assert.equal(catchXP(p,false,NOW+7*86400000),600);assert.equal(p.go!.trainer!.catchStreak!.days,1);
+ for(let day=8;day<14;day++)catchXP(p,false,NOW+day*86400000);assert.equal(p.go!.dust,dust+1000);
+});
+
+test('legacy catchDay never creates retrospective streak days or rewards on login, research or same-day catches',()=>{
+ const p=player();p.go!.trainer={xp:1234,claimedLevel:2,catchDay:'2026-10-20',research:{stamps:3,lastDay:'2026-10-19',breakthroughs:0}};const dust=p.go!.dust;
+ ensureGo(p,NOW);assert.equal(p.go!.trainer.catchStreak,undefined);assert.equal(p.go!.trainer.xp,1234);assert.equal(p.go!.dust,dust);
+ assert.equal(catchXP(p,false,NOW),100);assert.equal(p.go!.trainer.catchStreak,undefined);assert.equal(p.go!.dust,dust);
+ assert.equal(catchXP(p,false,NOW+86400000),600);assert.equal(p.go!.trainer.catchStreak!.days,1);assert.equal(p.go!.dust,dust);assert.deepEqual(p.go!.trainer.research,{stamps:3,lastDay:'2026-10-19',breakthroughs:0});
+ assert.equal(catchStreakDays({xp:0,claimedLevel:1,catchDay:''},''),0);
 });
 test('daily research checks server progress and cannot be claimed twice or without completing the requirement',()=>{
  const p=player();for(const id of ['catch','walk','skill'])assert.throws(()=>claimGoDaily(p,id));p.field!.walk={meters:500,dayMeters:500,anchor:null,at:NOW};const basic=p.field!.inventory.basic;claimGoDaily(p,'walk');assert.equal(p.field!.inventory.basic,basic+5);assert.equal(p.go!.dust,150);assert.equal(p.go!.trainer!.xp,300);assert.throws(()=>claimGoDaily(p,'walk'));p.field!.daily.skilled=1;claimGoDaily(p,'skill');assert.equal(p.go!.dust,350);assert.throws(()=>claimGoDaily(p,'fake'));

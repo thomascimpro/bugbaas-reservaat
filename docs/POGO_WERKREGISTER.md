@@ -4,6 +4,18 @@ Bijgewerkt: 20 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog
 
 ## ACTUELE CHECKPOINT
 
+**BB-50: 3D-wereld verder afgewerkt; zevendaagse vangstreeks toegevoegd.**
+- Natuur/gevels — Sol 6.1: bladbomen en coniferen, struiken/bloemen/riet en contactschaduwen; warme daken, dakranden, ramen en deuren. Echte Polygon/MultiPolygon-footprints en binnenhoven behouden. Instancing/batching met vaste limieten; geen begroeiing op wegen, water of gebouwen, hoge begroeiing vrij rond trainer.
+- 3D-personages — Sol 6.1-opvolger `world_actors_finish`: cosmetisch vloeiende GPS-beweging en kijkrichting, buddy, echte beschikbare insectclips, kleine idlebeweging en postcooldownkleuren. Ranger heeft alleen een idle-`Animation`, geen nieuwe loopclip. Alleen werkelijk geladen soorten schakelen hun fallbackportret uit. Dag/nachtbelichting en opruiming van gedeelde resources bijgewerkt.
+- Wereldoppervlak — Sol 6.1-opvolger `world_surface_finish`: 64px gras/bos/waterpatronen, oeverlijnen op bestaande watergeometrie, warme wegen/paden en dag/nachtpalet. Geen nieuwe kaartbron of verzonnen terrein.
+- Camera/GPS — `/root`: schuiner kaartbeeld, trainer lager in beeld, bovenaanzicht/3D-knop, vrij rondkijken en opnieuw volgen via GPS-knop. Laatste kaart blijft staan bij kort GPS-verlies; vangen/posten blijven afhankelijk van verse GPS. Afsluitfout tijdens camerabeweging opgelost.
+- Vangstreeks — Sol 6.1 `g1_g3_map`: één voortgang per echte server-UTC-vangdag, ook autocatch. Na een gemiste dag opnieuw beginnen; na dag 7 een nieuwe cyclus. Dag 7 +500 stof en +2000 XP bovenop de bestaande beloningen; gewone vangsten blijven 100 stof. Geen login-/trainingbonus of terugwerkende beloning. Onderzoeksstempels blijven apart behouden.
+- Getest: **237/237 functietests, TypeScript en webbuild groen**. Logs `.local/world-polish-tests.log`, `.local/world-polish-typecheck.log`, `.local/world-polish-web-build.log`.
+- Browser: stad/bos/meadow/waterkant op 320/390/430px; 3D/bovenaanzicht, GPS-beweging, handmatig slepen/hercentreren, kaart→collectie→terug, dag/nachtpresentatie en dag-7-vangst/resultaat/profiel/herladen. Geen browserfouten. [Wereldscreenshots/resultaten](../../bugbaas-world-polish/checks.json) en [vangstreeksresultaten](../../bugbaas-world-polish/streak-checks.json). Gesimuleerde GPS; dagpreview en zes eerdere vangdagen alleen in QA ingesteld. Geen echte wandeling of toestelprestatiemeting.
+- Geen productiepublicatie, spelerreset of nieuwe betaalde dienst. De bestaande live postenbron en echte Android-/cloudherstelgates blijven open. Postmodellen zijn verbeterd; geen werkende live postenbron claimen.
+
+Vorige afgeronde spelonderdelen:
+
 **Vier PoGO-achtige spelonderdelen uitgevoerd met drie Sol 6.1-agents en root.** Branch `codex/bb-01a-qa-records`.
 - Collectie — `g1_g3_map`: naam/dex, CP-bereiken, IV-sterren, shiny/favoriet/buddy/team; combineren met `&`/`!`, snelkeuzes, reset en waarschuwing vóór een power-up een leaguegrens overschrijdt.
 - Onderzoek — `g4_android`: één stempel per serverdag bij de eerste opgehaalde dagtaak. Gemiste dagen wissen niets. Iedere zeven stempels automatisch 500 nectarstof, 10 veldnetten, 2 lokbloemen en 1 snelle TM. Bestaande claims/XP blijven behouden.
@@ -24,8 +36,8 @@ Bijgewerkt: 20 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog
 | BB-10 | Menu/navigatie/camera | Web gebouwd, eerder browsergetest. Alleen hertesten bij relevante wijzigingen. |
 | BB-20 | Dex/collectie/detail/evolutie | Web gebouwd: #001–030 en rups → mot; uitgebreid zoeken en CP-grenswaarschuwing getest. Native detail nog 2D-fallback. |
 | BB-30 | 3D-bugs en shiny-art | 30 soorten en 60 portretten gebouwd; eerdere artcontrole beschikbaar. |
-| BB-40 | Tas/dagtaken/trainer/buddy/vrienden/PvP | Web gebouwd; uitgebreid met zevenstempelboek, echte cadeaus en vriendschapsharten. Nieuwe flows browsergetest met twee QA-spelers. |
-| BB-50 | Webkaart/GPS/vangen | Kaartbebouwing hersteld; stad/bos en navigatie op drie telefoonbreedtes browsergetest. |
+| BB-40 | Tas/dagtaken/trainer/buddy/vrienden/PvP | Web gebouwd; stempelboek, cadeaus, vriendschap en zevendaagse vangstreeks getest. PvP-regels behouden. |
+| BB-50 | Webkaart/GPS/vangen | Werelddecor, geveldetails, beweging, dag/nacht, camera en GPS-overgang bijgewerkt; vier biomen op drie telefoonbreedtes browsergetest. |
 | BB-60 | Android | GPS-start/stop-race opgelost, 7 gerichte tests groen. Echte uitvoering geblokkeerd door Java-loopback en ADB unauthorized. Fysieke wandeling/GPU/accu open. |
 | BB-70 | Posten/routes | Cache/foutafhandeling verbeterd, 10 gerichte tests groen. Toegestane betrouwbare live bron en veilige buitenroute open; providerblokkade niet omzeilen. |
 | BB-80 | Nesten/raids | Later, niet gebouwd. |

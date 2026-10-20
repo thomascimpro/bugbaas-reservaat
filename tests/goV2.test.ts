@@ -9,7 +9,9 @@ import {makeGoBattle,actGoBattle,advanceGoBattle} from '../game/goBattleV2';
 import {GoServiceV2,parseGo} from '../server/goServiceV2';
 import {SqliteStore} from '../server/sqlite';
 import type {PlayerV2} from '../game/typesV2';
-import {requireFieldLocation} from '../game/walkingV2';
+import {requireFieldLocation,locate} from '../game/walkingV2';
+import {rng} from '../game/catalogV2';
+import {catchChance} from '../game/fieldV2';
 const NOW=Date.UTC(2026,9,19,13),FIX={lat:52.0928,lng:5.1339,accuracy:8};
 
 test('GO location requires a recent measurement timestamp and refuses cached replays without changing progress',async()=>{const store=new SqliteStore(':memory:');try{let now=NOW;const service=new GoServiceV2(store,'local',()=>now);let v=await service.state('gps-time');const send=(fix:unknown)=>service.command('gps-time',{type:'worldLocate',fix,commandId:randomUUID(),expectedRevision:v.player.revision});for(const fix of [FIX,{...FIX,timestamp:now-15001},{...FIX,timestamp:now+5001},{...FIX,timestamp:NaN}])await assert.rejects(()=>send(fix),/GPS/);assert.equal((await service.state('gps-time')).player.walking,undefined);v=await send({...FIX,timestamp:now});const before=structuredClone(v.player);now+=1000;v=await send({...FIX,timestamp:NOW});assert.deepEqual(v.player.walking,before.walking);assert.deepEqual(v.player.go,before.go);await assert.rejects(()=>send({...FIX,timestamp:NOW-1}),/nieuwe GPS/);await assert.rejects(()=>send({...FIX,lat:FIX.lat+.0001,timestamp:NOW}),/gewijzigd/);}finally{store.close();}});
@@ -34,3 +36,28 @@ test('autocatcher is idle at rest, requires sustained motion, consumes one stand
 
 test('a fainted bug lets the trainer choose a replacement without spending the voluntary switch timer',()=>{const r=makeGoBattle(player(),player('b'),'replace',NOW,true);r.teams[1][0].hp=1;r.teams[0][0].go.fast='bite';actGoBattle(r,0,'fast',null,NOW);advanceGoBattle(r,NOW+500);assert.equal(r.active[1],0);assert.ok(r.replaceAt[1]>NOW);assert.throws(()=>actGoBattle(r,0,'fast',null,NOW+600));actGoBattle(r,1,'switch',2,NOW+700);assert.equal(r.active[1],2);assert.equal(r.swapAt[1],0);assert.equal(r.replaceAt[1],0);});
 test('map CP is stable across reopening and a retried capture pays GO resources only once',async()=>{const store=new SqliteStore(':memory:');try{let now=NOW;const service=new GoServiceV2(store,'local',()=>now);let v=await service.state('cp');const cmd=async(type:string,data:Record<string,unknown>={})=>v=await service.command('cp',{type,...data,...(type==='worldLocate'?{fix:{...(data.fix as object),timestamp:now}}:{}),commandId:randomUUID(),expectedRevision:v.player.revision});await cmd('worldLocate',{fix:FIX});const id=v.player.walking!.spawns[0].id;await cmd('worldEncounter',{spawn:id});const cp=v.player.field!.encounter!.cp;await cmd('worldEncounter',{spawn:id});assert.equal(v.player.field!.encounter!.cp,cp);await store.run(['v2Players:cp'],d=>{(d.get('v2Players:cp') as PlayerV2).field!.inventory.royal=1;});now+=2500;const c={type:'worldCast',encounter:v.player.field!.encounter!.id,net:'royal',bait:null,trace:[{x:.5,y:1,t:0},{x:.5,y:.42,t:1150}],commandId:randomUUID(),expectedRevision:v.player.revision};const a=await service.command('cp',c),b=await service.command('cp',c);assert.equal(a.player.go!.dust,100);assert.equal(b.player.go!.dust,100);assert.equal(stats(a.player.specimens.at(-1)!).cp,cp);assert.deepEqual(a.player.go,b.player.go);}finally{store.close();}});
+
+test('seventh-day active capture reports the actual 600 dust and command replay cannot pay it twice',async()=>{
+ const store=new SqliteStore(':memory:');try{
+  let now=NOW;const service=new GoServiceV2(store,'local',()=>now);let v=await service.state('streak-cast');
+  const cmd=async(type:string,data:Record<string,unknown>={})=>v=await service.command('streak-cast',{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});
+  await store.run(['v2Players:streak-cast'],d=>{const p=d.get('v2Players:streak-cast') as PlayerV2;p.go!.dust=123;p.go!.trainer={xp:1234,claimedLevel:2,catchDay:'2026-10-18',catchStreak:{days:6,lastDay:'2026-10-18'}};p.field!.inventory.royal=1;});
+  await cmd('worldLocate',{fix:{...FIX,timestamp:now}});await cmd('worldEncounter',{spawn:v.player.walking!.spawns[0].id});
+  const priorXP=v.player.go!.trainer!.xp;now+=2500;
+  const c={type:'worldCast',encounter:v.player.field!.encounter!.id,net:'royal',bait:null,trace:[{x:.5,y:1,t:0},{x:.5,y:.42,t:1150}],commandId:randomUUID(),expectedRevision:v.player.revision};
+  const caught=await service.command('streak-cast',c),again=await service.command('streak-cast',c);
+  assert.equal(caught.player.go!.dust,723);assert.equal(caught.player.field!.lastCast!.nectar,600);assert.equal(caught.player.walking!.lastCatch!.nectar,600);assert.equal(caught.player.field!.lastCast!.xp,caught.player.go!.trainer!.xp-priorXP);assert.ok(caught.player.field!.lastCast!.xp!>=2600);assert.equal(caught.player.go!.trainer!.catchStreak!.days,7);assert.deepEqual(again.player.go,caught.player.go);
+ }finally{store.close();}
+});
+
+test('automatic seventh-day capture shares the streak award and reports actual dust; failed autocatch earns no streak day',()=>{
+ const store=new SqliteStore(':memory:');try{
+  const service=new GoServiceV2(store,'local',()=>NOW),p=player(),fix={...FIX,lat:FIX.lat+.0002,timestamp:NOW};
+  p.go!.trainer!.catchDay='2026-10-18';p.go!.trainer!.catchStreak={days:6,lastDay:'2026-10-18'};
+  locate(p,fix,'streak-auto-map',NOW);p.walking!.spawns=[{id:'streak-auto',species:'ant',...fix,expiresAt:NOW+900000}];p.go!.auto.enabled=true;p.go!.auto.moving=1;p.go!.motion={fix:{...FIX,timestamp:NOW-15000},at:NOW-15000};
+  const failed=structuredClone(p),dust=p.go!.dust,xp=p.go!.trainer!.xp,auto=service as unknown as {auto:(player:PlayerV2,now:number,secret:string)=>void};let success='streak',failure='streak';
+  while(rng(success+':auto')()>=catchChance('ant','basic',null))success+='x';while(rng(failure+':auto')()<catchChance('ant','basic',null))failure+='x';
+  auto.auto(failed,NOW,failure);assert.equal(failed.go!.auto.last!.caught,false);assert.equal(failed.go!.dust,dust);assert.equal(failed.go!.trainer!.catchStreak!.days,6);
+  auto.auto(p,NOW,success);assert.equal(p.go!.auto.last!.caught,true);assert.equal(p.go!.dust,dust+600);assert.equal(p.walking!.lastCatch!.nectar,600);assert.equal(p.go!.trainer!.xp,xp+2600);assert.equal(p.go!.trainer!.catchStreak!.days,7);
+ }finally{store.close();}
+});
