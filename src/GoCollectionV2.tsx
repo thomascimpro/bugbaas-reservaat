@@ -4,7 +4,7 @@ import {DEX_SPECIES,dexNumber,dexStatus,EVOLUTIONS} from '../game/dexV2';
 import {collectionSearch,COLLECTION_SEARCH_HELP,powerUpLeagueWarning} from '../game/collectionSearchV2';
 import {useGoBack} from './GoBackV2';
 import {ShinyBackdropV2,ShinyMarkV2} from './WorldEffectsV2';
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
 import {Platform,Pressable,ScrollView,Share,Text,TextInput,View} from 'react-native';
 import type {GameViewV2} from '../game/typesV2';
 import {SPECIES,species} from '../game/catalogV2';
@@ -16,11 +16,13 @@ import type {RunV2} from './ShopViewV2';
 import {SpriteView,Scene} from './artV2';
 import {Button,Counter,Glyph,Help,IconButton,Label,Panel,Title,V,v,useInfo} from './uiV2';
 export function GoCollectionV2({view,run,busy,initialSpecimenId,open}:{view:GameViewV2;run:RunV2;busy:boolean;initialSpecimenId?:string;open?:(name:string)=>void}){
+ const scroll=useRef<ScrollView>(null);
  const p=view.player,g=p.go!,[selected,setSelected]=useState(()=>p.specimens.some(s=>s.id===initialSpecimenId&&s.go)?initialSpecimenId!:''),[query,setQuery]=useState(''),[sort,setSort]=useState<'cp'|'recent'|'shiny'>('cp'),[favoriteOnly,setFavoriteOnly]=useState(false),[perfectOnly,setPerfectOnly]=useState(false),[multi,setMulti]=useState(false),[selection,setSelection]=useState<string[]>([]),[details,setDetails]=useState<'iv'|'items'|'moves'|'evolve'|null>(null),info=useInfo();
  const matches=collectionSearch(query,{buddy:p.buddy,team:g.team}),bugs=p.specimens.filter(s=>matches(s)&&(sort!=='shiny'||s.shiny)&&(!favoriteOnly||s.favorite)&&(!perfectOnly||appraisal(s)===4)).sort((a,b)=>sort==='recent'?b.obtainedAt-a.obtainedAt:stats(b).cp-stats(a).cp),s=p.specimens.find(s=>s.id===selected&&s.go),st=s?stats(s):null,key=s?family(s.species):'',cost=s?powerCost(s.go!.level):null,second=s?secondCost(s.species):{dust:0,candy:0},nextStats=s&&cost?stats(s,{...s.go!,level:s.go!.level+.5}):st,nextCP=nextStats?.cp??0;
  // Consume a navigation ID only when it changes; refreshed player data must not reopen a closed detail.
  useEffect(()=>{setSelected(p.specimens.some(s=>s.id===initialSpecimenId&&s.go)?initialSpecimenId!:'');setDetails(null);},[initialSpecimenId]);
  useEffect(()=>{if(selected&&!s){setSelected(current=>current===selected?'':current);setDetails(null);}},[selected,s?.id]);
+ useEffect(()=>{if(selected)scroll.current?.scrollTo({y:0,animated:false});},[selected]);
  const searchTerms=query.toLowerCase().split('&').map(t=>t.trim()).filter(Boolean),filtered=!!query.trim()||favoriteOnly||perfectOnly||sort==='shiny',resetFilters=()=>{setQuery('');setFavoriteOnly(false);setPerfectOnly(false);setSort('cp');};
  const toggleSearch=(term:string)=>setQuery(searchTerms.includes(term)?searchTerms.filter(t=>t!==term).join('&'):[...searchTerms,term].join('&'));
  useGoBack(!!s,()=>{if(details)setDetails(null);else setSelected('');return true;});
@@ -29,7 +31,7 @@ export function GoCollectionV2({view,run,busy,initialSpecimenId,open}:{view:Game
  const action=(type:string,params:Record<string,unknown>={})=>void run(type,{id:s?.id,...params});
  const changeMove=(slot:'fast'|number)=>{if(!s)return;const pool=movePool(s.species),options=slot==='fast'?pool.fast.filter(m=>m!==s.go!.fast).map(m=>FAST[m].name):pool.charged.filter(m=>!s.go!.charged.includes(m)).map(m=>CHARGED[m].name);info.show({title:'Andere aanval?',icon:'attack',body:'Dit kost 1 '+(slot==='fast'?'snelle':'opgeladen')+' TM. De server kiest willekeurig: '+options.join(' of ')+'. De huidige aanval wordt vervangen.',action:{label:'Gebruik TM',onPress:()=>{void run('goTM',{id:s.id,slot}).then(ok=>{if(ok)info.hide();});}}});};
 
- return <ScrollView contentContainerStyle={{padding:15,paddingTop:87,gap:13,paddingBottom:100}}>
+ return <ScrollView ref={scroll} contentContainerStyle={{padding:15,paddingTop:87,gap:13,paddingBottom:100}}>
   <View style={[v.row,{justifyContent:'space-between'}]}><View style={{flex:1}}><Title>{s?species(s.species).name:'Bugs'}</Title></View>{s?<IconButton name="close" label="Sluit bug" onPress={()=>{setSelected('');setDetails(null);}}/>:<Help title="Je gevangen bugs" body="Hier staan je echte kaartvangsten en eerdere coconvondsten. Elke bug heeft eigen CP, level, IV's en aanvallen. Power-ups gebruiken algemene nectarstof en soortnectar. Een lager aanval-IV kan in een CP-league ruimte geven voor meer HP en verdediging. Sterren alleen bepalen niet welke build het beste is."/>}</View>
   {s&&st?<><Panel style={{padding:12,gap:13}}>
    <View style={{height:235,alignItems:'center',justifyContent:'center',borderRadius:23,overflow:'hidden'}}><Scene index={species(s.species).habitat}/>{s.shiny&&<ShinyBackdropV2/>}<View style={{position:'absolute',top:12}}><Label bold color="white">CP {st.cp}</Label></View><BugStageV2 id={s.species} shiny={s.shiny}/><CPArcV2 level={s.go!.level}/><View style={{position:'absolute',left:12,bottom:9}}><Label small color="white">Lv. {s.go!.level}</Label></View><View style={{position:'absolute',right:10,top:10}}><IconButton name="star" label="Favoriet" active={s.favorite} onPress={()=>action('favorite')}/></View></View>
