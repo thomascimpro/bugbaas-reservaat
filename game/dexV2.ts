@@ -33,7 +33,10 @@ export const DEX_SPECIES=[
  {number:28,id:'termite'},
  {number:29,id:'tigerbeetle'},
  {number:30,id:'tortoisebeetle'},
+ {number:31,id:'beetlegrub'},
 ] as const;
 export const dexNumber=(id:string)=>DEX_SPECIES.find(s=>s.id===id)?.number;
 export function dexStatus(p:PlayerV2,id:string){const caught=!!p.go?.dex?.includes(id);return {seen:caught||!!p.go?.entries&&Object.hasOwn(p.go.entries,id),caught,shiny:caught&&p.shinies.includes(id)};}
-export const EVOLUTIONS:Record<string,{to:string;candy:number}>={caterpillar:{to:'moth',candy:50}};
+export const EVOLUTIONS:Record<string,{to:string;candy:number}>={caterpillar:{to:'moth',candy:50},beetlegrub:{to:'hercules',candy:50}};
+// Keep the published adults' currency keys so existing nectar and XL stay usable.
+export function candyFamily(id:string){if(id==='beetlegrub')return 'hercules';return id==='moth'?'caterpillar':id;}

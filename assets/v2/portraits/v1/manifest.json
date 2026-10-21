@@ -332,6 +332,17 @@
       "size": 1024,
       "normal": "tortoisebeetle.png",
       "shiny": "tortoisebeetle-shiny.png"
+    },
+    "beetlegrub": {
+      "model": "BeetleGrub",
+      "palette": [
+        "#282145",
+        "#885DCF",
+        "#78F0D0"
+      ],
+      "size": 1024,
+      "normal": "beetlegrub.png",
+      "shiny": "beetlegrub-shiny.png"
     }
   }
 }

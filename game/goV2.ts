@@ -1,11 +1,15 @@
-import {ensureTrainer,catchXP} from './trainerV2';
+import {ensureTrainer,catchXP,grantXP} from './trainerV2';
+import {EVOLUTIONS,candyFamily} from './dexV2';
+import type {EchoProgress} from './echoArenaV2';
+import type {GoCocoonsProgress} from './goCocoonsV2';
+import type {BossProgress} from './goBossV2';
 import type {TrainerProgress} from './trainerV2';
 import type {SiteProgress} from './worldSitesV2';
 import {rng,species} from './catalogV2';
 import {checkV2 as check} from './shopV2';
 import type {PlayerV2,Specimen} from './typesV2';
 import type {Fix} from './walkingV2';
-export type Element='bug'|'flying'|'poison'|'grass'|'ground'|'rock'|'steel'|'dark'|'normal';
+export type Element='bug'|'flying'|'poison'|'grass'|'ground'|'rock'|'steel'|'dark'|'normal'|'fire'|'water';
 export type League='great'|'ultra'|'master';
 export const LEAGUES={great:{name:'Great League',cap:1500},ultra:{name:'Ultra League',cap:2500},master:{name:'Master League',cap:Infinity}};
 export const HELD={
@@ -13,9 +17,14 @@ export const HELD={
  thorn:{name:'Doorn',icon:'itemThorn',attack:1.03,defense:1,hp:1,hint:'+3% aanval'},
  bark:{name:'Schors',icon:'itemBark',attack:1,defense:1.05,hp:1,hint:'+5% verdediging'},
  wing:{name:'Windveer',icon:'itemWing',attack:1.01,defense:1.01,hp:1.01,hint:'+1% op alle stats'},
+ honey:{name:'Honinghart',icon:'itemHoney',attack:1.02,defense:1,hp:1.02,hint:'+2% aanval en HP'},
+ dew:{name:'Dauwkristal',icon:'itemDew',attack:1,defense:1.03,hp:1.03,hint:'+3% verdediging en HP'},
+ moon:{name:'Maanzaad',icon:'itemMoon',attack:1.06,defense:1,hp:.94,hint:'+6% aanval · −6% HP'},
+ sun:{name:'Zonnekern',icon:'itemSun',attack:1,defense:.95,hp:1.10,hint:'+10% HP · −5% verdediging'},
 } as const;
 export type Held=keyof typeof HELD;
 export const FAST={
+ water:{name:'Waterslag',type:'water',power:3,energy:3,turns:1},
  bite:{name:'Insectenbeet',type:'bug',power:3,energy:3,turns:1},
  fury:{name:'Snijslag',type:'bug',power:2,energy:4,turns:1},
  wing:{name:'Vleugelslag',type:'flying',power:5,energy:8,turns:2},
@@ -24,6 +33,8 @@ export const FAST={
  leaf:{name:'Bladsnede',type:'grass',power:9,energy:4,turns:2},
 } as const;
 export const CHARGED={
+ stream:{name:'Stroomstoot',type:'water',power:55,energy:35},
+ flare:{name:'Zonnegloed',type:'fire',power:90,energy:55},
  cut:{name:'Kruissnede',type:'bug',power:55,energy:35},
  buzz:{name:'Zoemgolf',type:'bug',power:100,energy:60},
  air:{name:'Luchtstoot',type:'flying',power:55,energy:40},
@@ -38,6 +49,7 @@ export type Fast=keyof typeof FAST;
 export type Charged=keyof typeof CHARGED;
 export type GoBug={level:number;iv:[number,number,number];fast:Fast;charged:Charged[];item:Held|null};
 export type GoProfile={
+ echo?:EchoProgress;cocoons?:GoCocoonsProgress;bosses?:BossProgress;
  sites?:SiteProgress;trainer?:TrainerProgress;
  entries?:Record<string,{seenAt:number|null;caughtAt:number|null;shinyAt:number|null}>;dexVersion?:1;
  ratedDay?:string;ratedCount?:number;dex?:string[];version:1;dust:number;candy:Record<string,number>;xl:Record<string,number>;items:Record<Held,number>;fastTMs:number;chargedTMs:number;
@@ -47,11 +59,13 @@ export type GoProfile={
  motion?:{fix:Fix;at:number};buddyMeters:number;
 };
 export function eligible(s:Specimen){return !!s.go||['walking','cocoon','metamorphosis'].includes(s.source);}
-export const family=(id:string)=>id==='moth'?'caterpillar':id;
+export const family=candyFamily;
 export function movePool(id:string):{types:Element[];fast:Fast[];charged:Charged[]}{
+ if(id==='beetlegrub')return {types:['bug'],fast:['bite','fury'],charged:['cut','earth','rock']};
+ if(id==='giantwaterbug'||id==='waterstrider')return {types:['bug','water'],fast:['water','bite'],charged:['stream','cut','earth']};
+ if(id==='moth')return {types:['bug','flying'],fast:['wing','fury'],charged:['air','buzz','cut','flare']};
  if(/moth|fly|butterfly|lacewing|bee(?!tle)|wasp|hornet|luna|morpho|peacock/.test(id))return {types:['bug','flying'],fast:['wing','fury'],charged:['air','buzz','cut']};
  if(/mantis|leaf|aphid|stick|weevil|caterpillar|silkworm/.test(id))return {types:['bug','grass'],fast:['fury','leaf'],charged:['cut','seed','buzz']};
- if(id==='giantwaterbug')return {types:['bug','dark'],fast:['bite','mud'],charged:['dark','earth','cut']};
  if(id==='antlion')return {types:['bug','ground'],fast:['mud','bite'],charged:['earth','rock','cut']};
  if(id==='cockroach')return {types:['bug','dark'],fast:['bite','fury'],charged:['dark','cut','buzz']};
  if(id==='termite')return {types:['bug','ground'],fast:['mud','fury'],charged:['earth','cut','rock']};
@@ -61,8 +75,8 @@ export function movePool(id:string):{types:Element[];fast:Fast[];charged:Charged
 }
 export function rollGoBug(kind:string,seed:string):GoBug{const random=rng(seed),pool=movePool(kind);return {level:1+Math.floor(random()*20),iv:[Math.floor(random()*16),Math.floor(random()*16),Math.floor(random()*16)],fast:pool.fast[Math.floor(random()*pool.fast.length)],charged:[pool.charged[Math.floor(random()*pool.charged.length)]],item:null};}
 export function ensureGo(p:PlayerV2,now:number){
- if(!p.go){p.go={version:1,dust:0,candy:{},xl:{},items:{leaf:0,thorn:0,bark:0,wing:0},fastTMs:0,chargedTMs:0,team:[],league:'great',rating:1000,wins:0,losses:0,history:[],battle:null,queue:null,auto:{enabled:false,lastAt:0,attempted:[],status:'off',moving:0},buddyMeters:0};p.revision++;}
- const g=p.go;ensureTrainer(p);g.dex??=[];g.entries??={};g.dexVersion=1;for(const id of g.dex)g.entries[id]??={seenAt:null,caughtAt:null,shinyAt:null};for(const s of p.specimens.filter(eligible)){g.entries[s.species]??={seenAt:s.obtainedAt,caughtAt:s.obtainedAt,shinyAt:s.shiny?s.obtainedAt:null};if(!g.dex.includes(s.species))g.dex.push(s.species);}for(const s of p.specimens.filter(eligible))if(!s.go){if(!g.dex.includes(s.species))g.dex.push(s.species);s.go=rollGoBug(s.species,p.uid+':existing:'+s.id);g.candy[family(s.species)]=(g.candy[family(s.species)]??0)+3;g.dust+=100;p.revision++;}
+ if(!p.go){p.go={version:1,dust:0,candy:{},xl:{},items:{leaf:0,thorn:0,bark:0,wing:0,honey:0,dew:0,moon:0,sun:0},fastTMs:0,chargedTMs:0,team:[],league:'great',rating:1000,wins:0,losses:0,history:[],battle:null,queue:null,auto:{enabled:false,lastAt:0,attempted:[],status:'off',moving:0},buddyMeters:0};p.revision++;}
+ const g=p.go;for(const key of Object.keys(HELD) as Held[])g.items[key]??=0;ensureTrainer(p);g.dex??=[];g.entries??={};g.dexVersion=1;for(const id of g.dex)g.entries[id]??={seenAt:null,caughtAt:null,shinyAt:null};for(const s of p.specimens.filter(eligible)){g.entries[s.species]??={seenAt:s.obtainedAt,caughtAt:s.obtainedAt,shinyAt:s.shiny?s.obtainedAt:null};if(!g.dex.includes(s.species))g.dex.push(s.species);}for(const s of p.specimens.filter(eligible))if(!s.go){if(!g.dex.includes(s.species))g.dex.push(s.species);s.go=rollGoBug(s.species,p.uid+':existing:'+s.id);g.candy[family(s.species)]=(g.candy[family(s.species)]??0)+3;g.dust+=100;p.revision++;}
  if(!p.specimens.some(s=>s.id===p.buddy&&eligible(s)))p.buddy=p.specimens.find(eligible)?.id??'';
  if(p.field&&p.field.inventory.basic===undefined)p.field.inventory.basic=30;
  return g;
@@ -90,7 +104,14 @@ export function teamGo(p:PlayerV2,raw:unknown,league:unknown,npc=false){const is
 export function transferGo(p:PlayerV2,id:unknown){const s=ownedGo(p,id);check(!s.favorite&&!s.shiny&&s.id!==p.buddy&&!p.go!.team.includes(s.id),'Favorieten, shinies, buddy en teambugs zijn beschermd.');p.go!.candy[family(s.species)]=(p.go!.candy[family(s.species)]??0)+1;p.specimens=p.specimens.filter(o=>o.id!==s.id);}
 export function transferManyGo(p:PlayerV2,ids:unknown){check(Array.isArray(ids)&&ids.length>0&&ids.length<=50&&new Set(ids).size===ids.length,'Kies 1 tot 50 verschillende bugs.');const specimens=ids.map(id=>ownedGo(p,id));check(specimens.every(s=>!s.favorite&&!s.shiny&&s.id!==p.buddy&&!p.go!.team.includes(s.id)),'Favorieten, shinies, buddy en teambugs zijn beschermd.');for(const s of specimens)transferGo(p,s.id);}
 export function markGoSeen(p:PlayerV2,kind:string,now:number){const g=p.go!;g.entries??={};g.entries[kind]??={seenAt:now,caughtAt:null,shinyAt:null};}
-export function evolveGo(p:PlayerV2,id:unknown,seed:string,now=Date.now()){const s=ownedGo(p,id),g=p.go!,key=family(s.species);check(s.species==='caterpillar'&&(g.candy[key]??0)>=50,'Een rups heeft 50 soortnectar nodig.');g.candy[key]-=50;s.species='moth';const slots=s.go!.charged.length,moves=rollGoBug(s.species,seed);s.go={...s.go!,fast:moves.fast,charged:slots>1?[...new Set([...moves.charged,...movePool(s.species).charged])].slice(0,2):moves.charged};if(!g.dex!.includes('moth'))g.dex!.push('moth');if(!p.discovered.includes('moth'))p.discovered.push('moth');if(s.shiny&&!p.shinies.includes('moth'))p.shinies.push('moth');markGoSeen(p,s.species,now);g.entries![s.species].caughtAt??=now;if(s.shiny)g.entries![s.species].shinyAt??=now;}
-export function awardGoCatch(p:PlayerV2,s:Specimen,seed:string,bait:string|null=null,grade?:string,curved=false){const g=p.go!,key=family(s.species),newKind=!g.dex!.includes(s.species);catchXP(p,newKind,s.obtainedAt,grade,curved);s.go=rollGoBug(s.species,seed);g.dust+=100;g.candy[key]=(g.candy[key]??0)+(bait==='fruit'?6:bait==='silver'?7:3);const random=rng(seed+':extra');let held:Held|null=null;if(s.go.level>=15&&random()<.1)g.xl[key]=(g.xl[key]??0)+1;if(random()<.04){const items=Object.keys(HELD) as Held[];held=items[Math.floor(random()*items.length)];g.items[held]++;}if(!g.dex!.includes(s.species))g.dex!.push(s.species);markGoSeen(p,s.species,s.obtainedAt);g.entries![s.species].caughtAt??=s.obtainedAt;if(s.shiny)g.entries![s.species].shinyAt??=s.obtainedAt;if(!p.buddy)p.buddy=s.id;return held;}
+export function evolveGo(p:PlayerV2,id:unknown,seed:string,now=Date.now()){
+ const s=ownedGo(p,id),g=p.go!,key=family(s.species),evo=EVOLUTIONS[s.species];
+ check(evo&&(g.candy[key]??0)>=evo.candy,'Deze evolutie vraagt voldoende soortnectar.');
+ g.candy[key]-=evo.candy;s.species=evo.to;const slots=s.go!.charged.length,moves=rollGoBug(s.species,seed);
+ s.go={...s.go!,fast:moves.fast,charged:slots>1?[...new Set([...moves.charged,...movePool(s.species).charged])].slice(0,2):moves.charged};
+ if(!g.dex!.includes(s.species))g.dex!.push(s.species);if(!p.discovered.includes(s.species))p.discovered.push(s.species);if(s.shiny&&!p.shinies.includes(s.species))p.shinies.push(s.species);
+ markGoSeen(p,s.species,now);g.entries![s.species].caughtAt??=now;if(s.shiny)g.entries![s.species].shinyAt??=now;
+}
+export function awardGoCatch(p:PlayerV2,s:Specimen,seed:string,bait:string|null=null,grade?:string,curved=false){const g=p.go!,key=family(s.species),newKind=!g.dex!.includes(s.species);if(s.source==='cocoon')grantXP(p,100+(newKind?500:0));else catchXP(p,newKind,s.obtainedAt,grade,curved);s.go=rollGoBug(s.species,seed);g.dust+=100;g.candy[key]=(g.candy[key]??0)+(bait==='fruit'?6:bait==='silver'?7:3);const random=rng(seed+':extra');let held:Held|null=null;if(s.go.level>=15&&random()<.1)g.xl[key]=(g.xl[key]??0)+1;if(random()<.04){const items=Object.keys(HELD) as Held[];held=items[Math.floor(random()*items.length)];g.items[held]++;}if(!g.dex!.includes(s.species))g.dex!.push(s.species);markGoSeen(p,s.species,s.obtainedAt);g.entries![s.species].caughtAt??=s.obtainedAt;if(s.shiny)g.entries![s.species].shinyAt??=s.obtainedAt;if(!p.buddy)p.buddy=s.id;return held;}
 
 export function buddyDistance(kind:string){const tier=species(kind).tier;return tier<=2?1000:tier<=5?3000:5000;}

@@ -30,4 +30,5 @@ export const bugPortraits:Record<string,readonly [ImageSourcePropType,ImageSourc
  'termite':[require('../assets/v2/portraits/v1/termite.webp'),require('../assets/v2/portraits/v1/termite-shiny.webp')],
  'tigerbeetle':[require('../assets/v2/portraits/v1/tigerbeetle.webp'),require('../assets/v2/portraits/v1/tigerbeetle-shiny.webp')],
  'tortoisebeetle':[require('../assets/v2/portraits/v1/tortoisebeetle.webp'),require('../assets/v2/portraits/v1/tortoisebeetle-shiny.webp')],
+ 'beetlegrub':[require('../assets/v2/portraits/v1/beetlegrub.webp'),require('../assets/v2/portraits/v1/beetlegrub-shiny.webp')],
 };

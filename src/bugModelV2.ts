@@ -34,6 +34,7 @@ export const SHINY_PALETTES:Record<string,readonly [string,string,string]>={
  termite:['#313256','#8A92C5','#F2DBA8'],
  tigerbeetle:['#3D2945','#BB6E9A','#F4CF87'],
  tortoisebeetle:['#293E45','#53BEB0','#F2DEA0'],
+ beetlegrub:['#282145','#885DCF','#78F0D0'],
 };
 export type BugModel={root:THREE.Group;clips:THREE.AnimationClip[]};
 export async function loadBugModel(name:string):Promise<BugModel>{const g=await new GLTFLoader().loadAsync('/models/'+name+'.glb');return {root:g.scene,clips:g.animations};}

@@ -1,7 +1,10 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {DEX_SPECIES,dexNumber,dexStatus} from '../game/dexV2';
+import {DEX_SPECIES,EVOLUTIONS,candyFamily,dexNumber,dexStatus} from '../game/dexV2';
+import {habitatWeight} from '../game/habitatsV2';
+import {readFile} from 'node:fs/promises';
+import sharp from 'sharp';
 import {freshV2} from '../game/safariV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo,evolveGo,rollGoBug,stats,movePool} from '../game/goV2';
@@ -11,13 +14,33 @@ import {GoServiceV2} from '../server/goServiceV2';
 import {SqliteStore} from '../server/sqlite';
 const NOW=Date.UTC(2026,9,20,12);
 
-test('published dex numbers stay stable when nine species are appended and each has complete playable data',()=>{
+test('published dex numbers stay stable as species are appended and each has complete playable data',()=>{
+ assert.deepEqual(DEX_SPECIES.slice(0,30).map(s=>s.id),['beetle','ant','aphid','weevil','moth','earwig','grasshopper','lacewing','dungbeetle','mantis','butterfly','divingbeetle','waterstrider','hoverfly','leafhopper','cricket','stick','leaf','silverfish','hercules','caterpillar','antlion','cockroach','cranefly','flea','giantwaterbug','mayfly','termite','tigerbeetle','tortoisebeetle']);
  assert.equal(dexNumber('beetle'),1);assert.equal(dexNumber('moth'),5);assert.equal(dexNumber('caterpillar'),21);
  assert.equal(new Set(DEX_SPECIES.map(s=>s.number)).size,DEX_SPECIES.length);
  assert.deepEqual([...DEX_SPECIES.map(s=>s.id)].sort(),Object.keys(WALK_MODELS).sort());
  for(const s of DEX_SPECIES){assert.equal(species(s.id).id,s.id);assert.ok(WALK_WEIGHTS[s.id]>0);assert.ok(movePool(s.id).fast.length>=2);assert.ok(movePool(s.id).charged.length>=3);}
  const at=(id:string)=>stats({id,source:'walking',species:id,level:1,shiny:false,favorite:false,obtainedAt:NOW,hearts:0,item:null,go:{...rollGoBug(id,'fixed'),level:50,iv:[15,15,15]}});
  for(const s of DEX_SPECIES.slice(21)){const actual=at(s.id),ceiling=at('hercules');assert.ok(actual.cp<=ceiling.cp);}
+});
+
+test('two larval families use real adult targets, preserve historic nectar keys and spawn in suitable habitats',()=>{
+ assert.equal(dexNumber('beetlegrub'),31);
+ assert.deepEqual(EVOLUTIONS,{caterpillar:{to:'moth',candy:50},beetlegrub:{to:'hercules',candy:50}});
+ for(const [from,{to,candy}] of Object.entries(EVOLUTIONS)){assert.ok(dexNumber(from));assert.ok(dexNumber(to));assert.ok(candy>0);assert.equal(candyFamily(from),candyFamily(to));}
+ assert.equal(candyFamily('hercules'),'hercules');assert.equal(candyFamily('moth'),'caterpillar');assert.equal(candyFamily('ant'),'ant');
+ assert.equal(WALK_MODELS.beetlegrub,'BeetleGrub');assert.ok(habitatWeight('beetlegrub',WALK_WEIGHTS.beetlegrub,'forest')>0);
+ for(const biome of ['urban','meadow','wetland','unknown'] as const)assert.equal(habitatWeight('beetlegrub',WALK_WEIGHTS.beetlegrub,biome),0);
+});
+
+test('new beetle larva has the licensed animated model and distinct transparent 1024px normal/shiny portraits',async()=>{
+ const model=await readFile('public/models/BeetleGrub.glb'),source=await readFile('assets/3d/gobkit-insects/BeetleGrub.glb');assert.deepEqual(model,source);
+ assert.equal(model.toString('utf8',0,4),'glTF');assert.equal(model.readUInt32LE(4),2);assert.equal(model.readUInt32LE(8),model.length);
+ const gltf=JSON.parse(model.toString('utf8',20,20+model.readUInt32LE(12)));assert.ok(gltf.meshes.length>0);assert.ok(gltf.animations.some((clip:{name:string})=>clip.name==='idle'));
+ assert.match(await readFile('assets/3d/gobkit-insects/LICENSE.txt','utf8'),/CC0 1\.0/);
+ const manifest=JSON.parse(await readFile('assets/v2/portraits/v1/manifest.json','utf8'));assert.equal(manifest.species.beetlegrub.model,'BeetleGrub');
+ const images=[];for(const suffix of ['','-shiny']){const file=`assets/v2/portraits/v1/beetlegrub${suffix}.webp`,metadata=await sharp(file).metadata();assert.equal(metadata.width,1024);assert.equal(metadata.height,1024);assert.equal(metadata.hasAlpha,true);const {data,info}=await sharp(file).ensureAlpha().raw().toBuffer({resolveWithObject:true});let visible=0;for(let y=0;y<1024;y++)for(let x=0;x<1024;x++){if(data[(y*1024+x)*info.channels+3]>5){visible++;assert.ok(x>=12&&x<=1011&&y>=12&&y<=1011,'portrait stays within frame');}}assert.ok(visible>10000);images.push(data);}
+ assert.notDeepEqual(images[0],images[1]);
 });
 test('dex backfill preserves existing ownership, currency, IV and unknown historical dates without awarding twice',()=>{
  const p=freshV2('dex-old','OLD12345',NOW);ensureField(p,NOW);ensureGo(p,NOW);

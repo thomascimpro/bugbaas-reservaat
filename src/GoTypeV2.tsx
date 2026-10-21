@@ -11,6 +11,8 @@ export const GO_TYPES:Record<Element,{name:string;color:string;icon:Icon}>={
  poison:{name:'Gif',color:'#9A69A9',icon:'venom'},grass:{name:'Gras',color:'#4E9462',icon:'leaf'},
  ground:{name:'Grond',color:'#A58353',icon:'crush'},rock:{name:'Steen',color:'#988B58',icon:'fortify'},
  steel:{name:'Staal',color:'#708E95',icon:'shield'},dark:{name:'Duister',color:'#626176',icon:'itemMoon'},normal:{name:'Normaal',color:'#939686',icon:'star'},
+ fire:{name:'Vuur',color:'#D8753D',icon:'itemSun'},
+ water:{name:'Water',color:'#4A92BF',icon:'itemDew'},
 };
 export function GoTypeBadge({type,compact=false}:{type:Element;compact?:boolean}){
  const t=GO_TYPES[type],info=useInfo();

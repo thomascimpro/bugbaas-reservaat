@@ -1,6 +1,7 @@
 import {rng} from './catalogV2';
 import type {PlayerV2} from './typesV2';
 import type {Fix} from './walkingV2';
+import type {Held} from './goV2';
 import {catchWild,CATCH_RADIUS,distance} from './walkingV2';
 import {checkV2 as check} from './shopV2';
 
@@ -24,7 +25,7 @@ export type Grade='miss'|'hit'|'nice'|'great'|'perfect';
 export const GRADES={miss:{name:'Mis',bonus:0,multiplier:0},hit:{name:'Gevangen!',bonus:0,multiplier:1},nice:{name:'Raak!',bonus:1,multiplier:1.15},great:{name:'Mooi!',bonus:2,multiplier:1.3},perfect:{name:'Perfect!',bonus:4,multiplier:1.5}} as const;
 export type NetPoint={x:number;y:number;t:number};
 export type FieldEncounter={cp?:number;id:string;spawn:string;createdAt:number;attempt:number;failures:number;bait:Bait|null;shiny:boolean};
-export type CastResult={xp?:number;held?:'leaf'|'thorn'|'bark'|'wing';candy?:number;cp?:number;id:string;spawn:string;species:string;attempt:number;outcome:'caught'|'escaped'|'fled'|'miss';grade:Grade;curved:boolean;chance:number;nectar:number;shiny:boolean;at:number};
+export type CastResult={xp?:number;held?:Held;candy?:number;cp?:number;id:string;spawn:string;species:string;attempt:number;outcome:'caught'|'escaped'|'fled'|'miss';grade:Grade;curved:boolean;chance:number;nectar:number;shiny:boolean;at:number};
 export type FieldState={lure?:{id:string;day:string;startedAt:number;expiresAt:number;lastAt:number;lastMeters:number;spawned:number;caught:number;seed?:string};walk?:{meters:number;dayMeters:number;anchor:Fix|null;at:number};cocoon?:{id:string;km:2|5;startedMeters:number;stage:number;seed?:string}|null;lastHatch?:{id:string;species:string;shiny:boolean;nectar:number;parts:number;at:number};inventory:Record<FieldItem,number>;encounters?:Record<string,FieldEncounter>;encounter:FieldEncounter|null;lastCast:CastResult|null;daily:{day:string;supply:boolean;catches:number;species:string[];skilled:number;claimed:string[];buddyFed?:boolean;buddyWalk?:boolean};total:{catches:number;perfect:number;curved:number};lastNet:Net};
 const dayKey=(now:number)=>new Date(now).toISOString().slice(0,10);
 export function ensureField(p:PlayerV2,now:number):FieldState{
