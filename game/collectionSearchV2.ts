@@ -3,7 +3,7 @@ import {dexNumber} from './dexV2';
 import {appraisal,stats} from './goV2';
 import type {Specimen} from './typesV2';
 
-export const COLLECTION_SEARCH_HELP='Naam of dexnummer: bosmier of #002. CP: cp1500 (precies), cp-1500 (maximaal), cp100-1500 (bereik), cp1500- (minimaal). IV: 0* t/m 4*; 4* is perfect. Ook: shiny, favoriet, buddy en team. Combineer met &: shiny&cp-1500. Sluit uit met !: !favoriet&!team. Snelkeuzes voegen een filter toe; tik nogmaals om het weg te halen.';
+export const COLLECTION_SEARCH_HELP='Soortnaam, bijnaam of dexnummer: bosmier of #002. CP: cp1500 (precies), cp-1500 (maximaal), cp100-1500 (bereik), cp1500- (minimaal). IV: 0* t/m 4*; 4* is perfect. Ook: shiny, favoriet, buddy en team. Combineer met &: shiny&cp-1500. Sluit uit met !: !favoriet&!team. Snelkeuzes voegen een filter toe; tik nogmaals om het weg te halen.';
 
 export function collectionSearch(query:string,context:{buddy:string;team:readonly string[]}){
  const terms=query.toLowerCase().split('&').map(t=>t.trim()).filter(Boolean);
@@ -21,7 +21,7 @@ export function collectionSearch(query:string,context:{buddy:string;team:readonl
    if(exact)matches=cp===Number(exact[1]);
    else if(range&&(range[1]||range[2]))matches=cp>=(range[1]?Number(range[1]):0)&&cp<=(range[2]?Number(range[2]):Infinity);
   }else if(/^#?\d+$/.test(term))matches=dexNumber(bug.species)===Number(term.replace('#',''));
-  else matches=species(bug.species).name.toLowerCase().includes(term);
+  else matches=species(bug.species).name.toLowerCase().includes(term)||!!bug.nickname?.toLowerCase().includes(term);
   return exclude?!matches:matches;
  });
 }

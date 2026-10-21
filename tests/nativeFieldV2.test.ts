@@ -53,6 +53,11 @@ test('native catch navigation can select a specimen only within the collection d
  for(const name of ['map','profile','account','ranked'])assert.equal(parseNativeFieldRequest(JSON.stringify({...message,name})),null);
  assert.equal(parseNativeFieldRequest(JSON.stringify({...message,token:'private'})),null);
 });
+test('native field menu opens the existing cocoon screen without permitting specimen selection there',()=>{
+ const message={kind:'navigate',name:'cocoons'};
+ assert.deepEqual(parseNativeFieldRequest(JSON.stringify(message)),message);
+ assert.equal(parseNativeFieldRequest(JSON.stringify({...message,specimenId:'owned-bug'})),null);
+});
 test('GPS bridge forwards exact native timestamps once, deduplicates Android delivery and changes permission only once',async()=>{
  const outgoing:unknown[]=[],window=new EventTarget() as EventTarget&Record<string,any>,document=new EventTarget() as EventTarget&Record<string,any>,navigator={} as Record<string,any>;
  window.ReactNativeWebView={postMessage:(raw:string)=>outgoing.push(JSON.parse(raw))};

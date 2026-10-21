@@ -3,6 +3,8 @@ import {EVOLUTIONS,candyFamily} from './dexV2';
 import type {EchoProgress} from './echoArenaV2';
 import type {GoCocoonsProgress} from './goCocoonsV2';
 import type {BossProgress} from './goBossV2';
+import type {GoTradeProgress} from './goTradeV2';
+import type {GoJournalEntry} from './goJournalV2';
 import type {TrainerProgress} from './trainerV2';
 import type {SiteProgress} from './worldSitesV2';
 import {rng,species} from './catalogV2';
@@ -47,8 +49,9 @@ export const CHARGED={
 } as const;
 export type Fast=keyof typeof FAST;
 export type Charged=keyof typeof CHARGED;
-export type GoBug={level:number;iv:[number,number,number];fast:Fast;charged:Charged[];item:Held|null};
+export type GoBug={traded?:{id:string;at:number;from:string};level:number;iv:[number,number,number];fast:Fast;charged:Charged[];item:Held|null};
 export type GoProfile={
+ journal?:GoJournalEntry[];trades?:GoTradeProgress;
  echo?:EchoProgress;cocoons?:GoCocoonsProgress;bosses?:BossProgress;
  sites?:SiteProgress;trainer?:TrainerProgress;
  entries?:Record<string,{seenAt:number|null;caughtAt:number|null;shinyAt:number|null}>;dexVersion?:1;
@@ -86,6 +89,7 @@ export function stats(s:Specimen,override?:GoBug){const b=override??s.go!;const 
 export function powerCost(level:number){if(level>=50)return null;const dust=[200,400,600,800,1000,1300,1600,1900,2200,2500,3000,3500,4000,4500,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000][Math.min(24,Math.floor((level-1)/2))];const candy=level<11?1:level<21?2:level<26?3:level<31?4:level<33?6:level<35?8:level<37?10:level<39?12:15;return {dust,candy:level<40?candy:0,xl:level>=40?[10,10,12,12,15,15,17,17,20,20][Math.floor(level)-40]:0};}
 export function appraisal(s:Specimen){const total=s.go!.iv.reduce((a,b)=>a+b,0);return total===45?4:total>=37?3:total>=30?2:total>=23?1:0;}
 export function ownedGo(p:PlayerV2,id:unknown){const s=p.specimens.find(s=>s.id===id&&s.go);check(s,'Kies een zelfgevangen bug.');return s;}
+export function renameGo(p:PlayerV2,id:unknown,raw:unknown){const s=ownedGo(p,id);check(typeof raw==='string','Kies een geldige bijnaam.');const name=(raw as string).trim().normalize('NFC');check(name.length<=18&&(!name||/^[\p{L}\p{N} _'’\-]+$/u.test(name)),'Gebruik maximaal 18 letters of cijfers.');if(name)s.nickname=name;else delete s.nickname;}
 export function powerUp(p:PlayerV2,id:unknown){const s=ownedGo(p,id),g=p.go!,cost=powerCost(s.go!.level),key=family(s.species);check(cost&&g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy&&(g.xl[key]??0)>=cost.xl,'Niet genoeg nectarstof, soortnectar of XL.');g.dust-=cost.dust;g.candy[key]-=cost.candy;if(cost.xl)g.xl[key]-=cost.xl;s.go!.level+=.5;}
 export function secondCost(kind:string){const tier=species(kind).tier;return tier<=2?{dust:10000,candy:25}:tier<=4?{dust:50000,candy:50}:tier<=6?{dust:75000,candy:75}:{dust:100000,candy:100};}
 export function secondAttack(p:PlayerV2,id:unknown,seed:string){const s=ownedGo(p,id),g=p.go!,key=family(s.species),cost=secondCost(s.species);check(s.go!.charged.length===1&&g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy,'Niet genoeg nectarstof of soortnectar voor de tweede aanval.');const pool=movePool(s.species).charged.filter(m=>!s.go!.charged.includes(m));s.go!.charged.push(pool[Math.floor(rng(seed)()*pool.length)]);g.dust-=cost.dust;g.candy[key]-=cost.candy;}
