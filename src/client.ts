@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, initializeAuth, signInAnonymously, signInWithEmailAndPassword, linkWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { getAuth, initializeAuth, signInAnonymously, signInWithEmailAndPassword, linkWithCredential, EmailAuthProvider, signOut, sendPasswordResetEmail, sendEmailVerification, reload } from 'firebase/auth';
 import type { Persistence } from 'firebase/auth';
 import { firebaseConfig } from './firebaseConfig';
 import type { Action, ArenaView, GameView, Match, SquadSlot } from '../game/types';
@@ -20,7 +20,7 @@ let localToken = ''; let mode: 'local' | 'cloud' = 'local';
 export class ApiError extends Error { constructor(message: string, public status: number) { super(message); } }
 async function token() { return mode === 'local' ? localToken : auth.currentUser?.getIdToken() ?? ''; }
 async function request<T>(path: string, body?: unknown, anonymous = false): Promise<T> {
-  const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 20000);
+  const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), path==='v2/command'&&(body as {type?:string})?.type==='worldLocate'?8000:20000);
   try {
     const response = await fetch(`${base}/api/game/${path}`, { method: body === undefined ? 'GET' : 'POST', signal: controller.signal,
       headers: { ...(body === undefined ? {} : { 'Content-Type': 'application/json' }), ...(anonymous ? {} : { Authorization: `Bearer ${await token()}` }) },
@@ -50,7 +50,13 @@ export const createArena = (squad: SquadSlot[], format: Match['format']) => requ
 export const joinArena = (code: string, squad: SquadSlot[]) => request<ArenaView>('arena/join', { code: code.trim().toUpperCase(), squad });
 export const actArena = (m: Match, actorId: string, move: 'attack' | 'special', targetId: string) => request<ArenaView>('arena/action', { code: m.code, revision: m.revision, actorId, move, targetId });
 export const leaveArena = () => request<ArenaView>('arena/leave', {});
+export const accountUid=()=>auth.currentUser?.uid??null;
 export const accountEmail = () => auth.currentUser?.email ?? null;
+export const accountDetails = () => ({email:auth.currentUser?.email??null,guest:auth.currentUser?.isAnonymous??true,verified:auth.currentUser?.emailVerified??false});
+export async function logoutV2(){if(mode!=='cloud'||!auth.currentUser||auth.currentUser.isAnonymous)throw new ApiError('Koppel eerst je gastvoortgang aan een e-mailadres.',400);await signOut(auth);await signInAnonymously(auth);return refreshV2();}
+export async function resetAccountPassword(email:string){if(mode!=='cloud')throw new ApiError('Open de online versie voor je account.',400);await sendPasswordResetEmail(auth,email.trim());}
+export async function verifyAccountEmail(){const user=auth.currentUser;if(!user?.email||user.isAnonymous)throw new ApiError('Koppel eerst je e-mailadres.',400);await sendEmailVerification(user);}
+export async function refreshAccountV2(){if(auth.currentUser){await reload(auth.currentUser);await auth.currentUser.getIdToken(true);}return refreshV2();}
 export async function accountLogin(email: string, password: string, link: boolean) {
   if (mode !== 'cloud') throw new ApiError('Accountkoppeling hoort bij de cloudversie. Deze sessie bewaart lokaal.', 400);
   if (link && auth.currentUser?.isAnonymous) await linkWithCredential(auth.currentUser, EmailAuthProvider.credential(email.trim(), password));

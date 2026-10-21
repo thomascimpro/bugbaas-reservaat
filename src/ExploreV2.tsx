@@ -12,12 +12,12 @@ import {useGoBack} from './GoBackV2';
 import {Button,Label,V} from './uiV2';
 
 export const browserExploration=false;
-type Props={view:GameViewV2;run:RunV2;busy:boolean;now:number;open:(name:string,specimenId?:string)=>void;camera?:React.MutableRefObject<MapCameraV2|null>};
+type Props={paused?:boolean;view:GameViewV2;run:RunV2;busy:boolean;now:number;open:(name:string,specimenId?:string)=>void;camera?:React.MutableRefObject<MapCameraV2|null>};
 export function ExploreV2(props:Props){
  const web=useRef<WebView>(null),latest=useRef(props),alive=useRef(true),ready=useRef(false),active=useRef(AppState.currentState==='active'),sequence=useRef(0),generation=useRef(0),watches=useRef(createNativeGPSWatches()),backPending=useRef(false),[problem,setProblem]=useState(''),[loading,setLoading]=useState(true);latest.current=props;
  let uri='';try{uri=nativeFieldURL(gameServerURL,__DEV__);}catch{}
  const send=(value:Record<string,unknown>)=>{if(alive.current&&ready.current)web.current?.postMessage(JSON.stringify({...value,seq:++sequence.current}));};
- const state=()=>{const p=latest.current;send({kind:'state',view:p.view,busy:p.busy,now:p.now,camera:p.camera?.current});};
+ const state=()=>{const p=latest.current;send({kind:'state',view:p.view,busy:p.busy,now:p.now,paused:!!p.paused,camera:p.camera?.current});};
  const stop=()=>{generation.current++;watches.current.stop();};
  const permission=async()=>{const p=await Location.getForegroundPermissionsAsync();send({kind:'permission',state:p.granted?'granted':p.canAskAgain?'prompt':'denied'});return p;};
  const gps=async(action:'get'|'watch'|'clear',id:number)=>{
@@ -34,7 +34,7 @@ export function ExploreV2(props:Props){
   }catch{error(2);}
  };
  useEffect(()=>{alive.current=true;const listener=AppState.addEventListener('change',status=>{active.current=status==='active';if(!active.current)stop();send({kind:'active',active:active.current});if(active.current)void permission();});return()=>{alive.current=false;ready.current=false;stop();listener.remove();};},[]);
- useEffect(()=>{if(ready.current)state();},[props.view.player.revision,props.busy,props.view.player.settings.reducedMotion,props.view.player.settings.largeText]);
+ useEffect(()=>{if(ready.current)state();},[props.view.player.revision,props.busy,props.paused,props.view.player.settings.reducedMotion,props.view.player.settings.largeText]);
  useGoBack(true,()=>{if(!ready.current)return false;backPending.current=true;send({kind:'back'});return true;},50);
  async function message(raw:string){const m=parseNativeFieldRequest(raw);if(!m)return;
   if(m.kind==='ready'){stop();ready.current=true;setLoading(false);setProblem('');state();send({kind:'active',active:active.current});await permission();}

@@ -1,6 +1,6 @@
 import type {MapCameraV2} from './mapCameraV2';
 
-const fieldCommands=new Set(['worldLocate','worldEncounter','worldCast','fieldSupply','fieldTask','fieldLure','goAuto','poiSpin','routeStart','routePause','routeResume','routeFinish','routeCancel']);
+const fieldCommands=new Set(['worldLocate','worldEncounter','worldFocus','worldCast','fieldSupply','fieldTask','fieldLure','goAuto','poiSpin','routeStart','routePause','routeResume','routeFinish','routeCancel']);
 const destinations=new Set(['map','team','ranked','bugdex','profile','buddy','friends','cocoons','settings','account']);
 export type NativeFieldRequest={kind:'ready'}|{kind:'command';id:string;command:string;params:Record<string,unknown>}|{kind:'navigate';name:string;specimenId?:string;camera?:MapCameraV2}|{kind:'geo';action:'get'|'watch'|'clear';id:number}|{kind:'backResult';handled:boolean};
 export function parseNativeFieldRequest(raw:string):NativeFieldRequest|null{

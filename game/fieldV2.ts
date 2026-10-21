@@ -4,16 +4,18 @@ import type {Fix} from './walkingV2';
 import type {Held} from './goV2';
 import {catchWild,CATCH_RADIUS,distance} from './walkingV2';
 import {checkV2 as check} from './shopV2';
+import {judgeCatchRhythm} from './catchTimingV2';
+import type {CatchFocus} from './catchTimingV2';
 
 export const NETS={
- basic:{name:'Veldnet',multiplier:1,cell:0,color:'#A5B694',hint:'Standaardnet. Actief vangen geeft extra kansen met je zwaai en lokmiddel.'},
+ basic:{name:'Veldnet',multiplier:1,cell:0,color:'#A5B694',hint:'Standaardnet. Actief vangen geeft extra kansen met je timing en lokmiddel.'},
  blue:{name:'Bosnet',multiplier:1.5,cell:1,color:'#368CDA',hint:'50% hogere vangkans.'},
  silk:{name:'Zijdenet',multiplier:2,cell:2,color:'#9C60D6',hint:'Verdubbelt de vangkans.'},
  royal:{name:'Oerwortelnet',multiplier:100,cell:3,color:'#E7B545',hint:'Een rake zwaai vangt altijd. Een misser verbruikt dit net niet.'},
 } as const;
 export const BAITS={
  pollen:{name:'Lokbloem',multiplier:1.5,cell:4,color:'#E8C358',hint:'50% hogere vangkans voor je volgende rake zwaai.'},
- dew:{name:'Dauwdruppel',multiplier:1,cell:5,color:'#66BCD6',hint:'De ring krimpt langzamer. De bug vlucht niet na deze poging.'},
+ dew:{name:'Dauwdruppel',multiplier:1,cell:5,color:'#66BCD6',hint:'Het vangritme gaat rustiger. De bug vlucht niet na deze poging.'},
  fruit:{name:'Bosframboos',multiplier:1,cell:6,color:'#DA7955',hint:'Verdubbelt de soortnectar van deze vangst.'},
  gold:{name:'Gouden lokbloem',multiplier:2.5,cell:7,color:'#EDC45E',hint:'Vangkans ×2,5 voor de volgende rake zwaai.'},
  silver:{name:'Zilverbes',multiplier:1.8,cell:8,color:'#B5CEDE',hint:'80% hogere vangkans en 7 soortnectar bij een normale vangst.'},
@@ -24,7 +26,7 @@ export type FieldItem=Net|Bait;
 export type Grade='miss'|'hit'|'nice'|'great'|'perfect';
 export const GRADES={miss:{name:'Mis',bonus:0,multiplier:0},hit:{name:'Gevangen!',bonus:0,multiplier:1},nice:{name:'Raak!',bonus:1,multiplier:1.15},great:{name:'Mooi!',bonus:2,multiplier:1.3},perfect:{name:'Perfect!',bonus:4,multiplier:1.5}} as const;
 export type NetPoint={x:number;y:number;t:number};
-export type FieldEncounter={cp?:number;id:string;spawn:string;createdAt:number;attempt:number;failures:number;bait:Bait|null;shiny:boolean};
+export type FieldEncounter={focus?:CatchFocus;cp?:number;id:string;spawn:string;createdAt:number;attempt:number;failures:number;bait:Bait|null;shiny:boolean};
 export type CastResult={xp?:number;held?:Held;candy?:number;cp?:number;id:string;spawn:string;species:string;attempt:number;outcome:'caught'|'escaped'|'fled'|'miss';grade:Grade;curved:boolean;chance:number;nectar:number;shiny:boolean;at:number};
 export type FieldState={lure?:{id:string;day:string;startedAt:number;expiresAt:number;lastAt:number;lastMeters:number;spawned:number;caught:number;seed?:string};walk?:{meters:number;dayMeters:number;anchor:Fix|null;at:number};cocoon?:{id:string;km:2|5;startedMeters:number;stage:number;seed?:string}|null;lastHatch?:{id:string;species:string;shiny:boolean;nectar:number;parts:number;at:number};inventory:Record<FieldItem,number>;encounters?:Record<string,FieldEncounter>;encounter:FieldEncounter|null;lastCast:CastResult|null;daily:{day:string;supply:boolean;catches:number;species:string[];skilled:number;claimed:string[];buddyFed?:boolean;buddyWalk?:boolean};total:{catches:number;perfect:number;curved:number};lastNet:Net};
 const dayKey=(now:number)=>new Date(now).toISOString().slice(0,10);
@@ -37,7 +39,7 @@ export function claimFieldSupply(p:PlayerV2,now:number){const f=ensureField(p,no
 export const FIELD_TASKS=[
  {id:'catch',name:'Vang 3 bugs',goal:3,icon:'leaf',reward:{blue:3,pollen:1}},
  {id:'variety',name:'Vang 2 soorten',goal:2,icon:'book',reward:{silk:1,dew:2}},
- {id:'skill',name:'Maak een mooie zwaai',goal:1,icon:'star',reward:{silk:1,fruit:1}},
+ {id:'skill',name:'Maak een mooie vangpoging',goal:1,icon:'star',reward:{silk:1,fruit:1}},
 ] as const;
 export function taskProgress(f:FieldState,id:string){return id==='catch'?f.daily.catches:id==='variety'?f.daily.species.length:f.daily.skilled;}
 export function claimFieldTask(p:PlayerV2,id:unknown,now:number){const f=ensureField(p,now),task=FIELD_TASKS.find(t=>t.id===id);check(task&&!f.daily.claimed.includes(task.id)&&taskProgress(f,task.id)>=task.goal,'Deze onderzoekstaak is nog niet klaar of al opgehaald.');grantField(p,task.reward,now);f.daily.claimed.push(task.id);}
@@ -55,8 +57,8 @@ export function catchChance(kind:string,net:Net,bait:Bait|null,grade:Grade='hit'
 export function encounterWild(p:PlayerV2,id:unknown,nonce:string,now:number){const f=ensureField(p,now),w=p.walking;check(w&&typeof id==='string'&&w.seed,'Open eerst de kaart.');const s=w.spawns.find(s=>s.id===id);check(s&&s.expiresAt>now&&!w.caught.includes(s.id),'Deze bug is verdwenen.');check(now-w.at<45000&&distance(w.fix,s)<=CATCH_RADIUS,'Vernieuw GPS of loop dichterbij.');f.encounters??={};for(const id of Object.keys(f.encounters))if(!w.spawns.some(s=>s.id===id))delete f.encounters[id];if(f.encounters[s.id]){f.encounter=f.encounters[s.id];return;}f.encounter={id:nonce,spawn:s.id,createdAt:now,attempt:0,failures:0,bait:null,shiny:rng(w.seed+':shiny:'+s.id)()<1/64};f.encounters[s.id]=f.encounter;}
 export function castNet(p:PlayerV2,raw:Record<string,unknown>,nonce:string,now:number){
  const f=ensureField(p,now),e=f.encounter,w=p.walking;check(e&&w&&w.seed&&e.id===raw.encounter,'Open deze vangst opnieuw.');const s=w.spawns.find(s=>s.id===e.spawn);check(s&&s.expiresAt>now&&!w.caught.includes(s.id),'Deze bug is gevangen of verdwenen.');check(now-w.at<45000&&distance(w.fix,s)<=CATCH_RADIUS,'Vernieuw je GPS of loop dichterbij.');check(!!p.go||w.count<60,'Vandaag zijn alle vangbeloningen opgehaald.');check(!f.lastCast||now-f.lastCast.at>=900,'Wacht even op je vorige zwaai.');check(typeof raw.net==='string'&&Object.hasOwn(NETS,raw.net),'Kies een net.');check(raw.bait===null||typeof raw.bait==='string'&&Object.hasOwn(BAITS,raw.bait),'Kies een lokmiddel.');const net=raw.net as Net,bait=e.bait??raw.bait as Bait|null;check(!e.bait||raw.bait===null||raw.bait===e.bait,'Het lokmiddel blijft actief tot een rake zwaai.');check(net==='basic'||f.inventory[net]>0,'Dit net is op.');if(!e.bait&&bait)check(f.inventory[bait]>0,'Dit lokmiddel is op.');
- const swing=judgeNet(raw.trace,bait);check(swing.duration<=now-e.createdAt+400,'Je zwaai is nog niet klaar.');const chance=catchChance(s.species,net,bait,swing.grade,swing.curved,p.go?0:e.failures),roll=rng(w.seed+':cast:'+s.id+':'+e.attempt)();
- if(net!=='basic'&&(net!=='royal'||swing.grade!=='miss'))f.inventory[net]--;if(!e.bait&&bait){f.inventory[bait]--;e.bait=bait;}f.lastNet=net==='royal'?'basic':net;e.attempt++;if(swing.grade==='great'||swing.grade==='perfect')f.daily.skilled++;
+ check(!(raw.trace!==undefined&&raw.rhythm!==undefined),'Kies één vangmethode.');const swing=raw.rhythm!==undefined?judgeCatchRhythm(raw.rhythm,e.focus,bait,now):judgeNet(raw.trace,bait);check(swing.duration<=now-e.createdAt+400,'Je zwaai is nog niet klaar.');const chance=catchChance(s.species,net,bait,swing.grade,swing.curved,p.go?0:e.failures),roll=rng(w.seed+':cast:'+s.id+':'+e.attempt)();
+ if(net!=='basic'&&(net!=='royal'||swing.grade!=='miss'))f.inventory[net]--;if(!e.bait&&bait){f.inventory[bait]--;e.bait=bait;}f.lastNet=net==='royal'?'basic':net;delete e.focus;e.attempt++;if(swing.grade==='great'||swing.grade==='perfect')f.daily.skilled++;
  let outcome:CastResult['outcome']='miss',nectar=0;
  if(swing.grade!=='miss'){
   if(roll<chance){const prior=p.nectar,first=f.daily.catches===0;catchWild(p,s.id,now);const base=p.nectar-prior,extra=GRADES[swing.grade].bonus+(swing.curved?1:0),multiplier=bait==='fruit'||bait==='silver'?2:1;nectar=(base+extra)*multiplier+(first?5:0);p.nectar+=nectar-base;w.lastCatch!.nectar=nectar;f.daily.catches++;if(!f.daily.species.includes(s.species))f.daily.species.push(s.species);f.total.catches++;if(swing.grade==='perfect')f.total.perfect++;if(swing.curved)f.total.curved++;outcome='caught';if(s.source==='lure'&&f.lure)f.lure.caught++;f.encounter=null;}
