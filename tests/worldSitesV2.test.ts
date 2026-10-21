@@ -42,8 +42,22 @@ test('world provider shares pending and cached reads and serializes requests acr
  now+=30000;await provider({...FIX,lat:FIX.lat+.02},()=>true,true);assert.equal(calls,2);
 });
 
-test('HTTP 406 and 403 stop provider-wide retries without switching endpoint or identity',async()=>{
- for(const status of [406,403]){let now=NOW,calls=0;const provider=createWorldSitesProvider(async()=>{calls++;return new Response('refused',{status});},()=>now);
+test('configured world source is the only requested endpoint with unchanged request headers',async()=>{
+ const endpoint='https://approved.example/overpass/interpreter',urls:string[]=[];
+ const provider=createWorldSitesProvider(async(url,options)=>{urls.push(String(url));assert.deepEqual(options?.headers,{'User-Agent':'BugBaas-Preview/0.1','Content-Type':'application/x-www-form-urlencoded'});assert.equal(options?.method,'POST');return Response.json({elements});},()=>NOW,endpoint);
+ const result=await provider(FIX,()=>true,true);assert.equal(result.available,true);assert.equal(result.posts.length,1);assert.deepEqual(urls,[endpoint]);
+});
+
+test('invalid configured world sources stay unavailable without a request or default fallback',async()=>{
+ for(const endpoint of ['', '/api/interpreter','http://approved.example/api/interpreter','https://user:pass@approved.example/api','https://@approved.example/api','https://approved.example/api?key=secret','https://approved.example/api?','https://approved.example/api#fragment','https://approved.example/api#',' https://approved.example/api','https:\\approved.example/api']){
+  let calls=0;const provider=createWorldSitesProvider(async()=>{calls++;return Response.json({elements});},()=>NOW,endpoint);
+  for(const lat of [FIX.lat,FIX.lat+.02])assert.deepEqual(await provider({...FIX,lat},()=>true,true),{posts:[],routes:[],available:false,dataAt:0});
+  assert.equal(calls,0,endpoint);
+ }
+});
+
+test('HTTP 406 and 403 stop default and configured provider-wide retries without switching endpoint or identity',async()=>{
+ for(const endpoint of [undefined,'https://approved.example/api/interpreter'])for(const status of [406,403]){let now=NOW,calls=0;const provider=createWorldSitesProvider(async(url,options)=>{calls++;assert.equal(url,endpoint??'https://overpass-api.de/api/interpreter');assert.deepEqual(options?.headers,{'User-Agent':'BugBaas-Preview/0.1','Content-Type':'application/x-www-form-urlencoded'});return new Response('refused',{status});},()=>now,endpoint);
   assert.equal((await provider(FIX,()=>true,true)).available,false);
   now+=86400000;for(const lat of [FIX.lat,FIX.lat+.02,FIX.lat+.04]){const result=await provider({...FIX,lat},()=>true,true);assert.equal(result.available,false);assert.deepEqual(result.posts,[]);assert.deepEqual(result.routes,[]);}assert.equal(calls,1);
  }

@@ -41,15 +41,21 @@ async function responseText(response:Response){
  try{for(;;){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>MAX_BODY_BYTES)throw new Error('World data too large');text+=decoder.decode(value,{stream:true});}return text+decoder.decode();}
  finally{await reader.cancel().catch(()=>{});reader.releaseLock();}
 }
-export function createWorldSitesProvider(request:typeof fetch=fetch,clock:()=>number=Date.now){
+function worldSitesUrl(configured:string|undefined){
+ if(configured===undefined)return 'https://overpass-api.de/api/interpreter';
+ try{const url=new URL(configured);if(!/^https:\/\//i.test(configured)||/[\s\\?#]/.test(configured)||url.username||url.password||configured.split('/')[2].includes('@')||!url.hostname)return null;return url.href;}catch{return null;}
+}
+export function createWorldSitesProvider(request:typeof fetch=fetch,clock:()=>number=Date.now,configuredUrl:string|undefined=process.env.GAME_WORLD_SITES_URL){
+ const endpoint=worldSitesUrl(configuredUrl);
  const cache=new Map<string,CacheEntry>();let busy=false,nextRequestAt=0,blocked=false,failures=0;
  return async function(fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean,waitForNetwork=false):Promise<WorldSites>{
+  if(endpoint===null)return {posts:[],routes:[],available:false,dataAt:0};
   const lat=Math.round(fix.lat*100)/100,lng=Math.round(fix.lng*100)/100,key=lat+','+lng;let entry=cache.get(key);
   if((!entry||entry.until<=clock())&&!entry?.pending&&!blocked&&!busy&&clock()>=nextRequestAt){
    const dy=.012,dx=.012/Math.max(.15,Math.cos(lat*Math.PI/180)),box=[lat-dy,lng-dx,lat+dy,lng+dx].join(','),query=`[out:json][timeout:8];(node["tourism"~"^(artwork|information|viewpoint|picnic_site)$"](${box});node["historic"~"^(memorial|monument)$"](${box});node["amenity"="drinking_water"](${box});way["highway"~"^(footway|path|pedestrian|steps)$"](${box}););out geom;`;
    entry={until:0,data:entry?.data??[],available:false,at:entry?.at??0};const current=entry;busy=true;nextRequestAt=clock()+MIN_REQUEST_MS;
    current.pending=(async()=>{try{
-    const r=await request('https://overpass-api.de/api/interpreter',{method:'POST',body:new URLSearchParams({data:query}),headers:{'User-Agent':'BugBaas-Preview/0.1','Content-Type':'application/x-www-form-urlencoded'},signal:AbortSignal.timeout(12000)});
+    const r=await request(endpoint,{method:'POST',body:new URLSearchParams({data:query}),headers:{'User-Agent':'BugBaas-Preview/0.1','Content-Type':'application/x-www-form-urlencoded'},signal:AbortSignal.timeout(12000)});
     if(!r.ok){
      // A refusal is not a reason to rotate endpoints or identity. Stop until restart.
      if(r.status===403||r.status===406)blocked=true;

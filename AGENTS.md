@@ -10,6 +10,6 @@
 8. Gebruik agents bij gebruikersverzoek met afgebakende taken en gescheiden bestanden. Eén chat/agent schrijft aan een bestand; behoud wijzigingen van anderen. Bij agentuitval: meld de beperking en ga zelf verder waar mogelijk.
 9. Geen tokens, sleutels, precieze woonlocaties of QA-databases in Git. Historische auteurs niet raden en geen ongeteste successen claimen.
 
-**Nu:** BB-01a en de BB-50 kaartfix zijn klaar. BB-60 GPS-opruiming en BB-70 bronfouten/cache zijn verbeterd; Collectiezoeken, onderzoeksstempels, cadeaus/vriendschap en vangstfeedback zijn toegevoegd; 3D-wereld/camera/dag-nacht en zevendaagse vangstreeks zijn nu ook bijgewerkt; 237 tests, TypeScript, webbuild en gerichte browserflows groen. Live postenbron en echte Android-uitvoering blijven open; herhaal bekende blokkades niet. Extra QA-automatisering is geparkeerd.
+**Nu:** BB-01a/BB-50 klaar; actuele vangst/detail/upgrade/buddyloop browsergetest. Best/Eindhoven: 36 kaarttegels, 42 spawns en adresgebouw gecontroleerd; stops/routes nog 0 door onbeschikbare bron. 245 tests en TypeScript groen. Debug-APK bouwt met bestaande korte Java-tempinstelling; actuele native uitvoering nog niet bewezen na automatisch geweigerde Metro-start. Live postenbron, fysieke wandeling en cloudherstel blijven open; herhaal bekende blokkades niet. Extra QA-automatisering is geparkeerd.
 
 Werkplan: `docs/superpowers/plans/2026-10-20-bugbaas-selectieve-qa-en-tracking.md`.

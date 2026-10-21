@@ -1,8 +1,15 @@
 # BugBaas — actuele voortgang
 
-Bijgewerkt: 20 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
+Bijgewerkt: 21 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
 
 ## ACTUELE CHECKPOINT
+
+**BB-53: Best/Eindhoven gecontroleerd; bronconfiguratie voorbereid en releasegrenzen bijgewerkt.**
+- Browser op het opgegeven adres in Best, Best Wilhelminaplein/Dorpsplein/Wilhelminapark en Eindhoven Markt/Stadswandelpark. Adrespositie via PDOK; parkposities uit officiële toerismebronnen. **36 kaarttegelverzoeken, 42 spawns, geen kaart-/browserfouten**. Pannen over 773/774 m, hercentreren, 320/390/430 px en echte UI-vangst in Best-park gecontroleerd. [Browserbewijs](../../bugbaas-best-eindhoven/checks.json).
+- Onafhankelijke BAG-uitsnede: adresgebouw aanwezig; representatieve binnenpunten van **16/16 BAG-panden met status `Pand in gebruik`** liggen in een OSM-gebouw of binnen 3 m van de contour. Overige BAG-objecten: 11 gesloopt, 2 ten onrechte opgevoerd en 1 bouw gestart. Alle 42 spawns voldoen aan kaartgeometrie; de 7 bij het adres liggen ook buiten de BAG-panden. Dit bewijst geen identieke gevels/daken. [Bronvergelijking](../../bugbaas-best-eindhoven/source-checks.json); adrescoördinaten alleen in lokale QA-artifacts.
+- **Stops/routes: alle zes locaties 0, bron `unavailable`.** Kaartlabels zijn geen gevalideerde rewardposten. Sol 6.1 `world_surface_finish`: vaste, eigen/expliciet toegestane HTTPS-bron configureerbaar via `GAME_WORLD_SITES_URL` vóór processtart. Ongeldige configuratie doet geen fetch/defaultfallback; 403/406-stop/backoff blijven intact. Geen providerrotatie of nieuwe live queries. **245/245 tests + TypeScript groen**, `.local/best-eindhoven-tests.log` en `.local/best-eindhoven-typecheck.log`.
+- Android: bestaande procesgebonden `JAVA_TOOL_OPTIONS` met korte sockettempmap herstelt Gradle-loopback; eigen QA-emulator was normaal ADB-authorized. Debugbouw slaagde (`.local/bb60-current-debug-build.log`, 222 taken, 2m24s); actuele bronhashes gecontroleerd. Native UI/GPS/achtergrond nog niet bewezen: automatische goedkeuringscontrole weigerde op 21 oktober de eigen Metro-start (`blocked by policy`). Geen andere startmethode, releaseguardwijziging of appdatareset uitgevoerd. Fysieke wandeling blijft open.
+- Cloudcontrole door `g1_g3_map` was read-only: reservaatdatabase `europe-west4`, geen backup/PITR, billing uit; geen cloudherstel uitgevoerd. Online preview draait oudere regels (`bugbaas-standard-2.0.0`); lokale preview de actuele `bugbaas-field-league-1`. Geen productiepublicatie/cloudwrites. Plan blijft open op live posten, actuele native uitvoering/fysieke wandeling en cloudherstel.
 
 **BB-52: bestaande loop volgen → vangen → eigen bug → verbeteren aangesloten; buddyafstand duidelijker.**
 - `/root`: een verre Nearby-bug krijgt een gekoppeld kaartdoel. Binnen 65 m verschijnt de vangknop; verlopen/gevangen doelen verdwijnen en de kaart keert terug naar de trainer. Kaartdoel staat niet over de vangst heen. Naam blijft op smalle schermen op één regel met de volledige toegankelijke naam.
@@ -41,7 +48,7 @@ Vorige afgeronde spelonderdelen:
 - Browser: echte vangst, combinatiezoekfunctie/reset, CP-waarschuwing, zevende stempel/eenmalige beloning en twee spelers die vrienden worden/cadeau sturen/openen. 320/390/430 px bekeken; geen browserfouten. [Screenshots en resultaten](../../bugbaas-pogo-slice/checks.json). Alleen geïsoleerde QA-accounts, ingerichte testvoortgang en gesimuleerde GPS; geen echte wandeling.
 - Eerder afgerond: BB-01a (`4181c33`); kaartbebouwing/GPS-opruiming/providerfouten (`b6fdb4a`). Stad 100 gebouwen en bos 160 bomen eerder browsergetest; geen nieuwe kaartscan nodig voor deze spelonderdelen.
 
-**Resterende concrete blokkade: BB-70 — toegestane werkende live bron voor posten/routes.** Bestaande providerweigering niet opnieuw blijven proberen. Androidbouw blijft apart geblokkeerd door Java-loopback. Extra testselectie/runner/CI bouwen we nu niet; zie het [eenvoudige plan](superpowers/plans/2026-10-20-bugbaas-selectieve-qa-en-tracking.md).
+**Resterende concrete blokkades:** BB-70 heeft een toegestane werkende live bron nodig; bronweigeringen niet blijven herhalen. Android bouwt met de bestaande korte Java-tempinstelling; actuele native uitvoering bleef open na de geweigerde Metro-start. Cloudherstel en fysieke wandeling ontbreken. Extra testselectie/runner/CI bouwen we niet; zie het [eenvoudige plan](superpowers/plans/2026-10-20-bugbaas-selectieve-qa-en-tracking.md).
 
 ## Stand per onderdeel
 | ID | Onderdeel | Stand / resterend |
@@ -54,8 +61,8 @@ Vorige afgeronde spelonderdelen:
 | BB-30 | 3D-bugs en shiny-art | 30 soorten en 60 portretten gebouwd; eerdere artcontrole beschikbaar. |
 | BB-40 | Tas/dagtaken/trainer/buddy/vrienden/PvP | Web gebouwd; stempelboek, cadeaus, vriendschap en zevendaagse vangstreeks getest. PvP-regels behouden. |
 | BB-50 | Webkaart/GPS/vangen | Werelddecor/camera bijgewerkt; verder pannen en volledige vlakke bebouwing hersteld. Acht echte kaartlocaties, twee vangsten en gesimuleerde wandeling gecontroleerd; zie BB-51. |
-| BB-60 | Android | GPS-start/stop-race opgelost, 7 gerichte tests groen. Echte uitvoering geblokkeerd door Java-loopback en ADB unauthorized. Fysieke wandeling/GPU/accu open. |
-| BB-70 | Posten/routes | Cache/foutafhandeling verbeterd, 10 gerichte tests groen. Toegestane betrouwbare live bron en veilige buitenroute open; providerblokkade niet omzeilen. |
+| BB-60 | Android | GPS-race opgelost; korte Java-tempinstelling/Gradle/debugbouw bewezen. Actuele native uitvoering nog open na geweigerde Metro-start. Fysieke wandeling/GPU/accu open. |
+| BB-70 | Posten/routes | Cache/foutafhandeling en vaste toegestane bron configureerbaar; 12 gerichte tests groen. Best/Eindhoven nog zonder stops/routes; live bron en veilige buitenroute open. |
 | BB-80 | Nesten/raids | Later, niet gebouwd. |
 | BB-90 | Release/cloudherstel | Lokale QA-restore geslaagd (600 records); echte cloudrestore, Android-wandeling en productieakkoord ontbreken. |
 

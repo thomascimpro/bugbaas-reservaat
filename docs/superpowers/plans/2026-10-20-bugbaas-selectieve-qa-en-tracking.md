@@ -1,6 +1,6 @@
 # BugBaas — eenvoudig werkplan
 
-Bijgewerkt op 20 oktober 2026. Dit vervangt het uitgebreide negenstappenplan.
+Bijgewerkt op 21 oktober 2026. Dit vervangt het uitgebreide negenstappenplan.
 
 ## Werkwijze
 1. Pak één concrete open speltaak uit het werkregister.
@@ -18,7 +18,7 @@ Geen nieuwe planningsronde of toestemming voor normale fixes. Geen afgeronde fun
 | 3 | **Android (BB-60)** | APK bouwt en draait in de aparte testomgeving; GPS, terug en achtergrond gecontroleerd. Java/ADB-blokkade alleen opnieuw proberen bij een aantoonbare nieuwe oplossing. |
 | 4 | **Releasecontrole (BB-90)** | Relevante tests groen, echte Android-wandeling en veilig cloudherstel bewezen. Productie vraagt afzonderlijk akkoord. |
 
-**BB-50 is afgerond en browsergetest.** GPS-opruiming (BB-60) en providerfouten/cache (BB-70) zijn ook verbeterd en getest. De live bron, echte Android-uitvoering en cloudherstel blijven open; zie het werkregister voor de concrete blokkades.
+**Stand na uitvoering:** BB-50 is afgerond en op acht eerdere plus zes Best/Eindhoven-locaties browsergetest; huidige 245 functietests en TypeScript groen. BB-70 is voorbereid op een eigen/toegestane vaste HTTPS-bron, maar geeft lokaal nog 0 echte stops/routes. BB-60 debugbouw slaagt met de bestaande korte Java-tempinstelling; actuele native uitvoering blijft open na automatisch geweigerde Metro-start. BB-90 blijft open op fysieke wandeling en cloudherstel; geen productiepublicatie. Zie BB-53 in het werkregister voor bewijs en grenzen.
 
 ## Testen zonder onnodig werk
 - Schermwijziging: TypeScript en alleen het betrokken scherm plus terugnavigatie op een telefoonformaat.
