@@ -1,5 +1,7 @@
 # BugBaas Reservaat — projectstart
 
+**Android 0.1.4 testrelease:** [Download APK](https://github.com/thomascimpro/bugbaas-reservaat/releases/download/v0.1.4/BugBaas-Reservaat-0.1.4.apk) · [Release, controlesom en testverslag](https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.4). Deze repository en downloads zijn privé; GitHub-toegang is vereist.
+
 > **Voor iedere nieuwe ontwikkelchat:** lees eerst [AGENTS.md](AGENTS.md). Daar staan het korte werkafspraken en de grenzen voor data en releases.
 
 ## Leesvolgorde (één actuele waarheid)
@@ -11,6 +13,6 @@
 6. [Functioneel Ontwerp](docs/POGO_FO_20261019.md) · [Technisch Ontwerp](docs/POGO_TO_ASSETS_20261019.md) · [Schermschetsen](docs/POGO_SCHERMSCHETSEN_20261019.html).
 
 ## Huidige stap
-BB-00, BB-01a en de kaartbebouwing zijn klaar. GPS-opruiming en foutafhandeling van de locatiebron zijn verbeterd met Sol 6.1-agents. Nu ook uitgebreid collectiezoeken, zeven onderzoeksstempels, cadeaus/vriendschapsharten en nieuwe vangstfeedback. Ook de 3D-wereld, camerabediening en dag/nachtweergave zijn bijgewerkt; zevendaagse vangstreeks toegevoegd. Gecontroleerd met 237 tests, TypeScript, webbuild en gerichte browserflows op drie telefoonbreedtes. Geen productiepublicatie.
+GPS-kaart/3D, vangen, collectie, upgrades, team/PvP, cocons en dag-/vriendenactiviteiten zijn gebouwd. Ruilen, collectienavigatie/bijnamen en het dagboek zijn afgerond. APK 0.1.4/build 5 is ondertekend en op Android uitgevoerd. 302 tests, TypeScript, webbuild, gerichte browser-/cloudcontroles en Android-emulatortests zijn geslaagd. Release-tag `v0.1.4` verwijst naar spelcode `3354649`; daaropvolgende publicatiedocumentatie verandert de APK niet. Geen promotie van de productieomgeving.
 
-**Nog open:** werkende toegestane live bron voor posten/routes, echte Android-uitvoering en cloudherstel. Extra QA-automatisering is geparkeerd; zie het [werkregister](docs/POGO_WERKREGISTER.md).
+**Nog open:** werkende toegestane live bron voor posten/routes, wandelen/toestelprestaties/accu op een echte telefoon en cloudherstel. De gecontroleerde GPS was gesimuleerd. Extra QA-automatisering is geparkeerd; zie het [werkregister](docs/POGO_WERKREGISTER.md).

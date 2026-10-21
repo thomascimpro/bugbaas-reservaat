@@ -4,6 +4,10 @@ Bijgewerkt: 21 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog
 
 ## ACTUELE CHECKPOINT
 
+**BB-62: nieuwe GitHub-repository en downloadbare testrelease gepubliceerd.**
+- [Privérepository](https://github.com/thomascimpro/bugbaas-reservaat), standaardbranch `main`; bestaande BugBaas-repositories ongemoeid. Tag [`v0.1.4`](https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.4) verwijst naar de geteste spelcode `3354649`. APK, SHA256SUMS en beknopt testverslag staan bij de gepubliceerde prerelease. GitHub-toegang is vereist voor privédownloads; geen app-/serverproductiepromotie.
+- De APK daadwerkelijk van GitHub teruggedownload: 159.722.037 bytes; SHA-256 `341e39ae8385084512203dc70190529025d26e38f5b49e505fdeca7e12783b58`, gelijk aan het geteste Android-pakket. Voor upload alle 825 historische Git-objecten/341 tekstblobs gericht gecontroleerd: geen uitgesloten lokale data-/sleutelbestanden of daadwerkelijke privésleutel-/GitHub-tokenmarkers aangetroffen. Spelcode en releasepunten uit BB-61 ongewijzigd; geen nieuwe speltests nodig voor alleen publicatie/documentatielinks.
+
 **BB-61: sociale onderdelen afgerond; ondertekende Android-testrelease 0.1.4 gebouwd en uitgevoerd.**
 - Drie Sol 6.1-agents leverden ruilen, collectienavigatie/bijnamen en het dagboek; root integreerde en testte. Ruilen vereist twee bevriende, gekoppelde spelers met verse GPS binnen 100 m, twee expliciete bevestigingen van hetzelfde aanbod en voldoende stof. Beide eigendommen/kosten wisselen atomair; aangepaste aanbiedingen, herhalen en opnieuw ruilen van hetzelfde exemplaar worden geweigerd. Gewoon 100 stof, speciaal 1000 stof, maximaal 20/1 speciale ruil per dag. IV wordt eenmaal opnieuw bepaald; level, shiny en aanvallen blijven behouden, held items blijven bij de oorspronkelijke eigenaar.
 - Collectie: vorige/volgende binnen het huidige filter, stabiele selectie en optionele bijnaam van maximaal 18 tekens met bevestiging/zoeken. Dagboek onder Profiel: maximaal 50 echte serveractiviteiten, CP/beloningen/kosten en een link naar het betreffende eigen exemplaar. Geen verzonnen oude gebeurtenissen of nieuwe beloningen.
