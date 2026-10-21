@@ -10,7 +10,21 @@ if (!$OutputApk) {
     $version=(Get-Content -LiteralPath (Join-Path $sourceRoot 'app.json') -Raw | ConvertFrom-Json).expo.version
     $OutputApk=Join-Path $sourceRoot "..\BugBaas-Reservaat-$version.apk"
 }
-if ($ApiUrl -notmatch '^https://[^/]+/?$') { throw 'A reachable HTTPS game server is required for a release APK.' }
+$apiEndpoint = $null
+if (![Uri]::TryCreate($ApiUrl, [UriKind]::Absolute, [ref]$apiEndpoint) -or
+    $apiEndpoint.Scheme -ne 'https' -or !$apiEndpoint.Host -or $apiEndpoint.UserInfo -or
+    $apiEndpoint.AbsolutePath -ne '/' -or $apiEndpoint.Query -or $apiEndpoint.Fragment) {
+    throw 'A root HTTPS game server URL without credentials, query or fragment is required for a release APK.'
+}
+$ApiUrl = $apiEndpoint.GetLeftPart([UriPartial]::Authority)
+try {
+    $gameInfo = Invoke-RestMethod -Uri "$ApiUrl/api/game/info" -TimeoutSec 15 -ErrorAction Stop
+} catch {
+    throw 'The HTTPS game server could not be checked. No APK was built.'
+}
+if ($gameInfo.rules -ne 'bugbaas-field-league-1') {
+    throw 'The game server uses an incompatible ruleset. Expected bugbaas-field-league-1; no APK was built.'
+}
 $signing=Get-Content -LiteralPath $SigningJson -Raw | ConvertFrom-Json
 if (!(Test-Path -LiteralPath $signing.path)) { throw 'Release keystore is missing.' }
 $buildPath=[IO.Path]::GetFullPath($BuildRoot)
