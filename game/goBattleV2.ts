@@ -50,7 +50,7 @@ export function advanceGoBattle(b:GoBattle,now:number){
   for(const h of hits){const d=active(b,(1-h.side) as Side);d.hp=Math.max(0,d.hp-h.amount);active(b,h.side).energy=Math.min(100,active(b,h.side).energy+h.energy);event(b,(1-h.side) as Side,'damage',h.amount);}
   finishCheck(b,due);if(b.replaceAt.some(Boolean))break;npc(b,due);
  }
- if(b.phase==='fight'&&now>=b.endsAt){const score=b.teams.map(t=>t.filter(f=>f.hp>0).length*1000+t.reduce((n,f)=>n+f.hp/f.maxHP,0));b.phase='finished';b.winner=score[0]===score[1]?null:score[0]>score[1]?0:1;event(b,0,'result');}
+ if(b.phase==='fight'&&now>=b.endsAt){const score=b.teams.map(t=>t.filter(f=>f.hp>0).length*1000+t.reduce((n,f)=>n+f.hp/f.maxHP,0));b.phase='finished';b.winner=b.boss?1:score[0]===score[1]?null:score[0]>score[1]?0:1;event(b,0,'result');}
  npc(b,now);
 }
 export function actGoBattle(b:GoBattle,side:Side,kind:unknown,value:unknown,now:number){

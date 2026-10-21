@@ -83,6 +83,15 @@ test('a real boss fight can be won and its daily reward is single-use while loss
  const tomorrow=makeBossBattle(p,'early','tomorrow',NOW+86400000);tomorrow.phase='finished';tomorrow.winner=1;assert.equal(settleBoss(p,tomorrow,NOW+86400000)!.dust,0);
  const retry=makeBossBattle(p,'early','retry',NOW+86400000);retry.phase='finished';retry.winner=0;assert.equal(settleBoss(p,retry,NOW+86400000)!.dust,150);
 });
+test('boss timeout requires defeating the boss and never rewards waiting with a larger surviving team',()=>{
+ for(const difficulty of ['early','mid','end'] as const){
+  const p=player();p.go!.trainer!.xp=levelXP(15);const b=makeBossBattle(p,difficulty,'idle-'+difficulty,NOW),hp=b.teams[1][0].hp;
+  advanceGoBattle(b,b.endsAt);assert.equal(b.phase,'finished');assert.equal(b.winner,1);assert.equal(b.teams[1][0].hp,hp);
+  const reward=settleBoss(p,b,b.endsAt)!;assert.deepEqual(reward,{dust:0,xp:0,fastTMs:0,chargedTMs:0,item:null,rewarded:false});assert.equal(p.go!.bosses!.wins,0);assert.deepEqual(p.go!.bosses!.claimed,[]);
+ }
+ const a=player(),b=makeEchoBattle(a,saveEchoDefense(player('other'),NOW),'echo-timeout',NOW);b.teams[1][2].hp=0;
+ advanceGoBattle(b,b.endsAt);assert.equal(b.winner,0);
+});
 test('eight held builds keep old ownership and provide actual stat tradeoffs including CP',()=>{
  const p=player(),s=p.specimens[0],old={leaf:2,thorn:1,bark:3,wing:4};
  p.go!.items=old as NonNullable<PlayerV2['go']>['items'];const dust=p.go!.dust;ensureGo(p,NOW);
