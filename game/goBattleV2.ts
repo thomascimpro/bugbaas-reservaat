@@ -3,8 +3,9 @@ import type {Charged,Element,GoBug,League} from './goV2';
 import type {PlayerV2,Side,Specimen} from './typesV2';
 import {checkV2 as check} from './shopV2';
 export type GoFighter={id:string;species:string;shiny:boolean;go:GoBug;cp:number;attack:number;defense:number;maxHP:number;hp:number;energy:number;readyAt:number};
-export type GoBattle={id:string;revision:number;players:[string,string];names:[string,string];ratings:[number,number];league:League;ranked:boolean;training:boolean;teams:[GoFighter[],GoFighter[]];active:[number,number];shields:[number,number];swapAt:[number,number];replaceAt:[number,number];fast:[{index:number;due:number}|null,{index:number;due:number}|null];phase:'fight'|'charge'|'finished';charge:{side:Side;move:Charged;startedAt:number;deadline:number;hits:number[];lastTap:number;shield:boolean|null}|null;winner:Side|null;settled:boolean;delta:number;createdAt:number;endsAt:number;events:{id:number;side:Side;kind:string;amount:number}[];serial:number};
+export type GoBattle={id:string;revision:number;players:[string,string];names:[string,string];ratings:[number,number];league:League;ranked:boolean;training:boolean;teams:[GoFighter[],GoFighter[]];active:[number,number];shields:[number,number];swapAt:[number,number];replaceAt:[number,number];fast:[{index:number;due:number}|null,{index:number;due:number}|null];phase:'fight'|'charge'|'finished';charge:{side:Side;move:Charged;startedAt:number;deadline:number;hits:number[];lastTap:number;shield:boolean|null}|null;winner:Side|null;settled:boolean;delta:number;rewards?:GoBattleReward[];createdAt:number;endsAt:number;events:{id:number;side:Side;kind:string;amount:number}[];serial:number};
 export type GoBattleView=GoBattle&{side:Side};
+export type GoBattleReward={dust:number;xp:number;fastTMs:number;chargedTMs:number};
 export const SWITCH_COOLDOWN=45000;
 const chart:Partial<Record<Element,{strong:Element[];weak:Element[]}>>={
  bug:{strong:['grass','dark'],weak:['flying','poison','steel']},

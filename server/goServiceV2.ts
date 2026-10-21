@@ -33,7 +33,13 @@ export class GoServiceV2{
  private query<T>(kind:string,filters:Parameters<NonNullable<Store['query']>>[1]=[],order?:{field:string;descending?:boolean},limit=100){check(this.store.query,'Opslag niet beschikbaar.',503);return this.store.query<T>(kind,filters,order,limit);}
  private settle(d:Documents,b:GoBattle,now:number){if(b.phase!=='finished'||b.settled)return;b.settled=true;const players=b.players.slice(0,b.training?1:2).map(id=>this.get(d,id,now));
   const expected=1/(1+10**((b.ratings[1]-b.ratings[0])/400));b.delta=b.ranked&&b.winner!==null?Math.round(24*((b.winner===0?1:0)-expected)):0;
-  for(let i=0;i<players.length;i++){const p=players[i],g=p.go!,won=b.winner===i,delta=i===0?b.delta:-b.delta;if(b.ranked){g.ratedCount=(g.ratedCount??0)+1;g.rating=Math.max(0,g.rating+delta);if(b.winner!==null)won?g.wins++:g.losses++;g.dust+=won?500:100;if(won)grantXP(p,250);const today=dayV2(now);if(g.ratedCount===1){const random=rng(b.id+p.uid);random()<.5?g.fastTMs++:g.chargedTMs++;}}g.history.unshift({id:b.id,opponent:b.names[1-i],result:b.winner===null?'Gelijkspel':won?'Gewonnen':'Verloren',delta,at:now});g.history=g.history.slice(0,30);p.revision++;if(!b.training)d.set('v2GoRanks:'+p.uid,{uid:p.uid,name:p.name,rating:g.rating,wins:g.wins});}
+  b.rewards=[];
+  for(let i=0;i<players.length;i++){
+   const p=players[i],g=p.go!,won=b.winner===i,delta=i===0?b.delta:-b.delta,before={dust:g.dust,xp:g.trainer!.xp,fastTMs:g.fastTMs,chargedTMs:g.chargedTMs};
+   if(b.ranked){g.ratedCount=(g.ratedCount??0)+1;g.rating=Math.max(0,g.rating+delta);if(b.winner!==null)won?g.wins++:g.losses++;g.dust+=won?500:100;if(won)grantXP(p,250);if(g.ratedCount===1){const random=rng(b.id+p.uid);random()<.5?g.fastTMs++:g.chargedTMs++;}}
+   b.rewards.push({dust:g.dust-before.dust,xp:g.trainer!.xp-before.xp,fastTMs:g.fastTMs-before.fastTMs,chargedTMs:g.chargedTMs-before.chargedTMs});
+   g.history.unshift({id:b.id,opponent:b.names[1-i],result:b.winner===null?'Gelijkspel':won?'Gewonnen':'Verloren',delta,at:now});g.history=g.history.slice(0,30);p.revision++;if(!b.training)d.set('v2GoRanks:'+p.uid,{uid:p.uid,name:p.name,rating:g.rating,wins:g.wins});
+  }
  }
  private async advance(id:string){const snapshot=await this.store.run([bk(id)],d=>document<GoBattle>(d,bk(id)));if(!snapshot)return;const ids=snapshot.players.slice(0,snapshot.training?1:2),keys=[bk(id),...ids.map(pk),...ids.map(id=>'v2GoRanks:'+id)];await this.store.run(keys,d=>{const b=document<GoBattle>(d,bk(id));if(!b)return;advanceGoBattle(b,this.clock());this.settle(d,b,this.clock());});}
  async state(uid:string,linked=false):Promise<GameViewV2>{let p=await this.ensure(uid);if(p.go!.queue)await this.matchmake(uid);p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));if(p.go!.battle)await this.advance(p.go!.battle);p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));

@@ -4,7 +4,8 @@ import {randomUUID} from 'node:crypto';
 import {freshV2} from '../game/safariV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureAdventure} from '../game/tacticsV2';
-import {ensureGo,awardGoCatch,stats,powerUp,powerCost,equipGo,teamGo,secondAttack,teachMove,transferGo,rollGoBug} from '../game/goV2';
+import {ensureGo,awardGoCatch,stats,powerUp,powerCost,equipGo,teamGo,teamIssue,secondAttack,teachMove,transferGo,rollGoBug,movePool} from '../game/goV2';
+import {levelXP} from '../game/trainerV2';
 import {makeGoBattle,actGoBattle,advanceGoBattle} from '../game/goBattleV2';
 import {GoServiceV2,parseGo} from '../server/goServiceV2';
 import {SqliteStore} from '../server/sqlite';
@@ -20,7 +21,38 @@ test('coarse or lost GPS cannot start or finish a catch or spend nets; an accura
 
 test('measured driving pauses active and automatic catches and distance, then recovers without a permanent lock',async()=>{const store=new SqliteStore(':memory:');try{let now=NOW;const service=new GoServiceV2(store,'local',()=>now);let v=await service.state('gps-speed');const cmd=async(type:string,data:Record<string,unknown>={})=>v=await service.command('gps-speed',{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});await cmd('worldLocate',{fix:{...FIX,timestamp:now}});await cmd('goAuto',{enabled:true});const stock=v.player.field!.inventory.basic;now+=15000;const fast={...FIX,lat:FIX.lat+.0035,timestamp:now};await cmd('worldLocate',{fix:fast});assert.equal(v.player.go!.auto.status,'too-fast');assert.throws(()=>requireFieldLocation(v.player.walking,now),/te snel/);await assert.rejects(()=>cmd('worldEncounter',{spawn:v.player.walking!.spawns[0].id}),/te snel/);assert.equal(v.player.field!.inventory.basic,stock);assert.equal(v.player.field!.walk!.meters,0);now+=31000;assert.equal((await service.state('gps-speed')).player.go!.auto.status,'gps');await cmd('worldLocate',{fix:{...fast,timestamp:now}});assert.doesNotThrow(()=>requireFieldLocation(v.player.walking,now));assert.equal(v.player.go!.auto.status,'waiting');}finally{store.close();}});
 function player(uid='a'){const p=freshV2(uid,uid==='b'?'TEST5678':'TEST1234',NOW);ensureAdventure(p,NOW);ensureField(p,NOW);ensureGo(p,NOW);for(const [i,kind] of ['ant','beetle','moth'].entries()){const s={id:'caught-'+i,species:kind,level:1,shiny:false,favorite:false,obtainedAt:NOW,source:'walking',hearts:0,item:null};p.specimens.push(s);awardGoCatch(p,s,uid+':'+i);p.specimens.at(-1)!.go!.level=10;}p.go!.team=p.specimens.filter(s=>s.go).map(s=>s.id);return p;}
+test('beetles use the intended steel pool instead of matching bee, without rewriting already owned attacks',()=>{
+ for(const kind of ['beetle','dungbeetle','divingbeetle','tigerbeetle','tortoisebeetle']){assert.deepEqual(movePool(kind).types,['bug','steel']);assert.ok(movePool(kind).charged.includes('iron'));assert.ok(!movePool(kind).fast.includes('wing'));}
+ for(const kind of ['bee','bumblebee','moth','butterfly','mayfly'])assert.deepEqual(movePool(kind).types,['bug','flying']);
+ const p=player(),s=p.specimens.find(s=>s.species==='beetle'&&s.go)!;s.go!.fast='wing';s.go!.charged=['air','buzz'];const before=structuredClone(s);ensureGo(p,NOW);assert.deepEqual(s,before);
+});
 test('only genuine collected specimens receive individual CP; old starters cannot enter PvP',()=>{const p=player();assert.ok(p.specimens.slice(0,10).filter(s=>s.source==='starter').every(s=>!s.go));assert.throws(()=>teamGo(p,p.specimens.filter(s=>s.source==='starter').slice(0,3).map(s=>s.id),'great'));assert.ok(p.specimens.filter(s=>s.go).every(s=>stats(s).cp>=10));});
+test('team previews and server saves reject the same invalid builds without changing the current team',()=>{
+ const p=player(),team=[...p.go!.team],before=structuredClone(p.go);
+ for(const [ids,league] of [[team.slice(0,2),'great'],[[team[0],team[0],team[2]],'great'],[[team[0],team[1],'absent'],'great'],[team,'ultra'],[team,'master']] as const){const issue=teamIssue(p,ids,league);assert.ok(issue);assert.throws(()=>teamGo(p,ids,league),e=>e instanceof Error&&e.message===issue);assert.deepEqual(p.go,before);}
+ const second={...structuredClone(p.specimens.find(s=>s.id===team[0])!),id:'duplicate-species'};p.specimens.push(second);assert.match(teamIssue(p,[team[0],second.id,team[2]],'great')!,/soorten/);
+ const s=p.specimens.find(s=>s.id===team[0])!;s.go!.level=50;assert.match(teamIssue(p,team,'great')!,/CP-limiet/);s.go!.level=10;
+ assert.equal(teamIssue(p,[team[2],team[0],team[1]],'great'),null);teamGo(p,[team[2],team[0],team[1]],'great');assert.equal(p.go!.team[0],team[2]);
+});
+
+test('ranked results report actual persisted rewards including capped XP and survive receipt replay',async()=>{
+ const store=new SqliteStore(':memory:');try{
+  const a=player('a'),b=player('b');a.go!.trainer!.xp=levelXP(40)-80;
+  for(const p of [a,b])await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));
+  const service=new GoServiceV2(store,'local',()=>NOW);let av=await service.state('a'),bv=await service.state('b');
+  av=await service.command('a',{type:'goQueue',commandId:randomUUID(),expectedRevision:av.player.revision});
+  bv=await service.command('b',{type:'goQueue',commandId:randomUUID(),expectedRevision:bv.player.revision});
+  const command={type:'goAct',action:'forfeit',value:null,commandId:randomUUID(),expectedRevision:bv.player.revision};
+  const lost=await service.command('b',command),again=await service.command('b',command);av=await service.state('a');
+  const win=av.goBattle!.rewards![av.goBattle!.side],loss=lost.goBattle!.rewards![lost.goBattle!.side];
+  assert.equal(win.dust,500);assert.equal(win.xp,80);assert.equal(win.fastTMs+win.chargedTMs,1);assert.equal(loss.dust,100);assert.equal(loss.xp,0);assert.equal(loss.fastTMs+loss.chargedTMs,1);
+  assert.equal(av.player.go!.dust-a.go!.dust,win.dust);assert.equal(av.player.go!.trainer!.xp,levelXP(40));assert.deepEqual(again.goBattle!.rewards,lost.goBattle!.rewards);assert.deepEqual(again.player.go,lost.player.go);
+  await service.command('a',{type:'goClose',commandId:randomUUID(),expectedRevision:av.player.revision});av=await service.state('a');
+  av=await service.command('a',{type:'goTrain',commandId:randomUUID(),expectedRevision:av.player.revision});
+  av=await service.command('a',{type:'goAct',action:'forfeit',value:null,commandId:randomUUID(),expectedRevision:av.player.revision});
+  assert.deepEqual(av.goBattle!.rewards,[{dust:0,xp:0,fastTMs:0,chargedTMs:0}]);
+ }finally{store.close();}
+});
 test('power-up spends general and species currency, changes only that specimen and preserves IVs',()=>{const p=player(),s=p.specimens.find(s=>s.go)!,other=p.specimens.filter(s=>s.go)[1],before=structuredClone(other),iv=[...s.go!.iv];p.go!.dust=5000;p.go!.candy.ant=100;const cp=stats(s).cp,cost=powerCost(s.go!.level)!;powerUp(p,s.id);assert.equal(p.go!.dust,5000-cost.dust);assert.ok(stats(s).cp>cp);assert.deepEqual(s.go!.iv,iv);assert.deepEqual(other,before);p.go!.dust=0;assert.throws(()=>powerUp(p,s.id));});
 test('held items are scarce owned copies, count in CP, and can invalidate a league team',()=>{const p=player(),s=p.specimens.find(s=>s.go)!;assert.throws(()=>equipGo(p,s.id,'thorn'));p.go!.items.thorn=1;const cp=stats(s).cp;equipGo(p,s.id,'thorn');assert.ok(stats(s).cp>cp);assert.throws(()=>equipGo(p,p.go!.team[1],'thorn'));s.go!.level=50;assert.throws(()=>teamGo(p,p.go!.team,'great'));});
 test('second charged attack and TMs use species resources and only choose legal different attacks',()=>{const p=player(),s=p.specimens.find(s=>s.go)!;p.go!.dust=10000;p.go!.candy.ant=25;secondAttack(p,s.id,'second');assert.equal(s.go!.charged.length,2);assert.equal(new Set(s.go!.charged).size,2);assert.equal(p.go!.dust,0);assert.throws(()=>secondAttack(p,s.id,'repeat'));p.go!.fastTMs=1;const move=s.go!.fast;teachMove(p,s.id,'fast','change');assert.notEqual(s.go!.fast,move);assert.equal(p.go!.fastTMs,0);assert.throws(()=>teachMove(p,s.id,'fast','repeat'));});
