@@ -4,6 +4,12 @@ Bijgewerkt: 21 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog
 
 ## ACTUELE CHECKPOINT
 
+**BB-54: geometrie van posten en routes aangescherpt.**
+- Posten worden gemeten tot het echte padsegment; een post naast het midden van een lang segment verdwijnt niet meer doordat de bronvertices verder weg liggen. Bereik, cooldown en beloningen blijven behouden.
+- Routes behouden alle bronbochten en het eindpunt. Controle tussen vertices met maximaal 5 m tussenruimte weigert aangetroffen kaartobstakels; geometriegaten boven 150 m worden geweigerd. De heen-en-terugroute blijft maximaal 1200 m. Posten/routes buiten de daadwerkelijk geladen kaarttegels worden niet toegelaten. Dit is geen bewijs van fysieke toegankelijkheid of volledige obstakeldetectie.
+- **249/249 tests en TypeScript groen**, inclusief vier regressietests; logs `.local/route-geometry-tests.log` en `.local/route-geometry-typecheck.log`. Browser: geïsoleerde synthetische L-route van 485 m, post midden naast het pad, 3D-post/selectie/voorraad/cooldown, starten/pauzeren/hervatten, eenmalige beloning en 320/390/430/1366 px; geen browserfouten. [Bewijs](../../bugbaas-route-geometry/checks.json). De beloningscontrole gebruikte een door de QA-fixture klaargezette route; geen echte wandeling of live postenbewijs. Alleen de aparte QA-server/QA-profielen aangepast; bestaande previewaccounts behouden.
+- Brononderzoek levert nog geen direct inzetbare veilige vervanging: [Eindhoven-kunstdata](https://data.overheid.nl/dataset/22481-kunstwerken) is een export uit 2019 met ook semiopenbare locaties; [BRT](https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1) bevat geen toegangseigenschap bij de onderzochte wegdelen; [Wandelnet](https://www.routedatabank.nl/hoe-werkt-het/) vraagt apart contact voor consumententoepassingen. Deze bronnen niet als automatische rewardposten/veilige routes toegevoegd. Live postenbron, native uitvoering/fysieke wandeling en cloudherstel blijven open. Geen nieuwe Metro-start of productiepublicatie.
+
 **BB-53: Best/Eindhoven gecontroleerd; bronconfiguratie voorbereid en releasegrenzen bijgewerkt.**
 - Browser op het opgegeven adres in Best, Best Wilhelminaplein/Dorpsplein/Wilhelminapark en Eindhoven Markt/Stadswandelpark. Adrespositie via PDOK; parkposities uit officiële toerismebronnen. **36 kaarttegelverzoeken, 42 spawns, geen kaart-/browserfouten**. Pannen over 773/774 m, hercentreren, 320/390/430 px en echte UI-vangst in Best-park gecontroleerd. [Browserbewijs](../../bugbaas-best-eindhoven/checks.json).
 - Onafhankelijke BAG-uitsnede: adresgebouw aanwezig; representatieve binnenpunten van **16/16 BAG-panden met status `Pand in gebruik`** liggen in een OSM-gebouw of binnen 3 m van de contour. Overige BAG-objecten: 11 gesloopt, 2 ten onrechte opgevoerd en 1 bouw gestart. Alle 42 spawns voldoen aan kaartgeometrie; de 7 bij het adres liggen ook buiten de BAG-panden. Dit bewijst geen identieke gevels/daken. [Bronvergelijking](../../bugbaas-best-eindhoven/source-checks.json); adrescoördinaten alleen in lokale QA-artifacts.
@@ -62,7 +68,7 @@ Vorige afgeronde spelonderdelen:
 | BB-40 | Tas/dagtaken/trainer/buddy/vrienden/PvP | Web gebouwd; stempelboek, cadeaus, vriendschap en zevendaagse vangstreeks getest. PvP-regels behouden. |
 | BB-50 | Webkaart/GPS/vangen | Werelddecor/camera bijgewerkt; verder pannen en volledige vlakke bebouwing hersteld. Acht echte kaartlocaties, twee vangsten en gesimuleerde wandeling gecontroleerd; zie BB-51. |
 | BB-60 | Android | GPS-race opgelost; korte Java-tempinstelling/Gradle/debugbouw bewezen. Actuele native uitvoering nog open na geweigerde Metro-start. Fysieke wandeling/GPU/accu open. |
-| BB-70 | Posten/routes | Cache/foutafhandeling en vaste toegestane bron configureerbaar; 12 gerichte tests groen. Best/Eindhoven nog zonder stops/routes; live bron en veilige buitenroute open. |
+| BB-70 | Posten/routes | Cache/foutafhandeling, vaste bronconfiguratie en route-/padgeometrie gecontroleerd; 15 gerichte post/route-tests + kaartdekkingtest groen. Best/Eindhoven nog zonder live stops/routes; bron en buitenroute open. |
 | BB-80 | Nesten/raids | Later, niet gebouwd. |
 | BB-90 | Release/cloudherstel | Lokale QA-restore geslaagd (600 records); echte cloudrestore, Android-wandeling en productieakkoord ontbreken. |
 

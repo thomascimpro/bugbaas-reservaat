@@ -9,10 +9,31 @@ import {freshV2} from '../game/safariV2';
 import {ensureGo} from '../game/goV2';
 import {GoServiceV2} from '../server/goServiceV2';
 import {SqliteStore} from '../server/sqlite';
-import {parseWeather} from '../server/environmentV2';
+import {getFieldEnvironment,parseWeather,tileXY} from '../server/environmentV2';
+import {createWorldSitesProvider} from '../server/worldSitesDataV2';
 const NOW=Date.UTC(2026,9,19,14),FIX={lat:52.09,lng:5.13,accuracy:8,timestamp:NOW};
 const polygon=(layer:string,kind:string,x=0,size=.001):AreaFeature=>({layer,properties:{class:kind},geometry:{type:'Polygon',coordinates:[[[5.13+x-size,52.09-size],[5.13+x+size,52.09-size],[5.13+x+size,52.09+size],[5.13+x-size,52.09+size],[5.13+x-size,52.09-size]]]}});
 function habitat(biome:Biome):HabitatContext{return {environment:{biome,mapSource:'osm',weather:{...UNKNOWN_WEATHER},at:NOW},biomeAt:()=>biome,canSpawnAt:()=>true};}
+
+test('posts and routes cannot extend into map tiles the environment has not loaded',async t=>{
+ const x=tileXY(FIX).x,west=x/2**14*360-180,scale=111320*Math.cos(FIX.lat*Math.PI/180),fix={...FIX,lng:west+400/scale};
+ const geometry=Array.from({length:7},(_,i)=>({lat:fix.lat,lon:fix.lng-i*100/scale}));
+ const elements=[{type:'way',id:901,tags:{highway:'footway',access:'yes'},geometry},{type:'node',id:902,tags:{tourism:'information'},lat:fix.lat,lon:fix.lng-550/scale}];
+ const requestedTiles=new Set<string>();
+ t.mock.method(globalThis,'fetch',async(input:string|URL|Request)=>{
+  const url=String(input);
+  if(url==='https://tiles.openfreemap.org/planet')return Response.json({tiles:['https://tiles.openfreemap.org/planet/qa/{z}/{x}/{y}.pbf']});
+  if(url.endsWith('.pbf')){requestedTiles.add(url.split('/').slice(-2).join('/').replace('.pbf',''));return new Response(new Uint8Array());}
+  if(url.includes('open-meteo.com'))return Response.json({current:{time:Date.now()/1000,weather_code:0,temperature_2m:18,is_day:1,wind_speed_10m:5}});
+  assert.equal(url,'https://overpass-api.de/api/interpreter');return Response.json({elements});
+ });
+ const provider=createWorldSitesProvider(globalThis.fetch);
+ let h=await getFieldEnvironment(fix,NOW,provider);
+ for(let i=0;i<4&&!h.sites?.available;i++){await new Promise(resolve=>setImmediate(resolve));h=await getFieldEnvironment(fix,NOW,provider);}
+ assert.equal(h.environment.mapSource,'osm');assert.equal(h.sites?.available,true);
+ const end=tileXY({lat:fix.lat,lng:geometry.at(-1)!.lon});assert.ok(!requestedTiles.has(end.x+'/'+end.y));
+ assert.deepEqual(h.sites?.posts,[]);assert.deepEqual(h.sites?.routes,[]);
+});
 
 test('OSM polygons determine forest, meadow, water shore and city while respecting holes',()=>{const forest=polygon('landcover','wood'),meadow=polygon('park','park'),water=polygon('water','lake');assert.equal(biomeAt(FIX,[forest]),'forest');assert.equal(biomeAt(FIX,[meadow]),'meadow');assert.equal(biomeAt(FIX,[]),'urban');assert.equal(biomeAt(FIX,[],false),'unknown');assert.equal(biomeAt({...FIX,lng:5.1315},[water]),'wetland');assert.equal(biomeAt({...FIX,lng:5.134},[water]),'urban');if(forest.geometry.type==='Polygon')forest.geometry.coordinates.push(polygon('landcover','wood',0,.0002).geometry.type==='Polygon'?(polygon('landcover','wood',0,.0002).geometry as GeoJSON.Polygon).coordinates[0]:[]);assert.equal(contains(FIX,forest.geometry),false);assert.equal(biomeAt({...FIX,lng:5.1308},[forest]),'forest');});
 test('spawns avoid mapped water, buildings and major transport lanes',()=>{assert.equal(canSpawnAt(FIX,[polygon('building','house')]),false);assert.equal(canSpawnAt(FIX,[polygon('water','lake')]),false);assert.equal(canSpawnAt(FIX,[{layer:'transportation',properties:{class:'motorway'},geometry:{type:'LineString',coordinates:[[5.13,52.08],[5.13,52.10]]}}]),false);const h=habitat('meadow');h.canSpawnAt=p=>p.lng>FIX.lng;const bugs=wildSpawns(FIX,'blocked-areas',NOW,h);assert.equal(bugs.length,7);assert.ok(bugs.every(b=>b.lng>FIX.lng));});

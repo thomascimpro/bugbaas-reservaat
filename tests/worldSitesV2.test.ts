@@ -9,6 +9,7 @@ import {ensureGo} from '../game/goV2';
 import {GoServiceV2,parseGo} from '../server/goServiceV2';
 import {SqliteStore} from '../server/sqlite';
 import {unknownHabitat} from '../game/habitatsV2';
+import {distance} from '../game/walkingV2';
 const NOW=Date.UTC(2026,9,20,14),FIX={lat:52.09,lng:5.13,accuracy:8,timestamp:NOW};
 const elements=[{type:'way',id:1,tags:{highway:'footway',access:'yes',name:'Bospaadje'},geometry:Array.from({length:15},(_,i)=>({lat:FIX.lat,lon:FIX.lng+i*.0003}))},{type:'node',id:2,tags:{tourism:'information',name:'Natuurbord'},lat:FIX.lat,lon:FIX.lng+.0001},{type:'node',id:3,tags:{tourism:'artwork',access:'private'},lat:FIX.lat,lon:FIX.lng+.0002},{type:'node',id:4,tags:{tourism:'viewpoint'},lat:FIX.lat+.004,lon:FIX.lng+.004}];
 const sites=buildWorldSites(elements,FIX,()=>true);
@@ -16,6 +17,31 @@ function player(){const p=freshV2('sites','SITES123',NOW);ensureField(p,NOW);ens
 test('world sites come from real tagged objects near allowed footways and never invent private, blocked or off-path posts',()=>{
  assert.equal(sites.posts.length,1);assert.equal(sites.posts[0].osmId,'node/2');assert.equal(sites.posts[0].name,'Natuurbord');assert.ok(sites.routes.length>0);assert.deepEqual(sites.routes[0].points[0],sites.routes[0].points.at(-1));assert.ok(sites.routes[0].meters>=320);
  assert.deepEqual(buildWorldSites(elements,FIX,()=>false),{posts:[],routes:[]});assert.deepEqual(buildWorldSites(elements.map(e=>({...e,tags:{...e.tags,access:'private'}})),FIX,()=>true),{posts:[],routes:[]});
+});
+
+test('posts use distance to a footpath segment rather than only its source vertices',()=>{
+ const path={type:'way',id:11,tags:{highway:'footway',access:'yes'},geometry:[{lat:FIX.lat,lon:FIX.lng-.001},{lat:FIX.lat,lon:FIX.lng+.001}]};
+ const post={type:'node',id:12,tags:{tourism:'information',name:'Midden op het pad'},lat:FIX.lat+.0001,lon:FIX.lng};
+ assert.ok(path.geometry.every(n=>distance(FIX,{lat:n.lat,lng:n.lon})>40));
+ assert.equal(buildWorldSites([path,post],FIX,()=>true).posts[0]?.osmId,'node/12');
+ assert.equal(buildWorldSites([path,{...post,lat:FIX.lat+.0005}],FIX,()=>true).posts.length,0);
+});
+
+test('routes check the spaces between safe source vertices and keep every bend',()=>{
+ const corner={lat:FIX.lat,lng:FIX.lng+.0016},end={lat:FIX.lat+.0012,lng:corner.lng};
+ const path={type:'way',id:21,tags:{highway:'footway',access:'yes'},geometry:[FIX,corner,end].map(p=>({lat:p.lat,lon:p.lng}))};
+ const corridor=(p:{lat:number;lng:number})=>Math.abs(p.lat-FIX.lat)<.00002||Math.abs(p.lng-corner.lng)<.00002;
+ const route=buildWorldSites([path],FIX,corridor).routes[0];assert.ok(route);assert.ok(route.points.some(p=>distance(p,corner)<.01));assert.ok(route.points.some(p=>distance(p,end)<.01));
+ for(let i=1;i<route.points.length;i++){const a=route.points[i-1],b=route.points[i];assert.ok(corridor({lat:(a.lat+b.lat)/2,lng:(a.lng+b.lng)/2}),'Route must follow the bend, not cut across it');}
+ const blocked=(p:{lat:number;lng:number})=>corridor(p)&&Math.abs(p.lng-(FIX.lng+.0008))>.00004;
+ assert.ok(path.geometry.every(p=>blocked({lat:p.lat,lng:p.lon})));assert.equal(buildWorldSites([path],FIX,blocked).routes.length,0);
+});
+
+test('routes reject long geometry gaps and cap the full out-and-back distance at 1200 metres',()=>{
+ const path={type:'way',id:31,tags:{highway:'footway',access:'yes'},geometry:Array.from({length:9},(_,i)=>({lat:FIX.lat+i*.001,lon:FIX.lng}))};
+ const route=buildWorldSites([path],FIX,()=>true).routes[0];assert.ok(route);assert.equal(route.meters,1200);
+ const gap={...path,geometry:[...path.geometry.slice(0,3),{lat:FIX.lat+.005,lon:FIX.lng}]};
+ assert.equal(buildWorldSites([gap],FIX,()=>true).routes.length,0);
 });
 test('post supplies are bounded, require fresh nearby GPS and honor a persistent five-minute cooldown',()=>{
  const p=player(),before=p.field!.inventory.basic;const loot=spinPost(p,sites.posts[0].id,'seed',NOW);assert.ok(loot.basic!>=2&&loot.basic!<=4);assert.equal(p.field!.inventory.basic,before+loot.basic!);assert.throws(()=>spinPost(p,sites.posts[0].id,'new-seed',NOW+1),/laadt/);p.walking!.fix={...FIX,lng:FIX.lng+.01};assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW),/65 meter/);p.walking!.fix=FIX;assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW+31000),/GPS/);assert.throws(()=>spinPost(p,'fabricated','new',NOW),/niet beschikbaar/);
