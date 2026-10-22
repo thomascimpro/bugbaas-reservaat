@@ -39,7 +39,7 @@ class BugBaasAdventureSyncModule(private val context: ReactApplicationContext) :
   private val permissionContract = PermissionController.createRequestPermissionResultContract()
   @Volatile private var permissionPromise: Promise? = null
   private val listener = object : BaseActivityEventListener() {
-    override fun onActivityResult(activity: Activity?, code: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(activity: Activity, code: Int, resultCode: Int, data: Intent?) {
       if (code != requestCode) return
       val waiting = permissionPromise ?: return
       permissionPromise = null
