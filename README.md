@@ -1,6 +1,6 @@
 # BugBaas Reservaat — projectstart
 
-**Android 0.1.4 testrelease:** [Download APK](https://github.com/thomascimpro/bugbaas-reservaat/releases/download/v0.1.4/BugBaas-Reservaat-0.1.4.apk) · [Release, controlesom en testverslag](https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.4). Deze repository en downloads zijn privé; GitHub-toegang is vereist.
+**Android 0.1.5 testrelease:** [Download APK](https://github.com/thomascimpro/bugbaas-reservaat/releases/download/v0.1.5/BugBaas-Reservaat-0.1.5.apk) · [Release, controlesom en testverslag](https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.5). Deze repository en downloads zijn privé; GitHub-toegang is vereist.
 
 > **Voor iedere nieuwe ontwikkelchat:** lees eerst [AGENTS.md](AGENTS.md). Daar staan het korte werkafspraken en de grenzen voor data en releases.
 
@@ -13,6 +13,6 @@
 6. [Functioneel Ontwerp](docs/POGO_FO_20261019.md) · [Technisch Ontwerp](docs/POGO_TO_ASSETS_20261019.md) · [Schermschetsen](docs/POGO_SCHERMSCHETSEN_20261019.html).
 
 ## Huidige stap
-GPS-kaart/3D, vangen, collectie, upgrades, team/PvP, cocons en dag-/vriendenactiviteiten zijn gebouwd. Ruilen, collectienavigatie/bijnamen en het dagboek zijn afgerond. APK 0.1.4/build 5 is ondertekend en op Android uitgevoerd. 302 tests, TypeScript, webbuild, gerichte browser-/cloudcontroles en Android-emulatortests zijn geslaagd. Release-tag `v0.1.4` verwijst naar spelcode `3354649`; daaropvolgende publicatiedocumentatie verandert de APK niet. Geen promotie van de productieomgeving.
+GPS-kaart/3D, trainer/outfits, een timingvangspel met drie tikken, Veldposten, collectie/CP/evolutie/TMs/held items, PvP/Echo, cocons en vrienden zijn aangesloten. Echte muziek/effecten, volume- en kwaliteitsinstellingen, Google-inloggen en optionele Android Health Connect zijn toegevoegd. APK 0.1.5/build 6 (Android 8+) is ondertekend en als update geïnstalleerd; bestaande collectie behouden en een nieuwe perfecte vangst in Firestore opgeslagen. 318 tests, TypeScript, webexport en gerichte browser-/Android-controles zijn geslaagd. APK-spelcode `52f892e`; zie het [werkregister](docs/POGO_WERKREGISTER.md) voor controlebewijs en actuele grenzen. Privé-prerelease gepubliceerd; APK van GitHub teruggedownload en exact dezelfde SHA-256 als het geteste/geïnstalleerde pakket. Health-leestoestemming, nuldata-sync, uitzetten en herstart gecontroleerd. Geen promotie van de productieomgeving.
 
-**Nog open:** werkende toegestane live bron voor posten/routes, wandelen/toestelprestaties/accu op een echte telefoon en cloudherstel. De gecontroleerde GPS was gesimuleerd. Extra QA-automatisering is geparkeerd; zie het [werkregister](docs/POGO_WERKREGISTER.md).
+**Nog onbewezen:** fysieke telefoonwandeling/prestaties/accu, persoonlijke Google-toestemming, echte Health Connect-afstand en volledige live cloud/Auth-restore. Virtuele posten volgen openbare kaartpaden; fysieke toegankelijkheid is niet gecertificeerd. De gecureerde posten/routesbron blijft uit. De gecontroleerde GPS was gesimuleerd.

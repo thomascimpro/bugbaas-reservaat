@@ -1,8 +1,18 @@
 # BugBaas — actuele voortgang
 
-Bijgewerkt: 21 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
+Bijgewerkt: 22 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
 
 ## ACTUELE CHECKPOINT
+
+**BB-63: vanggame, interface, accounts en Android 0.1.5 afgewerkt met drie agents.**
+- Drie-tikvangspel met krimpende groene ringen en serverberekende kwaliteit, eindige netten en dauw voor rustiger timing. GPS-acties blokkeren het hele spel niet meer; 3D-voorladen, begrensde modellen/renderkwaliteit en gepauzeerde kaart achter menu/vangst beperken vastlopers.
+- Drie traineroutfits, GPS-gecentreerd zoomen zonder pannen, donkere panelen en compacte collectie/Veldtas/cocons. PvP verwerkt een gebufferde tik binnen de bestaande cooldown en toont schade, energie en type. CP, evolutie, held items en TMs behouden. Echte gelicentieerde muziek/effecten, aparte volumes/mute en lage/normale/hoge beeldkwaliteit.
+- Virtuele Veldposten ontstaan deterministisch langs openbare OSM-kaartpaden, met GPS-bereik, cooldown en serverbeloningen. Eindhoven/Best/parkdata en echte UI-spin gecontroleerd; dit certificeert fysieke toegankelijkheid niet. Cocons 2/5 km geven verschillende stof-/soortnectarbeloningen; oude collectie en inventaris blijven behouden.
+- Google-provider, Android-app en ondertekenvingerafdruk in het nieuwe Firebase-project ingesteld. Webpopup en Android-inlogscherm openen/annuleren getest. E-mailkoppeling behoudt eigen QA-voortgang in een tweede browser. Health Connect leest uitsluitend stappen/afstand, negeert handmatige invoer, voorkomt dubbele GPS-beloning en vraagt opt-in per account. Persoonlijke Google-toestemming, mailbezorging en echte Health Connect-afstand niet bewezen.
+- **318/318 tests, TypeScript en webexport groen**; na de native muziekfix vier gerichte guardcontroles en tien bestaande native/settings-tests groen. Browser: 320/390/430 px, avatar, zoomslot, muziek/instellingen, posten/voorraad/cocons, collectie, PvP en echte Firestore-vangst. Bewijs: `../../bugbaas-release015`, `../../bugbaas-release015-gameplay-final`, `../../bugbaas-polish-qa` en `.local/release015-*.log`.
+- **APK 0.1.5/code 6, Android 8+**, ARM64 + x86_64, bestaande pakketnaam en keystore. Als update over 0.1.4 geïnstalleerd; bestaande APKAnt en Zweefvlieg behouden. Echte drie-tikvangst Perfect: Nachtvlinder toegevoegd, precies één net verbruikt en beloning in Firestore opgeslagen. Android-muziekcrash en Android 14+ Health-permissionroute gericht hersteld. Health Connect op API 35: echt read-only toestemmingsscherm, annuleren/toestaan, nuldata/manual sync en uitzetten geslaagd. Na force-stop/herstart alle drie bugs behouden; geen fatale Android/React-fout in de finale log. Geïnstalleerd pakket heeft exact de finale APK-hash. Bewijs `../../bugbaas-release015/android/health-final-proof.json`.
+- APK-spelcode `52f892e`; SHA-256 `2eea2836f110df311cf6ebf1646deaf73eec5a60eb9c55a4b273f78619a8299b`. [Compatibele preview](https://bugbaas-reservaat-preview-nl4edybs3-thomas-cim-pro.vercel.app), [APK](https://github.com/thomascimpro/bugbaas-reservaat/releases/download/v0.1.5/BugBaas-Reservaat-0.1.5.apk) en [release/testverslag](https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.5). Privé-prerelease `v0.1.5` gepubliceerd met APK, SHA256SUMS en testverslag. APK na publicatie teruggedownload: 175.309.127 bytes, hash gelijk aan geteste/geïnstalleerde APK. Tag wijst naar spelcode `52f892e`; latere documentatie verandert het pakket niet.
+- Handmatige private cloud-data-/Auth-metadata-export en offline herstel gecontroleerd; geen live herstel, automatische backup of volledig Auth-rampenherstel bewezen. Fysieke GPS-wandeling/toestel-GPU/accu en een toegestane gecureerde routesbron blijven open. `GAME_WORLD_SITES_URL=off`; virtuele padposten werken hiervan onafhankelijk. Geen reset, betaalde dienst of productiealiaswijziging.
 
 **BB-62: nieuwe GitHub-repository en downloadbare testrelease gepubliceerd.**
 - [Privérepository](https://github.com/thomascimpro/bugbaas-reservaat), standaardbranch `main`; bestaande BugBaas-repositories ongemoeid. Tag [`v0.1.4`](https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.4) verwijst naar de geteste spelcode `3354649`. APK, SHA256SUMS en beknopt testverslag staan bij de gepubliceerde prerelease. GitHub-toegang is vereist voor privédownloads; geen app-/serverproductiepromotie.
@@ -119,10 +129,10 @@ Vorige afgeronde spelonderdelen:
 | BB-30 | 3D-bugs en shiny-art | 31 soorten en 62 portretten; nieuwe larve normaal/shiny met 3D-palet en 1024px-kader gecontroleerd. |
 | BB-40 | Tas/dagtaken/trainer/buddy/vrienden/PvP | Web gebouwd; live PvP, aparte offline echo-arena, dagbazen, wandelcocons, acht held items, Vuur/Water en bestaande sociale/dagfuncties getest. |
 | BB-50 | Webkaart/GPS/vangen | Werelddecor/camera bijgewerkt; verder pannen en volledige vlakke bebouwing hersteld. Acht echte kaartlocaties, twee vangsten en gesimuleerde wandeling gecontroleerd; zie BB-51. |
-| BB-60 | Android | Ondertekende 0.1.4/code 5 gebouwd en op emulator uitgevoerd; GPS-brug, kaart/vangen, cocons, dagboek/collectie en herstart gecontroleerd. Fysieke wandeling/toestel-GPU/accu open. Zie BB-61. |
-| BB-70 | Posten/routes | Cache/foutafhandeling, vaste bronconfiguratie en route-/padgeometrie gecontroleerd; 15 gerichte post/route-tests + kaartdekkingtest groen. Best/Eindhoven nog zonder live stops/routes; bron en buitenroute open. |
+| BB-60 | Android | Ondertekende 0.1.5/code 6 (Android 8+) als update uitgevoerd: kaart/GPS, drie-tikvangst en collectie behouden; Health-/herstartcontrole zie BB-63. Fysieke wandeling/GPU/accu open. |
+| BB-70 | Posten/routes | Virtuele Veldposten langs openbare OSM-paden werken met bereik/cooldown/beloning, ook bij bron off; Eindhoven/Best/parkdata en UI getest. Fysieke toegankelijkheid en toegestane gecureerde routesbron open. |
 | BB-80 | Nesten/raids | Later, niet gebouwd. |
-| BB-90 | Release/cloudherstel | Actuele cloudpreview en geteste APK 0.1.4 beschikbaar. Lokale QA-restore eerder geslaagd (600 records); live postenbron, echte cloudrestore, fysieke Android-wandeling en productieakkoord ontbreken. |
+| BB-90 | Release/cloudherstel | Compatibele cloudpreview en APK 0.1.5, unit/browser/nativecontrole zie BB-63. Private databackup/offline herstel gecontroleerd; volledige live Firestore/Auth-restore, fysieke telefoonwandeling en productieakkoord ontbreken. |
 
 ## Bewijs en regels
 - [Historisch uitvoeringsverslag](POGO_UITVOERING.md): eerdere 28 schermchecks, 13 navigatiechecks, 5 native-brugchecks en 5 synthetische post/routechecks. Dit is geen nieuwe run op iedere wijziging.
