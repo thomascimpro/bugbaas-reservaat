@@ -6,18 +6,19 @@ import {catchWild,CATCH_RADIUS,distance} from './walkingV2';
 import {checkV2 as check} from './shopV2';
 import {judgeCatchRhythm} from './catchTimingV2';
 import type {CatchFocus} from './catchTimingV2';
+import type {HealthProgress} from './adventureSyncV2';
 
 export const NETS={
  basic:{name:'Veldnet',multiplier:1,cell:0,color:'#A5B694',hint:'Standaardnet. Actief vangen geeft extra kansen met je timing en lokmiddel.'},
  blue:{name:'Bosnet',multiplier:1.5,cell:1,color:'#368CDA',hint:'50% hogere vangkans.'},
  silk:{name:'Zijdenet',multiplier:2,cell:2,color:'#9C60D6',hint:'Verdubbelt de vangkans.'},
- royal:{name:'Oerwortelnet',multiplier:100,cell:3,color:'#E7B545',hint:'Een rake zwaai vangt altijd. Een misser verbruikt dit net niet.'},
+ royal:{name:'Oerwortelnet',multiplier:100,cell:3,color:'#E7B545',hint:'Een rake vangpoging slaagt altijd. Bij missen blijft dit net bewaard.'},
 } as const;
 export const BAITS={
- pollen:{name:'Lokbloem',multiplier:1.5,cell:4,color:'#E8C358',hint:'50% hogere vangkans voor je volgende rake zwaai.'},
+ pollen:{name:'Lokbloem',multiplier:1.5,cell:4,color:'#E8C358',hint:'50% hogere vangkans voor je volgende rake vangpoging.'},
  dew:{name:'Dauwdruppel',multiplier:1,cell:5,color:'#66BCD6',hint:'Het vangritme gaat rustiger. De bug vlucht niet na deze poging.'},
  fruit:{name:'Bosframboos',multiplier:1,cell:6,color:'#DA7955',hint:'Verdubbelt de soortnectar van deze vangst.'},
- gold:{name:'Gouden lokbloem',multiplier:2.5,cell:7,color:'#EDC45E',hint:'Vangkans ×2,5 voor de volgende rake zwaai.'},
+ gold:{name:'Gouden lokbloem',multiplier:2.5,cell:7,color:'#EDC45E',hint:'Vangkans ×2,5 voor de volgende rake vangpoging.'},
  silver:{name:'Zilverbes',multiplier:1.8,cell:8,color:'#B5CEDE',hint:'80% hogere vangkans en 7 soortnectar bij een normale vangst.'},
 } as const;
 export type Net=keyof typeof NETS;
@@ -28,10 +29,11 @@ export const GRADES={miss:{name:'Mis',bonus:0,multiplier:0},hit:{name:'Gevangen!
 export type NetPoint={x:number;y:number;t:number};
 export type FieldEncounter={focus?:CatchFocus;cp?:number;id:string;spawn:string;createdAt:number;attempt:number;failures:number;bait:Bait|null;shiny:boolean};
 export type CastResult={xp?:number;held?:Held;candy?:number;cp?:number;id:string;spawn:string;species:string;attempt:number;outcome:'caught'|'escaped'|'fled'|'miss';grade:Grade;curved:boolean;chance:number;nectar:number;shiny:boolean;at:number};
-export type FieldState={lure?:{id:string;day:string;startedAt:number;expiresAt:number;lastAt:number;lastMeters:number;spawned:number;caught:number;seed?:string};walk?:{meters:number;dayMeters:number;anchor:Fix|null;at:number};cocoon?:{id:string;km:2|5;startedMeters:number;stage:number;seed?:string}|null;lastHatch?:{id:string;species:string;shiny:boolean;nectar:number;parts:number;at:number};inventory:Record<FieldItem,number>;encounters?:Record<string,FieldEncounter>;encounter:FieldEncounter|null;lastCast:CastResult|null;daily:{day:string;supply:boolean;catches:number;species:string[];skilled:number;claimed:string[];buddyFed?:boolean;buddyWalk?:boolean};total:{catches:number;perfect:number;curved:number};lastNet:Net};
+export type FieldState={healthSync?:HealthProgress;lure?:{id:string;day:string;startedAt:number;expiresAt:number;lastAt:number;lastMeters:number;spawned:number;caught:number;seed?:string};walk?:{gpsMeters?:number;meters:number;dayMeters:number;anchor:Fix|null;at:number};cocoon?:{id:string;km:2|5;startedMeters:number;stage:number;seed?:string}|null;lastHatch?:{id:string;species:string;shiny:boolean;nectar:number;parts:number;at:number};inventory:Record<FieldItem,number>;encounters?:Record<string,FieldEncounter>;encounter:FieldEncounter|null;lastCast:CastResult|null;daily:{day:string;supply:boolean;catches:number;species:string[];skilled:number;claimed:string[];buddyFed?:boolean;buddyWalk?:boolean};total:{catches:number;perfect:number;curved:number};lastNet:Net};
 const dayKey=(now:number)=>new Date(now).toISOString().slice(0,10);
 export function ensureField(p:PlayerV2,now:number):FieldState{
  p.field??={inventory:{basic:30,blue:8,silk:3,royal:0,pollen:3,dew:2,fruit:2,gold:0,silver:0},encounter:null,lastCast:null,daily:{day:dayKey(now),supply:false,catches:0,species:[],skilled:0,claimed:[]},total:{catches:0,perfect:0,curved:0},lastNet:'basic'};
+ for(const id of [...Object.keys(NETS),...Object.keys(BAITS)] as FieldItem[])p.field.inventory[id]??=id==='basic'?30:0;
  if(p.field.daily.day!==dayKey(now)){p.field.daily={day:dayKey(now),supply:false,catches:0,species:[],skilled:0,claimed:[]};if(p.field.walk)p.field.walk.dayMeters=0;}if(p.walking&&p.walking.day!==dayKey(now)){p.walking.day=dayKey(now);p.walking.count=0;}return p.field;
 }
 export function grantField(p:PlayerV2,items:Partial<Record<FieldItem,number>>,now:number){const bag=ensureField(p,now).inventory;for(const [id,n] of Object.entries(items))bag[id as FieldItem]=Math.min(99999,bag[id as FieldItem]+n!);}

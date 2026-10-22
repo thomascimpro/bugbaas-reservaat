@@ -1,5 +1,6 @@
 import type {PlayerV2} from './typesV2';
 import {ensureField} from './fieldV2';
+import {gpsWalkMeters} from './adventureSyncV2';
 import {rng} from './catalogV2';
 import {walkingSpecies} from './walkingV2';
 import {checkV2 as check} from './shopV2';
@@ -10,11 +11,11 @@ export function startFieldLure(p:PlayerV2,id:string,seed:string,now:number){
  const f=ensureField(p,now),w=p.walking;
  check(w&&now-w.at<30000&&w.fix.accuracy<=35,'Zet eerst nauwkeurige GPS aan.');
  check(f.lure?.day!==f.daily.day&&(!f.lure||f.lure.expiresAt<=now),'Je wandellokker is vandaag al gebruikt.');
- f.lure={id,day:f.daily.day,startedAt:now,expiresAt:now+LURE_DURATION,lastAt:now,lastMeters:f.walk?.meters??0,spawned:0,caught:0,seed};
+ f.lure={id,day:f.daily.day,startedAt:now,expiresAt:now+LURE_DURATION,lastAt:now,lastMeters:gpsWalkMeters(p),spawned:0,caught:0,seed};
 }
 // Only distance already credited by the walking validator can attract a bug.
 export function advanceFieldActivities(p:PlayerV2,now:number,habitat?:HabitatContext){
- const f=ensureField(p,now),w=p.walking,l=f.lure,meters=f.walk?.meters??0;
+ const f=ensureField(p,now),w=p.walking,l=f.lure,meters=gpsWalkMeters(p);
  if(l&&l.seed&&w&&l.expiresAt>now&&now-l.lastAt>=30000&&meters-l.lastMeters>=25&&l.spawned<20){
   const random=rng(l.seed+':'+l.spawned),angle=random()*Math.PI*2,radius=12,point={lat:w.fix.lat+Math.cos(angle)*radius/111320,lng:w.fix.lng+Math.sin(angle)*radius/(111320*Math.cos(w.fix.lat*Math.PI/180))};
   if(habitat&&!habitat.canSpawnAt(point))return;const biome=habitat?.biomeAt(point);

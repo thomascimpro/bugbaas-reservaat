@@ -35,7 +35,7 @@ if (Test-Path -LiteralPath $buildPath) {
     New-Item -ItemType Directory -Path $buildPath | Out-Null
     @{source=$sourceRoot} | ConvertTo-Json | Set-Content -LiteralPath $marker
 }
-foreach ($name in @('App.tsx','package.json','package-lock.json','app.json','tsconfig.json','babel.config.js')) { Copy-Item -LiteralPath (Join-Path $sourceRoot $name) -Destination $buildPath -Force }
+foreach ($name in @('App.tsx','package.json','package-lock.json','app.json','tsconfig.json','babel.config.js','google-services.json')) { Copy-Item -LiteralPath (Join-Path $sourceRoot $name) -Destination $buildPath -Force }
 foreach ($name in @('assets','game','src','plugins')) { Copy-Item -LiteralPath (Join-Path $sourceRoot $name) -Destination $buildPath -Recurse -Force }
 $env:JAVA_HOME='C:\Program Files\Java\jdk-21'
 $env:ANDROID_HOME=Join-Path $env:LOCALAPPDATA 'Android\Sdk'

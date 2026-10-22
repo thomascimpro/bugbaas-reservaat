@@ -1,4 +1,5 @@
 import {getWorldSites} from './worldSitesDataV2';
+import {virtualPosts} from '../game/virtualPostsV2';
 import {biomeAt,canSpawnAt,UNKNOWN_WEATHER} from '../game/habitatsV2';
 import type {AreaFeature,FieldWeather,HabitatContext,WeatherKind} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
@@ -18,5 +19,6 @@ export async function getFieldEnvironment(f:Fix,now:number,sitesProvider:typeof 
  for(let x=a.x;x<=b.x&&requests.length<9;x++)for(let y=a.y;y<=b.y&&requests.length<9;y++){requests.push(tile(x,y));requestedTiles.add(x+','+y);}
  const [maps,w]=await Promise.all([Promise.all(requests),currentWeather(f)]),features=maps.flatMap(v=>v??[]),known=maps.length>0&&maps.every(v=>v!==null);
  const sites=known?await sitesProvider(f,p=>{const t=tileXY(p);return requestedTiles.has(t.x+','+t.y)&&canSpawnAt(p,features);}):{posts:[],routes:[]};
+ if(known){sites.posts=[...sites.posts,...virtualPosts(f,features,sites.posts)].slice(0,8);if(sites.posts.length)sites.available=true;}
  return {sites,environment:{biome:biomeAt(f,features,known),mapSource:known?'osm':'unavailable',weather:w,at:now},biomeAt:p=>biomeAt(p,features,known),canSpawnAt:p=>canSpawnAt(p,features)};
 }

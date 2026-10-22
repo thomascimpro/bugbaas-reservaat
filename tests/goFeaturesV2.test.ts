@@ -47,7 +47,7 @@ test('cocoon service hides rolls, counts distance since start, and pays no catch
   await send('cocoonStart',{id:v.player.go!.cocoons!.items[0].id});await assert.rejects(()=>send('cocoonClaim'),/volledige afstand/);
   await store.run(['v2Players:walker'],d=>{(d.get('v2Players:walker') as PlayerV2).field!.walk!.meters=9000;});v=await service.state('walker');
   const prior=structuredClone(v.player),command={type:'cocoonClaim',commandId:randomUUID(),expectedRevision:v.player.revision};v=await service.command('walker',command);
-  assert.equal(v.player.specimens.length,prior.specimens.length+1);assert.equal(v.player.go!.dust,prior.go!.dust+100);assert.equal(v.player.go!.trainer!.catchDay,prior.go!.trainer!.catchDay);assert.equal(v.player.field!.daily.catches,prior.field!.daily.catches);
+  assert.equal(v.player.specimens.length,prior.specimens.length+1);assert.equal(v.player.go!.dust,prior.go!.dust+500);assert.equal(v.player.go!.trainer!.catchDay,prior.go!.trainer!.catchDay);assert.equal(v.player.field!.daily.catches,prior.field!.daily.catches);
   assert.ok(v.player.specimens.at(-1)!.go!.iv.every(n=>n>=10&&n<=15));const after=structuredClone(v.player);v=await service.command('walker',command);assert.deepEqual(v.player,after);
   await assert.rejects(()=>send('cocoonClaim'),/geen cocon/);assert.ok(!JSON.stringify(v).includes('hatchSeed'));
  }finally{store.close();}

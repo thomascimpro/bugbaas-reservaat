@@ -1,12 +1,14 @@
 import {rng} from './catalogV2';
 import {awardGoCatch} from './goV2';
+import {family} from './goV2';
 import type {Held} from './goV2';
 import {checkV2 as check} from './shopV2';
 import type {PlayerV2,Specimen} from './typesV2';
 
 export type GoCocoon={id:string;km:2|5;obtainedAt:number;hatchSeed?:string};
-export type GoCocoonsProgress={version:1;items:GoCocoon[];active:{id:string;startMeters:number;startedAt:number}|null;nextId:number;hatched:number;lastCatchId?:string;lastHatch?:{id:string;species:string;shiny:boolean;at:number;held?:Held}};
+export type GoCocoonsProgress={version:1;items:GoCocoon[];active:{id:string;startMeters:number;startedAt:number}|null;nextId:number;hatched:number;lastCatchId?:string;lastPostDrop?:string;lastHatch?:{id:string;species:string;shiny:boolean;at:number;held?:Held;dust?:number;candy?:number}};
 export const COCOON_CAP=3,COCOON_CATCH_CHANCE=.1;
+export const COCOON_POST_CHANCE=.2,COCOON_REWARDS={2:{dust:500,candy:10},5:{dust:1500,candy:20}};
 // Each entry in a distance pool has the same chance. All thirty existing walking species are represented.
 export const COCOON_POOLS:Record<2|5,readonly string[]>={
  2:['beetle','ant','aphid','weevil','moth','earwig','grasshopper','lacewing','dungbeetle','hoverfly','leafhopper','cricket','silverfish','caterpillar','antlion','cockroach','cranefly','flea','mayfly','termite'],
@@ -32,6 +34,13 @@ export function awardCocoon(p:PlayerV2,seed:string,now:number){
  if(g.items.length>=COCOON_CAP||rng(seed+':cocoon-drop')()>=COCOON_CATCH_CHANCE)return false;
  addCocoon(g,rng(seed+':cocoon-distance')()<.75?2:5,seed+':cocoon-hatch',now);return true;
 }
+/** Called after a validated post spin. The consumed spin cannot reroll after freeing a bag slot. */
+export function awardPostCocoon(p:PlayerV2,post:string,seed:string,now:number){
+ if(p.go?.sites?.visits[post]!==now)return null;
+ const g=ensureCocoons(p,seed,now),spin=post+':'+now;if(g.lastPostDrop===spin)return null;g.lastPostDrop=spin;
+ if(g.items.length>=COCOON_CAP||rng(seed+':post-cocoon')()>=COCOON_POST_CHANCE)return null;
+ return addCocoon(g,rng(seed+':post-distance')()<.75?2:5,seed+':post-hatch',now);
+}
 export function startCocoon(p:PlayerV2,id:unknown,now:number){
  idle(p);const g=progress(p);check(!g.active,'Er wordt al een cocon uitgebroed.');
  const item=g.items.find(c=>c.id===id);check(item,'Kies een cocon uit je voorraad.');
@@ -50,7 +59,8 @@ export function hatchCocoon(p:PlayerV2,now:number):Specimen{
  const s:Specimen={id:'hatched-'+item.id,species:kind,level:1,shiny:rng(seed+':shiny')()<1/64,favorite:false,obtainedAt:now,source:'cocoon',hearts:0,item:null};
  check(!p.specimens.some(b=>b.id===s.id),'Deze cocon is al uitgekomen.');
  // Reuse collection, dust, nectar and dex accounting. Only this new specimen receives hatch IVs.
- let held=awardGoCatch(p,s,seed+':stats');if(g.hatched===0&&!Object.values(p.go!.items).some(n=>n>0)){p.go!.items.leaf++;held='leaf';}const random=rng(seed+':iv');s.go!.iv=[10+Math.floor(random()*6),10+Math.floor(random()*6),10+Math.floor(random()*6)];
+ let held=awardGoCatch(p,s,seed+':stats');const reward=COCOON_REWARDS[item.km];p.go!.dust+=reward.dust-100;p.go!.candy[family(kind)]+=reward.candy-3;
+ if(g.hatched===0&&!Object.values(p.go!.items).some(n=>n>0)){p.go!.items.leaf++;held='leaf';}const random=rng(seed+':iv');s.go!.iv=[10+Math.floor(random()*6),10+Math.floor(random()*6),10+Math.floor(random()*6)];
  p.specimens.push(s);if(!p.discovered.includes(kind))p.discovered.push(kind);if(s.shiny&&!p.shinies.includes(kind))p.shinies.push(kind);
- g.items=g.items.filter(c=>c.id!==item.id);g.active=null;g.hatched++;g.lastHatch={id:s.id,species:kind,shiny:s.shiny,at:now,...(held?{held}:{})};return s;
+ g.items=g.items.filter(c=>c.id!==item.id);g.active=null;g.hatched++;g.lastHatch={id:s.id,species:kind,shiny:s.shiny,at:now,dust:reward.dust,candy:reward.candy,...(held?{held}:{})};return s;
 }

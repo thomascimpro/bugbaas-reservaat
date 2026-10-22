@@ -22,7 +22,9 @@
           "isAndroidBackgroundLocationEnabled": false,
           "isAndroidForegroundServiceEnabled": true
         }
-      ]
+      ],
+      "@react-native-google-signin/google-signin",
+      "./plugins/withAdventureSync"
     ],
     "icon": "./assets/art/crest.png",
     "userInterfaceStyle": "light",
@@ -35,7 +37,8 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.SYSTEM_ALERT_WINDOW",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "single",

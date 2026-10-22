@@ -18,7 +18,7 @@ export function CatchResultV2({result,demo,newSpecies,onContinue,onCollection}:{
     {caught&&!demo&&newSpecies&&<View testID="new-dex-catch" style={{paddingHorizontal:10,paddingVertical:3,borderRadius:12,backgroundColor:'#F2D78C',flexDirection:'row',alignItems:'center',gap:4}}><Glyph name="book" size={19}/><Label small bold>Nieuwe soort</Label></View>}
    </View>
   </View>
-  {caught&&(demo?<Label small center color="#F1E5C9">Demo · geen beloningen</Label>:<View testID="catch-rewards" style={{padding:12,borderRadius:23,backgroundColor:'#FFF6E7F2',gap:9,borderWidth:1,borderColor:'#F2DCAB'}}>
+  {caught&&(demo?<Label small center color="#F1E5C9">Demo · geen beloningen</Label>:<View testID="catch-rewards" style={{padding:12,borderRadius:23,backgroundColor:'#214B40F2',gap:9,borderWidth:1,borderColor:'#F2DCAB'}}>
    {!!result.cp&&<Label bold center>CP {result.cp}</Label>}
    <View style={{flexDirection:'row',justifyContent:'space-around',gap:6}}>
     {([{icon:'nectar',value:result.nectar,label:'Nectarstof'},{icon:'profile',value:result.xp??0,label:'XP'},{icon:'leaf',value:result.candy??3,label:'Soortnectar'}] as const).map(reward=><View key={reward.icon} accessibilityLabel={reward.label+': +'+reward.value} style={{flex:1,minWidth:0,alignItems:'center',gap:2}}><Glyph name={reward.icon} size={35}/><Text style={{fontFamily:font,fontSize:20,fontWeight:'800',fontVariant:['tabular-nums'],color:V.ink}}>+{reward.value}</Text><Label small center>{reward.label}</Label></View>)}

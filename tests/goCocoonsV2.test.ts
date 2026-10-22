@@ -61,7 +61,7 @@ test('committed seeds keep hatch species, shiny, moves and IV stable across clai
  trainer.catchDay='2026-10-20';trainer.catchStreak={days:6,lastDay:'2026-10-20'};const xp=trainer.xp,dust=p.go!.dust,inventory=structuredClone(p.field!.inventory);
  startCocoon(p,p.go!.cocoons!.items[0].id,NOW);setMeters(p,2000);const q=structuredClone(p),a=hatchCocoon(p,NOW),b=hatchCocoon(q,NOW+86400000);
  assert.equal(a.species,b.species);assert.equal(a.shiny,b.shiny);assert.deepEqual(a.go,b.go);assert.ok(COCOON_POOLS[2].includes(a.species));assert.ok(a.go!.iv.every(n=>n>=10&&n<=15));
- assert.deepEqual(p.specimens.find(s=>s.id===old.id),older);assert.equal(p.go!.dust,dust+100);assert.equal(p.go!.candy[a.species==='moth'?'caterpillar':a.species],3);
+ assert.deepEqual(p.specimens.find(s=>s.id===old.id),older);assert.equal(p.go!.dust,dust+500);assert.equal(p.go!.candy[a.species==='moth'?'caterpillar':a.species],10);assert.equal(p.go!.cocoons!.lastHatch!.dust,500);assert.equal(p.go!.cocoons!.lastHatch!.candy,10);
  assert.equal(trainer.xp,xp+600);assert.equal(trainer.catchDay,'2026-10-20');assert.deepEqual(trainer.catchStreak,{days:6,lastDay:'2026-10-20'});
  assert.equal(p.nectar,wallet);assert.equal(p.adventure!.parts,parts);assert.deepEqual(p.field!.inventory,inventory);assert.deepEqual(p.field!.daily,daily);
  assert.ok(p.discovered.includes(a.species));assert.ok(p.go!.dex!.includes(a.species));assert.equal(p.go!.entries![a.species].caughtAt,NOW);
@@ -72,7 +72,7 @@ test('5km needs its full distance; battle and missing private seed prevent start
  p.go!.battle='busy';assert.throws(()=>startCocoon(p,rare.id,NOW));p.go!.battle=null;startCocoon(p,rare.id,NOW);
  setMeters(p,4999);assert.throws(()=>hatchCocoon(p,NOW));setMeters(p,5000);p.go!.queue={league:'great',at:NOW,until:NOW+120000};assert.throws(()=>hatchCocoon(p,NOW));p.go!.queue=null;
  const seed=rare.hatchSeed;delete rare.hatchSeed;assert.throws(()=>hatchCocoon(p,NOW));rare.hatchSeed=seed;
- const s=hatchCocoon(p,NOW);assert.ok(COCOON_POOLS[5].includes(s.species));assert.equal(awardCocoon(p,dropSeed(2),NOW),false);
+ const dust=p.go!.dust,s=hatchCocoon(p,NOW);assert.ok(COCOON_POOLS[5].includes(s.species));assert.equal(p.go!.dust,dust+1500);assert.equal(p.go!.cocoons!.lastHatch!.candy,20);assert.equal(awardCocoon(p,dropSeed(2),NOW),false);
 });
 
 test('the fixed one-in-64 shiny roll records its actual shiny specimen and dex entry',()=>{

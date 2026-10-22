@@ -6,6 +6,8 @@ import type { Persistence } from 'firebase/auth';
 import { firebaseConfig } from './firebaseConfig';
 import type { Action, ArenaView, GameView, Match, SquadSlot } from '../game/types';
 import type { CommandV2, GameViewV2 } from '../game/typesV2';
+import {googleSignInAvailable,signInGoogle} from './GoogleSignInV2';
+export {googleSignInAvailable};
 
 const app = getApps()[0] ?? initializeApp(firebaseConfig);
 let auth: ReturnType<typeof getAuth>;
@@ -52,7 +54,8 @@ export const actArena = (m: Match, actorId: string, move: 'attack' | 'special', 
 export const leaveArena = () => request<ArenaView>('arena/leave', {});
 export const accountUid=()=>auth.currentUser?.uid??null;
 export const accountEmail = () => auth.currentUser?.email ?? null;
-export const accountDetails = () => ({email:auth.currentUser?.email??null,guest:auth.currentUser?.isAnonymous??true,verified:auth.currentUser?.emailVerified??false});
+export const accountDetails = () => ({email:auth.currentUser?.email??null,guest:auth.currentUser?.isAnonymous??true,verified:auth.currentUser?.emailVerified??false,providers:auth.currentUser?.providerData.map(p=>p.providerId)??[]});
+export async function googleLoginV2(link=true){if(mode!=='cloud')throw new ApiError('Open de online versie voor Google-inloggen.',400);await signInGoogle(auth,link);return refreshV2();}
 export async function logoutV2(){if(mode!=='cloud'||!auth.currentUser||auth.currentUser.isAnonymous)throw new ApiError('Koppel eerst je gastvoortgang aan een e-mailadres.',400);await signOut(auth);await signInAnonymously(auth);return refreshV2();}
 export async function resetAccountPassword(email:string){if(mode!=='cloud')throw new ApiError('Open de online versie voor je account.',400);await sendPasswordResetEmail(auth,email.trim());}
 export async function verifyAccountEmail(){const user=auth.currentUser;if(!user?.email||user.isAnonymous)throw new ApiError('Koppel eerst je e-mailadres.',400);await sendEmailVerification(user);}

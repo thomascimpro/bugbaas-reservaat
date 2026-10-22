@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "388597825424",
+    "project_id": "bugbaas-reservaat-261012",
+    "storage_bucket": "bugbaas-reservaat-261012.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388597825424:android:eafa1982ea09258534fd15",
+        "android_client_info": {
+          "package_name": "nl.cimpro.bugbaas.reservaat.preview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "388597825424-krt8p4tu64dkqorjpocj6nos22eo2pkh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "nl.cimpro.bugbaas.reservaat.preview",
+            "certificate_hash": "2df0a20a7827f8b08cbdc2e830b4c740efb4b208"
+          }
+        },
+        {
+          "client_id": "388597825424-1ot43fjfafdsjh3gd5f36267u1olp980.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHJudZR16JotkjksinA27vl1XPEY9EH_k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "388597825424-1ot43fjfafdsjh3gd5f36267u1olp980.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
