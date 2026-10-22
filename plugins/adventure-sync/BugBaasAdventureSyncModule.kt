@@ -2,6 +2,8 @@ package __PACKAGE__
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -17,6 +19,8 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.WritableMap
+import com.facebook.react.modules.core.PermissionAwareActivity
+import com.facebook.react.modules.core.PermissionListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -69,7 +73,19 @@ class BugBaasAdventureSyncModule(private val context: ReactApplicationContext) :
           if (activity == null || permissionPromise != null) { promise.resolve(false); return@runOnUiQueueThread }
           try {
             permissionPromise = promise
-            activity.startActivityForResult(permissionContract.createIntent(context, permissions), requestCode)
+            if (Build.VERSION.SDK_INT >= 34) {
+              val permissionActivity = activity as? PermissionAwareActivity ?: throw IllegalStateException("Activity cannot request health permissions")
+              permissionActivity.requestPermissions(permissions.toTypedArray(), requestCode, PermissionListener { code, requested, grants ->
+                if (code != requestCode) false else {
+                  val waiting = permissionPromise; permissionPromise = null
+                  waiting?.resolve(permissions.all { permission ->
+                    val index = requested.indexOf(permission)
+                    index >= 0 && grants.getOrNull(index) == PackageManager.PERMISSION_GRANTED
+                  })
+                  true
+                }
+              })
+            } else activity.startActivityForResult(permissionContract.createIntent(context, permissions), requestCode)
           } catch (_: Exception) { permissionPromise = null; promise.resolve(false) }
         }
       } catch (_: Exception) { promise.resolve(false) }
