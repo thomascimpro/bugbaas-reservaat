@@ -1,0 +1,18 @@
+{
+  "publisher": "Gobkit / Alsomind Tech Co., Ltd.",
+  "pack": "Gobkit Free Animal Pack Vol. 2",
+  "source": "https://gobkit.com/freebies",
+  "manifest": "https://gobkit.com/api/free",
+  "url": "https://gobkit.com/freebies/animalB/Bee.glb",
+  "archive": "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip",
+  "license": "CC0-1.0",
+  "licenseFile": "LICENSE.txt",
+  "verifiedOn": "2026-10-23",
+  "file": "Bee.glb",
+  "bytes": 156888,
+  "sha256": "15dcefc04a7730a613d7a6065af19320891be5930596e9c39d04992765b3cf40",
+  "meshes": 1,
+  "skins": 1,
+  "animations": ["idle", "attack", "dead", "walk"],
+  "visualCheck": "Rendered from this GLB and inspected: stylized yellow striped bee, antennae, wings and legs; same low-poly Gobkit style. Normal and shiny 2D portraits use this exact model."
+}

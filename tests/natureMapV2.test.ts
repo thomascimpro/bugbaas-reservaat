@@ -91,6 +91,17 @@ test('new source content replaces equal-count features and coalesces tile events
  const queries=h.queries(),repaints=h.repaints();assert.ok([...h.listeners.values()].every(list=>list.size===0));h.emit('move');h.emit('sourcedata',{sourceId:'openmaptiles',sourceDataType:'content'});now+=1000;h.nature.update(fix);assert.equal(h.queries(),queries);assert.equal(h.repaints(),repaints);assert.equal(h.scene.children.length,0);
 });
 
+test('orbiting a stationary trainer never rebuilds terrain; actual new tiles still update it',t=>{
+ let now=10000;t.mock.method(Date,'now',()=>now);const fix={lat:0,lng:0,accuracy:8},h=movingScenery([feature('building',rectangle(30,0,10,10))]);
+ try{
+  h.nature.update(fix);const initial=h.queries();
+  for(let i=0;i<120;i++){h.emit('move');h.emit('sourcedata',{sourceId:'openmaptiles',sourceDataType:'visibility'});now+=50;h.nature.update(fix);}
+  assert.equal(h.queries(),initial);assert.equal(h.dataset.sceneryRevision,'1');
+  h.setFeatures([feature('building',rectangle(60,0,10,10))]);h.emit('sourcedata',{sourceId:'openmaptiles',sourceDataType:'content'});now+=1000;h.nature.update(fix);
+  assert.equal(h.dataset.sceneryRevision,'2');assert.equal(h.queries(),initial+7);
+ }finally{h.nature.dispose();}
+});
+
 test('minimal map adapters without events still follow their optional center on the throttled update',t=>{
  let now=10000;t.mock.method(Date,'now',()=>now);let center={lng:0,lat:0};const scene=new THREE.Scene(),dataset:Record<string,string>={},all=[feature('building',rectangle(800,0,12,12))],map={getCenter:()=>center,querySourceFeatures:(_source:string,o:{sourceLayer:string})=>all.filter(f=>f.layer===o.sourceLayer),getCanvas:()=>({dataset})} as unknown as GameMap,nature=addMapNature(map,scene,local);
  try{nature.update({lat:0,lng:0,accuracy:8});assert.equal(dataset.sceneryBuildings,'0');center={lng:coord(800),lat:0};now+=1000;nature.update({lat:0,lng:0,accuracy:8});assert.equal(dataset.sceneryBuildings,'1');}finally{nature.dispose();}

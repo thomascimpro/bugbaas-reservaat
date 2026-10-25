@@ -1,6 +1,6 @@
 import {createAudioPlayer,setAudioModeAsync} from 'expo-audio';
 const sources={click:require('../assets/v2/audio/pro/bookFlip1.wav'),buy:require('../assets/v2/audio/pro/handleCoins.wav'),sell:require('../assets/v2/audio/pro/handleCoins.wav'),roll:require('../assets/v2/audio/pro/cloth1.wav'),freeze:require('../assets/v2/audio/pro/beltHandle1.wav'),attack:require('../assets/v2/audio/pro/knifeSlice.wav'),hit:require('../assets/v2/audio/pro/chop.wav'),shield:require('../assets/v2/audio/pro/metalClick.wav'),summon:require('../assets/v2/audio/pro/cloth1.wav'),grow:require('../assets/v2/audio/pro/success.wav'),shiny:require('../assets/v2/audio/pro/shiny.wav'),reward:require('../assets/v2/audio/pro/success.wav'),win:require('../assets/v2/audio/pro/win.wav'),lose:require('../assets/v2/audio/pro/lose.wav')};
-const musicSources={field:require('../assets/v2/audio/pro/woodland-fantasy.mp3'),battle:require('../assets/v2/audio/pro/battle-loop.wav')};
+const musicSources={field:require('../assets/v2/audio/pro/woodland-fantasy.mp3'),battle:require('../assets/v2/audio/pro/battle-loop.mp3')};
 type Player=ReturnType<typeof createAudioPlayer>;
 const players=new Map<string,Player>(),musicPlayers=new Map<string,Player>();let enabled=true,unlocked=false,active=true,musicEnabled=true,musicVolume=.3,effectsVolume=.5,track:keyof typeof musicSources='field';
 export function setSoundEnabled(value:boolean){enabled=value;if(!value)stopAudio();}

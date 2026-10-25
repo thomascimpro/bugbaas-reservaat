@@ -1,9 +1,9 @@
 import type {ImageSourcePropType} from 'react-native';
 export const legacyArt:Record<string,ImageSourcePropType>={
-  'ambermantis': require('../assets/v2/rare/ambermantis.png'),
-  'crystalstag': require('../assets/v2/rare/crystalstag.png'),
-  'glasswing': require('../assets/v2/rare/glasswing.png'),
-  'cometmoth': require('../assets/v2/rare/cometmoth.png'),
+  'ambermantis': require('../assets/v2/rare/ambermantis.webp'),
+  'crystalstag': require('../assets/v2/rare/crystalstag.webp'),
+  'glasswing': require('../assets/v2/rare/glasswing.webp'),
+  'cometmoth': require('../assets/v2/rare/cometmoth.webp'),
   'ladybug': require('../assets/v2/legacy/ladybug.webp'),
   'bee': require('../assets/v2/legacy/bee.webp'),
   'beetle': require('../assets/v2/legacy/beetle.webp'),

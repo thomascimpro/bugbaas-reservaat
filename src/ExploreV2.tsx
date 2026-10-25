@@ -22,8 +22,8 @@ export function ExploreV2(props:Props){
  const permission=async()=>{const p=await Location.getForegroundPermissionsAsync();send({kind:'permission',state:p.granted?'granted':p.canAskAgain?'prompt':'denied'});return p;};
  const gps=async(action:'get'|'watch'|'clear',id:number)=>{
   if(action==='clear'){watches.current.clear(id);return;}
-  if(!active.current){send({kind:'geoError',id,code:2});return;}
-  const ownGeneration=generation.current,watch=action==='watch'?watches.current.begin(id):null,current=()=>alive.current&&active.current&&ownGeneration===generation.current&&(!watch||watch.current()),error=(code:number)=>{if(current())send({kind:'geoError',id,code});};
+   if(!active.current||latest.current.paused){send({kind:'geoError',id,code:2});return;}
+   const ownGeneration=generation.current,watch=action==='watch'?watches.current.begin(id):null,current=()=>alive.current&&active.current&&!latest.current.paused&&ownGeneration===generation.current&&(!watch||watch.current()),error=(code:number)=>{if(current())send({kind:'geoError',id,code});};
   try{
    let p=await Location.getForegroundPermissionsAsync();if(!current())return;if(!p.granted)p=await Location.requestForegroundPermissionsAsync();if(!current())return;
    send({kind:'permission',state:p.granted?'granted':p.canAskAgain?'prompt':'denied'});if(!p.granted){error(1);return;}
@@ -33,14 +33,15 @@ export function ExploreV2(props:Props){
    else{const subscription=await Location.watchPositionAsync({accuracy:Location.Accuracy.High,timeInterval:5000,distanceInterval:4},position,()=>error(2));watch!.attach(subscription);}
   }catch{error(2);}
  };
- useEffect(()=>{alive.current=true;const listener=AppState.addEventListener('change',status=>{active.current=status==='active';if(!active.current)stop();send({kind:'active',active:active.current});if(active.current)void permission();});return()=>{alive.current=false;ready.current=false;stop();listener.remove();};},[]);
- useEffect(()=>{if(ready.current)state();},[props.view.player.revision,props.busy,props.paused,props.view.player.settings.reducedMotion,props.view.player.settings.largeText]);
- useGoBack(true,()=>{if(!ready.current)return false;backPending.current=true;send({kind:'back'});return true;},50);
+  useEffect(()=>{alive.current=true;const listener=AppState.addEventListener('change',status=>{active.current=status==='active';if(!active.current)stop();send({kind:'active',active:active.current&&!latest.current.paused});if(active.current&&!latest.current.paused)void permission();});return()=>{alive.current=false;ready.current=false;stop();listener.remove();};},[]);
+  useEffect(()=>{if(props.paused)stop();send({kind:'active',active:active.current&&!props.paused});},[props.paused]);
+ useEffect(()=>{if(ready.current)state();},[props.view.player.revision,props.view.goGyms,props.busy,props.paused,props.view.player.settings.reducedMotion,props.view.player.settings.largeText]);
+  useGoBack(!props.paused,()=>{if(!ready.current)return false;backPending.current=true;send({kind:'back'});return true;},50);
  async function message(raw:string){const m=parseNativeFieldRequest(raw);if(!m)return;
-  if(m.kind==='ready'){stop();ready.current=true;setLoading(false);setProblem('');state();send({kind:'active',active:active.current});await permission();}
+   if(m.kind==='ready'){stop();ready.current=true;setLoading(false);setProblem('');state();send({kind:'active',active:active.current&&!latest.current.paused});if(!latest.current.paused)await permission();}
   else if(m.kind==='geo')await gps(m.action,m.id);
-  else if(m.kind==='command'){if(!active.current){send({kind:'result',id:m.id,ok:false});return;}const ok=await latest.current.run(m.command,m.params);state();send({kind:'result',id:m.id,ok});}
-  else if(m.kind==='navigate'){if(m.camera&&latest.current.camera)latest.current.camera.current=m.camera;latest.current.open(m.name,m.specimenId);}
+   else if(m.kind==='command'){if(!active.current||latest.current.paused){send({kind:'result',id:m.id,ok:false});return;}const ok=await latest.current.run(m.command,m.params);state();send({kind:'result',id:m.id,ok});}
+   else if(m.kind==='navigate'&&!latest.current.paused){if(m.camera&&latest.current.camera)latest.current.camera.current=m.camera;latest.current.open(m.name,m.specimenId);}
   else if(m.kind==='backResult'&&backPending.current){backPending.current=false;if(!m.handled)BackHandler.exitApp();}
  }
  if(!uri)return <View style={{flex:1,justifyContent:'center',padding:24}}><Label>De beveiligde kaartverbinding is nog niet ingesteld.</Label></View>;

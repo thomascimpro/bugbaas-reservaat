@@ -1,5 +1,7 @@
+import type {GymProgress} from './gymsV2';
 import {ensureTrainer,catchXP,grantXP} from './trainerV2';
-import {EVOLUTIONS,candyFamily} from './dexV2';
+import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
+import {EVOLUTIONS,candyFamily,baseSpeciesId,ELITE_FORMS} from './dexV2';
 import type {EchoProgress} from './echoArenaV2';
 import type {GoCocoonsProgress} from './goCocoonsV2';
 import type {BossProgress} from './goBossV2';
@@ -51,6 +53,7 @@ export type Fast=keyof typeof FAST;
 export type Charged=keyof typeof CHARGED;
 export type GoBug={traded?:{id:string;at:number;from:string};level:number;iv:[number,number,number];fast:Fast;charged:Charged[];item:Held|null};
 export type GoProfile={
+ gyms?:GymProgress;
  journal?:GoJournalEntry[];trades?:GoTradeProgress;
  echo?:EchoProgress;cocoons?:GoCocoonsProgress;bosses?:BossProgress;
  sites?:SiteProgress;trainer?:TrainerProgress;
@@ -64,6 +67,13 @@ export type GoProfile={
 export function eligible(s:Specimen){return !!s.go||['walking','cocoon','metamorphosis'].includes(s.source);}
 export const family=candyFamily;
 export function movePool(id:string):{types:Element[];fast:Fast[];charged:Charged[]}{
+ id=baseSpeciesId(id);
+ const fieldFamily=FIELD_FAMILY_SPECIES.find(s=>s.id===id)?.family;
+ if(fieldFamily==='lesserstag'||fieldFamily==='manticora')return {types:['bug','dark'],fast:['bite','fury'],charged:['cut','dark','rock']};
+ if(fieldFamily==='minotaurbeetle'||fieldFamily==='eyedclickbeetle'||fieldFamily==='sacredscarab')return {types:['bug','ground'],fast:['mud','bite'],charged:['earth','rock','iron']};
+ if(fieldFamily==='rosechafer'||fieldFamily==='asianladybeetle')return {types:['bug','steel'],fast:['bite','mud'],charged:['iron','rock','earth']};
+ if(fieldFamily==='acornweevil'||fieldFamily==='leafbeetle')return {types:['bug','grass'],fast:['leaf','fury'],charged:['seed','cut','rock']};
+ if(fieldFamily==='cardinalbeetle')return {types:['bug','poison'],fast:['poison','bite'],charged:['venom','cut','dark']};
  if(id==='beetlegrub')return {types:['bug'],fast:['bite','fury'],charged:['cut','earth','rock']};
  if(id==='giantwaterbug'||id==='waterstrider')return {types:['bug','water'],fast:['water','bite'],charged:['stream','cut','earth']};
  if(id==='moth')return {types:['bug','flying'],fast:['wing','fury'],charged:['air','buzz','cut','flare']};
@@ -86,33 +96,39 @@ export function ensureGo(p:PlayerV2,now:number){
 }
 const CPM=[.094,.16639787,.21573247,.25572005,.29024988,.3210876,.34921268,.37523559,.39956728,.4225,.44310755,.46279839,.48168495,.49985844,.51739395,.53435433,.55079269,.56675452,.58227891,.5974,.61215729,.62656713,.64065295,.65443563,.667934,.68116492,.69414365,.70688421,.71939909,.7317,.73776948,.74378943,.74976104,.75568551,.76156384,.76739717,.7731865,.77893275,.78463697,.7903,.7953,.8003,.8053,.8103,.8153,.8203,.8253,.8303,.8353,.8403];
 export function stats(s:Specimen,override?:GoBug){const b=override??s.go!;const meta=species(s.species),lo=CPM[Math.floor(b.level)-1],hi=CPM[Math.min(49,Math.ceil(b.level)-1)],c=b.level%1?Math.sqrt((lo*lo+hi*hi)/2):lo,item=b.item?HELD[b.item]:{attack:1,defense:1,hp:1},attack=(140+meta.attack*12+b.iv[0])*c*item.attack,defense=(130+meta.health*10+b.iv[1])*c*item.defense,hp=Math.max(10,Math.floor((140+meta.health*18+b.iv[2])*c*item.hp)),cp=Math.max(10,Math.floor(attack*Math.sqrt(defense)*Math.sqrt((140+meta.health*18+b.iv[2])*c*item.hp)/10));return {attack,defense,hp,cp};}
-export function powerCost(level:number){if(level>=50)return null;const dust=[200,400,600,800,1000,1300,1600,1900,2200,2500,3000,3500,4000,4500,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000][Math.min(24,Math.floor((level-1)/2))];const candy=level<11?1:level<21?2:level<26?3:level<31?4:level<33?6:level<35?8:level<37?10:level<39?12:15;return {dust,candy:level<40?candy:0,xl:level>=40?[10,10,12,12,15,15,17,17,20,20][Math.floor(level)-40]:0};}
+export function powerCost(level:number,steps=1){
+ if(!Number.isInteger(steps)||steps<1||steps>10||!Number.isFinite(level)||level<1||!Number.isInteger(level*2)||level+steps*.5>50)return null;
+ const total={dust:0,candy:0,xl:0};for(let i=0;i<steps;i++){const at=level+i*.5;total.dust+=[200,400,600,800,1000,1300,1600,1900,2200,2500,3000,3500,4000,4500,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000][Math.min(24,Math.floor((at-1)/2))];if(at<40)total.candy+=at<11?1:at<21?2:at<26?3:at<31?4:at<33?6:at<35?8:at<37?10:at<39?12:15;else total.xl+=[10,10,12,12,15,15,17,17,20,20][Math.floor(at)-40];}return total;
+}
 export function appraisal(s:Specimen){const total=s.go!.iv.reduce((a,b)=>a+b,0);return total===45?4:total>=37?3:total>=30?2:total>=23?1:0;}
+export function availableGo(p:PlayerV2,id:unknown){check(!p.go?.gyms?.deployed.some(d=>d.specimen===id),'Deze bug verdedigt een gym en komt terug na een nederlaag.');}
 export function ownedGo(p:PlayerV2,id:unknown){const s=p.specimens.find(s=>s.id===id&&s.go);check(s,'Kies een zelfgevangen bug.');return s;}
 export function renameGo(p:PlayerV2,id:unknown,raw:unknown){const s=ownedGo(p,id);check(typeof raw==='string','Kies een geldige bijnaam.');const name=(raw as string).trim().normalize('NFC');check(name.length<=18&&(!name||/^[\p{L}\p{N} _'’\-]+$/u.test(name)),'Gebruik maximaal 18 letters of cijfers.');if(name)s.nickname=name;else delete s.nickname;}
-export function powerUp(p:PlayerV2,id:unknown){const s=ownedGo(p,id),g=p.go!,cost=powerCost(s.go!.level),key=family(s.species);check(cost&&g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy&&(g.xl[key]??0)>=cost.xl,'Niet genoeg nectarstof, soortnectar of XL.');g.dust-=cost.dust;g.candy[key]-=cost.candy;if(cost.xl)g.xl[key]-=cost.xl;s.go!.level+=.5;}
+export function powerUp(p:PlayerV2,id:unknown,steps:unknown=1){availableGo(p,id);check(typeof steps==='number'&&Number.isInteger(steps)&&steps>=1&&steps<=10,'Kies 1 tot 10 power-ups.');const s=ownedGo(p,id),g=p.go!,cost=powerCost(s.go!.level,steps),key=family(s.species);check(cost,'Deze power-ups passen niet binnen level 50.');check(g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy&&(g.xl[key]??0)>=cost.xl,'Niet genoeg nectarstof, soortnectar of XL.');g.dust-=cost.dust;g.candy[key]=(g.candy[key]??0)-cost.candy;if(cost.xl)g.xl[key]-=cost.xl;s.go!.level+=steps*.5;}
 export function secondCost(kind:string){const tier=species(kind).tier;return tier<=2?{dust:10000,candy:25}:tier<=4?{dust:50000,candy:50}:tier<=6?{dust:75000,candy:75}:{dust:100000,candy:100};}
-export function secondAttack(p:PlayerV2,id:unknown,seed:string){const s=ownedGo(p,id),g=p.go!,key=family(s.species),cost=secondCost(s.species);check(s.go!.charged.length===1&&g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy,'Niet genoeg nectarstof of soortnectar voor de tweede aanval.');const pool=movePool(s.species).charged.filter(m=>!s.go!.charged.includes(m));s.go!.charged.push(pool[Math.floor(rng(seed)()*pool.length)]);g.dust-=cost.dust;g.candy[key]-=cost.candy;}
-export function teachMove(p:PlayerV2,id:unknown,slot:unknown,seed:string){const s=ownedGo(p,id),g=p.go!,pool=movePool(s.species);if(slot==='fast'){check(g.fastTMs>0,'Je hebt een snelle TM nodig.');const options=pool.fast.filter(m=>m!==s.go!.fast);s.go!.fast=options[Math.floor(rng(seed)()*options.length)];g.fastTMs--;}else{check((slot===0||slot===1)&&slot<s.go!.charged.length&&g.chargedTMs>0,'Kies een bestaande aanval en gebruik een opgeladen TM.');const options=pool.charged.filter(m=>!s.go!.charged.includes(m));check(options.length,'Geen andere aanval beschikbaar.');s.go!.charged[slot as number]=options[Math.floor(rng(seed)()*options.length)];g.chargedTMs--;}}
-export function equipGo(p:PlayerV2,id:unknown,item:unknown){const s=ownedGo(p,id);check(item===null||typeof item==='string'&&Object.hasOwn(HELD,item),'Kies een held item.');if(item)check((p.go!.items[item as Held]??0)>p.specimens.filter(o=>o.id!==s.id&&o.go?.item===item).length,'Dit item is al uitgerust of nog niet gevonden.');s.go!.item=item as Held|null;}
+export function secondAttack(p:PlayerV2,id:unknown,seed:string){availableGo(p,id);const s=ownedGo(p,id),g=p.go!,key=family(s.species),cost=secondCost(s.species);check(s.go!.charged.length===1&&g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy,'Niet genoeg nectarstof of soortnectar voor de tweede aanval.');const pool=movePool(s.species).charged.filter(m=>!s.go!.charged.includes(m));s.go!.charged.push(pool[Math.floor(rng(seed)()*pool.length)]);g.dust-=cost.dust;g.candy[key]-=cost.candy;}
+export function teachMove(p:PlayerV2,id:unknown,slot:unknown,seed:string){availableGo(p,id);const s=ownedGo(p,id),g=p.go!,pool=movePool(s.species);if(slot==='fast'){check(g.fastTMs>0,'Je hebt een snelle TM nodig.');const options=pool.fast.filter(m=>m!==s.go!.fast);s.go!.fast=options[Math.floor(rng(seed)()*options.length)];g.fastTMs--;}else{check((slot===0||slot===1)&&slot<s.go!.charged.length&&g.chargedTMs>0,'Kies een bestaande aanval en gebruik een opgeladen TM.');const options=pool.charged.filter(m=>!s.go!.charged.includes(m));check(options.length,'Geen andere aanval beschikbaar.');s.go!.charged[slot as number]=options[Math.floor(rng(seed)()*options.length)];g.chargedTMs--;}}
+export function equipGo(p:PlayerV2,id:unknown,item:unknown){availableGo(p,id);const s=ownedGo(p,id);check(item===null||typeof item==='string'&&Object.hasOwn(HELD,item),'Kies een held item.');if(item)check((p.go!.items[item as Held]??0)>p.specimens.filter(o=>o.id!==s.id&&o.go?.item===item).length,'Dit item is al uitgerust of nog niet gevonden.');s.go!.item=item as Held|null;}
 export function teamIssue(p:PlayerV2,raw:unknown,league:unknown,npc=false):string|null{
  if(typeof league!=='string'||!Object.hasOwn(LEAGUES,league)||!Array.isArray(raw)||raw.length!==3||new Set(raw).size!==3)return 'Kies drie verschillende eigen exemplaren en een league.';
  if(!npc&&league==='ultra'&&p.specimens.filter(s=>s.go&&stats(s).cp>1500).length<3)return 'Ultra League vraagt drie bugs boven 1500 CP.';
  if(!npc&&league==='master'&&p.specimens.filter(s=>s.go&&stats(s).cp>2500).length<3)return 'Master League vraagt drie bugs boven 2500 CP.';
  const team=raw.map(id=>p.specimens.find(s=>s.id===id&&s.go));if(team.some(s=>!s))return 'Kies een zelfgevangen bug.';
+ if(team.some(s=>p.go?.gyms?.deployed.some(d=>d.specimen===s!.id)))return 'Een bug verdedigt een gym. Kies een andere bug.';
  if(new Set(team.map(s=>s!.species)).size!==3)return 'Kies drie verschillende soorten.';
  if(team.some(s=>stats(s!).cp>LEAGUES[league as League].cap))return 'Een bug zit boven de CP-limiet.';
  return null;
 }
 export function teamGo(p:PlayerV2,raw:unknown,league:unknown,npc=false){const issue=teamIssue(p,raw,league,npc);check(!issue,issue??'Ongeldig team.');p.go!.team=[...(raw as string[])];p.go!.league=league as League;}
-export function transferGo(p:PlayerV2,id:unknown){const s=ownedGo(p,id);check(!s.favorite&&!s.shiny&&s.id!==p.buddy&&!p.go!.team.includes(s.id),'Favorieten, shinies, buddy en teambugs zijn beschermd.');p.go!.candy[family(s.species)]=(p.go!.candy[family(s.species)]??0)+1;p.specimens=p.specimens.filter(o=>o.id!==s.id);}
-export function transferManyGo(p:PlayerV2,ids:unknown){check(Array.isArray(ids)&&ids.length>0&&ids.length<=50&&new Set(ids).size===ids.length,'Kies 1 tot 50 verschillende bugs.');const specimens=ids.map(id=>ownedGo(p,id));check(specimens.every(s=>!s.favorite&&!s.shiny&&s.id!==p.buddy&&!p.go!.team.includes(s.id)),'Favorieten, shinies, buddy en teambugs zijn beschermd.');for(const s of specimens)transferGo(p,s.id);}
+export function transferGo(p:PlayerV2,id:unknown){availableGo(p,id);const s=ownedGo(p,id);check(!s.favorite&&!s.shiny&&s.id!==p.buddy&&!p.go!.team.includes(s.id),'Favorieten, shinies, buddy en teambugs zijn beschermd.');p.go!.candy[family(s.species)]=(p.go!.candy[family(s.species)]??0)+1;p.specimens=p.specimens.filter(o=>o.id!==s.id);}
+export function transferManyGo(p:PlayerV2,ids:unknown){check(Array.isArray(ids)&&ids.length>0&&ids.length<=50&&new Set(ids).size===ids.length,'Kies 1 tot 50 verschillende bugs.');const specimens=ids.map(id=>{availableGo(p,id);return ownedGo(p,id);});check(specimens.every(s=>!s.favorite&&!s.shiny&&s.id!==p.buddy&&!p.go!.team.includes(s.id)),'Favorieten, shinies, buddy en teambugs zijn beschermd.');for(const s of specimens)transferGo(p,s.id);}
 export function markGoSeen(p:PlayerV2,kind:string,now:number){const g=p.go!;g.entries??={};g.entries[kind]??={seenAt:now,caughtAt:null,shinyAt:null};}
 export function evolveGo(p:PlayerV2,id:unknown,seed:string,now=Date.now()){
+ availableGo(p,id);
  const s=ownedGo(p,id),g=p.go!,key=family(s.species),evo=EVOLUTIONS[s.species];
  check(evo&&(g.candy[key]??0)>=evo.candy,'Deze evolutie vraagt voldoende soortnectar.');
- g.candy[key]-=evo.candy;s.species=evo.to;const slots=s.go!.charged.length,moves=rollGoBug(s.species,seed);
- s.go={...s.go!,fast:moves.fast,charged:slots>1?[...new Set([...moves.charged,...movePool(s.species).charged])].slice(0,2):moves.charged};
+ g.candy[key]-=evo.candy;s.species=evo.to;
+ if(!ELITE_FORMS[s.species]){const slots=s.go!.charged.length,moves=rollGoBug(s.species,seed);s.go={...s.go!,fast:moves.fast,charged:slots>1?[...new Set([...moves.charged,...movePool(s.species).charged])].slice(0,2):moves.charged};}
  if(!g.dex!.includes(s.species))g.dex!.push(s.species);if(!p.discovered.includes(s.species))p.discovered.push(s.species);if(s.shiny&&!p.shinies.includes(s.species))p.shinies.push(s.species);
  markGoSeen(p,s.species,now);g.entries![s.species].caughtAt??=now;if(s.shiny)g.entries![s.species].shinyAt??=now;
 }

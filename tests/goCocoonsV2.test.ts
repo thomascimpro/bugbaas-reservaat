@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {COCOON_POOLS,awardCocoon,cocoonWalked,ensureCocoons,hatchCocoon,startCocoon} from '../game/goCocoonsV2';
+import {COCOON_POOLS,addCocoonIncubator,awardCocoon,cocoonActive,cocoonWalked,ensureCocoons,hatchCocoon,startCocoon} from '../game/goCocoonsV2';
 import {rng} from '../game/catalogV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo,rollGoBug} from '../game/goV2';
@@ -80,4 +80,26 @@ test('the fixed one-in-64 shiny roll records its actual shiny specimen and dex e
  assert.ok(seed);item.hatchSeed=seed;startCocoon(p,item.id,NOW);setMeters(p,2000);const s=hatchCocoon(p,NOW);
  assert.equal(s.shiny,true);assert.ok(p.shinies.includes(s.species));assert.equal(p.go!.entries![s.species].shinyAt,NOW);
  assert.equal(p.go!.cocoons!.lastHatch!.id,s.id);assert.equal(p.go!.cocoons!.lastHatch!.shiny,true);
+});
+
+test('extra incubators count simultaneous distance from independent starts while the unlimited old slot stays intact',()=>{
+ const p=player(),g=p.go!.cocoons!,basic=g.items[0];setMeters(p,3000);startCocoon(p,basic.id,NOW);
+ const preserved=structuredClone(g.active),incubator=addCocoonIncubator(p);
+ realCatch(p,'parallel-drop');awardCocoon(p,dropSeed(5),NOW);const extra=g.items[1];setMeters(p,4000);
+ startCocoon(p,extra.id,NOW+1000,incubator.id);assert.deepEqual(g.active,preserved);assert.equal(incubator.uses,3);
+ assert.throws(()=>startCocoon(p,extra.id,NOW+1000,incubator.id),/al uitgebroed/);
+ assert.equal(cocoonWalked(p,basic.id),1000);assert.equal(cocoonWalked(p,extra.id),0);
+ setMeters(p,5000);hatchCocoon(p,NOW+2000);assert.equal(g.active,null);assert.equal(cocoonWalked(p,extra.id),1000);assert.equal(incubator.uses,3);
+ setMeters(p,9000);const bug=hatchCocoon(p,NOW+3000,extra.id);assert.equal(bug.id,'hatched-'+extra.id);assert.equal(incubator.uses,2);assert.equal(g.parallel?.length,0);assert.throws(()=>hatchCocoon(p,NOW+4000,extra.id));
+});
+
+test('limited incubators cannot be double-booked, forged, or reused after their final hatch',()=>{
+ const p=player(),g=p.go!.cocoons!,machine=addCocoonIncubator(p,1),first=g.items[0];
+ realCatch(p,'drop-other');awardCocoon(p,dropSeed(2),NOW);const other=g.items[1];
+ assert.throws(()=>startCocoon(p,first.id,NOW,'forged'));assert.equal(g.active,null);assert.equal(g.parallel,undefined);
+ startCocoon(p,first.id,NOW,machine.id);assert.throws(()=>startCocoon(p,other.id,NOW,machine.id),/bezet/);
+ startCocoon(p,other.id,NOW);setMeters(p,2000);const active=structuredClone(g.active);hatchCocoon(p,NOW+1,first.id);
+ assert.deepEqual(g.active,active);assert.equal(cocoonActive(p,other.id)?.id,other.id);assert.equal(g.incubators?.length,0);assert.equal(machine.uses,0);
+ assert.throws(()=>startCocoon(p,other.id,NOW+2,machine.id));assert.throws(()=>hatchCocoon(p,NOW+2,{}));
+ assert.throws(()=>addCocoonIncubator(p,0));assert.throws(()=>addCocoonIncubator(p,Infinity));
 });

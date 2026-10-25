@@ -7,6 +7,7 @@ const compiled=await build({stdin:{contents:`
 import * as THREE from 'three';
 import {loadBugModel,instanceBug,lightBugs,SHINY_PALETTES} from './src/bugModelV2';
 import {WALK_MODELS} from './game/walkingV2';
+import {baseSpeciesId} from './game/dexV2';
 const cache=new Map();
 const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});renderer.setSize(1024,1024);renderer.setPixelRatio(1);renderer.setClearColor(0x000000,0);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;document.body.appendChild(renderer.domElement);
 window.species=Object.keys(WALK_MODELS);
@@ -18,7 +19,7 @@ window.renderBug=async(id,shiny)=>{
  let extent=0;for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){const p=new THREE.Vector3(x,y,z).project(camera);extent=Math.max(extent,Math.abs(p.x),Math.abs(p.y));}
  camera.zoom=.85/extent;camera.updateProjectionMatrix();renderer.render(scene,camera);const png=renderer.domElement.toDataURL('image/png');mixer.stopAllAction();
  if(shiny)group.traverse(o=>{if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();});
- return {png,palette:SHINY_PALETTES[id],model:WALK_MODELS[id]};
+ return {png,palette:SHINY_PALETTES[baseSpeciesId(id)],model:WALK_MODELS[id]};
 };
 `,resolveDir:process.cwd(),loader:'ts'},bundle:true,write:false,format:'iife',platform:'browser',target:'es2022',logLevel:'warning'});
 const script=compiled.outputFiles[0].contents;

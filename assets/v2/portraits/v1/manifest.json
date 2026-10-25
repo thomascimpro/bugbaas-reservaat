@@ -343,6 +343,677 @@
       "size": 1024,
       "normal": "beetlegrub.png",
       "shiny": "beetlegrub-shiny.png"
+    },
+    "bee": {
+      "model": "Bee",
+      "palette": [
+        "#24334B",
+        "#5EA6C4",
+        "#E8F4D4"
+      ],
+      "size": 1024,
+      "normal": "bee.png",
+      "shiny": "bee-shiny.png"
+    },
+    "beetle_elite": {
+      "model": "ClickBeetle",
+      "palette": [
+        "#291C42",
+        "#9B4BB7",
+        "#E7AF65"
+      ],
+      "size": 1024,
+      "normal": "beetle_elite.png",
+      "shiny": "beetle_elite-shiny.png"
+    },
+    "ant_elite": {
+      "model": "LeafcutterAnt",
+      "palette": [
+        "#14243D",
+        "#2597B1",
+        "#BCF2E3"
+      ],
+      "size": 1024,
+      "normal": "ant_elite.png",
+      "shiny": "ant_elite-shiny.png"
+    },
+    "aphid_elite": {
+      "model": "Aphid",
+      "palette": [
+        "#4D203E",
+        "#DB78AF",
+        "#FFE0BD"
+      ],
+      "size": 1024,
+      "normal": "aphid_elite.png",
+      "shiny": "aphid_elite-shiny.png"
+    },
+    "weevil_elite": {
+      "model": "GiraffeWeevil",
+      "palette": [
+        "#173B43",
+        "#39B8A0",
+        "#DDF1A4"
+      ],
+      "size": 1024,
+      "normal": "weevil_elite.png",
+      "shiny": "weevil_elite-shiny.png"
+    },
+    "moth_elite": {
+      "model": "HawkMoth",
+      "palette": [
+        "#213D50",
+        "#5BB8CD",
+        "#E4E2FF"
+      ],
+      "size": 1024,
+      "normal": "moth_elite.png",
+      "shiny": "moth_elite-shiny.png"
+    },
+    "earwig_elite": {
+      "model": "Earwig",
+      "palette": [
+        "#173B3A",
+        "#51B79A",
+        "#F2D797"
+      ],
+      "size": 1024,
+      "normal": "earwig_elite.png",
+      "shiny": "earwig_elite-shiny.png"
+    },
+    "grasshopper_elite": {
+      "model": "Katydid",
+      "palette": [
+        "#432744",
+        "#BE76B6",
+        "#F5DAC2"
+      ],
+      "size": 1024,
+      "normal": "grasshopper_elite.png",
+      "shiny": "grasshopper_elite-shiny.png"
+    },
+    "lacewing_elite": {
+      "model": "Lacewing",
+      "palette": [
+        "#433649",
+        "#D19C66",
+        "#FFF1C1"
+      ],
+      "size": 1024,
+      "normal": "lacewing_elite.png",
+      "shiny": "lacewing_elite-shiny.png"
+    },
+    "dungbeetle_elite": {
+      "model": "DungBeetle",
+      "palette": [
+        "#173E48",
+        "#418AB2",
+        "#B9F0DC"
+      ],
+      "size": 1024,
+      "normal": "dungbeetle_elite.png",
+      "shiny": "dungbeetle_elite-shiny.png"
+    },
+    "mantis_elite": {
+      "model": "OrchidMantis",
+      "palette": [
+        "#293B32",
+        "#6EAE83",
+        "#F2DEA8"
+      ],
+      "size": 1024,
+      "normal": "mantis_elite.png",
+      "shiny": "mantis_elite-shiny.png"
+    },
+    "butterfly_elite": {
+      "model": "Swallowtail",
+      "palette": [
+        "#233558",
+        "#668DDB",
+        "#F9D898"
+      ],
+      "size": 1024,
+      "normal": "butterfly_elite.png",
+      "shiny": "butterfly_elite-shiny.png"
+    },
+    "divingbeetle_elite": {
+      "model": "DivingBeetle",
+      "palette": [
+        "#342446",
+        "#A16DC5",
+        "#D4EDFC"
+      ],
+      "size": 1024,
+      "normal": "divingbeetle_elite.png",
+      "shiny": "divingbeetle_elite-shiny.png"
+    },
+    "waterstrider_elite": {
+      "model": "WaterStrider",
+      "palette": [
+        "#253247",
+        "#7A93B4",
+        "#E8C782"
+      ],
+      "size": 1024,
+      "normal": "waterstrider_elite.png",
+      "shiny": "waterstrider_elite-shiny.png"
+    },
+    "hoverfly_elite": {
+      "model": "Hoverfly",
+      "palette": [
+        "#193C3A",
+        "#5FC9BA",
+        "#E5FFE4"
+      ],
+      "size": 1024,
+      "normal": "hoverfly_elite.png",
+      "shiny": "hoverfly_elite-shiny.png"
+    },
+    "leafhopper_elite": {
+      "model": "Treehopper",
+      "palette": [
+        "#382950",
+        "#B48AD9",
+        "#F8DAB8"
+      ],
+      "size": 1024,
+      "normal": "leafhopper_elite.png",
+      "shiny": "leafhopper_elite-shiny.png"
+    },
+    "cricket_elite": {
+      "model": "MoleCricket",
+      "palette": [
+        "#34354A",
+        "#7998C9",
+        "#E2D8B2"
+      ],
+      "size": 1024,
+      "normal": "cricket_elite.png",
+      "shiny": "cricket_elite-shiny.png"
+    },
+    "stick_elite": {
+      "model": "StickInsect",
+      "palette": [
+        "#292E48",
+        "#7D77B8",
+        "#D7E3EC"
+      ],
+      "size": 1024,
+      "normal": "stick_elite.png",
+      "shiny": "stick_elite-shiny.png"
+    },
+    "leaf_elite": {
+      "model": "LeafInsect",
+      "palette": [
+        "#493E23",
+        "#C8A04E",
+        "#F6EDB8"
+      ],
+      "size": 1024,
+      "normal": "leaf_elite.png",
+      "shiny": "leaf_elite-shiny.png"
+    },
+    "silverfish_elite": {
+      "model": "Silverfish",
+      "palette": [
+        "#49332B",
+        "#CF9870",
+        "#F9D8AD"
+      ],
+      "size": 1024,
+      "normal": "silverfish_elite.png",
+      "shiny": "silverfish_elite-shiny.png"
+    },
+    "hercules_elite": {
+      "model": "HerculesBeetle",
+      "palette": [
+        "#20343E",
+        "#639BA3",
+        "#F0CD7C"
+      ],
+      "size": 1024,
+      "normal": "hercules_elite.png",
+      "shiny": "hercules_elite-shiny.png"
+    },
+    "antlion_elite": {
+      "model": "AntlionLarva",
+      "palette": [
+        "#253746",
+        "#5990A8",
+        "#D9EBC9"
+      ],
+      "size": 1024,
+      "normal": "antlion_elite.png",
+      "shiny": "antlion_elite-shiny.png"
+    },
+    "cockroach_elite": {
+      "model": "Cockroach",
+      "palette": [
+        "#183B48",
+        "#428D9C",
+        "#D2E8E5"
+      ],
+      "size": 1024,
+      "normal": "cockroach_elite.png",
+      "shiny": "cockroach_elite-shiny.png"
+    },
+    "cranefly_elite": {
+      "model": "CraneFly",
+      "palette": [
+        "#422C49",
+        "#AF7BBE",
+        "#F1D6B3"
+      ],
+      "size": 1024,
+      "normal": "cranefly_elite.png",
+      "shiny": "cranefly_elite-shiny.png"
+    },
+    "flea_elite": {
+      "model": "Flea",
+      "palette": [
+        "#233A3A",
+        "#6FB5A3",
+        "#D5EFBA"
+      ],
+      "size": 1024,
+      "normal": "flea_elite.png",
+      "shiny": "flea_elite-shiny.png"
+    },
+    "giantwaterbug_elite": {
+      "model": "GiantWaterBug",
+      "palette": [
+        "#43284D",
+        "#AA79B4",
+        "#F1DAA4"
+      ],
+      "size": 1024,
+      "normal": "giantwaterbug_elite.png",
+      "shiny": "giantwaterbug_elite-shiny.png"
+    },
+    "mayfly_elite": {
+      "model": "Mayfly",
+      "palette": [
+        "#233B52",
+        "#79B7D1",
+        "#EFF5D8"
+      ],
+      "size": 1024,
+      "normal": "mayfly_elite.png",
+      "shiny": "mayfly_elite-shiny.png"
+    },
+    "termite_elite": {
+      "model": "SoldierTermite",
+      "palette": [
+        "#313256",
+        "#8A92C5",
+        "#F2DBA8"
+      ],
+      "size": 1024,
+      "normal": "termite_elite.png",
+      "shiny": "termite_elite-shiny.png"
+    },
+    "tigerbeetle_elite": {
+      "model": "TigerBeetle",
+      "palette": [
+        "#3D2945",
+        "#BB6E9A",
+        "#F4CF87"
+      ],
+      "size": 1024,
+      "normal": "tigerbeetle_elite.png",
+      "shiny": "tigerbeetle_elite-shiny.png"
+    },
+    "tortoisebeetle_elite": {
+      "model": "TortoiseBeetle",
+      "palette": [
+        "#293E45",
+        "#53BEB0",
+        "#F2DEA0"
+      ],
+      "size": 1024,
+      "normal": "tortoisebeetle_elite.png",
+      "shiny": "tortoisebeetle_elite-shiny.png"
+    },
+    "bee_elite": {
+      "model": "Bee",
+      "palette": [
+        "#24334B",
+        "#5EA6C4",
+        "#E8F4D4"
+      ],
+      "size": 1024,
+      "normal": "bee_elite.png",
+      "shiny": "bee_elite-shiny.png"
+    },
+    "lesserstag": {
+      "model": "LesserStagBeetle",
+      "palette": [
+        "#243B48",
+        "#6FA8C3",
+        "#E8D89B"
+      ],
+      "size": 1024,
+      "normal": "lesserstag.png",
+      "shiny": "lesserstag-shiny.png"
+    },
+    "goldenstag": {
+      "model": "GoldenStagBeetle",
+      "palette": [
+        "#283847",
+        "#65B9CA",
+        "#F1DFB6"
+      ],
+      "size": 1024,
+      "normal": "goldenstag.png",
+      "shiny": "goldenstag-shiny.png"
+    },
+    "giraffestag": {
+      "model": "GiraffeStagBeetle",
+      "palette": [
+        "#272345",
+        "#A477C5",
+        "#DBF5DE"
+      ],
+      "size": 1024,
+      "normal": "giraffestag.png",
+      "shiny": "giraffestag-shiny.png"
+    },
+    "minotaurbeetle": {
+      "model": "Minotaurbeetle",
+      "palette": [
+        "#312240",
+        "#AB78C2",
+        "#F3D797"
+      ],
+      "size": 1024,
+      "normal": "minotaurbeetle.png",
+      "shiny": "minotaurbeetle-shiny.png"
+    },
+    "atlasbeetle": {
+      "model": "AtlasBeetle",
+      "palette": [
+        "#263E43",
+        "#72B2BD",
+        "#E5DCAC"
+      ],
+      "size": 1024,
+      "normal": "atlasbeetle.png",
+      "shiny": "atlasbeetle-shiny.png"
+    },
+    "caucasusbeetle": {
+      "model": "CaucasusBeetle",
+      "palette": [
+        "#3F263A",
+        "#C889AC",
+        "#F8D5A0"
+      ],
+      "size": 1024,
+      "normal": "caucasusbeetle.png",
+      "shiny": "caucasusbeetle-shiny.png"
+    },
+    "rosechafer": {
+      "model": "RoseChafer",
+      "palette": [
+        "#302442",
+        "#AC7ED1",
+        "#EFDA9E"
+      ],
+      "size": 1024,
+      "normal": "rosechafer.png",
+      "shiny": "rosechafer-shiny.png"
+    },
+    "flowerchafer": {
+      "model": "FlowerChafer",
+      "palette": [
+        "#20394B",
+        "#5DA7CA",
+        "#EEDFC5"
+      ],
+      "size": 1024,
+      "normal": "flowerchafer.png",
+      "shiny": "flowerchafer-shiny.png"
+    },
+    "rainbowscarab": {
+      "model": "RainbowScarab",
+      "palette": [
+        "#44253C",
+        "#D380A3",
+        "#F6D782"
+      ],
+      "size": 1024,
+      "normal": "rainbowscarab.png",
+      "shiny": "rainbowscarab-shiny.png"
+    },
+    "acornweevil": {
+      "model": "Acornweevil",
+      "palette": [
+        "#25334C",
+        "#709FC9",
+        "#F4DB9D"
+      ],
+      "size": 1024,
+      "normal": "acornweevil.png",
+      "shiny": "acornweevil-shiny.png"
+    },
+    "leafrollingweevil": {
+      "model": "LeafRollingWeevil",
+      "palette": [
+        "#442C40",
+        "#C780A3",
+        "#E9E5B2"
+      ],
+      "size": 1024,
+      "normal": "leafrollingweevil.png",
+      "shiny": "leafrollingweevil-shiny.png"
+    },
+    "harlequinbeetle": {
+      "model": "HarlequinBeetle",
+      "palette": [
+        "#233F42",
+        "#71C5BA",
+        "#F6D18D"
+      ],
+      "size": 1024,
+      "normal": "harlequinbeetle.png",
+      "shiny": "harlequinbeetle-shiny.png"
+    },
+    "asianladybeetle": {
+      "model": "Asianladybeetle",
+      "palette": [
+        "#26324F",
+        "#789FD4",
+        "#F6E2AC"
+      ],
+      "size": 1024,
+      "normal": "asianladybeetle.png",
+      "shiny": "asianladybeetle-shiny.png"
+    },
+    "ladybird28": {
+      "model": "Twentyeightspotladybird",
+      "palette": [
+        "#36254F",
+        "#B28AD9",
+        "#F6DCB8"
+      ],
+      "size": 1024,
+      "normal": "ladybird28.png",
+      "shiny": "ladybird28-shiny.png"
+    },
+    "leafbeetle": {
+      "model": "Leafbeetle",
+      "palette": [
+        "#382746",
+        "#BD85C4",
+        "#EDE5B2"
+      ],
+      "size": 1024,
+      "normal": "leafbeetle.png",
+      "shiny": "leafbeetle-shiny.png"
+    },
+    "cucumberbeetle": {
+      "model": "SpottedCucumberBeetle",
+      "palette": [
+        "#243A4B",
+        "#68B3C9",
+        "#F2D8A5"
+      ],
+      "size": 1024,
+      "normal": "cucumberbeetle.png",
+      "shiny": "cucumberbeetle-shiny.png"
+    },
+    "deerflowerbeetle": {
+      "model": "DeerHornedFlowerBeetle",
+      "palette": [
+        "#43293C",
+        "#CE829F",
+        "#ECF5D6"
+      ],
+      "size": 1024,
+      "normal": "deerflowerbeetle.png",
+      "shiny": "deerflowerbeetle-shiny.png"
+    },
+    "cardinalbeetle": {
+      "model": "CardinalBeetle",
+      "palette": [
+        "#25384D",
+        "#6CA9CD",
+        "#EFE0B6"
+      ],
+      "size": 1024,
+      "normal": "cardinalbeetle.png",
+      "shiny": "cardinalbeetle-shiny.png"
+    },
+    "rosalialonghorn": {
+      "model": "RosaliaLonghorn",
+      "palette": [
+        "#413041",
+        "#C292B6",
+        "#F0D99D"
+      ],
+      "size": 1024,
+      "normal": "rosalialonghorn.png",
+      "shiny": "rosalialonghorn-shiny.png"
+    },
+    "asianlonghorn": {
+      "model": "AsianLongHornedBeetle",
+      "palette": [
+        "#2A354B",
+        "#8AA4CE",
+        "#E7F1D3"
+      ],
+      "size": 1024,
+      "normal": "asianlonghorn.png",
+      "shiny": "asianlonghorn-shiny.png"
+    },
+    "eyedclickbeetle": {
+      "model": "EyedClickBeetle",
+      "palette": [
+        "#2D2442",
+        "#A67DC9",
+        "#F1DFB2"
+      ],
+      "size": 1024,
+      "normal": "eyedclickbeetle.png",
+      "shiny": "eyedclickbeetle-shiny.png"
+    },
+    "golofabeetle": {
+      "model": "GolofaBeetle",
+      "palette": [
+        "#233E43",
+        "#70B9BE",
+        "#EDDBA2"
+      ],
+      "size": 1024,
+      "normal": "golofabeetle.png",
+      "shiny": "golofabeetle-shiny.png"
+    },
+    "elephantbeetle": {
+      "model": "ElephantBeetle",
+      "palette": [
+        "#422B41",
+        "#C68DB7",
+        "#F2DFB2"
+      ],
+      "size": 1024,
+      "normal": "elephantbeetle.png",
+      "shiny": "elephantbeetle-shiny.png"
+    },
+    "sacredscarab": {
+      "model": "SacredScarab",
+      "palette": [
+        "#283247",
+        "#789FC5",
+        "#F5DC9A"
+      ],
+      "size": 1024,
+      "normal": "sacredscarab.png",
+      "shiny": "sacredscarab-shiny.png"
+    },
+    "moonhornedbeetle": {
+      "model": "MoonHornedDungBeetle",
+      "palette": [
+        "#392747",
+        "#AE85CA",
+        "#E7E7B0"
+      ],
+      "size": 1024,
+      "normal": "moonhornedbeetle.png",
+      "shiny": "moonhornedbeetle-shiny.png"
+    },
+    "neptunebeetle": {
+      "model": "NeptuneBeetle",
+      "palette": [
+        "#213D46",
+        "#6EB6C9",
+        "#F2D9AF"
+      ],
+      "size": 1024,
+      "normal": "neptunebeetle.png",
+      "shiny": "neptunebeetle-shiny.png"
+    },
+    "manticora": {
+      "model": "Manticora",
+      "palette": [
+        "#423044",
+        "#C18EB5",
+        "#EFE6B9"
+      ],
+      "size": 1024,
+      "normal": "manticora.png",
+      "shiny": "manticora-shiny.png"
+    },
+    "titanbeetle": {
+      "model": "TitanBeetle",
+      "palette": [
+        "#25344B",
+        "#7EA9CE",
+        "#F2D6A5"
+      ],
+      "size": 1024,
+      "normal": "titanbeetle.png",
+      "shiny": "titanbeetle-shiny.png"
+    },
+    "fivehornbeetle": {
+      "model": "FiveHornedRhinocerosBeetle",
+      "palette": [
+        "#253C40",
+        "#75BCB5",
+        "#EFE2AF"
+      ],
+      "size": 1024,
+      "normal": "fivehornbeetle.png",
+      "shiny": "fivehornbeetle-shiny.png"
+    },
+    "jewelchafer": {
+      "model": "Jewelbeetle",
+      "palette": [
+        "#442739",
+        "#D990B0",
+        "#E9F3D2"
+      ],
+      "size": 1024,
+      "normal": "jewelchafer.png",
+      "shiny": "jewelchafer-shiny.png"
     }
   }
 }

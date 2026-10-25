@@ -1,10 +1,12 @@
 import * as THREE from 'three';
+import {FIELD_FAMILY_SPECIES} from '../game/fieldFamiliesV2';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {clone} from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 // The same material palettes drive the animated model and its baked 2D portrait.
 export const SHINY_PALETTES:Record<string,readonly [string,string,string]>={
  ant:['#14243D','#2597B1','#BCF2E3'],
+ bee:['#24334B','#5EA6C4','#E8F4D4'],
  beetle:['#291C42','#9B4BB7','#E7AF65'],
  aphid:['#4D203E','#DB78AF','#FFE0BD'],
  weevil:['#173B43','#39B8A0','#DDF1A4'],
@@ -37,11 +39,20 @@ export const SHINY_PALETTES:Record<string,readonly [string,string,string]>={
  beetlegrub:['#282145','#885DCF','#78F0D0'],
 };
 export type BugModel={root:THREE.Group;clips:THREE.AnimationClip[]};
+for(const s of FIELD_FAMILY_SPECIES)SHINY_PALETTES[s.id]=s.palette;
 export async function loadBugModel(name:string):Promise<BugModel>{const g=await new GLTFLoader().loadAsync('/models/'+name+'.glb');return {root:g.scene,clips:g.animations};}
+// A map and its encounter use the same decoded source. Only instances own their skeletons/variants.
+const liveModels=new Map<string,{promise:Promise<BugModel>;model?:BugModel;users:number;at:number}>();
+function trimModels(){const idle=[...liveModels].filter(([,entry])=>!entry.users&&entry.model).sort((a,b)=>a[1].at-b[1].at);while(idle.length>3){const [name,entry]=idle.shift()!,resources=new Set<{dispose:()=>void}>();entry.model!.root.traverse(o=>{if(o instanceof THREE.SkinnedMesh)resources.add(o.skeleton);if(o instanceof THREE.Mesh){resources.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){resources.add(m);for(const value of Object.values(m))if(value instanceof THREE.Texture)resources.add(value);}}});resources.forEach(resource=>resource.dispose());liveModels.delete(name);}}
+export function borrowBugModel(name:string){
+ let entry=liveModels.get(name);if(!entry){entry={promise:loadBugModel(name),users:0,at:performance.now()};liveModels.set(name,entry);const own=entry;own.promise.then(model=>{own.model=model;trimModels();}).catch(()=>{if(liveModels.get(name)===own)liveModels.delete(name);});}
+ entry.users++;entry.at=performance.now();let released=false;return {promise:entry.promise,release(){if(released)return;released=true;entry!.users--;entry!.at=performance.now();trimModels();}};
+}
+const modelBounds=new WeakMap<BugModel,{center:THREE.Vector3;minY:number;edge:number}>();
 export function instanceBug(model:BugModel,size:number,species?:string,shiny=false){
- const root=clone(model.root) as THREE.Group;
- if(shiny&&species&&SHINY_PALETTES[species]){
-  const colors=SHINY_PALETTES[species].map(c=>new THREE.Color(c));
+ const root=clone(model.root) as THREE.Group,elite=!!species?.endsWith('_elite'),baseSpecies=species?.replace(/_elite$/,'');
+ if(shiny&&baseSpecies&&SHINY_PALETTES[baseSpecies]){
+  const colors=SHINY_PALETTES[baseSpecies].map(c=>new THREE.Color(c));
   root.traverse(o=>{if(!(o instanceof THREE.Mesh))return;const original=Array.isArray(o.material)?o.material:[o.material];const materials=original.map(source=>{
    const m:THREE.Material=source.clone();m.userData.bugVariant='shiny';const sheen={value:0};m.userData.shinySheen=sheen;
    m.onBeforeCompile=shader=>{shader.uniforms.bbSheen=sheen;shader.uniforms.bbShadow={value:colors[0]};shader.uniforms.bbBody={value:colors[1]};shader.uniforms.bbAccent={value:colors[2]};shader.fragmentShader='uniform float bbSheen;\nuniform vec3 bbShadow;\nuniform vec3 bbBody;\nuniform vec3 bbAccent;\n'+shader.fragmentShader;shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
@@ -53,11 +64,12 @@ export function instanceBug(model:BugModel,size:number,species?:string,shiny=fal
     diffuseColor.rgb=mix(diffuseColor.rgb,bbColor,bbMask);
     float bbSweep=bbSheen>0.0?pow(max(0.0,sin(vViewPosition.y*2.2+vViewPosition.x*.9-bbSheen*1.25)),12.0):0.0;
     diffuseColor.rgb+=vec3(.12,.16,.2)*bbSweep*bbMask;
-   `);};m.customProgramCacheKey=()=> 'bugbaas-shiny-v2-'+species;return m;
+   `);};m.customProgramCacheKey=()=> 'bugbaas-shiny-v2-'+baseSpecies;return m;
   });o.material=Array.isArray(o.material)?materials:materials[0];});
  }
- root.updateMatrixWorld(true);root.traverse(o=>{if(o instanceof THREE.SkinnedMesh)o.computeBoundingBox();});const box=new THREE.Box3().setFromObject(root),dimensions=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),scale=size/Math.max(dimensions.x,dimensions.y,dimensions.z);
- root.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);root.scale.setScalar(scale);const group=new THREE.Group();group.add(root);const mixer=new THREE.AnimationMixer(root),idle=model.clips.find(c=>c.name.toLowerCase()==='idle')??model.clips[0];if(idle){mixer.clipAction(idle).play();mixer.update(0);}return {group,mixer};
+ if(elite)root.traverse(o=>{if(!(o instanceof THREE.Mesh))return;const materials=(Array.isArray(o.material)?o.material:[o.material]).map(source=>{const m:THREE.Material=source.userData.bugVariant==='shiny'?source:source.clone();m.userData.bugVariant??='elite';m.userData.elite=true;const previous=m.onBeforeCompile.bind(m);m.onBeforeCompile=(shader,renderer)=>{previous(shader,renderer);shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>','#include <opaque_fragment>\nfloat bbEliteRim=pow(1.0-abs(dot(normalize(normal),normalize(vViewPosition))),3.0);\ngl_FragColor.rgb=mix(gl_FragColor.rgb,vec3(1.05,.73,.20),bbEliteRim*.72);');};m.customProgramCacheKey=()=> 'bugbaas-elite-v1-'+(shiny?baseSpecies:'normal');return m;});o.material=Array.isArray(o.material)?materials:materials[0];});
+ let bounds=modelBounds.get(model);if(!bounds){root.updateMatrixWorld(true);root.traverse(o=>{if(o instanceof THREE.SkinnedMesh)o.computeBoundingBox();});const box=new THREE.Box3().setFromObject(root),dimensions=box.getSize(new THREE.Vector3());bounds={center:box.getCenter(new THREE.Vector3()),minY:box.min.y,edge:Math.max(dimensions.x,dimensions.y,dimensions.z)};modelBounds.set(model,bounds);}const scale=size*(elite?1.1:1)/bounds.edge;
+ root.position.set(-bounds.center.x*scale,-bounds.minY*scale,-bounds.center.z*scale);root.scale.setScalar(scale);const group=new THREE.Group();group.add(root);const mixer=new THREE.AnimationMixer(root),idle=model.clips.find(c=>c.name.toLowerCase()==='idle')??model.clips[0];if(idle){mixer.clipAction(idle).play();mixer.update(0);}return {group,mixer};
 }
 export function lightBugs(scene:THREE.Scene){scene.add(new THREE.HemisphereLight(0xfff9df,0x53654b,2.7));const sun=new THREE.DirectionalLight(0xfff1c7,3.5);sun.position.set(-80,160,70);scene.add(sun);}
 

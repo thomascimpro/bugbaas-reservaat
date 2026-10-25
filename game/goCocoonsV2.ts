@@ -1,4 +1,5 @@
 import {rng} from './catalogV2';
+import {COCOON_SHINY_ODDS} from './shinyV2';
 import {awardGoCatch} from './goV2';
 import {family} from './goV2';
 import type {Held} from './goV2';
@@ -6,7 +7,9 @@ import {checkV2 as check} from './shopV2';
 import type {PlayerV2,Specimen} from './typesV2';
 
 export type GoCocoon={id:string;km:2|5;obtainedAt:number;hatchSeed?:string};
-export type GoCocoonsProgress={version:1;items:GoCocoon[];active:{id:string;startMeters:number;startedAt:number}|null;nextId:number;hatched:number;lastCatchId?:string;lastPostDrop?:string;lastHatch?:{id:string;species:string;shiny:boolean;at:number;held?:Held;dust?:number;candy?:number}};
+export type GoCocoonActive={id:string;startMeters:number;startedAt:number};
+export type GoCocoonIncubator={id:string;uses:number};
+export type GoCocoonsProgress={version:1;items:GoCocoon[];active:GoCocoonActive|null;parallel?:(GoCocoonActive&{incubatorId:string})[];incubators?:GoCocoonIncubator[];nextIncubatorId?:number;nextId:number;hatched:number;lastCatchId?:string;lastPostDrop?:string;lastHatch?:{id:string;species:string;shiny:boolean;at:number;held?:Held;dust?:number;candy?:number}};
 export const COCOON_CAP=3,COCOON_CATCH_CHANCE=.1;
 export const COCOON_POST_CHANCE=.2,COCOON_REWARDS={2:{dust:500,candy:10},5:{dust:1500,candy:20}};
 // Each entry in a distance pool has the same chance. All thirty existing walking species are represented.
@@ -41,26 +44,40 @@ export function awardPostCocoon(p:PlayerV2,post:string,seed:string,now:number){
  if(g.items.length>=COCOON_CAP||rng(seed+':post-cocoon')()>=COCOON_POST_CHANCE)return null;
  return addCocoon(g,rng(seed+':post-distance')()<.75?2:5,seed+':post-hatch',now);
 }
-export function startCocoon(p:PlayerV2,id:unknown,now:number){
- idle(p);const g=progress(p);check(!g.active,'Er wordt al een cocon uitgebroed.');
- const item=g.items.find(c=>c.id===id);check(item,'Kies een cocon uit je voorraad.');
- g.active={id:item.id,startMeters:meters(p),startedAt:now};return item;
+export function addCocoonIncubator(p:PlayerV2,uses=3){
+ const g=progress(p);check(Number.isSafeInteger(uses)&&uses>0&&uses<=3,'Deze broedmachine is niet beschikbaar.');
+ const item:GoCocoonIncubator={id:'incubator-'+(g.nextIncubatorId??1),uses};g.nextIncubatorId=(g.nextIncubatorId??1)+1;(g.incubators??=[]).push(item);return item;
 }
-export function cocoonWalked(p:PlayerV2){
- const g=p.go?.cocoons,a=g?.active,item=g?.items.find(c=>c.id===a?.id);
+export function cocoonActive(p:PlayerV2,id:string){const g=p.go?.cocoons;return g?.active?.id===id?g.active:g?.parallel?.find(a=>a.id===id);}
+export function startCocoon(p:PlayerV2,id:unknown,now:number,incubator?:unknown){
+ idle(p);const g=progress(p);
+ const item=g.items.find(c=>c.id===id);check(item,'Kies een cocon uit je voorraad.');
+ check(!cocoonActive(p,item.id),'Deze cocon wordt al uitgebroed.');
+ const active={id:item.id,startMeters:meters(p),startedAt:now};
+ if(incubator===undefined){check(!g.active,'Je basisbroedmachine is bezet. Kies een extra broedmachine.');g.active=active;}
+ else{const machine=g.incubators?.find(i=>i.id===incubator&&i.uses>0);check(machine,'Kies een beschikbare broedmachine.');check(!g.parallel?.some(a=>a.incubatorId===machine.id),'Deze broedmachine is bezet.');(g.parallel??=[]).push({...active,incubatorId:machine.id});}
+ return item;
+}
+export function cocoonWalked(p:PlayerV2,id?:string){
+ const g=p.go?.cocoons,a=id?cocoonActive(p,id):g?.active,item=g?.items.find(c=>c.id===a?.id);
  return a&&item?Math.min(item.km*1000,Math.max(0,meters(p)-a.startMeters)):0;
 }
-export function hatchCocoon(p:PlayerV2,now:number):Specimen{
- idle(p);const g=progress(p),a=g.active,item=g.items.find(c=>c.id===a?.id);
+export function hatchCocoon(p:PlayerV2,now:number,id?:unknown):Specimen{
+ idle(p);const g=progress(p);check(id===undefined||typeof id==='string','Kies een broedende cocon.');
+ const a=id===undefined?g.active:cocoonActive(p,id as string),item=g.items.find(c=>c.id===a?.id);
  check(a&&item,'Er wordt geen cocon uitgebroed.');
- check(cocoonWalked(p)>=item.km*1000,'Loop eerst de volledige afstand met de kaart open.');
+ check(cocoonWalked(p,item.id)>=item.km*1000,'Loop eerst de volledige afstand met de kaart open.');
+ const incubator='incubatorId' in a?g.incubators?.find(i=>i.id===a.incubatorId&&i.uses>0):undefined;
+ check(!('incubatorId' in a)||incubator,'De broedmachine is niet beschikbaar.');
  check(item.hatchSeed,'De cocon is niet beschikbaar.');
  const seed=item.hatchSeed,pool=COCOON_POOLS[item.km],kind=pool[Math.floor(rng(seed+':species')()*pool.length)];
- const s:Specimen={id:'hatched-'+item.id,species:kind,level:1,shiny:rng(seed+':shiny')()<1/64,favorite:false,obtainedAt:now,source:'cocoon',hearts:0,item:null};
+ const s:Specimen={id:'hatched-'+item.id,species:kind,level:1,shiny:rng(seed+':shiny')()<1/COCOON_SHINY_ODDS,favorite:false,obtainedAt:now,source:'cocoon',hearts:0,item:null};
  check(!p.specimens.some(b=>b.id===s.id),'Deze cocon is al uitgekomen.');
  // Reuse collection, dust, nectar and dex accounting. Only this new specimen receives hatch IVs.
  let held=awardGoCatch(p,s,seed+':stats');const reward=COCOON_REWARDS[item.km];p.go!.dust+=reward.dust-100;p.go!.candy[family(kind)]+=reward.candy-3;
  if(g.hatched===0&&!Object.values(p.go!.items).some(n=>n>0)){p.go!.items.leaf++;held='leaf';}const random=rng(seed+':iv');s.go!.iv=[10+Math.floor(random()*6),10+Math.floor(random()*6),10+Math.floor(random()*6)];
  p.specimens.push(s);if(!p.discovered.includes(kind))p.discovered.push(kind);if(s.shiny&&!p.shinies.includes(kind))p.shinies.push(kind);
- g.items=g.items.filter(c=>c.id!==item.id);g.active=null;g.hatched++;g.lastHatch={id:s.id,species:kind,shiny:s.shiny,at:now,dust:reward.dust,candy:reward.candy,...(held?{held}:{})};return s;
+ g.items=g.items.filter(c=>c.id!==item.id);if(g.active?.id===item.id)g.active=null;else g.parallel=g.parallel?.filter(c=>c.id!==item.id);
+ if(incubator){incubator.uses--;g.incubators=g.incubators?.filter(i=>i.uses>0);}
+ g.hatched++;g.lastHatch={id:s.id,species:kind,shiny:s.shiny,at:now,dust:reward.dust,candy:reward.candy,...(held?{held}:{})};return s;
 }

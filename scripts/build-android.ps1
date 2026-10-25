@@ -56,8 +56,32 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Android generation failed.' }
     Push-Location android
     try {
+        # Gradle retains removed Metro resources and does not track EXPO_PUBLIC_*
+        # changes. Clean only these owned, generated outputs before rebundling.
+        $generatedRoot=[IO.Path]::GetFullPath((Join-Path $buildPath 'android\app\build\generated'))
+        foreach ($relative in @('assets\createBundleReleaseJsAndAssets','res\createBundleReleaseJsAndAssets')) {
+            $generatedOutput=[IO.Path]::GetFullPath((Join-Path $generatedRoot $relative))
+            if (!$generatedOutput.StartsWith($generatedRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) { throw 'Generated cleanup escaped the build directory.' }
+            if (Test-Path -LiteralPath $generatedOutput) {
+                $ancestor=Get-Item -LiteralPath $generatedOutput
+                while ($ancestor -and $ancestor.FullName -ne $buildPath) {
+                    if ($ancestor.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Generated cleanup cannot follow a directory link.' }
+                    $ancestor=$ancestor.Parent
+                }
+                if (!$ancestor) { throw 'Generated cleanup has no owned build parent.' }
+                Remove-Item -LiteralPath $generatedOutput -Recurse -Force
+            }
+        }
         .\gradlew.bat :app:assembleRelease --no-daemon --max-workers=2 '-PreactNativeArchitectures=arm64-v8a,x86_64'
         if ($LASTEXITCODE -ne 0) { throw 'Android release build failed.' }
+        $archive=[IO.Compression.ZipFile]::OpenRead((Join-Path $buildPath 'android\app\build\outputs\apk\release\app-release.apk'))
+        try {
+            $entry=$archive.GetEntry('assets/index.android.bundle')
+            if (!$entry) { throw 'The release APK has no game bundle.' }
+            $reader=[IO.StreamReader]::new($entry.Open(),[Text.Encoding]::UTF8)
+            try { $bundledText=$reader.ReadToEnd() } finally { $reader.Dispose() }
+            if (!$bundledText.Contains($ApiUrl)) { throw 'The APK does not contain the checked server URL. No release artifact was copied.' }
+        } finally { $archive.Dispose() }
         Copy-Item -LiteralPath 'app\build\outputs\apk\release\app-release.apk' -Destination $OutputApk -Force
         Get-FileHash -LiteralPath $OutputApk -Algorithm SHA256
     } finally { Pop-Location }

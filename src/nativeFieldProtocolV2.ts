@@ -1,7 +1,7 @@
 import type {MapCameraV2} from './mapCameraV2';
 
-const fieldCommands=new Set(['worldLocate','worldEncounter','worldFocus','worldCast','fieldSupply','fieldTask','fieldLure','goAuto','poiSpin','routeStart','routePause','routeResume','routeFinish','routeCancel']);
-const destinations=new Set(['map','team','ranked','bugdex','profile','buddy','friends','cocoons','settings','account']);
+const fieldCommands=new Set(['gymTeam','gymDefend','gymAttack','coinBuy','worldLocate','worldEncounter','worldFocus','worldCast','fieldSupply','fieldTask','fieldLure','goAuto','poiSpin','routeStart','routePause','routeResume','routeFinish','routeCancel']);
+const destinations=new Set(['gyms','coinShop','map','team','ranked','bugdex','profile','buddy','friends','cocoons','settings','account']);
 export type NativeFieldRequest={kind:'ready'}|{kind:'command';id:string;command:string;params:Record<string,unknown>}|{kind:'navigate';name:string;specimenId?:string;camera?:MapCameraV2}|{kind:'geo';action:'get'|'watch'|'clear';id:number}|{kind:'backResult';handled:boolean};
 export function parseNativeFieldRequest(raw:string):NativeFieldRequest|null{
  if(raw.length>16384)return null;try{const m=JSON.parse(raw);if(!m||typeof m!=='object'||Array.isArray(m))return null;

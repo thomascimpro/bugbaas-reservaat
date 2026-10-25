@@ -106,3 +106,50 @@ Doel: herkenbare ruimtelijke patronen en voorspelbare bediening zoals PoGo, geen
 - Lokale bronbestanden: `game/walkingV2.ts`, `src/bugModelV2.ts`, `scripts/*bug-portraits*`, `assets/3d/gobkit-insects/README.txt`, `assets/3d/gobkit-insects/LICENSE.txt`.
 - Gobkit eigendom/licentie: https://gobkit.com/freebies en https://github.com/Ariescar/gobkit-free-assets
 - Pokémon GO UI: https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/84-what-is-the-map-view/; https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/124-viewing-the-pokedex/
+
+## 11. Actuele asset- en evolutiecontrole — 23 oktober 2026
+
+De aantallen in sectie 5 zijn historisch. Bij deze hercontrole waren alle 30 modellen uit Gobkit Insect Vol.1 al actief, naast de oorspronkelijke BugBaas-rups: **31 bestaande basisbugs**. De actuele [officiële JSON-catalogus](https://gobkit.com/api/free) bevat dezelfde 30 insectmodellen; er zijn geen ongebruikte extra insecten of complete nieuwe levenscycli in dit pack. [Gobkit bevestigt CC0 voor de gratis packs](https://gobkit.com/freebies). De [Quaternius Easy Enemy Pack](https://quaternius.com/packs/easyenemy.html) is ook CC0, maar bevat vijf eigen vijandmodellen; dit levert geen passende aanvullende levensstadia voor deze collectie op.
+
+Wel passend gevonden: **Bee** uit Gobkit Free Animal Pack Vol.2. Het officiële model is lokaal opgeslagen met bron-URL, licentie, SHA-256 en gemeten GLB-inhoud in `assets/3d/gobkit-bee/source.json`. De echte gerenderde bij is visueel gecontroleerd op vleugels, antennes, poten en gestreept lijf. Eén mesh, één skin, vier echte clips. Dit voegt één nieuwe basisbug toe, nummer 32; de eerste 31 nummers blijven staan.
+
+| Basisbug | Echt 3D-bestand | Natuurlijke volgende fase in huidige bibliotheek |
+|---|---|---|
+| Pantserkever | ClickBeetle.glb | Volwassen; geen volgende natuurlijke soort |
+| Bosmier | LeafcutterAnt.glb | Volwassen; geen volgende natuurlijke soort |
+| Bladluis | Aphid.glb | Volwassen; geen volgende natuurlijke soort |
+| Snuitkever | GiraffeWeevil.glb | Volwassen; geen volgende natuurlijke soort |
+| Nachtvlinder | HawkMoth.glb | Volwassen; bestaande rups is voorfase |
+| Oorworm | Earwig.glb | Volwassen; geen volgende natuurlijke soort |
+| Sabelsprinkhaan | Katydid.glb | Volwassen; geen volgende natuurlijke soort |
+| Gaasvlieg | Lacewing.glb | Volwassen; passende larve ontbreekt |
+| Mestkever | DungBeetle.glb | Volwassen; soortpassende larve ontbreekt |
+| Bidsprinkhaan | OrchidMantis.glb | Volwassen; passende nimf ontbreekt |
+| Zwaluwstaartvlinder | Swallowtail.glb | Volwassen; passende rups/pop ontbreekt |
+| Waterkever | DivingBeetle.glb | Volwassen; passende larve ontbreekt |
+| Schaatsenrijder | WaterStrider.glb | Volwassen; passende nimf ontbreekt |
+| Zweefvlieg | Hoverfly.glb | Volwassen; passende larve ontbreekt |
+| Helmcicade | Treehopper.glb | Volwassen; passende nimf ontbreekt |
+| Veenmol | MoleCricket.glb | Volwassen; passende nimf ontbreekt |
+| Wandelende tak | StickInsect.glb | Volwassen; passende nimf ontbreekt |
+| Wandelend blad | LeafInsect.glb | Volwassen; passende nimf ontbreekt |
+| Zilvervisje | Silverfish.glb | Geen insectenmetamorfose naar andere soort |
+| Herculeskever | HerculesBeetle.glb | Volwassen; bestaande Herculeslarve is voorfase |
+| Rups | HawkCaterpillar.glb | Nachtvlinder; oorspronkelijke projectgeometrie |
+| Mierenleeuwlarve | AntlionLarva.glb | Volwassen mierenleeuw ontbreekt; geen gaasvlieg als vervanging |
+| Kakkerlak | Cockroach.glb | Volwassen; passende nimf ontbreekt |
+| Langpootmug | CraneFly.glb | Volwassen; passende larve ontbreekt |
+| Vlo | Flea.glb | Volwassen; passende larve ontbreekt |
+| Reuzenwaterwants | GiantWaterBug.glb | Volwassen; passende nimf ontbreekt |
+| Eendagsvlieg | Mayfly.glb | Volwassen; passende waternimf/subimago ontbreekt |
+| Soldaattermiet | SoldierTermite.glb | Kaste; geen natuurlijke evolutie naar een andere soort |
+| Zandloopkever | TigerBeetle.glb | Volwassen; passende larve ontbreekt |
+| Schildpadkever | TortoiseBeetle.glb | Volwassen; passende larve ontbreekt |
+| Herculeslarve | BeetleGrub.glb | Herculeskever; bestaande spelkoppeling |
+| Honingbij, nieuw | Bee.glb | Volwassen; passende larve/pop ontbreekt |
+
+**Uitgevoerd na analyse:** twee bestaande larve→volwassene-lijnen behouden. Alle overige 30 basisbugs krijgen een terminale **Elite-spelvorm van dezelfde diersoort** voor 100 soortnectar. Dit zijn geen 30 nieuw gevonden diersoorten of geometrieën. Ze gebruiken het eigen gelicentieerde basismodel met 1,1× schaal en een goudkleurige materiaalrand, ook gecombineerd met de oorspronkelijke shiny-kleuren. Namen en evolutie-interface noemen dit expliciet een spelvorm. Exacte aanvallen, IV, level, shiny, item, exemplaar-ID en oorspronkelijke nectarfamilie blijven bij Elite behouden. De twee larvelijnen lopen door naar de bijbehorende volwassen Elite-vorm.
+
+**Fysieke bestanden:** 32 verschillende basismodellen; 62 dexvermeldingen inclusief 30 afgeleide Elite-vormen. Alle 62 hebben werkelijk gerenderde normale én shiny PNG/WebP-portretten van hun eigen model/materialen: 124 per formaat, transparant op 1024×1024. De assetcontrole opent ieder basismodel en vergelijkt de geïmporteerde bestanden met de bron. Er zijn geen ontbrekende natuurlijke levensstadia met een andere soort gevuld.
+
+De bestaande 2/5km-coconpools zijn ongewijzigd, zodat eerder vastgelegde privézaden dezelfde soort blijven opleveren. Nieuwe parallelle broedmachines wijzigen geen opgeslagen basisbroedmachine of bestaande wandelvoortgang.

@@ -18,6 +18,7 @@ function nearby(players:[PlayerV2,PlayerV2],now:number){const [a,b]=players.map(
 function active(t:GoTrade,uid:string,revision:unknown,now:number){check(t.users.includes(uid),'Deze ruil is niet van jou.',403);check(t.status==='offering'&&t.expiresAt>now,'Deze ruil is afgelopen. Start opnieuw.');check(Number.isSafeInteger(revision)&&t.revision===revision,'Het aanbod is veranderd. Bekijk de ruil opnieuw.',409);return t.users.indexOf(uid) as Side;}
 export function tradeBugIssue(p:PlayerV2,s:Specimen){
  if(!s.go)return 'Alleen bugs uit de GPS-collectie.';
+ if(p.go?.gyms?.deployed.some(d=>d.specimen===s.id))return 'Deze bug verdedigt een gym.';
  if(s.go.traded)return 'Deze bug is al geruild.';
  if(s.favorite||s.id===p.buddy||p.go!.team.includes(s.id))return 'Haal deze bug eerst uit je team, buddy en favorieten.';
  return null;

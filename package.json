@@ -1,6 +1,6 @@
 {
   "name": "bugbaas-reservaat",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -42,6 +42,7 @@
     "@gltf-transform/cli": "4.5.1",
     "@types/node": "^24.0.0",
     "@types/react": "~19.1.10",
+    "@types/react-dom": "^19.1.11",
     "@types/three": "0.186.0",
     "sharp": "0.35.5",
     "tsx": "^4.23.0",

@@ -4,8 +4,8 @@ import Svg,{Circle,Defs,LinearGradient,Path,RadialGradient,Rect,Stop} from 'reac
 import {font,Glyph,MotionPrefs} from './uiV2';
 
 const native=Platform.OS!=='web';
-const camp=require('../assets/v2/worlds/expedition-camp-v1.png');
-const loot=require('../assets/v2/worlds/woodland-loot-v1.png');
+const camp=require('../assets/v2/worlds/expedition-camp-v1.webp');
+const loot=require('../assets/v2/worlds/woodland-loot-v1.webp');
 
 // Backgrounding the app and the existing reduced-motion preference stop decorative loops.
 export function useActiveMotion(enabled=true){

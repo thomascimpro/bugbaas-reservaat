@@ -1,0 +1,9 @@
+{
+  "mode": "Built-in imagegen edit",
+  "reference": "wordmark.png",
+  "source": "app-emblem-v2.png",
+  "adaptiveForeground": "app-icon-foreground-v2.png",
+  "legacyIcon": "app-icon-v2.png",
+  "technicalPackaging": "Transparent symbol fitted to 563x640 inside 1024px Android foreground; legacy icon composited over #12382e. No white matte.",
+  "prompt": "Create the improved Android launcher foreground icon for BugBaas, using the emerald beetle emblem on the LEFT of the supplied BugBaas wordmark as the exact brand reference. A single premium emerald-green beetle/scarab emblem with elegant gold edging and restrained iridescence, professional polished mobile adventure game rendering, anatomically balanced insect silhouette. Preserve the same mature emerald and gold brand language. No text, no letters, no name, no white card, no white fill behind it, no circle or square background, no full-screen glow, no crown, no cute face. GENUINELY TRANSPARENT RGBA BACKGROUND outside the beetle itself. Square 1:1 canvas 1024px. Centered symmetrical emblem; all opaque gold/insect content must remain within the central 62 percent of canvas width AND height, with generous fully transparent margins for Android adaptive icon masks. Crisp recognizable silhouette at 48px, dark strong outlines and bright gold edge highlights readable on deep forest green. Render only this one standalone app emblem. This is a project asset, not a mockup."
+}

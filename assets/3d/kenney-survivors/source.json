@@ -6,7 +6,7 @@
   "license": "CC0-1.0",
   "licenseFile": "source/License.txt",
   "importedOn": "2026-10-19",
-  "status": "Source assets; not wired into gameplay",
+  "status": "Ranger model with idle and run animations used on the walking map; run plays at 0.75 speed",
   "files": [
     {
       "file": "source/Skins/survivorFemaleA.png",

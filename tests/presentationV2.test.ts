@@ -5,6 +5,7 @@ import {fitArt,plateSlices,heroBugSize,teamBugSize} from '../src/uiGeometryV2';
 import {combatCue,turnStamp} from '../src/combatFxV2';
 import type {TacticEvent,TacticRun} from '../game/tacticsV2';
 import {WALK_MODELS} from '../game/walkingV2';
+import {baseSpeciesId} from '../game/dexV2';
 import {SHINY_PALETTES,instanceBug} from '../src/bugModelV2';
 import * as THREE from 'three';
 
@@ -12,7 +13,7 @@ test('every active map species has its own shiny palette and two full-size baked
  const manifest=JSON.parse(readFileSync('assets/v2/portraits/v1/manifest.json','utf8')).species;
  assert.deepEqual(Object.keys(manifest).sort(),Object.keys(WALK_MODELS).sort());
  for(const [id,model] of Object.entries(WALK_MODELS)){
-  assert.equal(manifest[id].model,model);assert.deepEqual(manifest[id].palette,SHINY_PALETTES[id]);
+  assert.equal(manifest[id].model,model);assert.deepEqual(manifest[id].palette,SHINY_PALETTES[baseSpeciesId(id)]);
   const normal=readFileSync('assets/v2/portraits/v1/'+id+'.png'),shiny=readFileSync('assets/v2/portraits/v1/'+id+'-shiny.png');
   for(const data of [normal,shiny]){assert.equal(data.readUInt32BE(16),1024);assert.equal(data.readUInt32BE(20),1024);assert.equal(data[25],6);}
   assert.notDeepEqual(normal,shiny);for(const suffix of ['', '-shiny'])assert.ok(readFileSync('assets/v2/portraits/v1/'+id+suffix+'.webp').length>1000);

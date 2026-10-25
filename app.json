@@ -2,7 +2,7 @@
   "expo": {
     "name": "BugBaas Reservaat - Preview",
     "slug": "bugbaas-reservaat",
-    "version": "0.1.5",
+    "version": "0.1.7",
     "orientation": "portrait",
     "scheme": "bugbaas-reservaat",
     "plugins": [
@@ -26,11 +26,16 @@
       "@react-native-google-signin/google-signin",
       "./plugins/withAdventureSync"
     ],
-    "icon": "./assets/art/crest.png",
+    "icon": "./assets/v2/ui/app-icon-v2.png",
+    "backgroundColor": "#12382e",
     "userInterfaceStyle": "light",
     "android": {
       "package": "nl.cimpro.bugbaas.reservaat.preview",
-      "versionCode": 6,
+      "versionCode": 8,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/v2/ui/app-icon-foreground-v2.png",
+        "backgroundColor": "#12382e"
+      },
       "permissions": [],
       "blockedPermissions": [
         "android.permission.READ_EXTERNAL_STORAGE",
@@ -43,10 +48,12 @@
     "web": {
       "output": "single",
       "name": "BugBaas Reservaat",
-      "favicon": "./assets/art/crest.png"
+      "favicon": "./assets/v2/ui/app-icon-v2.png"
     },
     "splash": {
-      "backgroundColor": "#12382e"
+      "backgroundColor": "#12382e",
+      "image": "./assets/v2/ui/app-icon-foreground-v2.png",
+      "resizeMode": "contain"
     }
   }
 }

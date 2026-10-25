@@ -2,6 +2,7 @@
   "buildCommand": "npx expo export --platform web",
   "outputDirectory": "dist",
   "framework": null,
+  "regions": ["fra1"],
   "rewrites": [
     { "source": "/api/game/:path*", "destination": "/api/game?route=:path*" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }

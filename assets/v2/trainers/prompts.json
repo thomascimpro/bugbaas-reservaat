@@ -1,0 +1,30 @@
+{
+  "mode": "Built-in imagegen; one generation per portrait",
+  "generated": "2026-10-23",
+  "assets": [
+    {
+      "avatar": "fern",
+      "source": "fern-ranger-v1.png",
+      "runtime": "fern-ranger-v1.webp",
+      "runtimeSize": 512,
+      "postprocess": "Aspect-preserving resize/WebP encoding only; no generated edit",
+      "prompt": "Create a single premium mobile creature-collection game character portrait asset, square 1:1, stylized-concept. A confident adult woman field researcher, warm brown skin, dark curly hair gathered into a ponytail, olive green lightweight ranger jacket #6C9C64, cream piping, dark forest cap, compact tan backpack straps. Polished professional 3D game render, anatomically believable proportions, attractive expressive face, subtle friendly determined smile, front three-quarter angle looking toward viewer. Waist-up centered composition, entire cap and shoulders inside frame with generous safe margin. Smooth clean material work, rich soft daylight and rim light, no plastic toy look, not childish or chibi. Background a very soft dark forest green gradient with muted bokeh, no objects or text, no logos, no watermark, no UI. Portrait legible as a 64px avatar and detailed at 512px. Modern outdoor adventure game art, original character."
+    },
+    {
+      "avatar": "amber",
+      "source": "amber-ranger-v1.png",
+      "runtime": "amber-ranger-v1.webp",
+      "runtimeSize": 512,
+      "postprocess": "Aspect-preserving resize/WebP encoding only; no generated edit",
+      "prompt": "Create a single premium mobile creature-collection game character portrait asset, square 1:1, stylized-concept. A friendly adult man field researcher, light skin with freckles, short wavy auburn hair, amber ochre lightweight ranger jacket #D29A43, cream piping, brown cap, compact sage backpack straps. Polished professional 3D game render, anatomically believable proportions, attractive expressive face, subtle friendly determined smile, front three-quarter angle looking toward viewer. Waist-up centered composition, entire cap and shoulders inside frame with generous safe margin. Smooth clean material work, rich soft daylight and rim light, no plastic toy look, not childish or chibi. Background a very soft dark forest green gradient with muted bokeh, no objects or text, no logos, no watermark, no UI. Portrait legible as a 64px avatar and detailed at 512px. Modern outdoor adventure game art, original character."
+    },
+    {
+      "avatar": "tidal",
+      "source": "tidal-ranger-v1.png",
+      "runtime": "tidal-ranger-v1.webp",
+      "runtimeSize": 512,
+      "postprocess": "Aspect-preserving resize/WebP encoding only; no generated edit",
+      "prompt": "Create a single premium mobile creature-collection game character portrait asset, square 1:1, stylized-concept. An androgynous adult field researcher, East Asian features, neat black hair, desaturated teal blue lightweight ranger jacket #518DA8, pale blue piping, navy cap, compact tan backpack straps. Polished professional 3D game render, anatomically believable proportions, attractive expressive face, subtle friendly determined smile, front three-quarter angle looking toward viewer. Waist-up centered composition, entire cap and shoulders inside frame with generous safe margin. Smooth clean material work, rich soft daylight and rim light, no plastic toy look, not childish or chibi. Background a very soft dark forest green gradient with muted bokeh, no objects or text, no logos, no watermark, no UI. Portrait legible as a 64px avatar and detailed at 512px. Modern outdoor adventure game art, original character."
+    }
+  ]
+}

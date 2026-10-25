@@ -7,16 +7,16 @@ import {legacyArt} from './legacyArtV2';
 import {bugPortraits} from './bugPortraitsV2';
 import {Glyph,MotionPrefs,Wash,V} from './uiV2';
 import {AmbientV2,ShinySparklesV2,useActiveMotion} from './WorldEffectsV2';
-const landscape=require('../assets/v2/scenes.png');
-const meadow=require('../assets/v2/worlds/meadow-v2.png');
-const arena=require('../assets/v2/worlds/arena-v2.png');
+const landscape=require('../assets/v2/scenes.webp');
+const meadow=require('../assets/v2/worlds/meadow-v2.webp');
+const arena=require('../assets/v2/worlds/arena-v2.webp');
 function NativeLandscape({index}:{index:number}){
  const [box,setBox]=useState({width:0,height:0}),scale=Math.max(box.width/512,box.height/512);
  return <View pointerEvents="none" onLayout={e=>{const {width,height}=e.nativeEvent.layout;setBox(old=>old.width===width&&old.height===height?old:{width,height});}} style={StyleSheet.absoluteFill}>{scale>0&&<Image source={landscape} resizeMode="stretch" style={{position:'absolute',width:1024*scale,height:1536*scale,left:(box.width-512*scale)/2-index%2*512*scale,top:(box.height-512*scale)/2-Math.floor(index/2)*512*scale}}/>}</View>;
 }
 export function Ground({size=80,color='#223B28'}:{size?:number;color?:string}){const id='ground'+useId().replace(/:/g,'');return <View pointerEvents="none" style={{position:'absolute',bottom:size*.08,width:size,height:size*.25}}><Svg width="100%" height="100%" viewBox="0 0 100 25"><Defs><RadialGradient id={id}><Stop offset="0" stopColor={color} stopOpacity={.3}/><Stop offset="1" stopColor={color} stopOpacity={0}/></RadialGradient></Defs><Ellipse cx="50" cy="12" rx="48" ry="10" fill={`url(#${id})`}/></Svg></View>;}
 export function BugPortrait({id,size=70,shiny=false,silhouette=false,selected=false}:{id:string;size?:number;shiny?:boolean;silhouette?:boolean;selected?:boolean}){const rarity=RARITIES[rarityFor(id)];return <View style={{width:size,height:size*1.08,borderRadius:15,overflow:'hidden',backgroundColor:selected?'#D2DEC4':rarity.wash,borderWidth:selected?2:1,borderColor:selected?'#68AF79':rarity.color+'80',alignItems:'center',justifyContent:'flex-end'}}><Wash from={selected?'#D5E4C5':rarity.wash} to={selected?'#AEBE91':rarity.color+'45'}/><View style={{position:'absolute',bottom:0,left:0,right:0,height:'25%',backgroundColor:'#EDE8D780',borderTopLeftRadius:55,borderTopRightRadius:40}}/><Ground size={size*.9}/><SpriteView id={id} size={size*.97} shiny={shiny} silhouette={silhouette}/></View>;}
-const itemSources:Record<string,any>={leafshield:require('../assets/art/items/leaf.png'),pollen:require('../assets/art/items/pollen.png'),nectarfood:require('../assets/art/items/dew.png'),shell:require('../assets/art/items/dew.png'),thorn:require('../assets/art/items/wing.png')};
+const itemSources:Record<string,any>={leafshield:require('../assets/art/items/leaf.webp'),pollen:require('../assets/art/items/pollen.webp'),nectarfood:require('../assets/art/items/dew.webp'),shell:require('../assets/art/items/dew.webp'),thorn:require('../assets/art/items/wing.webp')};
 export function ItemArt({id,size=44}:{id:string;size?:number}){const source=itemSources[id];return <View style={{width:size,height:size,alignItems:'center',justifyContent:'center'}}>{source?<Image source={source} resizeMode="contain" style={{width:size,height:size}}/>:<View style={{width:size*.8,height:size*.8,borderRadius:size,backgroundColor:'#E0E8C7',borderWidth:1,borderColor:'#B7CA9C',alignItems:'center',justifyContent:'center'}}><Glyph name={['seed','sunseed','splash','acorn'].includes(id)?'star':['honey','royal','sap'].includes(id)?'nectar':'leaf'} color={V.pine} size={size*.48}/></View>}</View>;}
 export function SpriteView({id,size=70,shiny=false,flip=false,silhouette=false,animate=false,ribbon=0}:{id:string;size?:number;shiny?:boolean;flip?:boolean;silhouette?:boolean;animate?:boolean;ribbon?:number}){
  const active=useActiveMotion(animate&&!silhouette),bob=useRef(new Animated.Value(0)).current,seed=Array.from(id).reduce((n,c)=>n+c.charCodeAt(0),0),flying=/bee|fly|moth|butterfly|hornet|wasp|wing|luna|midge/.test(id);

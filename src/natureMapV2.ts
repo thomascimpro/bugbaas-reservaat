@@ -60,9 +60,11 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
  const group=new THREE.Group(),roofGroup=new THREE.Group();group.add(roofGroup);scene.add(group);
  const resources=new Set<{dispose:()=>void}>(),matrix=new THREE.Object3D(),instances:THREE.InstancedMesh[]=[];let signature='',last=-Infinity,dirty=true,removed=false,revision=0;
  const invalidate=()=>{if(!removed){dirty=true;map.triggerRepaint?.();}};
- const sourceChanged=(event:{sourceId?:string;sourceDataType?:string})=>{if(event.sourceId==='openmaptiles'&&event.sourceDataType!=='idle')invalidate();};
+ // Rotation/pitch do not change terrain. Rebuilding roofs/vegetation on every
+ // camera move caused periodic main-thread stalls while orbiting the trainer.
+ const sourceChanged=(event:{sourceId?:string;sourceDataType?:string})=>{if(event.sourceId==='openmaptiles'&&event.sourceDataType==='content')invalidate();};
  const listen=typeof map.on==='function'&&typeof map.off==='function';
- if(listen){map.on('move',invalidate);map.on('sourcedata',sourceChanged);}
+ if(listen)map.on('sourcedata',sourceChanged);
  const material=(color:number)=>{const m=new THREE.MeshStandardMaterial({color,roughness:1,flatShading:true});resources.add(m);return m;};
  const instanced=(name:string,geometry:THREE.BufferGeometry,color:number,count:number,shadow=false)=>{
   const m=shadow?new THREE.MeshBasicMaterial({color,transparent:true,opacity:.12,depthWrite:false}):material(color),mesh=new THREE.InstancedMesh(geometry,m,count);
@@ -149,5 +151,5 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
   for(const mesh of instances)mesh.instanceMatrix.needsUpdate=true;
   Object.assign(map.getCanvas().dataset,{sceneryCenter:JSON.stringify({lat:view.lat,lng:view.lng}),sceneryRevision:String(++revision),sceneryBuildings:String(buildings.length),sceneryTrees:String(trunks.count),sceneryConifers:String(pines.reduce((n,m)=>n+m.count,0)),sceneryShrubs:String(shrubs.count),sceneryFlowers:String(stems.count),sceneryReeds:String(reeds.count),sceneryWindows:String(windows.count)});
  }
- return {update:refresh,dispose(){removed=true;if(listen){map.off('move',invalidate);map.off('sourcedata',sourceChanged);}scene.remove(group);for(const child of roofGroup.children)(child as THREE.Mesh).geometry.dispose();for(const m of instances)m.dispose();resources.forEach(r=>r.dispose());}};
+ return {update:refresh,dispose(){removed=true;if(listen)map.off('sourcedata',sourceChanged);scene.remove(group);for(const child of roofGroup.children)(child as THREE.Mesh).geometry.dispose();for(const m of instances)m.dispose();resources.forEach(r=>r.dispose());}};
 }
