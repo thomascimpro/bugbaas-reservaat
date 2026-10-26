@@ -1,4 +1,5 @@
-import {gymSites,ensureGyms,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym} from '../game/gymsV2';
+import {gymSites,ensureGyms,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym,ensureNpcGym,settleExpiredGym,GYM_RULES} from '../game/gymsV2';
+import {ensureDailyChallenge,dailyChallengeView,makeDailyChallengeBattle,settleDailyChallenge,dailyWeekKey,weeklyDailyScore} from '../game/dailyChallengeV2';
 import type {Gym,GymSite} from '../game/gymsV2';
 import {buyCoinOffer} from '../game/coinShopV2';
 import {awardGoCatchCard,sendGoGift,openGoGift} from '../game/goGiftsV2';
@@ -6,7 +7,7 @@ import {appendGoJournal,publicGoJournal} from '../game/goJournalV2';
 import type {GoJournalEntry} from '../game/goJournalV2';
 import {startGoTrade,offerGoTrade,confirmGoTrade,cancelGoTrade,publicGoTrade} from '../game/goTradeV2';
 import type {GoTrade} from '../game/goTradeV2';
-import {ensureEcho,saveEchoDefense,chooseEchoMatch,makeEchoBattle,settleEcho} from '../game/echoArenaV2';
+import {ensureEcho,saveEchoDefense,chooseEchoMatch,makeEchoBattle,settleEcho,competitionTeamIssue} from '../game/echoArenaV2';
 import type {EchoDefense} from '../game/echoArenaV2';
 import {ensureCocoons,awardCocoon,startCocoon,hatchCocoon} from '../game/goCocoonsV2';
 import {ensureBosses,makeBossBattle,settleBoss} from '../game/goBossV2';
@@ -36,8 +37,11 @@ import type {Documents,Store} from './store';
 import {document} from './store';
 const pk=(uid:string)=>'v2Players:'+uid,bk=(id:string)=>'v2GoBattles:'+id,tk=(uid:string)=>'v2GoTickets:'+uid;
 const gyk=(id:string)=>'v2GoGyms:'+id;
+const dailyScoreKey=(uid:string,league:League,now:number)=>'v2DailyScores:'+dailyWeekKey(now)+':'+league+':'+uid;
+type DailyScoreRow={uid:string;name:string;week:string;league:League;score:number};
+const AUTO_DEFENSE_COMMANDS=new Set(['goTeam','goPower','goSecond','goTM','goEquip','goEvolve','goRename','profile','echoQueue','dailyChallenge']);
 const hash=(value:string)=>createHash('sha256').update(value).digest('hex');
-const FIELDS:Record<string,string[]>={gymTeam:['team'],gymDefend:['gym','id'],gymAttack:['gym','ids'],coinBuy:['offer'],adventureSync:['snapshot'],profile:['name','avatar'],settings:['sound','reducedMotion','largeText','music','volume','sfxVolume','graphics'],favorite:['id'],buddy:['id'],worldLocate:['fix'],worldEncounter:['spawn'],worldFocus:['encounter'],worldCast:['encounter','net','bait','trace','rhythm'],fieldLure:[],fieldSupply:[],fieldTask:['task'],poiSpin:['poi'],routeStart:['route'],routePause:[],routeResume:[],routeFinish:[],routeCancel:[],goPower:['id','steps'],goSecond:['id'],goTM:['id','slot'],goEquip:['id','item'],goTransfer:['id'],goTransferMany:['ids'],trainerClaim:[],goEvolve:['id'],goTeam:['ids','league'],goAuto:['enabled'],goQueue:[],goCancel:[],goTrain:[],goInvite:[],goJoin:['code'],goAct:['action','value'],goClose:[],friendRequest:['code'],friendAccept:['pair'],friendRemove:['pair'],giftSend:['pair','card'],giftOpen:['pair'],echoSave:[],echoQueue:[],cocoonStart:['id','incubator'],cocoonClaim:['id'],goBoss:['difficulty'],goRename:['id','name'],tradeStart:['pair'],tradeOffer:['pair','id','tradeRevision'],tradeConfirm:['pair','tradeRevision','special'],tradeCancel:['pair','tradeRevision']};
+const FIELDS:Record<string,string[]>={gymTeam:['team'],gymDefend:['gym','id'],gymAttack:['gym','ids'],coinBuy:['offer'],adventureSync:['snapshot'],profile:['name','avatar'],settings:['sound','reducedMotion','largeText','music','volume','sfxVolume','graphics'],favorite:['id'],buddy:['id'],worldLocate:['fix'],worldEncounter:['spawn'],worldFocus:['encounter'],worldCast:['encounter','net','bait','trace','rhythm'],fieldLure:[],fieldSupply:[],fieldTask:['task'],poiSpin:['poi'],routeStart:['route'],routePause:[],routeResume:[],routeFinish:[],routeCancel:[],goPower:['id','steps'],goSecond:['id'],goTM:['id','slot'],goEquip:['id','item'],goTransfer:['id'],goTransferMany:['ids'],trainerClaim:[],goEvolve:['id'],goTeam:['ids','league'],goAuto:['enabled'],goQueue:[],goCancel:[],goTrain:[],goInvite:[],goJoin:['code'],goAct:['action','value'],goClose:[],friendRequest:['code'],friendAccept:['pair'],friendRemove:['pair'],giftSend:['pair','card'],giftOpen:['pair'],echoSave:[],echoQueue:[],cocoonStart:['id','incubator'],cocoonClaim:['id'],goBoss:['difficulty'],dailyChallenge:['practice'],goRename:['id','name'],tradeStart:['pair'],tradeOffer:['pair','id','tradeRevision'],tradeConfirm:['pair','tradeRevision','special'],tradeCancel:['pair','tradeRevision']};
 const SOCIAL_COMMANDS=new Set(['profile','friendRequest','friendAccept','friendRemove','giftSend','giftOpen','tradeStart','tradeOffer','tradeConfirm','tradeCancel','echoSave']);
 type Ticket={uid:string;league:League;rating:number;at:number;until:number;status:'waiting'|'matched'|'cancelled'|'expired'};
 export function parseGo(raw:unknown):CommandV2{check(raw&&typeof raw==='object'&&!Array.isArray(raw),'Een actie is vereist.');const c=raw as CommandV2;check(typeof c.type==='string'&&Object.hasOwn(FIELDS,c.type),'Deze oude spelmodus is verwijderd. Vernieuw de game.');check(typeof c.commandId==='string'&&/^[\w-]{16,80}$/.test(c.commandId)&&Number.isSafeInteger(c.expectedRevision)&&c.expectedRevision>=0,'Ongeldige spelactie.');check(Object.keys(c).every(k=>['type','commandId','expectedRevision',...FIELDS[c.type]].includes(k)),'De server bepaalt stats, schade en beloningen.');return c;}
@@ -45,9 +49,10 @@ export class GoServiceV2{
  private claimedCodes=new Map<string,string>();
  // Cache document membership only; every player, battle and reward stays transactionally fresh.
  private battleDocumentKeys=new Map<string,readonly string[]>();
+ private dailyRankCache=new Map<string,{until:number;value:Promise<DailyScoreRow[]>}>();
  private socialCache=new Map<string,{until:number;value:Promise<{friends:FriendPair[];ranks:{uid:string;name:string;rating:number;wins:number}[];trades:GoTrade[];echoRanks:{uid:string;name:string;rating:number;wins:number}[]}>}>();
  constructor(public store:Store,public mode:'local'|'cloud',public clock=Date.now,public environment:(fix:Fix,now:number)=>Promise<HabitatContext>=async(_fix,now)=>unknownHabitat(now)){}
- private get(d:Documents,uid:string,now:number){let p=document<PlayerV2>(d,pk(uid));if(!p){const code=BigInt('0x'+hash(uid).slice(0,12)).toString(32).toUpperCase().padStart(10,'0').slice(-8);p=freshV2(uid,code,now);d.set(pk(uid),p);}ensureAdventure(p,now);ensureField(p,now);ensureGo(p,now);ensureGyms(p,now);ensureEcho(p,now);ensureBosses(p,now);ensureCocoons(p,randomBytes(24).toString('hex'),now);if(p.go!.ratedDay!==dayV2(now)){p.go!.ratedDay=dayV2(now);p.go!.ratedCount=0;}return p;}
+ private get(d:Documents,uid:string,now:number){let p=document<PlayerV2>(d,pk(uid));if(!p){const code=BigInt('0x'+hash(uid).slice(0,12)).toString(32).toUpperCase().padStart(10,'0').slice(-8);p=freshV2(uid,code,now);d.set(pk(uid),p);}ensureAdventure(p,now);ensureField(p,now);ensureGo(p,now);ensureGyms(p,now);ensureEcho(p,now);ensureBosses(p,now);ensureDailyChallenge(p,now);ensureCocoons(p,randomBytes(24).toString('hex'),now);if(p.go!.ratedDay!==dayV2(now)){p.go!.ratedDay=dayV2(now);p.go!.ratedCount=0;}return p;}
  async ensure(uid:string){const p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));if(this.claimedCodes.get(uid)!==p.friendCode){await this.store.run(['v2Codes:'+p.friendCode],d=>{const old=document<{uid:string}>(d,'v2Codes:'+p.friendCode);check(!old||old.uid===uid,'Spelercode conflicteert.',409);if(!old)d.set('v2Codes:'+p.friendCode,{uid});});if(this.claimedCodes.size>=1000)this.claimedCodes.clear();this.claimedCodes.set(uid,p.friendCode);}return p;}
  private query<T>(kind:string,filters:Parameters<NonNullable<Store['query']>>[1]=[],order?:{field:string;descending?:boolean},limit=100){check(this.store.query,'Opslag niet beschikbaar.',503);return this.store.query<T>(kind,filters,order,limit);}
  private social(uid:string){const cached=this.socialCache.get(uid);if(cached&&cached.until>this.clock())return cached.value;
@@ -55,18 +60,24 @@ export class GoServiceV2{
   if(this.socialCache.size>=1000)this.socialCache.clear();const entry={until:this.clock()+10000,value};this.socialCache.set(uid,entry);void value.catch(()=>{if(this.socialCache.get(uid)===entry)this.socialCache.delete(uid);});return value;
  }
  private note(p:PlayerV2,kind:GoJournalEntry['kind'],id:string,s:Specimen,at:number,extra:Partial<GoJournalEntry>={}){appendGoJournal(p,{id,kind,at,species:s.species,specimenId:s.id,shiny:s.shiny,cp:s.go?stats(s).cp:undefined,...extra});}
+ private dailyRanks(uids:string[],league:League,now:number){const week=dailyWeekKey(now),ids=[...new Set(uids)].sort(),cacheKey=week+':'+league+':'+ids.join(','),cached=this.dailyRankCache.get(cacheKey);if(cached&&cached.until>now)return cached.value;const keys=ids.map(uid=>dailyScoreKey(uid,league,now)),value=this.store.run(keys,d=>keys.flatMap(key=>{const row=document<DailyScoreRow>(d,key);return row?[row]:[];}));if(this.dailyRankCache.size>=1000)this.dailyRankCache.clear();const entry={until:now+10000,value};this.dailyRankCache.set(cacheKey,entry);void value.catch(()=>{if(this.dailyRankCache.get(cacheKey)===entry)this.dailyRankCache.delete(cacheKey);});return value;}
  private settle(d:Documents,b:GoBattle,now:number){
   if(b.phase==='finished'&&!b.settled)this.socialCache.clear();
+  if(b.dailyChallenge){
+   const p=this.get(d,b.players[0],now),reward=settleDailyChallenge(p,b,now);if(!reward)return;
+   const g=p.go!,beforeXP=g.trainer!.xp;g.dust+=reward.dust;grantXP(p,reward.xp);b.rewards=[{dust:reward.dust,xp:g.trainer!.xp-beforeXP,fastTMs:0,chargedTMs:0}];this.noteBattle(p,b,0,now);p.revision++;
+   if(!b.dailyChallenge.practice){d.set(dailyScoreKey(p.uid,b.league,b.createdAt),{uid:p.uid,name:p.name,week:dailyWeekKey(b.createdAt),league:b.league,score:weeklyDailyScore(g.dailyChallenge,b.league,b.createdAt)} satisfies DailyScoreRow);this.dailyRankCache.clear();}return;
+  }
   if(b.gym){
    const g=document<Gym>(d,gyk(b.gym.id));check(g,'Deze gym is niet beschikbaar.',409);
-   const owners=new Map(b.gym.defenders.map(ref=>[ref.uid,this.get(d,ref.uid,now)]));
+   const owners=new Map(b.gym.defenders.filter(ref=>!ref.npc).flatMap(ref=>{const owner=document<PlayerV2>(d,pk(ref.uid));return owner?[[ref.uid,owner] as [string,PlayerV2]]:[];}));
    if(settleGymBattle(g,b,owners,now)){const p=this.get(d,b.players[0],now);p.revision++;b.rewards=[{dust:0,xp:0,fastTMs:0,chargedTMs:0}];}return;
   }
   if(b.echo){
    const p=this.get(d,b.players[0],now),reward=settleEcho(p,b,now);if(!reward)return;
    const g=p.go!,beforeXP=g.trainer!.xp;g.dust+=reward.dust;grantXP(p,reward.xp);b.rewards=[{dust:reward.dust,xp:g.trainer!.xp-beforeXP,fastTMs:0,chargedTMs:0}];this.noteBattle(p,b,0,now);
    g.history.unshift({id:b.id,opponent:b.names[1]+' · Echo',result:b.winner===null?'Gelijkspel':b.winner===0?'Gewonnen':'Verloren',delta:0,at:now});g.history=g.history.slice(0,30);p.revision++;
-   if(reward.rewarded){d.set('v2EchoRanks:'+p.uid,{uid:p.uid,name:p.name,rating:g.echo!.rating,wins:g.echo!.wins});const ownDefense=document<EchoDefense>(d,'v2EchoDefenses:'+p.uid);if(ownDefense)ownDefense.rating=g.echo!.rating;}return;
+   if(reward.rewarded&&!b.echo.npc){d.set('v2EchoRanks:'+p.uid,{uid:p.uid,name:p.name,rating:g.echo!.rating,wins:g.echo!.wins});const ownDefense=document<EchoDefense>(d,'v2EchoDefenses:'+p.uid);if(ownDefense)ownDefense.rating=g.echo!.rating;const leagueDefense=document<EchoDefense>(d,'v2EchoDefenses:'+p.uid+'-'+b.league);if(leagueDefense)leagueDefense.rating=g.echo!.rating;}return;
   }
   if(b.boss){
    const p=this.get(d,b.players[0],now),reward=settleBoss(p,b,now);if(!reward)return;
@@ -83,15 +94,27 @@ export class GoServiceV2{
    g.history.unshift({id:b.id,opponent:b.names[1-i],result:b.winner===null?'Gelijkspel':won?'Gewonnen':'Verloren',delta,at:now});g.history=g.history.slice(0,30);p.revision++;if(!b.training)d.set('v2GoRanks:'+p.uid,{uid:p.uid,name:p.name,rating:g.rating,wins:g.wins});
   }
  }
- private noteBattle(p:PlayerV2,b:GoBattle,side:Side,at:number){const reward=b.rewards?.[side];appendGoJournal(p,{id:'battle:'+b.id,kind:b.echo?'echo':b.boss?'boss':'battle',at,result:b.winner===null?'draw':b.winner===side?'win':'loss',opponent:b.names[1-side],dust:reward?.dust??0,xp:reward?.xp??0,method:b.echo||b.boss?undefined:b.ranked?'ranked':b.training?'training':'casual'});}
- private rememberBattleKeys(b:GoBattle){const ids=b.players.slice(0,b.training?1:2),keys=[bk(b.id),...ids.flatMap(uid=>[pk(uid),'v2GoRanks:'+uid,'v2EchoRanks:'+uid,'v2EchoDefenses:'+uid])];if(b.gym)keys.push(gyk(b.gym.id),...b.gym.defenders.map(ref=>pk(ref.uid)));const immutable=Object.freeze([...new Set(keys)]);if(!this.battleDocumentKeys.has(b.id)&&this.battleDocumentKeys.size>=1000)this.battleDocumentKeys.delete(this.battleDocumentKeys.keys().next().value!);this.battleDocumentKeys.set(b.id,immutable);return immutable;}
+ private noteBattle(p:PlayerV2,b:GoBattle,side:Side,at:number){const reward=b.rewards?.[side];appendGoJournal(p,{id:'battle:'+b.id,kind:b.dailyChallenge?'challenge':b.echo?'echo':b.boss?'boss':'battle',at,result:b.winner===null?'draw':b.winner===side?'win':'loss',opponent:b.names[1-side],dust:reward?.dust??0,xp:reward?.xp??0,method:b.dailyChallenge||b.echo||b.boss?undefined:b.ranked?'ranked':b.training?'training':'casual'});}
+ private rememberBattleKeys(b:GoBattle){const ids=b.players.slice(0,b.training?1:2),keys=[bk(b.id),...ids.flatMap(uid=>[pk(uid),'v2GoRanks:'+uid,'v2EchoRanks:'+uid,'v2EchoDefenses:'+uid,'v2EchoDefenses:'+uid+'-'+b.league])];if(b.dailyChallenge)keys.push(dailyScoreKey(b.players[0],b.league,b.createdAt));if(b.gym)keys.push(gyk(b.gym.id),...b.gym.defenders.filter(ref=>!ref.npc).map(ref=>pk(ref.uid)));const immutable=Object.freeze([...new Set(keys)]);if(!this.battleDocumentKeys.has(b.id)&&this.battleDocumentKeys.size>=1000)this.battleDocumentKeys.delete(this.battleDocumentKeys.keys().next().value!);this.battleDocumentKeys.set(b.id,immutable);return immutable;}
  private async battleKeys(id:string){const cached=this.battleDocumentKeys.get(id);if(cached)return cached;const b=await this.store.run([bk(id)],d=>document<GoBattle>(d,bk(id)));return b?this.rememberBattleKeys(b):[];}
  private checkBattleKeys(d:Documents,b:GoBattle){check(this.rememberBattleKeys(b).every(key=>d.has(key)),'Je gevecht is veranderd. Probeer opnieuw.',409);}
  private async advance(id:string,uid?:string){const keys=await this.battleKeys(id);if(!keys.length)return;return this.store.run([...keys],d=>{const b=document<GoBattle>(d,bk(id));if(!b)return;this.checkBattleKeys(d,b);advanceGoBattle(b,this.clock());this.settle(d,b,this.clock());return {battle:b,player:uid?document<PlayerV2>(d,pk(uid)):undefined};});}
  private async gyms(p:PlayerV2){
-  const sites=new Map<string,GymSite>([...gymSites(p.walking?.posts??[]),...(p.go!.gyms?.deployed??[])].map(s=>[s.id,s]));
-  if(!sites.size)return {items:[],changed:false};const keys=[...sites.keys()].map(gyk),read=()=>this.store.run(keys,d=>[...sites.values()].map(site=>document<Gym>(d,gyk(site.id))??{...site,team:null,revision:0,defenders:[]} as Gym));
-  let gyms=await read();const expired=gyms.filter(g=>g.battle&&g.battle.until<=this.clock());for(const g of expired)await this.advance(g.battle!.id);if(expired.length)gyms=await read();return {items:gyms,changed:expired.length>0};
+  const now=this.clock(),sites=new Map<string,GymSite>([...gymSites(p.walking?.posts??[]),...(p.go!.gyms?.deployed??[])].map(site=>[site.id,site]));
+  if(!sites.size)return {items:[] as Gym[],changed:false};
+  const keys=[...sites.keys()].map(gyk),read=()=>this.store.run(keys,d=>[...sites.values()].map(site=>{let g=document<Gym>(d,gyk(site.id));if(!g){g={...site,team:null,revision:0,defenders:[]};d.set(gyk(site.id),g);}ensureNpcGym(g,now);return g;}));
+  let gyms=await read(),changed=false;const expiredBattles=gyms.filter(g=>g.battle&&g.battle.until<=now);
+  for(const g of expiredBattles)await this.advance(g.battle!.id);if(expiredBattles.length){gyms=await read();changed=true;}
+  const expiring=gyms.filter(g=>(!g.battle||g.battle.until<=now)&&g.defenders.some(defender=>!defender.npc&&now-defender.at>=GYM_RULES.maxStayMs));
+  if(expiring.length){
+   const ownerKeys=[...new Set(expiring.flatMap(g=>g.defenders.filter(defender=>!defender.npc).map(defender=>pk(defender.uid))))],ownersAllowed=new Set(ownerKeys);
+   const result=await this.store.run([...expiring.map(g=>gyk(g.id)),...ownerKeys],d=>{
+    const owners=new Map<string,PlayerV2>();for(const key of ownerKeys){const owner=document<PlayerV2>(d,key);if(owner)owners.set(owner.uid,owner);}
+    let returned=false;const updated=expiring.map(prior=>{const g=document<Gym>(d,gyk(prior.id));check(g,'Deze gym is veranderd.',409);check(g.defenders.filter(defender=>!defender.npc&&now-defender.at>=GYM_RULES.maxStayMs).every(defender=>ownersAllowed.has(pk(defender.uid))),'De gymverdediging is veranderd. Vernieuw de kaart.',409);if(settleExpiredGym(g,owners,now))returned=true;return g;});return {returned,updated};
+   });
+   const updates=new Map(result.updated.map(g=>[g.id,g]));gyms=gyms.map(g=>updates.get(g.id)??g);changed||=result.returned;
+  }
+  return {items:gyms,changed};
  }
  async state(uid:string,linked=false):Promise<GameViewV2>{let p=await this.ensure(uid),battle:GoBattle|null=null;if(p.go!.queue){await this.matchmake(uid);p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));}if(p.go!.battle){const snapshot=await this.advance(p.go!.battle,uid);if(snapshot){p=snapshot.player??p;battle=snapshot.battle;}}return this.view(uid,p,battle,linked);}
  private async view(uid:string,p:PlayerV2,battle:GoBattle|null,linked:boolean):Promise<GameViewV2>{
@@ -104,8 +127,9 @@ export class GoServiceV2{
   publicPlayer.safari=null;publicPlayer.match=null;publicPlayer.ticket=false;publicPlayer.arenaRun=null;
   if(publicPlayer.adventure){publicPlayer.adventure.run=null;publicPlayer.adventure.expedition=null;}
   const {friends,ranks,trades,echoRanks}=await this.social(uid);publicPlayer.go!.journal=publicGoJournal(publicPlayer.go!.journal);
+  const friendUids=new Set([uid,...friends.filter(pair=>pair.accepted&&!pair.removed).flatMap(pair=>pair.users)]),weeklyRows=publicPlayer.go!.dailyChallenge!.days.length||friendUids.size>1?await this.dailyRanks([...friendUids],publicPlayer.go!.league,this.clock()):[],dailyChallengeLeaderboard=weeklyRows.filter(row=>row.week===dailyWeekKey(this.clock())&&row.league===publicPlayer.go!.league&&friendUids.has(row.uid)&&Number.isSafeInteger(row.score)&&row.score>=0).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name)).map(row=>({name:row.name,score:row.score,me:row.uid===uid}));
   const visible=battle?structuredClone(battle) as GoBattleView:null;if(visible){check(visible.players.includes(uid),'Dit gevecht is niet van jou.',403);visible.side=visible.players.indexOf(uid) as Side;if(visible.gym)visible.gym.defenders=[];const other=(1-visible.side) as Side;if(visible.queued)visible.queued[other]=null;visible.teams[other].forEach((f,i)=>{f.energy=0;f.attack=0;f.defense=0;f.readyAt=0;f.go={level:0,iv:[0,0,0],fast:'bite',charged:[],item:null};if(i!==visible.active[other]){f.id='opponent-'+i;f.species='unknown';f.cp=0;f.shiny=false;f.hp=f.hp>0?1:0;f.maxHP=1;}else{f.hp=Math.ceil(f.hp/f.maxHP*100);f.maxHP=100;}});}
-  return {goGyms:gyms.map(g=>publicGym(g,uid,this.clock())),goTrades:trades.map(t=>publicGoTrade(t,this.clock())),echoLeaderboard:echoRanks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),player:publicPlayer,now:this.clock(),mode:this.mode,linked:linked||this.mode==='local',match:null,ticket:null,friends:friends.filter(f=>!f.removed),leaderboard:ranks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),goBattle:visible};
+  return {dailyChallenge:dailyChallengeView(publicPlayer,this.clock()),dailyChallengeLeaderboard,goGyms:gyms.map(g=>publicGym(g,uid,this.clock())),goTrades:trades.map(t=>publicGoTrade(t,this.clock())),echoLeaderboard:echoRanks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),player:publicPlayer,now:this.clock(),mode:this.mode,linked:linked||this.mode==='local',match:null,ticket:null,friends:friends.filter(f=>!f.removed),leaderboard:ranks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),goBattle:visible};
  }
  private auto(p:PlayerV2,now:number,secret:string){const g=p.go!,a=g.auto,w=p.walking;if(!w)return;const previous=g.motion;g.motion={fix:{...w.fix},at:now};if(!a.enabled){a.status='off';return;}if(w.blockedUntil&&w.blockedUntil>now){a.status='too-fast';a.moving=0;return;}if(!previous||w.fix.accuracy>25||previous.fix.accuracy>25){a.status='gps';a.moving=0;return;}
   const seconds=(now-previous.at)/1000,meters=distance(previous.fix,w.fix),speed=meters/seconds;if(seconds<5||seconds>60||meters<Math.max(12,w.fix.accuracy,previous.fix.accuracy)||speed<.7){a.status='waiting';a.moving=0;return;}if(speed>7){a.status='too-fast';a.moving=0;return;}a.status='moving';a.moving++;if(a.moving<2||now-a.lastAt<30000)return;const f=p.field!;if(f.inventory.basic<1){a.status='empty';return;}a.attempted=a.attempted.filter(id=>w.spawns.some(s=>s.id===id&&s.expiresAt>now));const s=w.spawns.find(s=>s.expiresAt>now&&!w.caught.includes(s.id)&&!a.attempted.includes(s.id)&&g.dex?.includes(s.species)&&f.encounter?.spawn!==s.id&&distance(w.fix,s)<=CATCH_RADIUS);if(!s)return;
@@ -120,9 +144,9 @@ export class GoServiceV2{
   return {player,battle:id?document<GoBattle>(d,bk(id))??null:null};
  }
  async command(uid:string,raw:unknown,linked=false):Promise<GameViewV2>{
-  const c=parseGo(raw),now=this.clock(),secret=randomBytes(24).toString('hex'),id=randomBytes(16).toString('hex'),p=await this.ensure(uid);if(p.go!.battle&&c.type!=='goAct')await this.advance(p.go!.battle);
+  const c=parseGo(raw),now=this.clock(),secret=randomBytes(24).toString('hex'),id=randomBytes(16).toString('hex');let p=await this.ensure(uid);if(c.type==='gymDefend'||c.type==='gymAttack'){const gymState=await this.gyms(p);if(gymState.changed)p=await this.store.run([pk(uid)],d=>this.get(d,uid,now));}if(p.go!.battle&&c.type!=='goAct')await this.advance(p.go!.battle);
   const habitat=c.type==='worldLocate'?await this.environment(validFix(c.fix,now),now):undefined;
-  const echoDefense=c.type==='echoQueue'?chooseEchoMatch(p,await this.query<EchoDefense>('v2EchoDefenses',[{field:'league',op:'==',value:p.go!.league}]),now):null;
+  const echoDefense=c.type==='echoQueue'?chooseEchoMatch(p,linked||this.mode==='local'?await this.query<EchoDefense>('v2EchoDefenses',[{field:'league',op:'==',value:p.go!.league}]):[],now):null;
   const receipt='v2GoReceipts:'+uid+'-'+c.commandId,rate='v2GoRate:'+uid,keys=[pk(uid),receipt,rate,tk(uid)];let otherUid:string|undefined;
   if(c.type==='goJoin'||c.type==='friendRequest'){check(typeof c.code==='string'&&/^[A-Z0-9]{8}$/.test(c.code),'Gebruik een geldige achttekencode.');const entry=await this.store.run(['v2Codes:'+c.code],d=>document<{uid:string}>(d,'v2Codes:'+c.code));check(entry&&entry.uid!==uid,'Deze speler is niet gevonden.');otherUid=entry.uid;keys.push(pk(otherUid),'v2GoInvites:'+c.code,'v2FriendPairs:'+([uid,otherUid].sort().join('_')));}
   if(c.type==='friendAccept'||c.type==='friendRemove'||c.type==='giftSend'||c.type==='giftOpen'){check(typeof c.pair==='string'&&c.pair.length<256,'Kies een vriend.');keys.push('v2FriendPairs:'+c.pair);}
@@ -130,8 +154,8 @@ export class GoServiceV2{
   if(trading){check(linked||this.mode==='local','Koppel je account om te ruilen.',403);check(typeof c.pair==='string'&&c.pair.length>0&&c.pair.length<256,'Kies een vriend.');const pairKey='v2FriendPairs:'+c.pair,pair=await this.store.run([pairKey],d=>document<FriendPair>(d,pairKey));check(pair&&pair.users.length===2&&pair.users.includes(uid)&&pair.users[0]!==pair.users[1],'Deze vriendschap bestaat niet.',403);keys.push(pairKey,'v2GoTrades:'+c.pair,...pair.users.map(pk));}
   if(c.type==='gymDefend'||c.type==='gymAttack'){check(typeof c.gym==='string'&&/^gym-[\w:.-]{1,180}$/.test(c.gym),'Kies een geldige gym.');keys.push(gyk(c.gym));}
   if(c.type==='goInvite')keys.push('v2GoInvites:'+p.friendCode);
-  if(c.type==='goTrain'||c.type==='goJoin'||c.type==='echoQueue'||c.type==='goBoss'||c.type==='gymAttack')keys.push(bk(id));
-  if(c.type==='echoSave')keys.push('v2EchoDefenses:'+uid);
+  if(c.type==='goTrain'||c.type==='goJoin'||c.type==='echoQueue'||c.type==='goBoss'||c.type==='dailyChallenge'||c.type==='gymAttack')keys.push(bk(id));
+  if(c.type==='echoSave'||AUTO_DEFENSE_COMMANDS.has(c.type))keys.push('v2EchoDefenses:'+uid,...Object.keys(LEAGUES).map(league=>'v2EchoDefenses:'+uid+'-'+league));
   if(p.go!.battle)keys.push(...await this.battleKeys(p.go!.battle));
   const snapshot=await this.store.run([...new Set(keys)],d=>{
    const fingerprint=hash(JSON.stringify(c)),old=document<{fingerprint:string}>(d,receipt);if(old){check(old.fingerprint===fingerprint,'Dit actie-ID is al voor iets anders gebruikt.',409);const player=this.get(d,uid,now);if(c.type==='goAct'){const battle=player.go!.battle?document<GoBattle>(d,bk(player.go!.battle)):undefined;if(battle){this.checkBattleKeys(d,battle);advanceGoBattle(battle,now);this.settle(d,battle,now);}}return this.commandSnapshot(d,player);}
@@ -141,7 +165,7 @@ export class GoServiceV2{
     case 'gymTeam':idle();check(linked||this.mode==='local','Koppel je account voor gyms.',403);chooseGymTeam(x,c.team,now);break;
     case 'gymDefend':case 'gymAttack':{
      idle();check(linked||this.mode==='local','Koppel je account voor gyms.',403);const key=gyk(c.gym as string),site=gymSites(x.walking?.posts??[]).find(s=>s.id===c.gym);let gym=document<Gym>(d,key);if(!gym){check(site,'Deze gym is niet beschikbaar.');gym={...site,team:null,revision:0,defenders:[]};d.set(key,gym);}
-     if(c.type==='gymDefend')placeGymDefender(x,gym,c.id,id,now);else{const b=makeGymBattle(x,gym,c.ids,id,now);d.set(bk(id),b);g.battle=id;}break;
+     ensureNpcGym(gym,now);if(c.type==='gymDefend')placeGymDefender(x,gym,c.id,id,now);else{const b=makeGymBattle(x,gym,c.ids,id,now);d.set(bk(id),b);g.battle=id;}break;
     }
     case 'coinBuy':idle();buyCoinOffer(x,c.offer,now);break;
     case 'profile':check(typeof c.name==='string'&&/^[\p{L}\p{N} _-]{2,18}$/u.test(c.name),'Gebruik 2 tot 18 letters of cijfers.');if(c.avatar!==undefined){check(['fern','amber','tidal'].includes(c.avatar as string),'Kies een ranger.');x.avatar=c.avatar as 'fern'|'amber'|'tidal';}x.name=c.name;x.onboarded=true;break;
@@ -173,10 +197,11 @@ export class GoServiceV2{
     case 'goEvolve':{idle();const fromSpecies=ownedGo(x,c.id).species;evolveGo(x,c.id,secret,now);this.note(x,'evolve','evolve:'+c.commandId,ownedGo(x,c.id),now,{fromSpecies});break;}
     case 'goTeam':idle();teamGo(x,c.ids,c.league);break;
     case 'goBoss':{idle();const b=makeBossBattle(x,c.difficulty as BossDifficulty,id,now);d.set(bk(id),b);g.battle=id;break;}
+    case 'dailyChallenge':{idle();const b=makeDailyChallengeBattle(x,id,now,c.practice===undefined?false:c.practice as boolean);d.set(bk(id),b);g.battle=id;break;}
     case 'cocoonStart':idle();startCocoon(x,c.id,now,c.incubator);break;
     case 'cocoonClaim':{idle();const before={dust:g.dust,xp:g.trainer!.xp};hatchCocoon(x,now,c.id);this.note(x,'hatch','hatch:'+g.cocoons!.lastHatch!.id, x.specimens.at(-1)!,now,{dust:g.dust-before.dust,xp:g.trainer!.xp-before.xp});break;}
-    case 'echoSave':idle();check(linked||this.mode==='local','Koppel je account om je verdediging te bewaren.',403);d.set('v2EchoDefenses:'+uid,saveEchoDefense(x,now));break;
-    case 'echoQueue':{idle();check(linked||this.mode==='local','Koppel je account voor offline duels.',403);teamGo(x,g.team,g.league);check(echoDefense,'Nog geen opgeslagen tegenstander in deze league. Bewaar je verdediging of speel Training.');const b=makeEchoBattle(x,echoDefense,id,now);d.set(bk(id),b);g.battle=id;break;}
+    case 'echoSave':{idle();check(linked||this.mode==='local','Koppel je account om je verdediging te bewaren.',403);const defense=saveEchoDefense(x,now);d.set('v2EchoDefenses:'+uid,defense);d.set('v2EchoDefenses:'+uid+'-'+g.league,defense);break;}
+    case 'echoQueue':{idle();check(echoDefense,'Deze tegenstander is niet beschikbaar.');const b=makeEchoBattle(x,echoDefense,id,now);d.set(bk(id),b);g.battle=id;break;}
     case 'goAuto':check(typeof c.enabled==='boolean','Kies aan of uit.');g.auto.enabled=c.enabled as boolean;g.auto.moving=0;g.auto.status=c.enabled?'waiting':'off';g.motion=x.walking?{fix:{...x.walking.fix},at:now}:undefined;break;
     case 'goQueue':idle();check(linked||this.mode==='local','Koppel je account voor Ranked.',403);check((g.ratedCount??0)<25,'Vandaag zijn alle 25 Ranked-gevechten gespeeld.');teamGo(x,g.team,g.league);g.queue={league:g.league,at:now,until:now+120000};d.set(tk(uid),{uid,league:g.league,rating:g.rating,at:now,until:now+120000,status:'waiting'} satisfies Ticket);break;
     case 'goCancel':check(!g.battle,'Je tegenstander is al gevonden.');g.queue=null;d.set(tk(uid),{status:'cancelled'});break;
@@ -196,6 +221,7 @@ export class GoServiceV2{
     case 'giftOpen':openGoGift(x,document<FriendPair>(d,'v2FriendPairs:'+c.pair),now);break;
     case 'friendAccept':case 'friendRemove':{const pair=document<FriendPair>(d,'v2FriendPairs:'+c.pair);check(pair&&pair.users.includes(uid)&&!pair.removed,'Deze vriendschap bestaat niet.',403);if(c.type==='friendRemove')pair.removed=true;else{check(pair.requestedBy!==uid,'Alleen de ontvanger kan accepteren.');pair.accepted=true;}break;}
    }
+    if(AUTO_DEFENSE_COMMANDS.has(c.type)&&(linked||this.mode==='local')&&!competitionTeamIssue(x)){const defense=saveEchoDefense(x,now);d.set('v2EchoDefenses:'+uid+'-'+g.league,defense);}
     x.revision++;d.set(receipt,{fingerprint,at:now,type:c.type});return this.commandSnapshot(d,x);
   });if(SOCIAL_COMMANDS.has(c.type))this.socialCache.clear();if(snapshot?.battle)this.rememberBattleKeys(snapshot.battle);return snapshot?this.view(uid,snapshot.player,snapshot.battle,linked):this.state(uid,linked);
  }

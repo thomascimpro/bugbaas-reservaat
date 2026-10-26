@@ -16,7 +16,7 @@ export function GoBossV2({view,run,busy,now}:{view:GameViewV2;run:RunV2;busy:boo
   {open&&(Object.keys(BOSS_LEVELS) as BossDifficulty[]).map(difficulty=>{const c=bossChallenge(difficulty,now),issue=bossIssue(p,difficulty),claimed=p.go?.bosses?.claimed.includes(c.id);return <View key={difficulty} style={{borderTopWidth:1,borderColor:'#6D8D6E66',paddingTop:12,gap:8}}>
    <View style={[v.row,{gap:12}]}><SpriteView id={c.species} size={75}/><View style={{flex:1,gap:4}}><Label bold>{c.name} · Lv. {c.level}</Label><Label small>{species(c.species).name}</Label><GoTypes species={c.species} compact/></View>{claimed&&<Glyph name="check" size={26}/>}</View>
    <View style={[v.row,{justifyContent:'space-around'}]}><Counter icon="nectar" value={'+'+c.dust} label="Nectarstof"/><Counter icon="star" value={'+'+c.xp} label="XP"/>{difficulty==='end'&&<Glyph name="gift" size={27}/>}</View>
-   <Button small disabled={busy||!!issue} icon={claimed?'refresh':'swords'} onPress={()=>void run('goBoss',{difficulty})}>{claimed?'Oefenen':c.name}</Button>{issue&&<Label small>{issue}</Label>}
+   <Button small disabled={busy||!!issue} icon={claimed?'refresh':'swords'} onPress={()=>void run('goBoss',{difficulty})}>{claimed?'Oefen opnieuw':'Daag '+c.name+' uit'}</Button>{issue&&<Label small>{issue}</Label>}
   </View>;})}
  </Panel>;
 }

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {freshV2} from '../game/safariV2';
 import {ensureGo,rollGoBug} from '../game/goV2';
 import {actGoBattle,advanceGoBattle} from '../game/goBattleV2';
-import {chooseEchoMatch,ensureEcho,makeEchoBattle,saveEchoDefense,settleEcho} from '../game/echoArenaV2';
+import {chooseEchoMatch,ensureEcho,makeEchoBattle,saveEchoDefense,settleEcho,echoNPCDefenses,normalizeCompetitionFighter} from '../game/echoArenaV2';
 import type {EchoDefense} from '../game/echoArenaV2';
 import type {PlayerV2} from '../game/typesV2';
 
@@ -15,10 +15,10 @@ function player(uid='a'){
 }
 function finished(p:PlayerV2,d:EchoDefense,id:string,now=NOW,winner:0|1|null=0){const b=makeEchoBattle(p,d,id,now);b.phase='finished';b.winner=winner;return b;}
 
-test('echo defense uses only the current valid server team and copies IV, moves, shiny, items and frozen stats',()=>{
+test('echo defense normalizes battle IV and level while preserving chosen species, moves, shiny and items',()=>{
  const p=player(),before=structuredClone(p.specimens),d=saveEchoDefense(p,NOW);
  assert.equal(d.uid,p.uid);assert.equal(d.league,p.go!.league);assert.deepEqual(d.team.map(f=>f.id),p.go!.team);
- for(let i=0;i<3;i++){assert.deepEqual(d.team[i].go,before[i].go);assert.equal(d.team[i].shiny,before[i].shiny);assert.ok(d.team[i].attack>0);assert.ok(d.team[i].cp>0);}
+ for(let i=0;i<3;i++){assert.deepEqual(d.team[i].go,normalizeCompetitionFighter({...d.team[i],go:before[i].go!},d.league).go);assert.deepEqual(d.team[i].go.iv,[10,10,10]);assert.equal(d.team[i].shiny,before[i].shiny);assert.ok(d.team[i].attack>0);assert.ok(d.team[i].cp>0);}
  assert.equal(d.team[0].go.item,'leaf');const frozen=structuredClone(d);
  p.specimens[0].go!.iv[0]=15;p.specimens[0].go!.level=11;p.specimens[0].go!.charged.push('buzz');p.specimens[1].shiny=false;p.go!.team.reverse();
  assert.deepEqual(d,frozen);assert.equal(Object.hasOwn(p.go!.echo!.defense!,'team'),false);
@@ -35,17 +35,17 @@ test('echo chooses genuine other owners in the same league closest to the separa
  const p=player(),own=saveEchoDefense(p,NOW),near=saveEchoDefense(player('near'),NOW),far=saveEchoDefense(player('far'),NOW),wrong={...near,uid:'wrong',league:'ultra' as const};
  ensureEcho(p,NOW).rating=1150;p.go!.rating=3000;near.rating=1160;far.rating=2900;
  assert.equal(chooseEchoMatch(p,[own,wrong,far,near],NOW)?.uid,'near');
- assert.equal(chooseEchoMatch(p,[own,wrong],NOW),null);
+ assert.equal(chooseEchoMatch(p,[own,wrong],NOW).npc,true);
  assert.throws(()=>makeEchoBattle(p,own,'self',NOW),/eigen verdediging/);
  assert.throws(()=>makeEchoBattle(p,wrong,'league',NOW),/dezelfde league/);
- const invalid={...near,team:near.team.slice(0,2)};assert.equal(chooseEchoMatch(p,[invalid],NOW),null);
+ const invalid={...near,team:near.team.slice(0,2)};assert.equal(chooseEchoMatch(p,[invalid],NOW).npc,true);
 });
 
 test('offline battle runs existing combat against an independent copy and never mutates the defense owner',()=>{
  const a=player(),owner=player('b'),d=saveEchoDefense(owner,NOW),original=structuredClone(d),before=structuredClone(owner);
- // Stored combat stats, rather than later account data, are authoritative for this copy.
+ // Competition copies recalculate normalized stats rather than trusting saved account power.
  d.team[0].attack+=2;const b=makeEchoBattle(a,d,'combat',NOW);assert.equal(b.training,true);assert.equal(b.ranked,false);
- assert.equal(b.echo!.defenderUid,owner.uid);assert.deepEqual(b.ratings,[1000,1000]);assert.equal(b.teams[1][0].attack,d.team[0].attack);
+ assert.equal(b.echo!.defenderUid,owner.uid);assert.deepEqual(b.ratings,[1000,1000]);assert.equal(b.teams[1][0].attack,normalizeCompetitionFighter(d.team[0],d.league).attack);assert.notEqual(b.teams[1][0].attack,d.team[0].attack);
  actGoBattle(b,0,'fast',null,NOW);advanceGoBattle(b,NOW+1000);advanceGoBattle(b,NOW+2000);
  assert.ok(b.events.some(e=>e.kind==='damage'));assert.ok(b.teams[0][0].hp<b.teams[0][0].maxHP||b.teams[1][0].hp<b.teams[1][0].maxHP);
  assert.deepEqual(owner,before);assert.deepEqual(d.team[0].go,original.team[0].go);assert.equal(d.team[0].hp,d.team[0].maxHP);
@@ -83,5 +83,18 @@ test('five daily rewards cap grants while leaving practice playable and resumes 
 test('match selection prefers an unfarmed eligible owner before nearest practice opponent',()=>{
  const p=player(),near=saveEchoDefense(player('near'),NOW),fresh=saveEchoDefense(player('fresh'),NOW);fresh.rating=1200;
  settleEcho(p,finished(p,near,'one'),NOW);assert.equal(chooseEchoMatch(p,[near,fresh],NOW)?.uid,'fresh');
- assert.equal(chooseEchoMatch(p,[near],NOW)?.uid,'near');
+ assert.equal(chooseEchoMatch(p,[near],NOW)?.npc,true);
+});
+
+
+test('solo echo has stable same-league NPC identities and grants at most five resource rewards without any rating or ranked wins',()=>{
+ const p=player(),before=structuredClone(p.go!);const first=echoNPCDefenses('great',NOW);assert.deepEqual(first,echoNPCDefenses('great',NOW+10000));assert.notEqual(first[0].uid,echoNPCDefenses('great',NOW+DAY)[0].uid);
+ for(let i=0;i<6;i++){const d=chooseEchoMatch(p,[],NOW);assert.equal(d.npc,true);assert.match(d.name,/NPC/);assert.equal(d.league,p.go!.league);const b=finished(p,d,'npc-'+i);assert.deepEqual(settleEcho(p,b,NOW),{dust:i<5?150:0,xp:i<5?100:0,delta:0,rewarded:i<5});}
+ assert.equal(p.go!.echo!.rating,1000);assert.equal(p.go!.echo!.wins,0);assert.equal(p.go!.echo!.losses,0);assert.equal(p.go!.rating,before.rating);assert.equal(p.go!.wins,before.wins);
+});
+
+test('fresh human defenses outrank NPCs, exhausted human defense yields to fresh NPC, and actual growth never changes fair copied power',()=>{
+ const p=player(),d=saveEchoDefense(player('owner'),NOW),before=structuredClone(p.specimens);assert.equal(chooseEchoMatch(p,[d],NOW).uid,d.uid);settleEcho(p,finished(p,d,'first-human'),NOW);assert.equal(chooseEchoMatch(p,[d],NOW).npc,true);
+ const low=makeEchoBattle(p,d,'low',NOW);p.specimens.forEach(s=>{s.go!.level=50;s.go!.iv=[15,15,15];});const actual=structuredClone(p.specimens),high=makeEchoBattle(p,d,'high',NOW);assert.deepEqual(high.teams[0],low.teams[0]);assert.deepEqual(p.specimens,actual);assert.notDeepEqual(p.specimens,before);
+ for(const league of ['great','ultra','master'] as const)for(const npc of echoNPCDefenses(league,NOW))assert.ok(npc.team.every(f=>f.cp<=(league==='great'?1500:league==='ultra'?2500:Infinity)));
 });

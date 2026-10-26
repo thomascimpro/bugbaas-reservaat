@@ -4,7 +4,7 @@ import {ActivityIndicator,Animated,Easing,Modal,Platform,Pressable,ScrollView,St
 import Svg,{Defs,LinearGradient,Stop,Rect} from 'react-native-svg';
 import {ButtonPlate,GameIcon} from './gameUiArt';
 import type {GameIconName} from './gameUiArt';
-export const font=Platform.OS==='web'?'Trebuchet MS':undefined;
+export const font=Platform.OS==='web'?'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif':undefined;
 export const V={ink:'#EDF2D9',muted:'#B7CAB6',pine:'#086455',mint:'#A5CE87',paper:'#12382F',line:'#66836C',red:'#D7645F',gold:'#C5922D'};
 export const TextScale=createContext(1);
 export const MotionPrefs=createContext(false);

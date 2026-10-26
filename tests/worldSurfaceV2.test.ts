@@ -43,18 +43,22 @@ test('surface styling uses real source geometry and preserves transport widths a
  const f=fixture(),sources=structuredClone(f.style.sources),route=structuredClone(f.find('route-gameplay')),surface=applyWorldSurface(f.map,{isDay:true});
  try{assert.deepEqual(f.style.sources,sources);assert.deepEqual(f.find('route-gameplay'),route);assert.equal((f.find('road-path')!.paint as Record<string,unknown>)['line-width'],5);
   const water=f.find('water')!,shore=f.find('bb-world-shore-water')!;assert.equal(shore.type,'line');assert.equal('source' in shore&&shore.source,'openmaptiles');assert.equal('source-layer' in shore&&shore['source-layer'],'water');assert.deepEqual('filter' in shore&&shore.filter,'filter' in water&&water.filter);assert.equal(shore.minzoom,water.minzoom);assert.ok(f.style.layers.indexOf(shore)<f.style.layers.indexOf(water));
+  // Warm travel surfaces retain clear edges against the deeper day foliage.
+  const luminance=(hex:string)=>{const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};
+  const path=(f.find('road-path')!.paint as Record<string,unknown>)['line-color'] as unknown[],edge=(f.find('road-casing')!.paint as Record<string,unknown>)['line-color'] as string,ground=(f.find('background')!.paint as Record<string,unknown>)['background-color'] as string;
+  assert.ok((luminance(path[3] as string)+.05)/(luminance(edge)+.05)>3,'paths need a clear dark casing');assert.ok((luminance(path[3] as string)+.05)/(luminance(ground)+.05)>1.7,'paths remain visible against the ground');
   assert.equal((water.paint as Record<string,unknown>)['fill-pattern'],'bb-world-water');assert.equal(f.images.get('bb-world-water')!.width,64);assert.deepEqual(validateStyleMin(f.style),[]);
  }finally{surface.dispose();}
 });
 
 test('day/night updates are idempotent after custom layer creation and dispose releases owned decoration',()=>{
  const f=fixture(),surface=applyWorldSurface(f.map,{isDay:true,reducedMotion:false}),daySky=f.sky,dayWater=f.images.get('bb-world-water')!.data.slice(),writes=f.writes;
- const building=f.find('building')!.paint as Record<string,unknown>;assert.equal(building['fill-color'],'#D4CAAA');assert.equal(building['fill-outline-color'],'#BABD97');
+ const building=f.find('building')!.paint as Record<string,unknown>;assert.equal(building['fill-color'],'#CBBB99');assert.equal(building['fill-outline-color'],'#899579');
  f.blockSerialization();surface.update({isDay:true});surface.update({reducedMotion:true});assert.equal(f.writes,writes);
  surface.update({isDay:false});assert.notDeepEqual(f.sky,daySky);assert.notDeepEqual(f.images.get('bb-world-water')!.data,dayWater);assert.deepEqual(validateStyleMin(f.style),[]);
  assert.equal(building['fill-color'],'#8E9381');assert.equal(building['fill-outline-color'],'#6D7C6C');
  surface.update({isDay:null});assert.deepEqual(f.sky,daySky);assert.deepEqual(f.images.get('bb-world-water')!.data,dayWater);
- assert.equal(building['fill-color'],'#D4CAAA');surface.update({isDay:false});
+ assert.equal(building['fill-color'],'#CBBB99');surface.update({isDay:false});
  surface.dispose();assert.equal(f.find('bb-world-shore-water'),undefined);assert.equal(f.images.has('bb-world-water'),false);assert.equal(f.images.has('bb-world-grass'),false);assert.equal(f.images.has('bb-grass'),true);assert.equal((f.find('water')!.paint as Record<string,unknown>)['fill-pattern'],undefined);assert.deepEqual(f.sky,{'sky-color':'#FFFFFF'});
  assert.equal(building['fill-color'],'#D4CAAA');assert.equal(building['fill-outline-color'],'#BABD97');
  const disposedWrites=f.writes;surface.update({isDay:false});surface.dispose();assert.equal(f.writes,disposedWrites);

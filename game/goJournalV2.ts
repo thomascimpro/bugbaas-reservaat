@@ -1,7 +1,7 @@
 import type {PlayerV2} from './typesV2';
 
 export const GO_JOURNAL_LIMIT=50;
-const KINDS=['catch','autoMiss','hatch','battle','boss','echo','evolve','power','trade','transfer','move','equip'] as const;
+const KINDS=['catch','autoMiss','hatch','battle','boss','echo','challenge','evolve','power','trade','transfer','move','equip'] as const;
 export type GoJournalEntry={
  id:string;kind:typeof KINDS[number];at:number;
  species?:string;specimenId?:string;shiny?:boolean;cp?:number;dust?:number;xp?:number;

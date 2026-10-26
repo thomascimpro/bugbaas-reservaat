@@ -11,7 +11,7 @@ import type {Glyph as GlyphName} from './uiV2';
 const ACTION:Record<GoJournalEntry['kind'],{label:string;icon:GlyphName}>={
  catch:{label:'Gevangen',icon:'leaf'},autoMiss:{label:'Ontsnapt aan autovanger',icon:'leaf'},
  hatch:{label:'Cocon uitgekomen',icon:'heart'},battle:{label:'Duel',icon:'swords'},
- boss:{label:'Dagbaas',icon:'cup'},echo:{label:'Echo-arena',icon:'swords'},
+ boss:{label:'Dagbaas',icon:'cup'},echo:{label:'Echo-arena',icon:'swords'},challenge:{label:'Dagstrijd',icon:'cup'},
  evolve:{label:'Geëvolueerd',icon:'star'},power:{label:'Power-up',icon:'attack'},
  trade:{label:'Geruild',icon:'friends'},transfer:{label:'Vrijgelaten',icon:'leaf'},
  move:{label:'Aanval geleerd',icon:'attack'},equip:{label:'Uitrusting aangepast',icon:'itemLeaf'},

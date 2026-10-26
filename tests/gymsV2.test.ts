@@ -8,10 +8,10 @@ import {freshV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo,rollGoBug,powerUp,teachMove,equipGo,evolveGo,transferManyGo,teamIssue} from '../game/goV2';
-import {GYM_TEAMS,gymSites,ensureGyms,gymCoins,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym} from '../game/gymsV2';
+import {GYM_TEAMS,gymSites,ensureGyms,gymCoins,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym,ensureNpcGym,settleExpiredGym,GYM_RULES} from '../game/gymsV2';
 import type {Gym,GymTeam} from '../game/gymsV2';
 import {buyCoinOffer} from '../game/coinShopV2';
-import {advanceGoBattle} from '../game/goBattleV2';
+import {advanceGoBattle,actGoBattle} from '../game/goBattleV2';
 import {tradeBugIssue} from '../game/goTradeV2';
 import type {PlayerV2,GameViewV2} from '../game/typesV2';
 const NOW=Date.UTC(2026,9,22,10),fix={lat:51.4416,lng:5.4697,accuracy:5,timestamp:NOW};
@@ -60,6 +60,7 @@ test('coin shop validates server catalog/balance, rejects forged prices and pres
 test('shared service persists an absent owner defense, resolves real taps, returns coins atomically and keeps PvP rating unchanged',async()=>{
  const store=new SqliteStore(':memory:');let now=NOW;try{
   const service=new GoServiceV2(store,'local',()=>now),a=player('owner','fern','ant',1),b=player('attacker','amber','hercules',50);for(const p of [a,b])await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));
+  await store.run(['v2GoGyms:'+site.id],d=>d.set('v2GoGyms:'+site.id,{...gym(),npcSeeded:true}));
   let owner=await service.state(a.uid),attack=await service.state(b.uid);const send=(uid:string,v:GameViewV2,type:string,data:Record<string,unknown>={})=>service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});owner=await send(a.uid,owner,'gymDefend',{gym:site.id,id:a.specimens[0].id});assert.equal((await service.state(b.uid)).goGyms![0].defenders[0].name,a.name);
   now+=9*3600000;await store.run(['v2Players:'+b.uid],d=>{const x=d.get('v2Players:'+b.uid) as PlayerV2;x.walking!.at=now;x.walking!.fix.timestamp=now;});attack=await service.state(b.uid);attack=await send(b.uid,attack,'gymAttack',{gym:site.id,ids:b.go!.team});assert.ok(attack.goBattle!.gym);assert.deepEqual(attack.goBattle!.gym!.defenders,[]);
   let accepted:Record<string,unknown>|undefined;for(let i=0;i<100&&attack.goBattle!.phase!=='finished';i++){
@@ -72,6 +73,7 @@ test('shared service persists an absent owner defense, resolves real taps, retur
 });
 test('shop command retries spend and grant once; concurrent deposits never exceed capacity',async()=>{
  const store=new SqliteStore(':memory:');try{const p=player('shopper');p.go!.gyms!.coins=160;await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));const service=new GoServiceV2(store,'local',()=>NOW),v=await service.state(p.uid),command={type:'coinBuy',offer:'field-nets',commandId:randomUUID(),expectedRevision:v.player.revision};await Promise.all(Array.from({length:4},()=>service.command(p.uid,command)));const next=await service.state(p.uid);assert.equal(next.player.go!.gyms!.coins,80);assert.equal(next.player.field!.inventory.basic,p.field!.inventory.basic+20);
+  await store.run(['v2GoGyms:'+site.id],d=>d.set('v2GoGyms:'+site.id,{...gym(),npcSeeded:true}));
   const kinds=['ant','beetle','moth','earwig','mantis','waterstrider','hercules'];for(let i=0;i<kinds.length;i++){const x=player('slot'+i,'fern',kinds[i]);await store.run(['v2Players:'+x.uid],d=>d.set('v2Players:'+x.uid,x));}const views=await Promise.all(kinds.map((_,i)=>service.state('slot'+i)));const results=await Promise.allSettled(views.map(v=>service.command(v.player.uid,{type:'gymDefend',gym:site.id,id:v.player.specimens[0].id,commandId:randomUUID(),expectedRevision:v.player.revision})));assert.equal(results.filter(r=>r.status==='fulfilled').length,6);assert.equal((await service.state('slot0')).goGyms![0].defenders.length,6);
  }finally{store.close();}
 });
@@ -80,4 +82,44 @@ test('native map allows only the new gym/shop commands and destinations, never c
  for(const command of ['gymTeam','gymDefend','gymAttack','coinBuy']){assert.ok(parseNativeFieldRequest(JSON.stringify({kind:'command',id:'request1',command,params:{}})));assert.equal(parseNativeFieldRequest(JSON.stringify({kind:'command',id:'request1',command,params:{expectedRevision:99}})),null);}
  for(const name of ['gyms','coinShop'])assert.ok(parseNativeFieldRequest(JSON.stringify({kind:'navigate',name})));
  assert.equal(parseNativeFieldRequest(JSON.stringify({kind:'navigate',name:'adminGyms'})),null);
+});
+
+
+test('neutral gyms seed explicit NPCs once; a real solo battle frees them for human defense without NPC coins or Elo',()=>{
+ const g=gym(),a=player('solo','fern','hercules',20),before=structuredClone(a);assert.equal(ensureNpcGym(g,NOW),true);assert.equal(ensureNpcGym(g,NOW),false);assert.equal(g.team,null);assert.equal(g.defenders.length,3);assert.equal(new Set(g.defenders.map(d=>d.bug.species)).size,3);assert.ok(publicGym(g,a.uid,NOW).defenders.every(d=>d.npc&&!d.me));
+ assert.throws(()=>placeGymDefender(a,g,a.specimens[0].id,'blocked',NOW),/wachters/);
+ const b=makeGymBattle(a,g,a.go!.team,'solo-npc-battle',NOW);assert.ok(b.gym!.defenders.every(d=>d.npc));
+ let t=NOW;for(let i=0;i<1400&&b.phase!=='finished';i++){t+=200;advanceGoBattle(b,t);if(b.phase==='fight'&&!b.replaceAt.some(Boolean)&&!b.fast[0]&&b.teams[0][b.active[0]].readyAt<=t)actGoBattle(b,0,'fast',null,t);}
+ assert.equal(b.phase,'finished');assert.equal(b.winner,0);assert.equal(settleGymBattle(g,b,new Map(),t),true);assert.equal(g.defenders.length,0);assert.deepEqual(a,before);assert.equal(ensureNpcGym(g,t),false);
+ a.walking!.at=t;a.walking!.fix.timestamp=t;placeGymDefender(a,g,a.specimens[0].id,'solo-owner',t);assert.equal(g.team,'fern');assert.equal(g.defenders[0].npc,undefined);assert.equal(ensureNpcGym(g,t),false);
+});
+
+test('existing human gym takes precedence over NPC seeding and never refills after a human return',()=>{
+ const g=gym(),p=player('legacy');placeGymDefender(p,g,p.specimens[0].id,'legacy-deploy',NOW);delete g.npcSeeded;const defense=structuredClone(g.defenders);ensureNpcGym(g,NOW);assert.deepEqual(g.defenders,defense);
+ assert.equal(settleExpiredGym(g,new Map([[p.uid,p]]),NOW+GYM_RULES.maxStayMs),true);assert.equal(g.defenders.length,0);assert.equal(ensureNpcGym(g,NOW+GYM_RULES.maxStayMs),false);
+});
+
+test('12-hour returns are bound to placement and owned specimen, idempotent and share the fifty-coin owner cap across gyms',()=>{
+ const p=player('solo-return'),original=structuredClone(p.specimens),g=gym(),other={...gym(),id:'gym-second'};placeGymDefender(p,g,p.specimens[0].id,'expiry-a',NOW);placeGymDefender(p,other,p.specimens[1].id,'expiry-b',NOW);const owners=new Map([[p.uid,p]]);
+ assert.equal(settleExpiredGym(g,owners,NOW+GYM_RULES.maxStayMs-1),false);assert.equal(p.go!.gyms!.coins,0);
+ assert.equal(settleExpiredGym(g,owners,NOW+GYM_RULES.maxStayMs),true);assert.equal(settleExpiredGym(other,owners,NOW+GYM_RULES.maxStayMs),true);assert.equal(p.go!.gyms!.coins,50);assert.equal(p.go!.gyms!.earned,50);assert.equal(p.go!.gyms!.deployed.length,0);assert.deepEqual(p.specimens,original);assert.equal(p.go!.gyms!.returns.length,2);assert.equal(p.go!.gyms!.returns[0].coins,0);
+ const settled=structuredClone(p);assert.equal(settleExpiredGym(g,owners,NOW+GYM_RULES.maxStayMs+1),false);assert.deepEqual(p,settled);
+});
+
+test('expiry waits for active battle deadline and stale battle cannot damage a replacement deployment',()=>{
+ const p=player('expiry-owner'),enemy=player('expiry-enemy','amber'),g=gym();placeGymDefender(p,g,p.specimens[0].id,'original-deploy',NOW);const t=NOW+GYM_RULES.maxStayMs-1000;enemy.walking!.at=t;enemy.walking!.fix.timestamp=t;const b=makeGymBattle(enemy,g,enemy.go!.team,'last-battle',t),owners=new Map([[p.uid,p]]);
+ assert.equal(settleExpiredGym(g,owners,t+1001),false);assert.equal(settleExpiredGym(g,owners,b.endsAt),true);assert.equal(p.go!.gyms!.coins,50);p.walking!.at=b.endsAt;p.walking!.fix.timestamp=b.endsAt;placeGymDefender(p,g,p.specimens[0].id,'replacement',b.endsAt);
+ b.phase='finished';b.teams[1][0].hp=0;assert.equal(settleGymBattle(g,b,owners,b.endsAt),false);assert.equal(g.defenders[0].deployment,'replacement');assert.equal(p.go!.gyms!.returns.length,1);
+});
+
+test('expiry rejects missing or mismatched real owner binding before making any return or coin mutation',()=>{
+ for(const corrupt of ['missing','gym','post','deployment','specimen','at','owned'] as const){const p=player('bound-owner'),g=gym();placeGymDefender(p,g,p.specimens[0].id,'bound',NOW);const placement=p.go!.gyms!.deployed[0];if(corrupt==='gym')placement.id='other';if(corrupt==='post')placement.postId='other';if(corrupt==='deployment')placement.deployment='other';if(corrupt==='specimen')placement.specimen='other';if(corrupt==='at')placement.at++;if(corrupt==='owned')p.specimens=p.specimens.slice(1);const beforeP=structuredClone(p),beforeG=structuredClone(g);assert.throws(()=>settleExpiredGym(g,corrupt==='missing'?new Map():new Map([[p.uid,p]]),NOW+GYM_RULES.maxStayMs),/veranderd/);assert.deepEqual(p,beforeP);assert.deepEqual(g,beforeG);}
+});
+
+
+test('service concurrently returns expired offscreen defenses once and caps one owner across gyms without another player',async()=>{
+ const store=new SqliteStore(':memory:');let now=NOW;try{const p=player('offline-return'),g=gym(),other={...gym(),id:'gym-offscreen',postId:'offscreen-post',lat:fix.lat+.02};placeGymDefender(p,g,p.specimens[0].id,'offline-a',NOW);p.walking!.fix.lat=other.lat;placeGymDefender(p,other,p.specimens[1].id,'offline-b',NOW);p.walking!.fix.lat=fix.lat;
+  const keys=['v2Players:'+p.uid,'v2GoGyms:'+g.id,'v2GoGyms:'+other.id];await store.run(keys,d=>{d.set(keys[0],p);d.set(keys[1],g);d.set(keys[2],other);});const service=new GoServiceV2(store,'local',()=>now);now+=GYM_RULES.maxStayMs;
+  await Promise.all(Array.from({length:8},()=>service.state(p.uid)));const result=await service.state(p.uid);assert.equal(result.player.go!.gyms!.coins,50);assert.equal(result.player.go!.gyms!.earned,50);assert.equal(result.player.go!.gyms!.deployed.length,0);assert.equal(result.player.go!.gyms!.returns.length,2);assert.deepEqual(result.player.specimens,p.specimens);await store.run(keys,d=>{assert.equal((d.get(keys[1]) as Gym).defenders.length,0);assert.equal((d.get(keys[2]) as Gym).defenders.length,0);});
+ }finally{store.close();}
 });

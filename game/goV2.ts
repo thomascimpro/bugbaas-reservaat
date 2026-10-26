@@ -1,4 +1,5 @@
 import type {GymProgress} from './gymsV2';
+import type {DailyChallengeProgress} from './dailyChallengeV2';
 import {ensureTrainer,catchXP,grantXP} from './trainerV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
 import {EVOLUTIONS,candyFamily,baseSpeciesId,ELITE_FORMS} from './dexV2';
@@ -53,6 +54,7 @@ export type Fast=keyof typeof FAST;
 export type Charged=keyof typeof CHARGED;
 export type GoBug={traded?:{id:string;at:number;from:string};level:number;iv:[number,number,number];fast:Fast;charged:Charged[];item:Held|null};
 export type GoProfile={
+ dailyChallenge?:DailyChallengeProgress;
  gyms?:GymProgress;
  journal?:GoJournalEntry[];trades?:GoTradeProgress;
  echo?:EchoProgress;cocoons?:GoCocoonsProgress;bosses?:BossProgress;
@@ -101,7 +103,7 @@ export function powerCost(level:number,steps=1){
  const total={dust:0,candy:0,xl:0};for(let i=0;i<steps;i++){const at=level+i*.5;total.dust+=[200,400,600,800,1000,1300,1600,1900,2200,2500,3000,3500,4000,4500,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000][Math.min(24,Math.floor((at-1)/2))];if(at<40)total.candy+=at<11?1:at<21?2:at<26?3:at<31?4:at<33?6:at<35?8:at<37?10:at<39?12:15;else total.xl+=[10,10,12,12,15,15,17,17,20,20][Math.floor(at)-40];}return total;
 }
 export function appraisal(s:Specimen){const total=s.go!.iv.reduce((a,b)=>a+b,0);return total===45?4:total>=37?3:total>=30?2:total>=23?1:0;}
-export function availableGo(p:PlayerV2,id:unknown){check(!p.go?.gyms?.deployed.some(d=>d.specimen===id),'Deze bug verdedigt een gym en komt terug na een nederlaag.');}
+export function availableGo(p:PlayerV2,id:unknown){check(!p.go?.gyms?.deployed.some(d=>d.specimen===id),'Deze bug verdedigt een gym en komt terug na een nederlaag of na 12 uur.');}
 export function ownedGo(p:PlayerV2,id:unknown){const s=p.specimens.find(s=>s.id===id&&s.go);check(s,'Kies een zelfgevangen bug.');return s;}
 export function renameGo(p:PlayerV2,id:unknown,raw:unknown){const s=ownedGo(p,id);check(typeof raw==='string','Kies een geldige bijnaam.');const name=(raw as string).trim().normalize('NFC');check(name.length<=18&&(!name||/^[\p{L}\p{N} _'’\-]+$/u.test(name)),'Gebruik maximaal 18 letters of cijfers.');if(name)s.nickname=name;else delete s.nickname;}
 export function powerUp(p:PlayerV2,id:unknown,steps:unknown=1){availableGo(p,id);check(typeof steps==='number'&&Number.isInteger(steps)&&steps>=1&&steps<=10,'Kies 1 tot 10 power-ups.');const s=ownedGo(p,id),g=p.go!,cost=powerCost(s.go!.level,steps),key=family(s.species);check(cost,'Deze power-ups passen niet binnen level 50.');check(g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy&&(g.xl[key]??0)>=cost.xl,'Niet genoeg nectarstof, soortnectar of XL.');g.dust-=cost.dust;g.candy[key]=(g.candy[key]??0)-cost.candy;if(cost.xl)g.xl[key]-=cost.xl;s.go!.level+=steps*.5;}
