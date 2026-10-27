@@ -7,6 +7,7 @@ import {rng} from './catalogV2';
 import {checkV2 as check} from './shopV2';
 import {awardPostCocoon} from './goCocoonsV2';
 import {HELD} from './goV2';
+import {awardPostResearch} from './postResearchV2';
 import type {Held} from './goV2';
 
 export type FieldPost={id:string;name:string;lat:number;lng:number;source:'osm'|'virtual';osmId?:string};
@@ -23,7 +24,7 @@ export function spinPost(p:PlayerV2,id:unknown,seed:string,now:number){
  const cocoon=awardPostCocoon(p,post.id,seed,now),tmRoll=random(),tm=tmRoll<.01?'fast':tmRoll<.02?'charged':undefined;
  if(tm==='fast')p.go!.fastTMs++;if(tm==='charged')p.go!.chargedTMs++;
  let held:Held|undefined;if(random()<.02){const types=Object.keys(HELD) as Held[];held=types[Math.floor(random()*types.length)];p.go!.items[held]++;}
- for(const [key,at] of Object.entries(s.visits))if(now-at>86400000)delete s.visits[key];s.lastLoot={post:post.id,items,at:now,...(cocoon?{cocoon:cocoon.km}:{}),...(tm?{tm}:{}),...(held?{held}:{})};grantXP(p,50);return items;
+ awardPostResearch(p,post.id,now);for(const [key,at] of Object.entries(s.visits))if(now-at>86400000)delete s.visits[key];s.lastLoot={post:post.id,items,at:now,...(cocoon?{cocoon:cocoon.km}:{}),...(tm?{tm}:{}),...(held?{held}:{})};grantXP(p,50);return items;
 }
 const day=(now:number)=>new Date(now).toISOString().slice(0,10);
 export function startRoute(p:PlayerV2,id:unknown,now:number){

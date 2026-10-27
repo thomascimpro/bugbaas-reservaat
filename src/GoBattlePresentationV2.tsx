@@ -1,15 +1,17 @@
-import React from 'react';
-import {Pressable,Text,View} from 'react-native';
+import React,{useContext,useEffect,useRef} from 'react';
+import {Animated,Pressable,Text,View} from 'react-native';
 import type {GoBattleView,GoFighter} from '../game/goBattleV2';
 import {FAST} from '../game/goV2';
 import {species} from '../game/catalogV2';
-import {font,Glyph} from './uiV2';
+import {font,Glyph,MotionPrefs} from './uiV2';
 import {GoTypes,GO_TYPES} from './GoTypeV2';
 import {GoCombatFighterV2} from './GoCombatFighterV2';
 
+// Lost HP lingers as a red chunk that drains shortly after the hit.
 export function BattleHealthV2({unit}:{unit:GoFighter}){
- const ratio=Math.max(0,Math.min(1,unit.hp/unit.maxHP));
- return <View accessibilityLabel={unit.hp+' van '+unit.maxHP+' HP'} style={{width:'100%',gap:3}}><View style={{height:8,borderRadius:5,overflow:'hidden',backgroundColor:'#051D1BE6',borderWidth:1,borderColor:'#EBF6DE66'}}><View style={{height:'100%',width:(ratio*100+'%') as '100%',backgroundColor:ratio>.5?'#A5E4A0':ratio>.2?'#F3CD73':'#F29783'}}/></View><Text style={{fontFamily:font,color:'#E7F3DD',fontSize:10,fontWeight:'700',textAlign:'right',fontVariant:['tabular-nums']}}>{unit.hp} / {unit.maxHP} HP</Text></View>;
+ const ratio=Math.max(0,Math.min(1,unit.hp/unit.maxHP)),reduced=useContext(MotionPrefs),trail=useRef(new Animated.Value(ratio)).current,last=useRef({id:unit.id,ratio});
+ useEffect(()=>{const prior=last.current;last.current={id:unit.id,ratio};if(prior.id!==unit.id||ratio>=prior.ratio||reduced){trail.setValue(ratio);return;}const animation=Animated.sequence([Animated.delay(320),Animated.timing(trail,{toValue:ratio,duration:520,useNativeDriver:false})]);animation.start();return()=>animation.stop();},[ratio,unit.id,reduced,trail]);
+ return <View accessibilityLabel={unit.hp+' van '+unit.maxHP+' HP'} style={{width:'100%',gap:3}}><View style={{height:9,borderRadius:5,overflow:'hidden',backgroundColor:'#051D1BE6',borderWidth:1,borderColor:'#EBF6DE66'}}><Animated.View style={{position:'absolute',left:0,top:0,bottom:0,width:trail.interpolate({inputRange:[0,1],outputRange:['0%','100%']}),backgroundColor:'#F07A62'}}/><View style={{height:'100%',width:(ratio*100+'%') as '100%',backgroundColor:ratio>.5?'#A5E4A0':ratio>.2?'#F3CD73':'#F29783'}}/></View><Text style={{fontFamily:font,color:'#E7F3DD',fontSize:10,fontWeight:'700',textAlign:'right',fontVariant:['tabular-nums']}}>{unit.hp} / {unit.maxHP} HP</Text></View>;
 }
 function FighterHUD({unit,enemy=false}:{unit:GoFighter;enemy?:boolean}){
  return <View pointerEvents="box-none" style={{width:'72%',maxWidth:310,alignSelf:enemy?'flex-end':'flex-start',paddingHorizontal:12,paddingTop:7,paddingBottom:5,gap:3,borderRadius:16,borderWidth:1,borderColor:'#D8EDCA55',backgroundColor:'#0C302BEF'}}><View style={{flexDirection:'row',alignItems:'center',gap:6}}><Text numberOfLines={1} style={{flex:1,fontFamily:font,fontSize:12,fontWeight:'800',color:'#FFF4DA'}}>{species(unit.species).name}</Text><Text style={{fontFamily:font,fontSize:11,fontWeight:'800',color:'#E9D698'}}>{unit.cp} CP</Text></View><View style={{flexDirection:'row',gap:7,alignItems:'center'}}><View style={{flex:1}}><BattleHealthV2 unit={unit}/></View><GoTypes species={unit.species} compact/></View></View>;

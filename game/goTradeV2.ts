@@ -26,10 +26,12 @@ export function tradeBugIssue(p:PlayerV2,s:Specimen){
 export function startGoTrade(players:[PlayerV2,PlayerV2],pair:FriendPair|undefined,id:string,seed:string,now:number):GoTrade{
  const f=friend(players,pair);nearby(players,now);return {id,pair:f.id,users:[...f.users],names:players.map(p=>p.name) as [string,string],revision:0,status:'offering',offers:[null,null],accepted:[false,false],createdAt:now,expiresAt:now+GO_TRADE.duration,seed};
 }
+// Traded bugs never carry the original catcher's GPS spot.
+function shared(bug:Specimen){const copy=structuredClone(bug);delete copy.catchLocation;return copy;}
 export function offerGoTrade(t:GoTrade,players:[PlayerV2,PlayerV2],pair:FriendPair|undefined,uid:string,id:unknown,revision:unknown,now:number){
  const side=active(t,uid,revision,now),f=friend(players,pair);check(f.id===t.pair&&f.users.every((u,i)=>u===t.users[i]),'De vriendschap is veranderd.',409);nearby(players,now);
  const bug=ownedGo(players[side],id),issue=tradeBugIssue(players[side],bug);check(!issue,issue??'Deze bug kan niet geruild worden.');
- t.offers[side]={bug:structuredClone(bug),cp:stats(bug).cp};if(t.offers.every(Boolean))t.terms=tradeTerms(t,players);else delete t.terms;t.accepted=[false,false];t.revision++;
+ t.offers[side]={bug:shared(bug),cp:stats(bug).cp};if(t.offers.every(Boolean))t.terms=tradeTerms(t,players);else delete t.terms;t.accepted=[false,false];t.revision++;
 }
 export function tradeTerms(t:GoTrade,players:[PlayerV2,PlayerV2]){
  const special=t.offers.some((offer,i)=>offer&&(offer.bug.shiny||!players[1-i].go!.dex?.includes(offer.bug.species)));
@@ -38,7 +40,7 @@ export function tradeTerms(t:GoTrade,players:[PlayerV2,PlayerV2]){
 export function confirmGoTrade(t:GoTrade,players:[PlayerV2,PlayerV2],pair:FriendPair|undefined,uid:string,revision:unknown,special:unknown,now:number){
  const side=active(t,uid,revision,now),f=friend(players,pair);check(f.id===t.pair&&f.users.every((u,i)=>u===t.users[i]),'De vriendschap is veranderd.',409);nearby(players,now);
  check(t.offers.every(Boolean),'Kies allebei eerst één bug.');
- const bugs=t.offers.map((offer,i)=>{const p=players[i],bug=ownedGo(p,offer!.bug.id),issue=tradeBugIssue(p,bug);check(!issue,issue??'Deze bug kan niet geruild worden.');check(JSON.stringify(bug)===JSON.stringify(offer!.bug),'Een aangeboden bug is veranderd. Kies het aanbod opnieuw.',409);return bug;});
+ const bugs=t.offers.map((offer,i)=>{const p=players[i],bug=ownedGo(p,offer!.bug.id),issue=tradeBugIssue(p,bug);check(!issue,issue??'Deze bug kan niet geruild worden.');check(JSON.stringify(shared(bug))===JSON.stringify(offer!.bug),'Een aangeboden bug is veranderd. Kies het aanbod opnieuw.',409);return bug;});
  check(bugs[0].id!==bugs[1].id&&!players[0].specimens.some(s=>s.id===bugs[1].id)&&!players[1].specimens.some(s=>s.id===bugs[0].id),'Deze exemplaren kunnen niet veilig worden geruild.',409);
  const terms=tradeTerms(t,players),day=dayV2(now);
  check(typeof special==='boolean'&&(!terms.special||special),'Bevestig expliciet de speciale ruil en de stofkosten.');
@@ -48,7 +50,7 @@ export function confirmGoTrade(t:GoTrade,players:[PlayerV2,PlayerV2],pair:Friend
  check(t.seed,'De ruil is verlopen. Start opnieuw.');
  const floor=f.points>=90?5:f.points>=30?3:f.points>=7?2:1;
  // Every validation precedes the swap. The service persists both players and this document in one transaction.
- const incoming=bugs.map((bug,i)=>{const result=structuredClone(bug),random=rng(t.seed+':'+bug.id+':'+players[1-i].uid);result.go!.iv=[floor+Math.floor(random()*(16-floor)),floor+Math.floor(random()*(16-floor)),floor+Math.floor(random()*(16-floor))];result.go!.item=null;result.item=null;result.go!.traded={id:t.id,at:now,from:players[i].uid};return result;});
+ const incoming=bugs.map((bug,i)=>{const result=shared(bug),random=rng(t.seed+':'+bug.id+':'+players[1-i].uid);result.go!.iv=[floor+Math.floor(random()*(16-floor)),floor+Math.floor(random()*(16-floor)),floor+Math.floor(random()*(16-floor))];result.go!.item=null;result.item=null;result.go!.traded={id:t.id,at:now,from:players[i].uid};return result;});
  for(let i=0;i<2;i++){const p=players[i],g=p.go!,received=incoming[1-i],previous=g.trades;
   p.specimens=p.specimens.filter(s=>s.id!==bugs[i].id);p.specimens.push(received);g.dust-=terms.dust;g.trades={day,count:(previous?.day===day?previous.count:0)+1,...(terms.special?{specialDay:day}:previous?.specialDay?{specialDay:previous.specialDay}:{})};
   if(!p.discovered.includes(received.species))p.discovered.push(received.species);if(received.shiny&&!p.shinies.includes(received.species))p.shinies.push(received.species);

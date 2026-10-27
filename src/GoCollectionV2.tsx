@@ -136,7 +136,7 @@ export function GoCollectionV2({view,run,busy,initialSpecimenId,open,onSelection
 
   {details==='evolve'&&evo&&<Panel><Title>{usesSharedEvolutionModel(evo.to)?'Elite-evolutie':'Evolutie'}</Title><CollectionEvolutionV2 id={s.species} shiny={s.shiny}/><Label bold center>CP {st.cp} → {stats({...s,species:evo.to}).cp}</Label><Counter icon="leaf" value={evo.candy} label="Soortnectar"/><Help title="Evolueren" body="Je bug krijgt een nieuwe vorm en wordt sterker. Zijn aanleg, level, shiny en item blijven behouden. Hiervoor betaal je nectar van deze familie. Na evolueren krijg je 1 nectar terug."/>{powerUpLeagueWarning(st.cp,stats({...s,species:evo.to}).cp)&&<Label small bold color="#F0BC85">{powerUpLeagueWarning(st.cp,stats({...s,species:evo.to}).cp)}</Label>}<Button disabled={busy||(g.candy[key]??0)<evo.candy} onPress={()=>void run('goEvolve',{id:s.id}).then(ok=>{if(ok)setDetails(null);})}>Bevestig evolutie</Button><Button small secondary onPress={()=>setDetails(null)}>Annuleren</Button></Panel>}
 
-  {details==='iv'&&s.obtainedAt>0&&<Label small color={V.muted}>Verkregen · {new Date(s.obtainedAt).toLocaleDateString('nl-NL')}</Label>}
+  {details==='iv'&&s.catchLocation&&<Button small secondary icon="compass" onPress={()=>info.show({title:s.catchLocation?.boss?'Gevangen kaartbaas':'Vangplek',icon:'compass',body:s.catchLocation!.lat.toFixed(5)+', '+s.catchLocation!.lng.toFixed(5)+' · GPS-plek van de bug bij de bevestigde vangst.'})}>Vangplek</Button>}{details==='iv'&&s.obtainedAt>0&&<Label small color={V.muted}>Verkregen · {new Date(s.obtainedAt).toLocaleString('nl-NL',{dateStyle:'medium',timeStyle:'short'})}</Label>}
 
   {open&&<Button small icon="swords" onPress={()=>open('ranked')}>Naar Strijd</Button>}
 

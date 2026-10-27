@@ -3,7 +3,7 @@ import {applyNatureStyle} from './natureMapV2';
 
 export type WorldSurfaceOptions={isDay?:boolean|null;reducedMotion?:boolean};
 // Deeper foliage and cool water frame warm paths; contrast comes from the same source layers.
-const DAY={ground:'#8BB66B',grass:'#80B65C',forest:'#3E7957',wetland:'#66A18A',sand:'#E4CF98',city:'#A5BC83',built:'#B4BCA0',building:'#CBBB99',buildingEdge:'#899579',park:'#76AD59',water:'#399BA7',shore:'#74B49A',road:'#EDDFBC',path:'#F8EDCF',edge:'#63865A',rail:'#718A83',sky:'#8FCADB',horizon:'#C7DDB0'};
+const DAY={ground:'#8BB66B',grass:'#80B65C',forest:'#3E7957',wetland:'#66A18A',sand:'#E4CF98',city:'#96BE72',built:'#A9B992',building:'#CBBB99',buildingEdge:'#899579',park:'#76AD59',water:'#399BA7',shore:'#74B49A',road:'#EDDFBC',path:'#F8EDCF',edge:'#63865A',rail:'#718A83',sky:'#8FCADB',horizon:'#C7DDB0'};
 const NIGHT={ground:'#536E62',grass:'#5B7D62',forest:'#375D54',wetland:'#527A73',sand:'#9C9A82',city:'#61796A',built:'#6D7F76',building:'#8E9381',buildingEdge:'#6D7C6C',park:'#5B8060',water:'#36757F',shore:'#608F86',road:'#AEA98E',path:'#D0C5A2',edge:'#536B60',rail:'#637D78',sky:'#152C48',horizon:'#708988'};
 const IMAGES={grass:'bb-world-grass',forest:'bb-world-forest',water:'bb-world-water'} as const;
 type PaintName=Parameters<GameMap['setPaintProperty']>[1];

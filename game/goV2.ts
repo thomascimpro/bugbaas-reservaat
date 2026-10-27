@@ -11,6 +11,7 @@ import type {GoTradeProgress} from './goTradeV2';
 import type {GoJournalEntry} from './goJournalV2';
 import type {TrainerProgress} from './trainerV2';
 import type {SiteProgress} from './worldSitesV2';
+import type {PostResearch} from './postResearchV2';
 import {rng,species} from './catalogV2';
 import {checkV2 as check} from './shopV2';
 import type {PlayerV2,Specimen} from './typesV2';
@@ -37,6 +38,12 @@ export const FAST={
  poison:{name:'Gifprik',type:'poison',power:3,energy:9,turns:2},
  mud:{name:'Modderslag',type:'ground',power:5,energy:8,turns:2},
  leaf:{name:'Bladsnede',type:'grass',power:9,energy:4,turns:2},
+ claw:{name:'Klauwslag',type:'bug',power:8,energy:5,turns:2},
+ siphon:{name:'Nectarprik',type:'bug',power:1,energy:5,turns:1},
+ snap:{name:'Schaduwknip',type:'dark',power:6,energy:6,turns:2},
+ metal:{name:'Schildslag',type:'steel',power:7,energy:6,turns:2},
+ gust:{name:'Stormvleugel',type:'flying',power:11,energy:9,turns:3},
+ spark:{name:'Gloeipuls',type:'fire',power:4,energy:9,turns:2},
 } as const;
 export const CHARGED={
  stream:{name:'Stroomstoot',type:'water',power:55,energy:35},
@@ -50,11 +57,21 @@ export const CHARGED={
  earth:{name:'Aardstoot',type:'ground',power:90,energy:55},
  iron:{name:'IJzerkop',type:'steel',power:70,energy:50},
  dark:{name:'Nachtbeet',type:'dark',power:70,energy:45},
+ needle:{name:'Naaldsalvo',type:'poison',power:35,energy:30},
+ web:{name:'Webworp',type:'bug',power:40,energy:30},
+ crush:{name:'Rotsbreker',type:'rock',power:120,energy:70},
+ shell:{name:'Pantserbeuk',type:'steel',power:100,energy:60},
+ dive:{name:'Duikvlucht',type:'flying',power:90,energy:55},
+ night:{name:'Nachtstorm',type:'dark',power:100,energy:60},
+ sap:{name:'Wortelstorm',type:'grass',power:90,energy:55},
+ burst:{name:'Vonkregen',type:'fire',power:55,energy:35},
 } as const;
 export type Fast=keyof typeof FAST;
 export type Charged=keyof typeof CHARGED;
 export type GoBug={traded?:{id:string;at:number;from:string};level:number;iv:[number,number,number];fast:Fast;charged:Charged[];item:Held|null};
 export type GoProfile={
+ research?:PostResearch;
+ teamPresets?:Partial<Record<League,(string[]|null)[]>>;
  dailyChallenge?:DailyChallengeProgress;
  gyms?:GymProgress;
  journal?:GoJournalEntry[];trades?:GoTradeProgress;
@@ -69,7 +86,7 @@ export type GoProfile={
 };
 export function eligible(s:Specimen){return !!s.go||['walking','cocoon','metamorphosis'].includes(s.source);}
 export const family=candyFamily;
-export function movePool(id:string):{types:Element[];fast:Fast[];charged:Charged[]}{
+function legacyMovePool(id:string):{types:Element[];fast:Fast[];charged:Charged[]}{
  const role=EXPANDED_BY_ID[id]?.moveRole;
  if(role==='spider')return {types:['bug','poison'],fast:['fury','poison'],charged:['cut','venom','dark']};
  if(role==='armabee')return {types:['bug','steel'],fast:['bite','fury'],charged:['iron','buzz','cut']};
@@ -100,7 +117,13 @@ export function movePool(id:string):{types:Element[];fast:Fast[];charged:Charged
  if(/beetle|stag|rhino|hercules|scarab|goliath|shieldbug/.test(id))return {types:['bug','steel'],fast:['bite','mud'],charged:['iron','rock','earth']};
  return {types:['bug'],fast:['bite','fury'],charged:['cut','rock','buzz']};
 }
-export function rollGoBug(kind:string,seed:string):GoBug{const random=rng(seed),pool=movePool(kind);return {level:1+Math.floor(random()*20),iv:[Math.floor(random()*16),Math.floor(random()*16),Math.floor(random()*16)],fast:pool.fast[Math.floor(random()*pool.fast.length)],charged:[pool.charged[Math.floor(random()*pool.charged.length)]],item:null};}
+export function movePool(id:string){
+ const pool=legacyMovePool(id),pick=rng('family-moves:'+candyFamily(id))(),has=(type:Element)=>pool.types.includes(type);
+ const fast:Fast=pick<.35?'siphon':pick<.7?'claw':has('fire')?'spark':has('steel')?'metal':has('dark')?'snap':has('flying')?'gust':'claw';
+ const charged:Charged=has('poison')?'needle':has('fire')?'burst':has('steel')?'shell':has('dark')?'night':has('grass')?'sap':has('rock')||has('ground')?'crush':has('flying')?'dive':'web';
+ return {...pool,fast:[...pool.fast,fast],charged:[...pool.charged,...(pick<.5?['web' as Charged,charged]:[charged])].filter((m,i,a)=>a.indexOf(m)===i)};
+}
+export function rollGoBug(kind:string,seed:string,bonus?:{level:number}):GoBug{const random=rng(seed),pool=movePool(kind);const rolled=1+Math.floor(random()*20),iv=()=>bonus?10+Math.floor(random()*6):Math.floor(random()*16);return {level:bonus?.level??rolled,iv:[iv(),iv(),iv()],fast:pool.fast[Math.floor(random()*pool.fast.length)],charged:[pool.charged[Math.floor(random()*pool.charged.length)]],item:null};}
 export function ensureGo(p:PlayerV2,now:number){
  if(!p.go){p.go={version:1,dust:0,candy:{},xl:{},items:{leaf:0,thorn:0,bark:0,wing:0,honey:0,dew:0,moon:0,sun:0},fastTMs:0,chargedTMs:0,team:[],league:'great',rating:1000,wins:0,losses:0,history:[],battle:null,queue:null,auto:{enabled:false,lastAt:0,attempted:[],status:'off',moving:0},buddyMeters:0};p.revision++;}
  const g=p.go;for(const key of Object.keys(HELD) as Held[])g.items[key]??=0;ensureTrainer(p);g.dex??=[];g.entries??={};g.dexVersion=1;for(const id of g.dex)g.entries[id]??={seenAt:null,caughtAt:null,shinyAt:null};for(const s of p.specimens.filter(eligible)){g.entries[s.species]??={seenAt:s.obtainedAt,caughtAt:s.obtainedAt,shinyAt:s.shiny?s.obtainedAt:null};if(!g.dex.includes(s.species))g.dex.push(s.species);}for(const s of p.specimens.filter(eligible))if(!s.go){if(!g.dex.includes(s.species))g.dex.push(s.species);s.go=rollGoBug(s.species,p.uid+':existing:'+s.id);g.candy[family(s.species)]=(g.candy[family(s.species)]??0)+3;g.dust+=100;p.revision++;}
@@ -146,7 +169,7 @@ export function evolveGo(p:PlayerV2,id:unknown,seed:string,now=Date.now()){
  if(!g.dex!.includes(s.species))g.dex!.push(s.species);if(!p.discovered.includes(s.species))p.discovered.push(s.species);if(s.shiny&&!p.shinies.includes(s.species))p.shinies.push(s.species);
  markGoSeen(p,s.species,now);g.entries![s.species].caughtAt??=now;if(s.shiny)g.entries![s.species].shinyAt??=now;
 }
-export function awardGoCatch(p:PlayerV2,s:Specimen,seed:string,bait:string|null=null,grade?:string,curved=false){const g=p.go!,key=family(s.species),newKind=!g.dex!.includes(s.species);if(s.source==='cocoon')grantXP(p,100+(newKind?500:0));else catchXP(p,newKind,s.obtainedAt,grade,curved);s.go=rollGoBug(s.species,seed);const reward=s.source==='cocoon'?{dust:100,candy:3}:goCatchRewards(s.species,bait);g.dust+=reward.dust;g.candy[key]=(g.candy[key]??0)+reward.candy;const random=rng(seed+':extra');let held:Held|null=null;if(s.go.level>=15&&random()<.1)g.xl[key]=(g.xl[key]??0)+1;if(random()<.04){const items=Object.keys(HELD) as Held[];held=items[Math.floor(random()*items.length)];g.items[held]++;}if(!g.dex!.includes(s.species))g.dex!.push(s.species);markGoSeen(p,s.species,s.obtainedAt);g.entries![s.species].caughtAt??=s.obtainedAt;if(s.shiny)g.entries![s.species].shinyAt??=s.obtainedAt;if(!p.buddy)p.buddy=s.id;return held;}
+export function awardGoCatch(p:PlayerV2,s:Specimen,seed:string,bait:string|null=null,grade?:string,curved=false,bonus?:{level:number}){const g=p.go!,key=family(s.species),newKind=!g.dex!.includes(s.species);if(s.source==='cocoon')grantXP(p,100+(newKind?500:0));else catchXP(p,newKind,s.obtainedAt,grade,curved);s.go=rollGoBug(s.species,seed,bonus);const reward=s.source==='cocoon'?{dust:100,candy:3}:goCatchRewards(s.species,bait);g.dust+=reward.dust;g.candy[key]=(g.candy[key]??0)+reward.candy;const random=rng(seed+':extra');let held:Held|null=null;if(s.go.level>=15&&random()<.1)g.xl[key]=(g.xl[key]??0)+1;if(random()<.04){const items=Object.keys(HELD) as Held[];held=items[Math.floor(random()*items.length)];g.items[held]++;}if(!g.dex!.includes(s.species))g.dex!.push(s.species);markGoSeen(p,s.species,s.obtainedAt);g.entries![s.species].caughtAt??=s.obtainedAt;if(s.shiny)g.entries![s.species].shinyAt??=s.obtainedAt;if(!p.buddy)p.buddy=s.id;return held;}
 
 export function goCatchRewards(kind:string,bait:string|null=null){const stage=evolutionStage(kind),candy=[3,5,10][stage-1];return {dust:[100,300,500][stage-1],candy:bait==='fruit'?candy*2:bait==='silver'?Math.floor(candy*7/3):candy};}
 export function buddyDistance(kind:string){const tier=species(evolutionLine(kind)[0]).tier;return tier<=2?1000:tier<=5?3000:5000;}

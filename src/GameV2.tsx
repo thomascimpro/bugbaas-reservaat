@@ -94,7 +94,8 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
 
  const latest=useRef<GameViewV2|null>(null),locked=useRef(false),background=useRef(false),base=useRef({server:Date.now(),received:performance.now()}),active=useRef(true);
 
- function accept(next:GameViewV2){const prior=latest.current;if(!isNewerV2(prior,next))return;if(errorSource.current==='poll')clearError();const rows=rewardChanges(prior?.player??null,next.player);if(prior?.player.uid!==next.player.uid)setRewards(null);else if(rows.length)setRewards({id:Date.now(),rows,dismissed:[]});latest.current=next;setView(next);base.current={server:next.now,received:performance.now()};setNow(next.now);setAudioSettings(next.player.settings);if(next.goBattle||next.player.go?.queue)setTab('Ranked');}
+ // A catch reveals its result after the net wiggles; a toast would spoil it and the result card lists the rewards.
+ function accept(next:GameViewV2,catchCard=false){const prior=latest.current;if(!isNewerV2(prior,next))return;if(errorSource.current==='poll')clearError();const rows=catchCard?[]:rewardChanges(prior?.player??null,next.player);if(prior?.player.uid!==next.player.uid)setRewards(null);else if(rows.length)setRewards({id:Date.now(),rows,dismissed:[]});latest.current=next;setView(next);base.current={server:next.now,received:performance.now()};setNow(next.now);setAudioSettings(next.player.settings);if(next.goBattle||next.player.go?.queue)setTab('Ranked');}
 
  async function boot(){setBusy(true);clearError();try{const connected=await connectV2();accept(connected);const raw=await AsyncStorage.getItem('bugbaas-v2-pending');if(raw){const saved=JSON.parse(raw);if(saved.uid===connected.player.uid&&saved.command&&saved.command.type!=='worldLocate'){setPending(saved.command);reportError('Een eerdere actie wacht op controle. Probeer die veilig opnieuw.','command');}else await AsyncStorage.removeItem('bugbaas-v2-pending');}}catch(e){reportError(e instanceof Error?e.message:'Verbinden is niet gelukt.','poll');}finally{setBusy(false);}}
 
@@ -108,7 +109,7 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
 
   if(!locating){setBusy(true);reportError('','command');unlockAudio();setPending(command);}
 
-  try{if(!locating)await AsyncStorage.setItem('bugbaas-v2-pending',JSON.stringify({uid:latest.current!.player.uid,command}));accept(await commandV2(command));if(!locating){setPending(null);await AsyncStorage.removeItem('bugbaas-v2-pending');clearError();playSound(command.type==='goAct'?(command.action==='shield'?'shield':'attack'):command.type==='goPower'?'grow':'click');}return true;}
+  try{if(!locating)await AsyncStorage.setItem('bugbaas-v2-pending',JSON.stringify({uid:latest.current!.player.uid,command}));accept(await commandV2(command),command.type==='worldCast');if(!locating){setPending(null);await AsyncStorage.removeItem('bugbaas-v2-pending');clearError();playSound(command.type==='goAct'?(command.action==='shield'?'shield':'attack'):command.type==='goPower'?'grow':'click');}return true;}
 
   catch(e){if(!locating){reportError(e instanceof Error?e.message:'Actie niet verwerkt.','command');if(e instanceof ApiError&&e.status!==0&&e.status<500){setPending(null);await AsyncStorage.removeItem('bugbaas-v2-pending');}}void refreshV2().then(next=>{if(latest.current?.player.uid===next.player.uid)accept(next);}).catch(()=>{});return false;}
 
