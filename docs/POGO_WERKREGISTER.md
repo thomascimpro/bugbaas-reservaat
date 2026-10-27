@@ -4,7 +4,9 @@ Bijgewerkt: 27 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog
 
 ## ACTUELE CHECKPOINT
 
-**BB-78 (visueel/spelgevoel, op `main`, niet gecommit/gereleased; andere bestanden dan BB-77):**
+**Release 0.1.12/code13 (BB-77 + BB-78), preview https://bugbaas-reservaat-preview-9uhjj4tsm-thomas-cim-pro.vercel.app.** Code-review van BB-77 (onafhankelijke agent): geen serverexploit; gerepareerd met regressietests (`tests/releaseReviewV2.test.ts`): ruil stuurt geen `catchLocation` mee (`goTradeV2`), en een onverlopen bonusbaas blokkeert geen nieuwe wilde spawns (`walkingV2.locate`). Bewust geaccepteerd: 0.1.11 kent de nieuwe aanvallen niet en kan daarop vastlopen; update verplicht (geen versiecontrole in de app, minimumversie-check is open). Oude APK mist ook `goBoss`/`postResearch` in de native whitelist. 428/428 tests, zes cloudchecks groen, Firebase-inlogdomein toegevoegd met behoud van bestaande domeinen. `scripts/build-android.ps1` laadt nu de zip-API (PowerShell 5.1).
+
+**BB-78 (visueel/spelgevoel; andere bestanden dan BB-77):**
 - UI-stijl (`uiV2`), veldmenu als tegelraster (`FieldHomeV2`), voller kaartpalet voor woonwijk/bebouwing (`worldSurfaceV2`; gebouwkleur ongewijzigd).
 - Vangen (`CatchV2.web`, `NetThrowV2`, `CatchResultV2`, `GameV2`): na een rake worp sluit het net en schudt 1-3× (gevangen 3, gevlucht 2, ontsnapt 1-2) met oplichtende bolletjes; daarna Gevangen!-sterren of scheurend net. Uitkomst blijft de serveruitslag; alleen de onthulling wacht. Minder beweging = direct resultaat. Geen beloningsmelding meer tijdens vangen (zou uitslag verklappen). Worpoordeel springt in beeld, BOOGBONUS!-label, ademend vangvenster. Shiny: lichtring + sterrenregen + shiny-geluid bij verschijnen, SHINY-badge, Shiny!-chip op vangkaart.
 - Gevecht (`GoCombatFighterV2`, `GoBattlePresentationV2`): zwevende schadegetallen (Super effectief!/Niet zo effectief…), knipperende treffer, HP-balk met rode naloop.

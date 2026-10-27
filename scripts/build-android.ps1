@@ -5,6 +5,8 @@ param(
     [string]$OutputApk = ''
 )
 $ErrorActionPreference='Stop'
+# Windows PowerShell 5.1 does not load the zip API by default; the post-build URL check needs it.
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 $sourceRoot=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 if (!$OutputApk) {
     $version=(Get-Content -LiteralPath (Join-Path $sourceRoot 'app.json') -Raw | ConvertFrom-Json).expo.version
