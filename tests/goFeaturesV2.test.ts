@@ -62,7 +62,7 @@ test('second evolution family spends existing Hercules currency and preserves id
  const p=player(),s=p.specimens[0];s.species='beetlegrub';s.shiny=true;s.favorite=true;s.hearts=7;s.go!.charged=['cut','buzz'];s.go!.item='thorn';const before=structuredClone(s);
  p.go!.candy.hercules=75;p.go!.xl.hercules=4;assert.equal(family(s.species),'hercules');assert.deepEqual(movePool(s.species).types,['bug']);evolveGo(p,s.id,'evolve',NOW);
  assert.equal(s.species,'hercules');assert.equal(s.id,before.id);assert.equal(s.go!.level,before.go!.level);assert.deepEqual(s.go!.iv,before.go!.iv);assert.equal(s.go!.item,'thorn');assert.equal(s.go!.charged.length,2);assert.equal(s.shiny,true);assert.equal(s.favorite,true);assert.equal(s.hearts,7);
- assert.equal(p.go!.candy.hercules,25);assert.equal(p.go!.xl.hercules,4);assert.ok(p.shinies.includes('hercules'));assert.throws(()=>evolveGo(p,s.id,'again',NOW));
+ assert.equal(p.go!.candy.hercules,51);assert.equal(p.go!.xl.hercules,4);assert.ok(p.shinies.includes('hercules'));assert.throws(()=>evolveGo(p,s.id,'again',NOW));
 });
 test('boss strength is fixed despite player upgrades, has one living enemy, and enforces progression gates',()=>{
  const p=player();assert.ok(bossIssue(p,'mid'));p.go!.trainer!.xp=levelXP(15);const first=makeBossBattle(p,'end','boss-1',NOW);p.specimens[0].go!.level=16;const second=makeBossBattle(p,'end','boss-2',NOW);

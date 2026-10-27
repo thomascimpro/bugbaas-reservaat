@@ -26,7 +26,7 @@ test('published dex numbers stay stable as species are appended and each has com
 
 test('two larval families use real adult targets, preserve historic nectar keys and spawn in suitable habitats',()=>{
  assert.equal(dexNumber('beetlegrub'),31);
- assert.deepEqual(EVOLUTIONS.caterpillar,{to:'moth',candy:50});assert.deepEqual(EVOLUTIONS.beetlegrub,{to:'hercules',candy:50});
+ assert.deepEqual(EVOLUTIONS.caterpillar,{to:'moth',candy:12});assert.deepEqual(EVOLUTIONS.beetlegrub,{to:'hercules',candy:25});
  for(const [from,{to,candy}] of Object.entries(EVOLUTIONS)){assert.ok(dexNumber(from));assert.ok(dexNumber(to));assert.ok(candy>0);assert.equal(candyFamily(from),candyFamily(to));}
  assert.equal(candyFamily('hercules'),'hercules');assert.equal(candyFamily('moth'),'caterpillar');assert.equal(candyFamily('ant'),'ant');
  assert.equal(WALK_MODELS.beetlegrub,'BeetleGrub');assert.ok(habitatWeight('beetlegrub',WALK_WEIGHTS.beetlegrub,'forest')>0);
@@ -65,7 +65,7 @@ test('only a validated real encounter records seen; it does not award a catch, s
 test('evolution preserves specimen identity, IV, shiny, favorite, held item, buddy, acquisition and unlocked second slot',()=>{
  const p=freshV2('evo','EVOL1234',NOW);ensureField(p,NOW);ensureGo(p,NOW);const bug={id:'my-rups',species:'caterpillar',source:'walking',level:1,shiny:true,favorite:true,obtainedAt:NOW-1000,hearts:4,item:null,go:{...rollGoBug('caterpillar','rups'),charged:['cut','seed'] as ['cut','seed'],item:'leaf' as const}};p.specimens.push(bug);p.buddy=bug.id;p.go!.candy.caterpillar=50;
  const before=structuredClone(bug);evolveGo(p,bug.id,'evolution',NOW);
- assert.equal(bug.id,before.id);assert.equal(bug.source,before.source);assert.equal(bug.obtainedAt,before.obtainedAt);assert.equal(bug.favorite,true);assert.equal(bug.shiny,true);assert.equal(p.buddy,bug.id);assert.equal(bug.go.item,'leaf');assert.deepEqual(bug.go.iv,before.go.iv);assert.equal(bug.go.level,before.go.level);assert.equal(bug.go.charged.length,2);assert.equal(new Set(bug.go.charged).size,2);assert.equal(p.go!.candy.caterpillar,0);assert.equal(dexStatus(p,'moth').shiny,true);assert.throws(()=>evolveGo(p,bug.id,'again',NOW));
+ assert.equal(bug.id,before.id);assert.equal(bug.source,before.source);assert.equal(bug.obtainedAt,before.obtainedAt);assert.equal(bug.favorite,true);assert.equal(bug.shiny,true);assert.equal(p.buddy,bug.id);assert.equal(bug.go.item,'leaf');assert.deepEqual(bug.go.iv,before.go.iv);assert.equal(bug.go.level,before.go.level);assert.equal(bug.go.charged.length,2);assert.equal(new Set(bug.go.charged).size,2);assert.equal(p.go!.candy.caterpillar,39);assert.equal(dexStatus(p,'moth').shiny,true);assert.throws(()=>evolveGo(p,bug.id,'again',NOW));
 });
 
 test('every base bug has a complete evolution line; published forms preserve currencies, moves and existing specimen data',()=>{
@@ -76,7 +76,7 @@ test('every base bug has a complete evolution line; published forms preserve cur
   const p=freshV2('elite-'+base,'ELITE123',NOW);ensureField(p,NOW);ensureGo(p,NOW);
   const bug={id:'original-'+base,species:base,nickname:'Mijn bug',source:'walking',level:1,shiny:true,favorite:true,obtainedAt:NOW-1000,hearts:4,item:null,go:{...rollGoBug(base,'same'),iv:[15,7,11] as [number,number,number],item:'leaf' as const}};p.specimens.push(bug);p.buddy=bug.id;p.go!.team=[bug.id];const key=candyFamily(base);p.go!.candy[key]=100;p.go!.xl[key]=17;
   const before=structuredClone(bug);evolveGo(p,bug.id,'no-reroll',NOW);
-  assert.equal(bug.species,id);assert.equal(baseSpeciesId(id),base);assert.equal(WALK_MODELS[id],EVOLUTION_APPEARANCES[id]?.model??WALK_MODELS[base]);assert.equal(usesSharedEvolutionModel(id),!EVOLUTION_APPEARANCES[id]);assert.deepEqual(movePool(id),movePool(base));assert.deepEqual(bug,{...before,species:id});assert.equal(candyFamily(id),key);assert.equal(p.go!.candy[key],0);assert.equal(p.go!.xl[key],17);assert.equal(p.buddy,before.id);assert.deepEqual(p.go!.team,[before.id]);assert.equal(dexStatus(p,id).shiny,true);assert.ok(stats(bug).cp>=stats(before).cp);assert.equal(EVOLUTIONS[id]?.to,['moth_elite','hercules_elite'].includes(id)?undefined:base+'_ultimate');assert.throws(()=>evolveGo(p,bug.id,'again',NOW));
+  assert.equal(bug.species,id);assert.equal(baseSpeciesId(id),base);assert.equal(WALK_MODELS[id],EVOLUTION_APPEARANCES[id]?.model??WALK_MODELS[base]);assert.equal(usesSharedEvolutionModel(id),!EVOLUTION_APPEARANCES[id]);assert.deepEqual(movePool(id),movePool(base));assert.deepEqual(bug,{...before,species:id});assert.equal(candyFamily(id),key);assert.equal(p.go!.candy[key],101-EVOLUTIONS[base].candy);assert.equal(p.go!.xl[key],17);assert.equal(p.buddy,before.id);assert.deepEqual(p.go!.team,[before.id]);assert.equal(dexStatus(p,id).shiny,true);assert.ok(stats(bug).cp>=stats(before).cp);assert.equal(EVOLUTIONS[id]?.to,['moth_elite','hercules_elite'].includes(id)?undefined:base+'_ultimate');assert.throws(()=>evolveGo(p,bug.id,'again',NOW));
  }
 });
 

@@ -1,5 +1,5 @@
 import {useEffect,useRef} from 'react';
-import {AppState,PermissionsAndroid,Platform} from 'react-native';
+import {Alert,AppState,PermissionsAndroid,Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
@@ -43,6 +43,10 @@ export async function prepareBackgroundAutoCatchV2():Promise<string>{
  if(AppState.currentState!=='active')return 'Open BugBaas om autovangst aan te zetten.';
  try{
   const permission=await Location.requestForegroundPermissionsAsync();if(!permission.granted)return 'Geef BugBaas toegang tot je locatie voor autovangst.';if(permission.android?.accuracy==='coarse')return 'Zet Precieze locatie aan voor autovangst en afstand.';
+  if(!(await Location.getBackgroundPermissionsAsync()).granted){
+   const proceed=await new Promise<boolean>(resolve=>Alert.alert('Locatie bij scherm uit','BugBaas gebruikt je locatie voor afstand en autovangst wanneer de app niet zichtbaar is. Kies in het volgende scherm Altijd toestaan. Je ziet een blijvende melding zolang dit actief is.',[{text:'Niet nu',style:'cancel',onPress:()=>resolve(false)},{text:'Toestemming geven',onPress:()=>resolve(true)}],{cancelable:true,onDismiss:()=>resolve(false)}));
+   if(!proceed||!(await Location.requestBackgroundPermissionsAsync()).granted)return 'Kies Altijd toestaan bij de locatietoestemming voor afstand en autovangst met scherm uit.';
+  }
   if(!await Location.hasServicesEnabledAsync())return 'Zet je locatie aan voor autovangst.';
   if(Number(Platform.Version)>=33&&await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)!==PermissionsAndroid.RESULTS.GRANTED)return 'Sta meldingen toe: autovangst blijft zichtbaar terwijl de app op de achtergrond werkt.';
   return '';
@@ -51,6 +55,7 @@ export async function prepareBackgroundAutoCatchV2():Promise<string>{
 async function startService(uid:string){
  if(AppState.currentState!=='active')return;
  const permission=await Location.getForegroundPermissionsAsync();if(!permission.granted)throw new Error('Geef toegang tot je locatie om autovangst te hervatten.');if(permission.android?.accuracy==='coarse')throw new Error('Zet Precieze locatie aan voor autovangst en afstand.');
+ if(!(await Location.getBackgroundPermissionsAsync()).granted)throw new Error('Autovangst heeft Altijd toestaan voor locatie nodig. Zet autovangst opnieuw aan om dit te regelen.');
  if(Number(Platform.Version)>=33&&!await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS))throw new Error('Sta meldingen toe om autovangst op de achtergrond te gebruiken.');
  if(!await Location.hasServicesEnabledAsync())throw new Error('Zet je locatie aan om autovangst te hervatten.');
  const prior=await readSession();if(prior&&prior.uid!==uid)await stopService();

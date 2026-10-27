@@ -66,7 +66,7 @@ export function hatchCocoon(p:PlayerV2,now:number,id?:unknown):Specimen{
  idle(p);const g=progress(p);check(id===undefined||typeof id==='string','Kies een broedende cocon.');
  const a=id===undefined?g.active:cocoonActive(p,id as string),item=g.items.find(c=>c.id===a?.id);
  check(a&&item,'Er wordt geen cocon uitgebroed.');
- check(cocoonWalked(p,item.id)>=item.km*1000,'Loop eerst de volledige afstand met de kaart open.');
+ check(cocoonWalked(p,item.id)>=item.km*1000,'Loop eerst de volledige afstand van je cocon.');
  const incubator='incubatorId' in a?g.incubators?.find(i=>i.id===a.incubatorId&&i.uses>0):undefined;
  check(!('incubatorId' in a)||incubator,'De broedmachine is niet beschikbaar.');
  check(item.hatchSeed,'De cocon is niet beschikbaar.');

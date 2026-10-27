@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {freshV2} from '../game/safariV2';
 import {ensureField} from '../game/fieldV2';
-import {ensureGo} from '../game/goV2';
+import {ensureGo,rollGoBug} from '../game/goV2';
 import {ensureCocoons,startCocoon,cocoonWalked} from '../game/goCocoonsV2';
 import {syncAdventure,mergeGPSWalk,gpsWalkMeters} from '../game/adventureSyncV2';
 import {startFieldLure,advanceFieldActivities} from '../game/fieldActivitiesV2';
@@ -13,14 +13,22 @@ import {SqliteStore} from '../server/sqlite';
 import {recordWalk} from '../game/walkingRewardsV2';
 const NOW=Date.UTC(2026,9,22,10),FIX={lat:51.44,lng:5.47,accuracy:5};
 const snap=(steps:number,meters:number,now=NOW)=>({dayUTC:new Date(now).toISOString().slice(0,10),capturedAt:now,steps,meters,source:'health-connect'});
+
+test('returning from a closed app credits walking, buddy nectar and cocoon progress with autocatch off and no invented GPS',async()=>{
+ const store=new SqliteStore(':memory:');let now=NOW;const service=new GoServiceV2(store,'local',()=>now),uid='closed-walk';try{
+  let v=await service.state(uid);await store.run(['v2Players:'+uid],d=>{const p=d.get('v2Players:'+uid) as import('../game/typesV2').PlayerV2;p.specimens.push({id:'health-buddy',species:'ant',level:1,shiny:false,favorite:false,obtainedAt:now,source:'walking',hearts:0,item:null,go:rollGoBug('ant','health')});p.buddy='health-buddy';});v=await service.state(uid);
+  const send=async(type:string,data:Record<string,unknown>)=>v=await service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});await send('cocoonStart',{id:v.player.go!.cocoons!.items[0].id});await send('adventureSync',{snapshot:snap(0,0,now)});const stock=v.player.field!.inventory.basic;now+=3600000;const command={type:'adventureSync',snapshot:snap(3000,2000,now),commandId:randomUUID(),expectedRevision:v.player.revision};v=await service.command(uid,command);
+  assert.equal(v.player.field!.walk!.meters,2000);assert.equal(cocoonWalked(v.player),2000);assert.equal(v.player.go!.candy.ant,2);assert.equal(gpsWalkMeters(v.player),0);assert.equal(v.player.walking,undefined);assert.equal(v.player.go!.auto.enabled,false);assert.equal(v.player.field!.inventory.basic,stock);const count=v.player.specimens.length;v=await service.command(uid,command);assert.equal(v.player.field!.walk!.meters,2000);assert.equal(v.player.go!.candy.ant,2);await send('cocoonClaim',{});assert.equal(v.player.specimens.length,count+1);
+ }finally{store.close();}
+});
 function player(){const p=freshV2('health-qa','HLTH1234',NOW);ensureField(p,NOW);ensureGo(p,NOW);ensureCocoons(p,'seed',NOW);p.walking={at:NOW,fix:FIX,spawns:[],caught:[],count:0,day:'2026-10-22'};return p;}
-test('first connection starts a baseline; later step-backed distance is bounded, persistent and never counted twice',()=>{
+test('first connection starts a baseline; later step-backed distance is bounded, persistent without an eight-kilometer cutoff and never counted twice',()=>{
  const p=player();p.field!.walk={meters:1000,dayMeters:1000,anchor:null,at:NOW};assert.equal(syncAdventure(p,snap(10000,7200),NOW),0);assert.equal(p.field!.walk.meters,1000);
  startCocoon(p,p.go!.cocoons!.items[0].id,NOW);const later=NOW+3600000;assert.equal(syncAdventure(p,snap(13000,9200,later),later),2000);assert.equal(cocoonWalked(p),2000);assert.equal(gpsWalkMeters(p),1000);assert.equal(p.field!.walk.dayMeters,3000);
  assert.equal(syncAdventure(p,snap(13000,9200,later),later),0);assert.equal(p.field!.walk.meters,3000);
  // A replayed lower provider total cannot remove or re-award previously credited distance.
  assert.equal(syncAdventure(p,snap(12000,8500,later+1000),later+1000),0);assert.equal(p.field!.walk.meters,3000);
- const next=later+3600000;syncAdventure(p,snap(30000,21000,next),next);assert.equal(p.field!.walk.dayMeters,8000);assert.equal(p.field!.walk.meters,8000);
+ const next=later+3600000;syncAdventure(p,snap(30000,21000,next),next);assert.equal(p.field!.walk.dayMeters,14800);assert.equal(p.field!.walk.meters,14800);
 });
 test('GPS and imported activity use a conservative union while GPS-only routes and lures keep their own meters',()=>{
  const p=player();syncAdventure(p,snap(0,0),NOW);startFieldLure(p,'lure','private',NOW);
@@ -36,7 +44,7 @@ test('bad, stale, manual-source, unbacked or impossibly fast health snapshots ca
  const p=player();syncAdventure(p,snap(0,0),NOW);assert.throws(()=>syncAdventure(p,snap(5000,3000,NOW+1000),NOW+1000),/te korte tijd/);assert.equal(p.field!.walk!.meters,0);
  assert.equal(syncAdventure(p,snap(40,30,NOW+1000),NOW+1000),30);assert.throws(()=>syncAdventure(p,snap(80,60,NOW+1000),NOW+1000));assert.equal(p.field!.walk!.meters,30);
 });
-test('UTC day roll keeps lifetime distance, resets the combined day cap and never creates a GPS fix',()=>{
+test('UTC day roll keeps lifetime distance, resets the combined day total and never creates a GPS fix',()=>{
  const p=player();syncAdventure(p,snap(0,0),NOW);syncAdventure(p,snap(3000,2000,NOW+3600000),NOW+3600000);const before=structuredClone(p.walking),next=NOW+86400000;syncAdventure(p,snap(1500,1000,next),next);assert.equal(p.field!.walk!.meters,3000);assert.equal(p.field!.walk!.dayMeters,1000);assert.deepEqual(p.walking,{...before,day:new Date(next).toISOString().slice(0,10)});
 });
 test('health command receipts protect distance and reject fabricated direct reward fields',async()=>{
@@ -56,8 +64,8 @@ test('15-second cycling samples can exceed seventy-five meters and eight kilomet
 test('Health Connect merging never removes verified GPS beyond eight kilometers or counts the same distance twice',()=>{
  const p=player();syncAdventure(p,snap(0,0),NOW);p.field!.walk!.meters=8000;p.field!.walk!.dayMeters=8000;mergeGPSWalk(p,0,0,NOW+3600000);assert.equal(gpsWalkMeters(p),8000);
  p.field!.walk!.meters+=900;p.field!.walk!.dayMeters+=900;mergeGPSWalk(p,8000,8000,NOW+4200000);assert.equal(p.field!.walk!.meters,8900);assert.equal(p.field!.walk!.dayMeters,8900);assert.equal(gpsWalkMeters(p),8900);
- assert.equal(syncAdventure(p,snap(14000,10000,NOW+7200000),NOW+7200000),0);assert.equal(p.field!.walk!.meters,8900);assert.equal(p.field!.walk!.dayMeters,8900);assert.equal(gpsWalkMeters(p),8900);
- const late=player();late.field!.walk={meters:8900,dayMeters:8900,anchor:null,at:NOW};syncAdventure(late,snap(10000,8000),NOW);assert.equal(syncAdventure(late,snap(13000,10000,NOW+3600000),NOW+3600000),0);assert.equal(late.field!.walk!.meters,8900);
+ assert.equal(syncAdventure(p,snap(14000,10000,NOW+7200000),NOW+7200000),1100);assert.equal(p.field!.walk!.meters,10000);assert.equal(p.field!.walk!.dayMeters,10000);assert.equal(gpsWalkMeters(p),8900);
+ const late=player();late.field!.walk={meters:8900,dayMeters:8900,anchor:null,at:NOW};syncAdventure(late,snap(10000,8000),NOW);assert.equal(syncAdventure(late,snap(13000,10000,NOW+3600000),NOW+3600000),2000);assert.equal(late.field!.walk!.meters,10900);
 });
 
 test('real GPS cycling advances cocoon and walk research together and a replay cannot count the distance twice',async()=>{

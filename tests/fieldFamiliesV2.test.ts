@@ -24,7 +24,7 @@ test('new three-stage families append after all 62 published dex entries',()=>{
   assert.equal(EVOLUTIONS[f.stages[0].id].candy,25);assert.equal(EVOLUTIONS[f.stages[1].id].candy,100);
   assert.equal(EVOLUTIONS[f.stages[2].id],undefined);
  }
- assert.deepEqual(EVOLUTIONS.caterpillar,{to:'moth',candy:50});
+ assert.deepEqual(EVOLUTIONS.caterpillar,{to:'moth',candy:12});
 });
 
 test('two evolutions share nectar, improve CP and retain owned shiny identity and build',()=>{
@@ -34,8 +34,8 @@ test('two evolutions share nectar, improve CP and retain owned shiny identity an
   p.specimens.push(bug);p.buddy=bug.id;p.go!.team=[bug.id];p.go!.candy[f.family]=125;p.go!.dust=777;
   const identity={id:bug.id,nickname:bug.nickname,iv:bug.go.iv,level:bug.go.level,item:bug.go.item,shiny:bug.shiny,obtainedAt:bug.obtainedAt};
   for(const s of f.stages.slice(1)){const before=stats(bug).cp;evolveGo(p,bug.id,'evolve-'+s.id,NOW);assert.equal(bug.species,s.id);assert.ok(stats(bug).cp>before);assert.equal(bug.go.charged.length,2);assert.deepEqual({id:bug.id,nickname:bug.nickname,iv:bug.go.iv,level:bug.go.level,item:bug.go.item,shiny:bug.shiny,obtainedAt:bug.obtainedAt},identity);}
-  assert.equal(p.go!.candy[f.family],0);assert.equal(p.go!.dust,777);assert.equal(p.buddy,'mine');assert.deepEqual(p.go!.team,['mine']);assert.throws(()=>evolveGo(p,'mine','terminal',NOW));
-  assert.equal(p.go!.candy[f.family],0);
+  assert.equal(p.go!.candy[f.family],2);assert.equal(p.go!.dust,777);assert.equal(p.buddy,'mine');assert.deepEqual(p.go!.team,['mine']);assert.throws(()=>evolveGo(p,'mine','terminal',NOW));
+  assert.equal(p.go!.candy[f.family],2);
  }
 });
 

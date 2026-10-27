@@ -3,7 +3,7 @@ import {Pressable,Text,View} from 'react-native';
 import {movePool} from '../game/goV2';
 import type {Element} from '../game/goV2';
 import {effectiveness} from '../game/goBattleV2';
-import {font,Glyph,Help,V,useInfo} from './uiV2';
+import {Button,font,Glyph,V,useInfo} from './uiV2';
 import type {Glyph as Icon} from './uiV2';
 
 export const GO_TYPES:Record<Element,{name:string;color:string;icon:Icon}>={
@@ -21,4 +21,4 @@ export function GoTypeBadge({type,compact=false}:{type:Element;compact?:boolean}
  return <Pressable accessibilityRole="button" accessibilityLabel={'Type '+t.name} accessibilityHint="Tik of houd vast voor sterke en zwakke types" onPress={e=>{e.stopPropagation();show();}} onLongPress={e=>{e.stopPropagation();show();}} style={{alignSelf:'flex-start',flexDirection:'row',alignItems:'center',gap:3,minHeight:compact?27:34,paddingHorizontal:compact?5:8,paddingVertical:3,borderRadius:14,backgroundColor:t.color+'38',borderWidth:1,borderColor:t.color+'99'}}><Glyph name={t.icon} size={compact?16:20}/>{!compact&&<Text style={{fontFamily:font,fontSize:11,fontWeight:'700',color:V.ink}}>{t.name}</Text>}</Pressable>;
 }
 export function GoTypes({species,compact=false}:{species:string;compact?:boolean}){return <View style={{flexDirection:'row',flexWrap:'wrap',gap:4}}>{movePool(species).types.map(type=><GoTypeBadge key={type} {...{type,compact}}/>)}</View>;}
-export function GoTypeHelp(){return <Help title="Types" body={'Een bug heeft één of twee types. Tik of houd een type-icoon vast voor hulp.\n\n'+Object.entries(GO_TYPES).map(([id,type])=>{const strong=Object.keys(GO_TYPES).filter(k=>effectiveness(id as Element,[k as Element])>1).map(k=>GO_TYPES[k as Element].name);return type.name+' → '+(strong.join(', ')||'geen typebonus');}).join('\n')+'\n\n→ betekent sterk tegen: ×1,6 schade. Dubbele types combineren bonussen en weerstanden. Dezelfde aanval als je eigen type krijgt ×1,2 schade. Aanval, verdediging en schilden bepalen de uiteindelijke schade.'}/>;}
+export function GoTypeHelp(){const info=useInfo(),body='Een bug heeft één of twee types. Tik of houd een type-icoon vast voor hulp.\n\n'+Object.entries(GO_TYPES).map(([id,type])=>{const strong=Object.keys(GO_TYPES).filter(k=>effectiveness(id as Element,[k as Element])>1).map(k=>GO_TYPES[k as Element].name);return type.name+' → '+(strong.join(', ')||'geen typebonus');}).join('\n')+'\n\n→ betekent sterk tegen: ×1,6 schade. Dubbele types combineren bonussen en weerstanden. Dezelfde aanval als je eigen type krijgt ×1,2 schade. Aanval, verdediging en schilden bepalen de uiteindelijke schade.';return <Button small secondary onPress={()=>info.show({title:'Types',body,icon:'info'})}>Types</Button>;}

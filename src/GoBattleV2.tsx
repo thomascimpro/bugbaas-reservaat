@@ -67,7 +67,7 @@ function HP({value,max}:{value:number;max:number}){return <View style={{width:'1
 
 export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;open?:(name:string)=>void}){
 
- const p=view.player,g=p.go!,b=view.goBattle,[picking,setPicking]=useState(false),[code,setCode]=useState(''),[invite,setInvite]=useState(false),[inviteMade,setInviteMade]=useState(0),[live,setLive]=useState(false),[ranks,setRanks]=useState(false),[searchExpired,setSearchExpired]=useState(false),queued=useRef(g.queue?.until),info=useInfo(),{height}=useWindowDimensions(),fighterSize=Math.max(72,Math.min(160,(height-340)*.36));
+ const p=view.player,g=p.go!,b=view.goBattle,[picking,setPicking]=useState(false),[code,setCode]=useState(''),[invite,setInvite]=useState(false),[inviteMade,setInviteMade]=useState(0),[mode,setMode]=useState<'duel'|'daily'|'boss'|'live'>('duel'),[ranks,setRanks]=useState(false),[searchExpired,setSearchExpired]=useState(false),queued=useRef(g.queue?.until),info=useInfo(),{height}=useWindowDimensions(),fighterSize=Math.max(72,Math.min(160,(height-340)*.36)),live=mode==='live';
 
  useEffect(()=>{if(queued.current&&!g.queue&&!b&&now>=queued.current)setSearchExpired(true);if(g.queue)setSearchExpired(false);queued.current=g.queue?.until;},[g.queue?.until,b?.id]);
 
@@ -99,15 +99,17 @@ export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;b
 
  const pool=p.specimens.filter(s=>s.go).sort((a,b)=>stats(b).cp-stats(a).cp),issue=teamIssue(p,g.team,g.league),valid=!issue;
 
- return <ScrollView contentContainerStyle={{padding:16,paddingTop:87,gap:14,paddingBottom:100}}><View style={[v.row,{justifyContent:'space-between'}]}><Title>Strijd</Title><GoTypeHelp/><Help title="Strijd" body="Speel meteen: Echo gebruikt opgeslagen spelerteams of een duidelijk benoemde NPC. De daguitdaging geeft iedereen dezelfde tegenstander; je beste score telt. Dagbazen zijn solo. Live Ranked en vriendenduels staan onder Live spelen; daarvoor moet iemand anders tegelijk beschikbaar zijn. Alleen live Ranked verandert je live Elo."/></View>
+ return <ScrollView contentContainerStyle={{padding:16,paddingTop:87,gap:14,paddingBottom:100}}><View style={[v.row,{justifyContent:'space-between'}]}><Title>Strijd</Title><GoTypeHelp/><Help title="Strijd" body="Duel: speel direct, ook als niemand online is. Dagstrijd: verbeter je dagscore. Dagbaas: versla een sterke bug. Samen online spelen: beide spelers moeten aanwezig zijn."/></View>
 
-  <GoEchoArenaV2 {...{view,run,busy,now}}/>
+  <View accessibilityRole="tablist" style={{flexDirection:'row',gap:5}}>{([{id:'duel',name:'Duel'},{id:'daily',name:'Dagstrijd'},{id:'boss',name:'Dagbaas'}] as const).map(tab=><Pressable key={tab.id} accessibilityRole="tab" accessibilityLabel={tab.name} accessibilityState={{selected:mode===tab.id}} onPress={()=>setMode(tab.id)} style={{flex:1,minHeight:46,alignItems:'center',justifyContent:'center',borderRadius:14,backgroundColor:mode===tab.id?'#426B4A':'#1A4035',borderWidth:1,borderColor:mode===tab.id?'#A2C58D':'#66836C55'}}><Label bold>{tab.name}</Label></Pressable>)}</View>
 
-  <GoDailyChallengeV2 {...{view,run,busy,now}}/>
+  {mode==='duel'&&<GoEchoArenaV2 {...{view,run,busy,now}} onChooseTeam={()=>setPicking(true)}/>}
 
-  <GoBossV2 {...{view,run,busy,now}}/>
+  {mode==='daily'&&<GoDailyChallengeV2 {...{view,run,busy,now}}/>}
 
-  <Button secondary icon="friends" onPress={()=>setLive(!live)}>{live?'Sluit live spelen':'Live spelen · optioneel'}</Button>
+  {mode==='boss'&&<GoBossV2 {...{view,run,busy,now}}/>}
+
+  <Button small secondary icon="friends" onPress={()=>setMode(live?'duel':'live')}>{live?'Terug naar duels':'Samen online spelen'}</Button>
 
   {live&&<><Panel style={{flexDirection:'row',alignItems:'center',gap:16}}><RankEmblem rating={g.rating} size={65}/><View style={{flex:1,gap:5}}><Title>{g.rating}</Title><Label small>Live Elo · {Math.max(0,25-(g.ratedCount??0))} duels over</Label></View></Panel>
 
@@ -121,7 +123,7 @@ export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;b
 
   </>}
 
-  {!live&&<Button small secondary icon="team" onPress={()=>setPicking(true)}>Mijn strijdteam</Button>}
+  {!live&&mode!=='duel'&&<Button small secondary icon="team" onPress={()=>setPicking(true)}>Mijn strijdteam</Button>}
 
   {picking&&<GoTeamPickerV2 player={p} {...{run,busy}} onClose={()=>setPicking(false)}/>}
 

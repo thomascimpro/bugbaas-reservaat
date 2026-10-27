@@ -6,7 +6,7 @@ import type {Held} from './goV2';
 import {catchWild,CATCH_RADIUS,distance} from './walkingV2';
 import {checkV2 as check} from './shopV2';
 import {judgeCatchRhythm} from './catchTimingV2';
-import {netFlickGrade} from './netThrowV2';
+import {netFlickGrade,validNetFlick} from './netThrowV2';
 import type {CatchFocus} from './catchTimingV2';
 import type {HealthProgress} from './adventureSyncV2';
 
@@ -21,7 +21,7 @@ export const BAITS={
  dew:{name:'Dauwdruppel',multiplier:1,cell:5,color:'#66BCD6',hint:'Meer raakruimte voor je net. De bug vlucht niet na deze poging.'},
  fruit:{name:'Bosframboos',multiplier:1,cell:6,color:'#DA7955',hint:'Verdubbelt de soortnectar van deze vangst.'},
  gold:{name:'Gouden lokbloem',multiplier:2.5,cell:7,color:'#EDC45E',hint:'Vangkans ×2,5 voor de volgende rake vangpoging.'},
- silver:{name:'Zilverbes',multiplier:1.8,cell:8,color:'#B5CEDE',hint:'80% hogere vangkans en 7 soortnectar bij een normale vangst.'},
+ silver:{name:'Zilverbes',multiplier:1.8,cell:8,color:'#B5CEDE',hint:'80% hogere vangkans en extra soortnectar: 7, 11 of 23 per evolutiestadium.'},
 } as const;
 export type Net=keyof typeof NETS;
 export type Bait=keyof typeof BAITS;
@@ -52,9 +52,9 @@ export function judgeNet(raw:unknown,bait:Bait|null):{grade:Grade;curved:boolean
  const flick=!!raw&&typeof raw==='object'&&!Array.isArray(raw);if(flick)check(Object.keys(raw).every(k=>['kind','points'].includes(k))&&(raw as {kind?:unknown}).kind==='flick','Ongeldige networp.');
  const input=flick?(raw as {points?:unknown}).points:raw;check(Array.isArray(input)&&input.length>=2&&input.length<=96,'Ongeldige netzwaai.');const trace=input as NetPoint[];
  for(let i=0;i<trace.length;i++){const p=trace[i];check(p&&typeof p==='object'&&!Array.isArray(p)&&Object.keys(p).every(k=>['x','y','t'].includes(k))&&[p.x,p.y,p.t].every(Number.isFinite)&&p.x>=-.4&&p.x<=1.4&&p.y>=-.4&&p.y<=1.6&&p.t>=0&&p.t<=5000&&(i===0?p.t===0:p.t>trace[i-1].t),'Ongeldige beweging.');}
- const first=trace[0],last=trace.at(-1)!,duration=last.t;check(first.y>=(flick ? .75 : .8)&&Math.abs(first.x-.5)<=(flick ? .35 : .3)&&duration>=(flick?60:120)&&duration<=(flick?1200:5000),'Begin bij het net en veeg kort omhoog.');
+ const first=trace[0],last=trace.at(-1)!,duration=last.t;check(first.y>=(flick ? .75 : .8)&&Math.abs(first.x-.5)<=(flick ? .35 : .3)&&duration>=(flick?60:120)&&duration<=5000,'Begin bij het net en veeg kort omhoog.');
  let length=0;for(let i=1;i<trace.length;i++){const dist=Math.hypot(trace[i].x-trace[i-1].x,trace[i].y-trace[i-1].y);check(dist<=.2+(trace[i].t-trace[i-1].t)/1000*12,'De zwaai verspringt te snel.');length+=dist;}
- if(flick)return netFlickGrade(trace,bait);
+ if(flick){check(validNetFlick(trace),'Veeg snel omhoog en laat het net los voordat je de bug raakt.');return netFlickGrade(trace,bait);}
  const aim=Math.hypot(last.x-.5,last.y-.42),phase=(duration%(bait==='dew'?2600:1800))/(bait==='dew'?2600:1800),inside=aim<=ringRadius(duration,bait),grade:Grade=aim>.24?'miss':!inside?'hit':phase>=.8?'perfect':phase>=.5?'great':'nice';
  const straight=Math.hypot(last.x-first.x,last.y-first.y),curved=grade!=='miss'&&trace.length>=5&&length>straight*1.14&&trace.some(p=>Math.abs(p.x-(first.x+(last.x-first.x)*p.t/duration))>.13);return {grade,curved,duration};
 }
