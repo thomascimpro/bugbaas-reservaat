@@ -1,6 +1,7 @@
 import type { Ability, Item, Species } from './typesV2';
-import {baseSpeciesId} from './dexV2';
+import {baseSpeciesId,EVOLUTION_APPEARANCES} from './dexV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
+import {EXPANDED_SPECIES} from './dexExpansionV2';
 export const RULES = 'bugbaas-standard-2.0.0';
 type Row = [string, string, number, number, Ability, string];
 const rows: Row[] = [
@@ -72,11 +73,13 @@ const rows: Row[] = [
 export const SPECIES: Species[] = rows.map((r,i)=>({id:r[0],name:r[1],tier:Math.floor(i/10)+1,attack:r[2],health:r[3],ability:r[4],text:r[5],habitat:i%4,art:i}));
 // New field species have explicit tiers; existing catalog ordering and stats remain stable.
 export const FIELD_SPECIES:Species[]=[
+ ...EXPANDED_SPECIES.map((s):Species=>({id:s.id,name:s.name,tier:s.tier,attack:s.attack,health:s.health,habitat:s.biome==='forest'?1:s.biome==='wetland'?2:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Evolutiestadium '+s.stage+' van dezelfde spelfamilie.'})),
  ...FIELD_FAMILY_SPECIES.map((s):Species=>({id:s.id,name:s.name,tier:s.tier,attack:s.attack,health:s.health,habitat:s.biome==='forest'?1:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Evolutiefamilie met drie spelstadia.'})),
  {id:'beetlegrub',name:'Herculeslarve',tier:1,attack:1,health:4,habitat:1,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een keverlarve uit de bosbodem.'},
  {id:'antlion',name:'Mierenleeuwlarve',tier:4,attack:7,health:3,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'cockroach',name:'Kakkerlak',tier:1,attack:2,health:6,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'cranefly',name:'Langpootmug',tier:1,attack:3,health:3,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'flea',name:'Vlo',tier:2,attack:5,health:2,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'giantwaterbug',name:'Reuzenwaterwants',tier:5,attack:7,health:7,habitat:2,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'mayfly',name:'Eendagsvlieg',tier:2,attack:3,health:2,habitat:2,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'termite',name:'Soldaattermiet',tier:3,attack:5,health:5,habitat:1,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'tortoisebeetle',name:'Schildpadkever',tier:4,attack:3,health:7,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}];
 export const TOKENS: Species[] = ['larva','midgeToken','silkToken','lunaToken','antToken','mothToken'].map((id,i)=>({id,name:['Larve','Mugje','Zijderupsje','Lunamotje','Werkmier','Motje'][i],tier:0,attack:1,health:1,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Tijdelijke hulp in dit gevecht.',habitat:0,art:[16,3,28,11,4,11][i]}));
-export const species = (id:string):Species => { const base=baseSpeciesId(id),s=[...SPECIES,...FIELD_SPECIES,...TOKENS].find(s=>s.id===base); if(!s) throw new Error('Onbekende soort.'); return base===id?s:{...s,id,name:s.name+' · Elite',attack:s.attack+1,health:s.health+1,text:'Elite-spelvorm van '+s.name+'. Dezelfde diersoort met sterker pantser.'}; };
+const speciesById=new Map([...SPECIES,...FIELD_SPECIES,...TOKENS].map(s=>[s.id,s]));
+export const species=(id:string):Species=>{const exact=speciesById.get(id);if(exact)return exact;const base=baseSpeciesId(id),s=speciesById.get(base);if(!s)throw new Error('Onbekende soort.');const appearance=EVOLUTION_APPEARANCES[id];return {...s,id,name:appearance?.name??s.name+' \u00b7 Elite',attack:s.attack+1,health:s.health+1,text:appearance?'Een spel-evolutie van '+s.name+' met een eigen insectmodel. Geen biologische levenscyclus.':'Elite-spelvorm van '+s.name+'. Dezelfde diersoort met sterker pantser.'};};
 export const ITEMS: Item[] = [
  {id:'leafshield',name:'Bladschild',tier:2,price:3,held:true,shield:1,text:'Blokkeert de eerste klap.'},
  {id:'pollen',name:'Stuifmeel',tier:1,price:3,held:false,attack:1,health:1,text:'Geef één bug blijvend +1/+1.'},

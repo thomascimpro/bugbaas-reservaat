@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 import {FIELD_FAMILY_SPECIES} from '../game/fieldFamiliesV2';
+import {usesSharedEvolutionModel} from '../game/dexV2';
+import {EXPANDED_SPECIES} from '../game/dexExpansionV2';
+import {EVOLUTION_ASSETS} from '../game/evolutionAssetsV2';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {clone} from 'three/examples/jsm/utils/SkeletonUtils.js';
 
@@ -16,6 +19,7 @@ export const SHINY_PALETTES:Record<string,readonly [string,string,string]>={
  lacewing:['#433649','#D19C66','#FFF1C1'],
  dungbeetle:['#173E48','#418AB2','#B9F0DC'],
  mantis:['#293B32','#6EAE83','#F2DEA8'],
+ mantis_elite:['#2D2146','#A66FD0','#F5D6F3'],
  butterfly:['#233558','#668DDB','#F9D898'],
  divingbeetle:['#342446','#A16DC5','#D4EDFC'],
  waterstrider:['#253247','#7A93B4','#E8C782'],
@@ -40,6 +44,8 @@ export const SHINY_PALETTES:Record<string,readonly [string,string,string]>={
 };
 export type BugModel={root:THREE.Group;clips:THREE.AnimationClip[]};
 for(const s of FIELD_FAMILY_SPECIES)SHINY_PALETTES[s.id]=s.palette;
+for(const s of EXPANDED_SPECIES)SHINY_PALETTES[s.id]=s.palette;
+for(const [id,s] of Object.entries(EVOLUTION_ASSETS))SHINY_PALETTES[id]=s.palette;
 export async function loadBugModel(name:string):Promise<BugModel>{const g=await new GLTFLoader().loadAsync('/models/'+name+'.glb');return {root:g.scene,clips:g.animations};}
 // A map and its encounter use the same decoded source. Only instances own their skeletons/variants.
 const liveModels=new Map<string,{promise:Promise<BugModel>;model?:BugModel;users:number;at:number}>();
@@ -50,12 +56,12 @@ export function borrowBugModel(name:string){
 }
 const modelBounds=new WeakMap<BugModel,{center:THREE.Vector3;minY:number;edge:number}>();
 export function instanceBug(model:BugModel,size:number,species?:string,shiny=false){
- const root=clone(model.root) as THREE.Group,elite=!!species?.endsWith('_elite'),baseSpecies=species?.replace(/_elite$/,'');
- if(shiny&&baseSpecies&&SHINY_PALETTES[baseSpecies]){
-  const colors=SHINY_PALETTES[baseSpecies].map(c=>new THREE.Color(c));
+ const root=clone(model.root) as THREE.Group,elite=usesSharedEvolutionModel(species??''),baseSpecies=species?.replace(/_elite$/,''),palette=SHINY_PALETTES[species??'']??SHINY_PALETTES[baseSpecies??''];
+ if(shiny&&palette){
+  const colors=palette.map(c=>new THREE.Color(c));
   root.traverse(o=>{if(!(o instanceof THREE.Mesh))return;const original=Array.isArray(o.material)?o.material:[o.material];const materials=original.map(source=>{
    const m:THREE.Material=source.clone();m.userData.bugVariant='shiny';const sheen={value:0};m.userData.shinySheen=sheen;
-   m.onBeforeCompile=shader=>{shader.uniforms.bbSheen=sheen;shader.uniforms.bbShadow={value:colors[0]};shader.uniforms.bbBody={value:colors[1]};shader.uniforms.bbAccent={value:colors[2]};shader.fragmentShader='uniform float bbSheen;\nuniform vec3 bbShadow;\nuniform vec3 bbBody;\nuniform vec3 bbAccent;\n'+shader.fragmentShader;shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+   m.onBeforeCompile=shader=>{shader.uniforms.bbSheen=sheen;shader.uniforms.bbShadow={value:colors[0]};shader.uniforms.bbBody={value:colors[1]};shader.uniforms.bbAccent={value:colors[2]};shader.fragmentShader='uniform float bbSheen;\nuniform vec3 bbShadow;\nuniform vec3 bbBody;\nuniform vec3 bbAccent;\n'+shader.fragmentShader;const colorChunk='vertexColors' in source&&source.vertexColors?'color_fragment':'map_fragment';shader.fragmentShader=shader.fragmentShader.replace('#include <'+colorChunk+'>',`#include <${colorChunk}>
     vec3 bbSource=sqrt(max(diffuseColor.rgb,vec3(0.0)));
     float bbValue=dot(bbSource,vec3(0.2126,0.7152,0.0722));
     vec3 bbColor=mix(bbShadow,bbBody,smoothstep(0.04,0.55,bbValue));

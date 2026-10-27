@@ -1,5 +1,6 @@
 import type {WorldSites} from './worldSitesV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
+import {EXPANDED_SPECIES} from './dexExpansionV2';
 import type {Geometry} from 'geojson';
 import type {Fix} from './walkingV2';
 
@@ -25,5 +26,6 @@ const ONLY:Record<string,Biome[]>={giantwaterbug:['wetland'],mayfly:['wetland'],
 const LIKES:Record<string,Biome[]>={cockroach:['urban'],flea:['urban'],cranefly:['meadow','wetland'],termite:['forest'],tigerbeetle:['meadow'],tortoisebeetle:['meadow','forest'],aphid:['meadow'],weevil:['forest'],moth:['forest'],grasshopper:['meadow'],lacewing:['meadow','wetland'],dungbeetle:['forest'],mantis:['meadow','forest'],hoverfly:['meadow','wetland'],cricket:['meadow'],silverfish:['urban'],caterpillar:['meadow','forest']};
 export function weatherMultiplier(id:string,w?:FieldWeather){if(!w||w.stale||w.kind==='unknown')return 1;if(w.isDay===false&&['moth','cricket','earwig'].includes(id))return 1.7;if(w.kind==='sunny'&&w.isDay!==false&&['butterfly','grasshopper','mantis','hoverfly','leafhopper'].includes(id))return 1.6;if(w.kind==='rainy'&&['divingbeetle','waterstrider','earwig','aphid'].includes(id))return 1.7;if(w.kind==='windy'&&['moth','butterfly','lacewing','hoverfly'].includes(id))return 1.4;if((w.kind==='cloudy'||w.kind==='fog')&&['moth','earwig','cricket'].includes(id))return 1.3;return 1;}
 for(const s of FIELD_FAMILY_SPECIES)LIKES[s.id]=[s.biome];
+for(const s of EXPANDED_SPECIES)LIKES[s.id]=[s.biome];
 export function habitatWeight(id:string,base:number,biome?:Biome,weather?:FieldWeather){if(!biome)return base;if(ONLY[id]&&!ONLY[id].includes(biome))return 0;return base*(LIKES[id]?.includes(biome)?2:1)*weatherMultiplier(id,weather);}
 export function unknownHabitat(now:number):HabitatContext{return {environment:{biome:'unknown',mapSource:'unavailable',weather:{...UNKNOWN_WEATHER},at:now},biomeAt:()=> 'unknown',canSpawnAt:()=>true};}

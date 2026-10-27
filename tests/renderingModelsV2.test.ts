@@ -17,11 +17,16 @@ test('map and catch share one decoded model, and eviction preserves active lease
  }finally{GLTFLoader.prototype.loadAsync=original;}
 });
 
-test('Elite forms keep source anatomy/materials and combine original shiny colours with gold trim',()=>{
+test('distinct evolution meshes retain their normal materials and apply a body shiny without legacy gold trim',()=>{
  const root=new THREE.Group(),source=new THREE.MeshStandardMaterial({color:'#AA7733'});root.add(new THREE.Mesh(new THREE.BoxGeometry(2,1,1),source));const model={root,clips:[]};
- const normal=instanceBug(model,3,'ant'),elite=instanceBug(model,3,'ant_elite'),shiny=instanceBug(model,3,'ant_elite',true),inner=(g:THREE.Group)=>(g.children[0] as THREE.Group),material=(g:THREE.Group)=>(inner(g).children[0] as THREE.Mesh).material as THREE.Material;
- assert.equal(material(normal.group),source);assert.notEqual(material(elite.group),source);assert.equal(material(elite.group).userData.bugVariant,'elite');assert.equal(inner(elite.group).scale.x,inner(normal.group).scale.x*1.1);assert.equal(source.userData.elite,undefined);
- const shader={uniforms:{},fragmentShader:'#include <map_fragment>\n#include <opaque_fragment>'};material(shiny.group).onBeforeCompile(shader as never,{} as never);assert.match(shader.fragmentShader,/bbEliteRim/);assert.match(shader.fragmentShader,/bbShadow/);assert.equal(material(shiny.group).userData.bugVariant,'shiny');assert.equal(material(shiny.group).userData.elite,true);
+ const normal=instanceBug(model,3,'beetle'),elite=instanceBug(model,3,'beetle_elite'),shiny=instanceBug(model,3,'beetle_elite',true),inner=(g:THREE.Group)=>(g.children[0] as THREE.Group),material=(g:THREE.Group)=>(inner(g).children[0] as THREE.Mesh).material as THREE.Material;
+ assert.equal(material(normal.group),source);assert.equal(material(elite.group),source);assert.equal(inner(elite.group).scale.x,inner(normal.group).scale.x);assert.equal(source.userData.elite,undefined);
+ const shader={uniforms:{},fragmentShader:'#include <map_fragment>\n#include <opaque_fragment>'};material(shiny.group).onBeforeCompile(shader as never,{} as never);assert.doesNotMatch(shader.fragmentShader,/bbEliteRim/);assert.match(shader.fragmentShader,/bbShadow/);assert.equal(material(shiny.group).userData.bugVariant,'shiny');assert.equal(material(shiny.group).userData.elite,undefined);
+});
+
+test('new stage meshes skip legacy gold trim and shiny applies after authored vertex colors',()=>{
+ const root=new THREE.Group(),source=new THREE.MeshStandardMaterial({color:'#FFFFFF',vertexColors:true});root.add(new THREE.Mesh(new THREE.BoxGeometry(2,1,1),source));const model={root,clips:[]},normal=instanceBug(model,3,'mantis_elite'),shiny=instanceBug(model,3,'mantis_elite',true),material=(g:THREE.Group)=>((g.children[0] as THREE.Group).children[0] as THREE.Mesh).material as THREE.Material;
+ assert.equal(material(normal.group),source);assert.equal(material(normal.group).userData.elite,undefined);assert.equal(material(shiny.group).userData.elite,undefined);const shader={uniforms:{},fragmentShader:'#include <map_fragment>\n#include <color_fragment>\n#include <opaque_fragment>'};material(shiny.group).onBeforeCompile(shader as never,{} as never);assert.ok(shader.fragmentShader.indexOf('vec3 bbSource')>shader.fragmentShader.indexOf('#include <color_fragment>'));assert.doesNotMatch(shader.fragmentShader,/bbEliteRim/);assert.equal(source.userData.bugVariant,undefined);
 });
 
 

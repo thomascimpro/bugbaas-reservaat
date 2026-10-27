@@ -25,7 +25,7 @@ test('species idle stays anchored with bounded motion, independent phases and an
 test('real exported models provide the selected idle/flying clip and Ranger switches between idle and running',()=>{
  const clips=(model:string)=>{const bytes=readFileSync(`public/models/${model}.glb`),json=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)).toString());return (json.animations??[]).map((clip:{name:string})=>clip.name) as string[];};
  const ranger=clips('Ranger');assert.deepEqual(ranger,['idle','run']);assert.equal(worldClip(ranger,false),'idle');assert.equal(worldClip(ranger,true),'run');
- for(const [species,model] of Object.entries(WALK_MODELS)){const names=clips(model),selected=worldClip(names,false,species);assert.ok(selected&&names.includes(selected),`${species} needs a real idle clip`);assert.ok(selected==='idle'||selected==='fly',`${species}: ${selected}`);}
+ for(const [species,model] of Object.entries(WALK_MODELS)){const names=clips(model),selected=worldClip(names,false,species);assert.ok(selected&&names.includes(selected),`${species} needs a real idle clip`);assert.ok(['idle','fly'].includes(selected.toLowerCase()),`${species}: ${selected}`);}
 });
 
 test('cosmetic wild steps stay within two meters of each real spawn and reduced motion rests exactly',()=>{

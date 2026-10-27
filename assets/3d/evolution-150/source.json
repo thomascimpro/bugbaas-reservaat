@@ -1,0 +1,3059 @@
+{
+  "version": 1,
+  "created": "2026-10-26",
+  "models": [
+    {
+      "target_id": "beetle_elite",
+      "dex_number": 33,
+      "family": "beetle",
+      "stage": 2,
+      "asset_name": "beetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "beetleEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "14a2c934e9469a05dff11b4802ec7d37a6530b3b2cba9322b79ab7cb82d4bd37",
+      "bytes": 78076,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "5add91ad5628e886ac7829c38c2d8d124c2577cdd23154853eb07402d8397e15",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "beetle_ultimate",
+      "dex_number": 93,
+      "family": "beetle",
+      "stage": 3,
+      "asset_name": "beetleUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "beetleUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "7e86a0e8b75843de10877a1badc6b9f3693a950495716e192d86f2eac6ca73c3",
+      "bytes": 81620,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "a4beeb2f99a9c1c0182a1089bb5e722413240d766fbfeb95479d3352f80ffe09",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "ant_ultimate",
+      "dex_number": 94,
+      "family": "ant",
+      "stage": 3,
+      "asset_name": "antUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "antUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "6e3bee3957df0c6c22d3cdea69f0989565b72b0d111fe2c4dc02984cc66d8663",
+      "bytes": 93732,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "df6b5bb1d12f15a98cdd015e094fbc8f15332c06246c22e9306c0bfac03ac05a",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "aphid_elite",
+      "dex_number": 35,
+      "family": "aphid",
+      "stage": 2,
+      "asset_name": "aphidEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "aphidEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "bd0d987897d2b7a4bcea3b97f2a9e956919b2f0e9295f545e278aed98c40fd6b",
+      "bytes": 87988,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "8a20a9ee4cb98e6d1777bc0dc8e63df988950b9498606ffd9768636de93ea662",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "aphid_ultimate",
+      "dex_number": 95,
+      "family": "aphid",
+      "stage": 3,
+      "asset_name": "aphidUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "aphidUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "585958de6bdbcb1a62e876057332e6f468d3104bb7774f15ae91f82083fb2db9",
+      "bytes": 118440,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "4d38195e93286f46ffb0b2eeaf6c572985e82ed61f2f6d738ee516cc38f26432",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "weevil_elite",
+      "dex_number": 36,
+      "family": "weevil",
+      "stage": 2,
+      "asset_name": "weevilEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "weevilEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "b03291cb4024334b3dc619622e71f233c7de839d3c9df2e734593995ba15964c",
+      "bytes": 80576,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "dd9dde2085f2c9ef2439ac58442c4592154295588182920f562c174291d3d54b",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "weevil_ultimate",
+      "dex_number": 96,
+      "family": "weevil",
+      "stage": 3,
+      "asset_name": "weevilUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "weevilUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "a195fb9f1eeea4d7ca69c4553e0dad28dce2f8d0a269632bfaf9380a436ebe66",
+      "bytes": 84096,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "e029cd85b9def9482baacc5aa17f5599bfee5da439736b6fa1c7779ca14ca92a",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "earwig_elite",
+      "dex_number": 38,
+      "family": "earwig",
+      "stage": 2,
+      "asset_name": "earwigEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "earwigEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "207929b332e71f21cad86c8e497d44ded28f1f8ef7d849e4b62d2518dcb8d4a0",
+      "bytes": 90976,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "177c41d7c967adfd0813cc074319708c3936cc5d34377e47277a5cec7d8ddc12",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "earwig_ultimate",
+      "dex_number": 97,
+      "family": "earwig",
+      "stage": 3,
+      "asset_name": "earwigUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "earwigUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "30ae13f35ad9816a2042b0114d4cd3aa9215243c376aa8fefb67c11d52097d44",
+      "bytes": 103240,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "abaa708e7fa41e6f5b7971ddf6c8bdaa5b9d0f9829b90f919f6674ffb24d2591",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "grasshopper_elite",
+      "dex_number": 39,
+      "family": "grasshopper",
+      "stage": 2,
+      "asset_name": "grasshopperEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "grasshopperEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "f9322768417f496bb1090a4e0c5c1b6bd89c4638730294219d26dbf60022fb06",
+      "bytes": 65708,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "3cc4158d6aed32d9e9c9e8c567455e59078a25d49000d952dbeb4693bfd7bd7b",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "grasshopper_ultimate",
+      "dex_number": 98,
+      "family": "grasshopper",
+      "stage": 3,
+      "asset_name": "grasshopperUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "grasshopperUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "1a7f20039f4cf13b616fcaed8dfcf2e877be01b3cb3a24dd8b137ff701db5719",
+      "bytes": 78088,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "e9ef82883acdd44d06b5e624568365b3c9b0c5eca4d7b8bed241933dbcdcc7d7",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "lacewing_elite",
+      "dex_number": 40,
+      "family": "lacewing",
+      "stage": 2,
+      "asset_name": "lacewingEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "lacewingEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "fb8d69b369d60a751b2d8443d76ec9cd21729f8278406e246869af7e8e922d86",
+      "bytes": 119124,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "02ad0e5e3ac41479d6fa508bf32d63b717dfc6ba8c83ab0926f60d295a1fbfab",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "lacewing_ultimate",
+      "dex_number": 99,
+      "family": "lacewing",
+      "stage": 3,
+      "asset_name": "lacewingUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "lacewingUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "f4afce8f1e7dcf249b1057dac7841c02051e4cdfe566cf2abd4cf1b9e217e5fe",
+      "bytes": 126760,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "a61e26413e2465234d48c06ef0d9531448d50bc91858b88075fcb6a1b9a435f2",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "dungbeetle_elite",
+      "dex_number": 41,
+      "family": "dungbeetle",
+      "stage": 2,
+      "asset_name": "dungbeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "dungbeetleEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "16a27e62b4ccddcc608a2d985855812b8cfce12c0a77cd9987560391b4e79519",
+      "bytes": 85080,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "05adae4bbd23c00015e0ea8f725bf93b43a98a0764140e8480b0bd686229e2a3",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "dungbeetle_ultimate",
+      "dex_number": 100,
+      "family": "dungbeetle",
+      "stage": 3,
+      "asset_name": "dungbeetleUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "dungbeetleUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "af451fa909c8a1943c0c967d5a1c37d0d226ab6af70bd9c2b52b6a4276551863",
+      "bytes": 88616,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "287dca174e74396b399b1301cfbc261b533fa1084a4570a99f7231f33196a788",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "mantis_ultimate",
+      "dex_number": 101,
+      "family": "mantis",
+      "stage": 3,
+      "asset_name": "mantisUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "mantisUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "27b3035935e0daf6107f6e1f029b290897b2734c073b92309e6d9daf2cf8c226",
+      "bytes": 95968,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "c24306ff7db40a34effe5fdd1fd9a2d0a39661a045c2e9f2064f84dbd33c6fe1",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "butterfly_ultimate",
+      "dex_number": 102,
+      "family": "butterfly",
+      "stage": 3,
+      "asset_name": "butterflyUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "butterflyUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "2a250d47c4609d3c580115e5d8eabd7ad750c5b9b270ae6657d66d24fd02483c",
+      "bytes": 203248,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "ed0c597755fbfb3c05c4f9424c4d84e81f81856955400946df06dbb2657c5dac",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "divingbeetle_elite",
+      "dex_number": 44,
+      "family": "divingbeetle",
+      "stage": 2,
+      "asset_name": "divingbeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "divingbeetleEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "6ee0c623551317f31de9561770e326bff3a10754b7c952043594302aac688aec",
+      "bytes": 76876,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "e578498764013bd3facad2293f2f9a7acd8806fbed77484c7cbcd6214d0c5d54",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "divingbeetle_ultimate",
+      "dex_number": 103,
+      "family": "divingbeetle",
+      "stage": 3,
+      "asset_name": "divingbeetleUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "divingbeetleUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "ff83fd1c5c6a0bbc3eef7bfd5d8bc73c1aabd70b54653ee6060e27e32e956ba4",
+      "bytes": 95824,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "b037ece9c55ca1635eda910f797c6650c24a2e0309c075d9053ba0af8ff5ab94",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "waterstrider_elite",
+      "dex_number": 45,
+      "family": "waterstrider",
+      "stage": 2,
+      "asset_name": "waterstriderEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "waterstriderEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "d56ff105e5d24e4e505470bf0a24c0b5d2c35c5f2678456cb2a351639b7a1a15",
+      "bytes": 98932,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "4b1b5b251d45474dc05e085a33a07f8cb2c5f154e245e01c4f2888725e533fbb",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "waterstrider_ultimate",
+      "dex_number": 104,
+      "family": "waterstrider",
+      "stage": 3,
+      "asset_name": "waterstriderUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "waterstriderUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "084a3f12db829bd27d22e52004ff424a19a51b6f27e95d6f55cec88736779964",
+      "bytes": 106636,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "4dfe0e04e8b0158347b662ff940baa4b2777e47dd98d0dafcc87d9c1974aa26f",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "hoverfly_elite",
+      "dex_number": 46,
+      "family": "hoverfly",
+      "stage": 2,
+      "asset_name": "hoverflyEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "hoverflyEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "70be968315c3e03eff24e743b7b54ec5629fdc3122c549b09ec9c62b5e19bdb7",
+      "bytes": 99788,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "42d1818eaa480d79036661c4e28848abbab5d9d1d47e19abe27a3e2ce879c3c4",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "hoverfly_ultimate",
+      "dex_number": 105,
+      "family": "hoverfly",
+      "stage": 3,
+      "asset_name": "hoverflyUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "hoverflyUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "ee19821d3e3306c777b371b8c637e4817da419879da754059dde0dd2b4477485",
+      "bytes": 107324,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "26ea73eb9fe394d899d99daa53557b37573a0cd4faf33a1757993aa2af941cef",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "leafhopper_elite",
+      "dex_number": 47,
+      "family": "leafhopper",
+      "stage": 2,
+      "asset_name": "leafhopperEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "leafhopperEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "720d0c9d81f2f555a9e9e4d9232628f45d4428c216d86c4a21d40b8c786233fe",
+      "bytes": 87692,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "573ab28a74886e6ac038a36b7303a1b14f6b5d6ce0b00827400ab2be00aaef7b",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "leafhopper_ultimate",
+      "dex_number": 106,
+      "family": "leafhopper",
+      "stage": 3,
+      "asset_name": "leafhopperUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "leafhopperUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "fd12950f70eb2855904e7b262b368fe4a06522019329c64dde7f3e23d293414a",
+      "bytes": 89576,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "9fd80793127933c3070907bf59284a4ee386abcf804ffec9d566a24f955e5f6f",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cricket_elite",
+      "dex_number": 48,
+      "family": "cricket",
+      "stage": 2,
+      "asset_name": "cricketEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "cricketEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "e60fcdc73682cf5cf7792539207953e8d42de0d8c92cdb15956cacc27f3617f5",
+      "bytes": 71612,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "ae751e133a8e4959da6e05aa42556f52f5289505d16185db8eb6e79d4c97cbb5",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cricket_ultimate",
+      "dex_number": 107,
+      "family": "cricket",
+      "stage": 3,
+      "asset_name": "cricketUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "cricketUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "23a6edc1b560af542c69b1e27578fc0d530dd1fcb3108b049743cc6c71c44d67",
+      "bytes": 92564,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "4d841e4a63d1e18372a0381dbd0bdf6c6d6266e99ceb049348280306f8bee23f",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "stick_elite",
+      "dex_number": 49,
+      "family": "stick",
+      "stage": 2,
+      "asset_name": "stickEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "stickEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "aa8e1ffd2eb318a4e5204fd1f6ea5172c06f0bc6667f387689889786f169c46e",
+      "bytes": 71560,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "2f666746d15771de75044ec174d723ea1e23148ee384a845204b0eaef371d0db",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "stick_ultimate",
+      "dex_number": 108,
+      "family": "stick",
+      "stage": 3,
+      "asset_name": "stickUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "stickUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "4b88ca35045d0e05be82cfc7a3a4ffe667b5f187a398246615d97ecd99e84332",
+      "bytes": 76820,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "3d54ff2cfcb4a24d9cddf3d50f881ffef8185276722811ef5036e15f46e93fa7",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "leaf_elite",
+      "dex_number": 50,
+      "family": "leaf",
+      "stage": 2,
+      "asset_name": "leafEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "leafEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "50370191959a781adfaca8cfda5c4b504b064513ad4063aa505f5a7061637b04",
+      "bytes": 73560,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "b2d7fd24d0758b0c4f821faa3001db453edcedd0117abb40b207dc8bb8af08c6",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "leaf_ultimate",
+      "dex_number": 109,
+      "family": "leaf",
+      "stage": 3,
+      "asset_name": "leafUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "leafUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "f09fdeaf90c6637e7097d94817260ffc4df0591105e4edc2f7e0f2d01e03ad5e",
+      "bytes": 76644,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "53294b4102b9f3eb49a4b6e10e40787d62d534059660873695d4d750853374d6",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "silverfish_elite",
+      "dex_number": 51,
+      "family": "silverfish",
+      "stage": 2,
+      "asset_name": "silverfishEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "silverfishEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "0d78b9d5c1add26219b425e242559206553737691409bbc888941522c5770b23",
+      "bytes": 102060,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "c2002ccc79a8c4da297e3d16908b1d903446e3d7cc7817a1090606e62f952377",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "silverfish_ultimate",
+      "dex_number": 110,
+      "family": "silverfish",
+      "stage": 3,
+      "asset_name": "silverfishUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "silverfishUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "006fc01f4e19c70f89c68224b7c6333e5a5a6a8da61a0df0f5fb6f68f355d1e5",
+      "bytes": 116952,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "6ed72d5d5f4f255385de5876fd77e79719d15793d487621b3f7daa373fe17ea1",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "moth_elite",
+      "dex_number": 37,
+      "family": "caterpillar",
+      "stage": 3,
+      "asset_name": "mothEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "mothEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "a213376f48278e6b4909067f58f2c6f11418cc136539af933cd19b17a902759f",
+      "bytes": 211780,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "cf5ff2435b4ac34f8460b6954820ef0485a871558c4ff86bb812956625000218",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "antlion_elite",
+      "dex_number": 53,
+      "family": "antlion",
+      "stage": 2,
+      "asset_name": "antlionEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "antlionEliteUnique.glb",
+      "source": "OriginalAdultAntlion",
+      "sourceGeometryReused": false,
+      "sha256": "8a1c364f06586ea645453e11c84ea593605765c725629c776dc87836c9bd8edb",
+      "bytes": 149716,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "attack",
+        "fly",
+        "idle",
+        "walk"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "f3575f47e7e13d13bf9ee548ac1b3c95c67dc3ed74b3cbf8b8743dab6da86356",
+      "materialFixes": []
+    },
+    {
+      "target_id": "antlion_ultimate",
+      "dex_number": 111,
+      "family": "antlion",
+      "stage": 3,
+      "asset_name": "antlionUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "antlionUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "c375566b91afb1af86282d1a1ec36008536911d58a3386b46aaeaa6fe214c681",
+      "bytes": 126760,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "774cbcb73701a182449ca34e63d48bee8a1fa995f5837cde2fdf8b4be3dfa747",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cockroach_elite",
+      "dex_number": 54,
+      "family": "cockroach",
+      "stage": 2,
+      "asset_name": "cockroachEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "cockroachEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "0777f9301cc67ba1c0bb51fa0fd221f7fce2dd2e78bc2683053081e29f8fd099",
+      "bytes": 91280,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "cebdcf3180d38747b5a46f84d7fc7cf466c980430e3a9a57e31e83e89f56ea84",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cockroach_ultimate",
+      "dex_number": 112,
+      "family": "cockroach",
+      "stage": 3,
+      "asset_name": "cockroachUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "cockroachUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "241f94a181f5facfe84e93695cd6e1487f0a0c1bce9a2687b92ab5ad98b2f47a",
+      "bytes": 103548,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "0281abdc8c6f268d6be00996e72ba34fa5b2a1aed0d909c9f1b130f5b9272fec",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cranefly_elite",
+      "dex_number": 55,
+      "family": "cranefly",
+      "stage": 2,
+      "asset_name": "craneflyEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "craneflyEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "b3b25833ddb77838284f588004b84ffe2e7a4a67c5424f854aaf5c631f92b5b0",
+      "bytes": 110944,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "fabcf9e3d8eb43d8df6c309a01c0e2a973082c0288b0d9503f7d98fb565f9d57",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cranefly_ultimate",
+      "dex_number": 113,
+      "family": "cranefly",
+      "stage": 3,
+      "asset_name": "craneflyUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "craneflyUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "4daca94e88741e8a64413515310e78ae8c8278e6bd43b6d75b0e28698fe3cef1",
+      "bytes": 118644,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "5418d38bdd24b5b87511cbdd917ce53e914b49ccc6b2c1786dc9019be0e91221",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "flea_elite",
+      "dex_number": 56,
+      "family": "flea",
+      "stage": 2,
+      "asset_name": "fleaEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "fleaEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "ca283355d8e9890517c12f7f6605ecf029d76bf949b656079c3003fd9664ac07",
+      "bytes": 61980,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "f95081419bb9728f42ce352e0056de0d6cf1a7b60eda5f501dabc9b5921e3922",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "flea_ultimate",
+      "dex_number": 114,
+      "family": "flea",
+      "stage": 3,
+      "asset_name": "fleaUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "fleaUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "b94558dc73e59396f4e1eb60893b3a7819ca965537a35fe374e8410f52596df4",
+      "bytes": 73976,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "cb8010998d0f10c0a3005ffd2a504f108fdf5fdd5193828f1c5f38565b398cd7",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "giantwaterbug_elite",
+      "dex_number": 57,
+      "family": "giantwaterbug",
+      "stage": 2,
+      "asset_name": "giantwaterbugEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "giantwaterbugEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "71e151a9fbc7cd9e6653fb6bfb1565c8fef4ab29b9d6d5ec8593f9bd01f1ee9c",
+      "bytes": 85636,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "6a2e8ffe6e95096da300304f047d3b52297ef224f8085279f880ba76c6541666",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "giantwaterbug_ultimate",
+      "dex_number": 115,
+      "family": "giantwaterbug",
+      "stage": 3,
+      "asset_name": "giantwaterbugUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "giantwaterbugUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "029ec0d021f82c50162f981bf836a238b6ce753f0633b5367c4879ed64690858",
+      "bytes": 123704,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "c4f85c9df7b0b102279d16e11440b6b7f26cff4a1b2a0847bee0455d9087f907",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "mayfly_elite",
+      "dex_number": 58,
+      "family": "mayfly",
+      "stage": 2,
+      "asset_name": "mayflyEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "mayflyEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "7ab7b0c884535c169989630774da0ba8cdf4d39ea6c04a960f63d580e249b745",
+      "bytes": 122780,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "36c2534770a339ebcfec0dfa4f21bc892772d5757aff1e6a042a259794c155db",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "mayfly_ultimate",
+      "dex_number": 116,
+      "family": "mayfly",
+      "stage": 3,
+      "asset_name": "mayflyUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "mayflyUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "075c7c550639f948b9ac9be5b26af87124772129058ff8f70d93acd3c1f4e61f",
+      "bytes": 130484,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "94beb96630973ad7c23b5cf3deb03a3751cf6e6969045585e491a5be98c72b92",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "termite_elite",
+      "dex_number": 59,
+      "family": "termite",
+      "stage": 2,
+      "asset_name": "termiteEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "termiteEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "74eb1f18b5c91554f50918d3a5af34a12a3b28487699b8b5de8c4c28ce41ca64",
+      "bytes": 110932,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "6a3871711410d245e3e5459bde43703e56a8fa443721d5e7ba845ac18dcee39d",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "termite_ultimate",
+      "dex_number": 117,
+      "family": "termite",
+      "stage": 3,
+      "asset_name": "termiteUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "termiteUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "54485fc81c3f3a949a4791ee1276bfad85ca9de468b7e42d47d75c1046dbe2b0",
+      "bytes": 116040,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "anatomical trunk segmentation with authentic cerci, pincers or queen abdomen"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "07979cdde473816cd3ca8c2da06c87e1a3b1a36b667d2485074aef598e960723",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "tigerbeetle_elite",
+      "dex_number": 60,
+      "family": "tigerbeetle",
+      "stage": 2,
+      "asset_name": "tigerbeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "tigerbeetleEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "bd179e820c80c296bb78739207d61c8f1ac90b404a79f697fa05e70b5098e2bb",
+      "bytes": 81700,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "4ec7b19c118962915422e16c08642edd64a7602045d897ffc82210d7456773e5",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "tigerbeetle_ultimate",
+      "dex_number": 118,
+      "family": "tigerbeetle",
+      "stage": 3,
+      "asset_name": "tigerbeetleUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "tigerbeetleUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "de3f5f3251651bd7f915d231f6579e284fc3a6a460fcbad07c1bd145668dd7e9",
+      "bytes": 118500,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "984d9c4dba0af1244273800fb187f6a3494375fc8833c1af9664d0e6e20357f2",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "tortoisebeetle_elite",
+      "dex_number": 61,
+      "family": "tortoisebeetle",
+      "stage": 2,
+      "asset_name": "tortoisebeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "tortoisebeetleEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "93678b07000716ea113d8f0d25829d6f47887992b02332872ef628b030cdcab4",
+      "bytes": 80064,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "60da7b5d29dc9bb6ec1d95714a34c9fdf15bb894f5bc0d3748c497f675d7f91e",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "tortoisebeetle_ultimate",
+      "dex_number": 119,
+      "family": "tortoisebeetle",
+      "stage": 3,
+      "asset_name": "tortoisebeetleUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "tortoisebeetleUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "848369305e46bd3f933a8eabd45314897c96bc52252f5c88cd7703f2cc49de27",
+      "bytes": 124476,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "4ab44f3aabf61fad27affa33a9c796acb97af34010f93f4fb166104fdb79202a",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "hercules_elite",
+      "dex_number": 52,
+      "family": "beetlegrub",
+      "stage": 3,
+      "asset_name": "herculesEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "herculesEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "a1c0e8235cbbd5e639bafe1321ad725fb69d8864bf46a2d6176f4e47ac07c8f6",
+      "bytes": 88604,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "d56d29dbf338844489e02bf5e991fb603375dab0889501db438d9839d7ede0a9",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "bee_elite",
+      "dex_number": 62,
+      "family": "bee",
+      "stage": 2,
+      "asset_name": "beeEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "beeEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "811dcc42696421be7971dcafdda1403e0573bca0037db7c4d50134e3be0a14ab",
+      "bytes": 109120,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "f4877eef573d11a7cc528c5f2a59bb3f08ce358a4ef96d642c7856208824f2f8",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "bee_ultimate",
+      "dex_number": 120,
+      "family": "bee",
+      "stage": 3,
+      "asset_name": "beeUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "beeUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "25efaf187d61aeb41fe668419efa7fedc5124915002ae49d5134a940c4b9b034",
+      "bytes": 116648,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "0ac16229ef4e01fdb36156f2031546299a5c53da388e7a8c2c2625134f25ca60",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "spider_1",
+      "dex_number": 121,
+      "family": "spider",
+      "stage": 1,
+      "asset_name": "SpiderStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "SpiderStage1.glb",
+      "source": "Spiderling",
+      "sourceGeometryReused": true,
+      "sha256": "17d33cf3462616f57f33002c5328ac3c1bc19a94d5cdbd3c17b0ef5ed1eeebc8",
+      "bytes": 1033852,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 1,
+      "drawCalls": 1,
+      "animations": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Hit",
+        "Death",
+        "GetUp",
+        "Bite",
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [],
+      "author": "danielgruginski / algumacoisaqq",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://github.com/danielgruginski/Insectoids",
+      "downloadUrl": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/export/godot/Spiderling/Spiderling.glb",
+      "sourceSha256": "b15f9bc10fe7a1e42c6266d1217bcade4adb9e1c3c0ea343ddd289ab5f18f57f",
+      "geometrySha256": "eb09917cd16037893b622be12d8b9af8e33314565c00d50b00d7fbaef036e22f",
+      "materialFixes": [
+        "Official author T_Spiderling.png embedded as base color; Wasp wing uses T_Wasp_Wing.png; bake vertex channels removed"
+      ]
+    },
+    {
+      "target_id": "spider_2",
+      "dex_number": 122,
+      "family": "spider",
+      "stage": 2,
+      "asset_name": "SpiderStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "SpiderStage2.glb",
+      "source": "Spider",
+      "sourceGeometryReused": true,
+      "sha256": "4889b6f23825f8028d3b35e461277ebca735808fc3524cd3f855b07c6d818c6c",
+      "bytes": 2082872,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 1,
+      "drawCalls": 1,
+      "animations": [
+        "GetUp",
+        "Idle",
+        "Walk",
+        "Run",
+        "Hit",
+        "Death",
+        "Bite",
+        "Strike",
+        "WebSpit",
+        "Threat",
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [],
+      "author": "danielgruginski / algumacoisaqq",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://github.com/danielgruginski/Insectoids",
+      "downloadUrl": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/export/godot/Spider/Spider.glb",
+      "sourceSha256": "01392cd888484d89beead84dbfa90a5b5b09880df19a20b5b7055926ae5f71de",
+      "geometrySha256": "19d33583f7a898e61bbe23908922bdc713a5ebf2c81a872c023219fdd93670fa",
+      "materialFixes": [
+        "Official author T_Spider.png embedded as base color; Wasp wing uses T_Wasp_Wing.png; bake vertex channels removed"
+      ]
+    },
+    {
+      "target_id": "spider_3",
+      "dex_number": 123,
+      "family": "spider",
+      "stage": 3,
+      "asset_name": "SpiderStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "SpiderStage3.glb",
+      "source": "Broodmother",
+      "sourceGeometryReused": true,
+      "sha256": "b5970e6a1df02e1d07f355799188e915b1a2843a2b7edb27f512d44f3821d190",
+      "bytes": 2271616,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 1,
+      "drawCalls": 1,
+      "animations": [
+        "Idle",
+        "Walk",
+        "Hit",
+        "Death",
+        "GetUp",
+        "Bite",
+        "Threat",
+        "Spawn",
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [],
+      "author": "danielgruginski / algumacoisaqq",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://github.com/danielgruginski/Insectoids",
+      "downloadUrl": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/export/godot/Broodmother/Broodmother.glb",
+      "sourceSha256": "0c030b9d739bc556607c920d0a9b2a85866ffe349f13c9331c469993e8e80b07",
+      "geometrySha256": "310e9132ecee40e3f787ea39ff8942002ec898473f62272f22181e85a5f42048",
+      "materialFixes": [
+        "Official author T_Broodmother.png embedded as base color; Wasp wing uses T_Wasp_Wing.png; bake vertex channels removed"
+      ]
+    },
+    {
+      "target_id": "armabee_1",
+      "dex_number": 124,
+      "family": "armabee",
+      "stage": 1,
+      "asset_name": "ArmabeeStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "ArmabeeStage1.glb",
+      "source": "Armabee",
+      "sourceGeometryReused": true,
+      "sha256": "a223f40a6311a806a326a5e28c88e8de635939da166f5be6e5bf005c30fbafd6",
+      "bytes": 99644,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 5,
+      "animations": [
+        "CharacterArmature|Death",
+        "CharacterArmature|Fast_Flying",
+        "CharacterArmature|Flying_Idle",
+        "CharacterArmature|Headbutt",
+        "CharacterArmature|HitReact",
+        "CharacterArmature|No",
+        "CharacterArmature|Punch",
+        "CharacterArmature|Yes",
+        "idle",
+        "walk",
+        "fly",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://poly.pizza/m/42djT5zJnx",
+      "sourceSha256": "9a47899a2320aa42d5f550598a981c26517c6e27723980f5d2080a557eb88dc2",
+      "geometrySha256": "f3edf3f7d0ad9e6406f11e9afa63e4a26a29b1dfe4b8889d5519f098fce8dc88",
+      "materialFixes": []
+    },
+    {
+      "target_id": "armabee_2",
+      "dex_number": 125,
+      "family": "armabee",
+      "stage": 2,
+      "asset_name": "ArmabeeStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "ArmabeeStage2.glb",
+      "source": "Armabee-Evolved",
+      "sourceGeometryReused": true,
+      "sha256": "23fa6f30e551f68dfcce00b7efafc3b80ac934ad624f013b2ddfeb42e2ebdfae",
+      "bytes": 122908,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 7,
+      "animations": [
+        "CharacterArmature|Death",
+        "CharacterArmature|Fast_Flying",
+        "CharacterArmature|Flying_Idle",
+        "CharacterArmature|Headbutt",
+        "CharacterArmature|HitReact",
+        "CharacterArmature|No",
+        "CharacterArmature|Punch",
+        "CharacterArmature|Yes",
+        "idle",
+        "walk",
+        "fly",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://poly.pizza/m/GcttdvsqsQ",
+      "sourceSha256": "61a48cfba610e46abba0c98f5371d331f60ed087a55a335580cbf27ba4b3d190",
+      "geometrySha256": "755080d3a5fa7be11321aaa54652807352f688dc9b29ea52d9824e132380378b",
+      "materialFixes": []
+    },
+    {
+      "target_id": "armabee_3",
+      "dex_number": 126,
+      "family": "armabee",
+      "stage": 3,
+      "asset_name": "ArmabeeStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "ArmabeeStage3.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "1016ecb670042466a920cdc85b38bcb6f46e3ab546cd2efb4fb5c18739ef43b0",
+      "bytes": 126464,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "3be010363b0127a1eb81c5f0ce0fe97c5f152ff21c9979996587aa62cd364b93",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "scorpion_1",
+      "dex_number": 127,
+      "family": "scorpion",
+      "stage": 1,
+      "asset_name": "ScorpionStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "ScorpionStage1.glb",
+      "source": "Scorpion",
+      "sourceGeometryReused": true,
+      "sha256": "a9d738aa4de48853355e5235bf1df174018ca1347b2d7de2ac4cc7d14111b4f6",
+      "bytes": 64812,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 1,
+      "drawCalls": 1,
+      "animations": [
+        "idle",
+        "attack",
+        "dead",
+        "walk"
+      ],
+      "authoredFeatures": [
+        "eight legs, articulated pincers and six-segment over-body sting"
+      ],
+      "author": "Gobkit",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://gobkit.com/api/free",
+      "sourceSha256": "6e50166b3efe1e95e714009125e332af89af575d5cadebfce40db08dac6eab0a",
+      "geometrySha256": "76eb332185a1c87c37249459820f09560f7cedd46c76c990f8ec70e15d9bfaf7",
+      "materialFixes": []
+    },
+    {
+      "target_id": "scorpion_2",
+      "dex_number": 128,
+      "family": "scorpion",
+      "stage": 2,
+      "asset_name": "ScorpionStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "ScorpionStage2.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "31bfd6025a7df2a506af8ad274c91dae567db88a34249406f099287bf0835e16",
+      "bytes": 106508,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "eight legs, articulated pincers and six-segment over-body sting"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "d45b417e2dba17a1bd9ebab1ce24166f2e51887f707869adeac35fbfd83d6e14",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "scorpion_3",
+      "dex_number": 129,
+      "family": "scorpion",
+      "stage": 3,
+      "asset_name": "ScorpionStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "ScorpionStage3.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "f10b555105a96c0f82498166b292e56e67622e6af50a972bcfda6e90409033ba",
+      "bytes": 106776,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "eight legs, articulated pincers and six-segment over-body sting"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "b261e729896374498132d325544254b2bd96ae32852045d173e404d4825bb0f3",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "centipede_1",
+      "dex_number": 130,
+      "family": "centipede",
+      "stage": 1,
+      "asset_name": "CentipedeStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "CentipedeStage1.glb",
+      "source": "Geode-Centipede",
+      "sourceGeometryReused": true,
+      "sha256": "bf8609ce746d219c3b8beadcc0e382a1c664a1beadd481fdbc3a20025ca45046",
+      "bytes": 164556,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "move",
+        "attack",
+        "walk"
+      ],
+      "authoredFeatures": [
+        "11 articulating trunk plates with paired legs and venom claws"
+      ],
+      "author": "ak",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://gobkit.com/s/3brigvwdxqc3",
+      "sourceSha256": "5b6260c471f3ec7926e421482c7ff569e41d24df59a38d789089b54fa7028a3d",
+      "geometrySha256": "f9aaff7af61725b25b28ca5a976ffec91cf07ea57551e2eb2a62280c27d876cb",
+      "materialFixes": []
+    },
+    {
+      "target_id": "centipede_2",
+      "dex_number": 131,
+      "family": "centipede",
+      "stage": 2,
+      "asset_name": "CentipedeStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "CentipedeStage2.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "0266f6e5fbd75564bb66665647a432d33a5633c7a9e5fc31959587b6ddcfbaa2",
+      "bytes": 269460,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "15 articulating trunk plates with paired legs and venom claws"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "adba29fbcd19433ff996588c3a576677248ee3662e8715daa8ed3373a80c6d72",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "centipede_3",
+      "dex_number": 132,
+      "family": "centipede",
+      "stage": 3,
+      "asset_name": "CentipedeStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "CentipedeStage3.glb",
+      "source": "Centipede",
+      "sourceGeometryReused": true,
+      "sha256": "acbf10497d4a5f74654ef8d3e6b4f77d605e81e003cf26932b568cc73b124b2c",
+      "bytes": 3419036,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 1,
+      "drawCalls": 1,
+      "animations": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Threat",
+        "Bite",
+        "Burrow",
+        "Emerge",
+        "Hit",
+        "Death",
+        "GetUp",
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "19 articulating trunk plates with paired legs and venom claws"
+      ],
+      "author": "danielgruginski / algumacoisaqq",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://github.com/danielgruginski/Insectoids",
+      "downloadUrl": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/export/godot/Centipede/Centipede.glb",
+      "sourceSha256": "c368147a968374ac0ee7f4f9452d3fb6633316ed0211cab6e661878e1800354d",
+      "geometrySha256": "0da07c97cd136fd2c226fd66853146b7354cce7630b0fcd2af0821aa97ec7857",
+      "materialFixes": [
+        "Official author T_Centipede.png embedded as base color; Wasp wing uses T_Wasp_Wing.png; bake vertex channels removed"
+      ]
+    },
+    {
+      "target_id": "wasp_1",
+      "dex_number": 133,
+      "family": "wasp",
+      "stage": 1,
+      "asset_name": "WaspStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "WaspStage1.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "ba106bdfd2d0a45a37e4b779fef15c594d8ab53301dab0f787d2d006c16ced55",
+      "bytes": 43272,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "genuine wingless larval anatomy, segmented trunk and family-specific feeding appendages"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "6a45d92e1b6f2d53bc16dc86e18e6079df9f3be7e833714f8cd0b7f018ba59be",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "wasp_2",
+      "dex_number": 134,
+      "family": "wasp",
+      "stage": 2,
+      "asset_name": "WaspStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "WaspStage2.glb",
+      "source": "QuaterniusWasp",
+      "sourceGeometryReused": true,
+      "sha256": "ecc6644d9d2ae3b409aa19c0a7bcee2b5be0819f257a5e9c266f28861d1b5b72",
+      "bytes": 257524,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "WaspArmature|Wasp_Attack",
+        "WaspArmature|Wasp_Death",
+        "WaspArmature|Wasp_Flying",
+        "idle",
+        "walk",
+        "fly",
+        "attack",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://poly.pizza/m/3aQgc75sUR",
+      "downloadUrl": "https://static.poly.pizza/71cadefd-8e65-423a-9a95-3cdf7e012586.glb",
+      "sourceSha256": "050fe9f39c61f62c00691303fa44f85cbd6548d385f27d95011fa9936d2b48a3",
+      "geometrySha256": "ede93e782ec8f7a2f08cf7c4fc2ed724cd4b5259f89e30d35a729494d7fc2ded",
+      "materialFixes": []
+    },
+    {
+      "target_id": "wasp_3",
+      "dex_number": 135,
+      "family": "wasp",
+      "stage": 3,
+      "asset_name": "WaspStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "WaspStage3.glb",
+      "source": "Wasp",
+      "sourceGeometryReused": true,
+      "sha256": "8c05044d215b30b9781933632d59195a37aa03e826710114060b23c1bfd9574d",
+      "bytes": 1495436,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 2,
+      "drawCalls": 2,
+      "animations": [
+        "Idle",
+        "Fly",
+        "Threat",
+        "Sting",
+        "Dive",
+        "Hit",
+        "Death",
+        "GetUp",
+        "idle",
+        "walk",
+        "fly",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "danielgruginski / algumacoisaqq",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://github.com/danielgruginski/Insectoids",
+      "downloadUrl": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/export/godot/Wasp/Wasp.glb",
+      "sourceSha256": "35e0db4ff8cac6fe89e9e8e795066d63917c1e3f9136e44bdaf595c77e0f2190",
+      "geometrySha256": "f99e4d31d83bec55d15697810cbbc09fa7882e4e143c8b141d5bffd32fd42008",
+      "materialFixes": [
+        "Official author T_Wasp.png embedded as base color; Wasp wing uses T_Wasp_Wing.png; bake vertex channels removed"
+      ]
+    },
+    {
+      "target_id": "dragonfly_1",
+      "dex_number": 136,
+      "family": "dragonfly",
+      "stage": 1,
+      "asset_name": "DragonflyStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "DragonflyStage1.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "260e57dd86ac6c4f6b8acb9dbc58a3dc8def05b2faa6ce02b4282b6db9e68558",
+      "bytes": 93348,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "genuine wingless larval anatomy, segmented trunk and family-specific feeding appendages"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "3e4b3fc700af7d94925d38d3d559b88d946f0cf32bb5ec450d9e85e4b64227f8",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "dragonfly_2",
+      "dex_number": 137,
+      "family": "dragonfly",
+      "stage": 2,
+      "asset_name": "DragonflyStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "DragonflyStage2.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "906e0f0407c1d9f5e860774da8b08034630f1c96fb19fd23a1c967378b3c34b0",
+      "bytes": 119132,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "6a428abf25d547f386768eb49505c61138bc8f0cea9e35881208016de0dd9c51",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "dragonfly_3",
+      "dex_number": 138,
+      "family": "dragonfly",
+      "stage": 3,
+      "asset_name": "DragonflyStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "DragonflyStage3.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "48f33cd8bc943151630c73301ad9f33fbb1d0a0a0bb564d35a94fc4627276668",
+      "bytes": 126648,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "4c994037f22d50d17c735fa2b3673abc1e15526b9c8c9bfe15d7cf9c2a67191c",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "firefly_1",
+      "dex_number": 139,
+      "family": "firefly",
+      "stage": 1,
+      "asset_name": "FireflyStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "FireflyStage1.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "16a94c7d2c8b0105875ea6ca250afd9478030704fb0fad28a16a921ca914e15e",
+      "bytes": 97576,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "genuine wingless larval anatomy, segmented trunk and family-specific feeding appendages"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "c3e90d5034467f870c5459696ffb4e99bf45bd0bce735d184685360df079b1e5",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "firefly_2",
+      "dex_number": 140,
+      "family": "firefly",
+      "stage": 2,
+      "asset_name": "FireflyStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "FireflyStage2.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "7b32cf2e51e6726067aca5e96383e061e15d027729a43778ee34b2846269c593",
+      "bytes": 120788,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "6008b1267bf0b3317ffdf089629c6da89b2cb73e5ef2db6b4956fb2bd2e1f0b1",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "firefly_3",
+      "dex_number": 141,
+      "family": "firefly",
+      "stage": 3,
+      "asset_name": "FireflyStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "FireflyStage3.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "ffb9fcdf8f413ed9d5e329af0a3d1c845923247f7861ba1549908d793a1704a4",
+      "bytes": 135016,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "94f2fe3957f610e96c718872c2f62597f21642bf061797e0171380d80c7d4333",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cicada_1",
+      "dex_number": 142,
+      "family": "cicada",
+      "stage": 1,
+      "asset_name": "CicadaStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "CicadaStage1.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "0ee6329d8a202d098809777616e0b4859645c775d083221620d5688ef6418d38",
+      "bytes": 70872,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "a3ccde983e41165afba72710c96bb88d90a89b5e2e7351012a9455f871d90cb6",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cicada_2",
+      "dex_number": 143,
+      "family": "cicada",
+      "stage": 2,
+      "asset_name": "CicadaStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "CicadaStage2.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "541771d5e7d5984635c9755c6f117ea85efd1ad1bdaf22d3f953ec48a60a6d0e",
+      "bytes": 91452,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "f86c7722401e6cbad7f41e00349bb8fd77e52052944371eb54fa224f3aaea27d",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "cicada_3",
+      "dex_number": 144,
+      "family": "cicada",
+      "stage": 3,
+      "asset_name": "CicadaStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "CicadaStage3.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "d4f8e3db212f607f14167ce58615605d1c2a3816171304bd93cfcb2c68c9c6f2",
+      "bytes": 109968,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "0b85c0de10485453f778ae4db5ec6ee829ea4a62cb1fb8666b7214a10d5826d1",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "mosquito_1",
+      "dex_number": 145,
+      "family": "mosquito",
+      "stage": 1,
+      "asset_name": "MosquitoStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "MosquitoStage1.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "835a0d2652df428975aac253d2b0bc791b6b1e03fa487f06e9d817338578bcc1",
+      "bytes": 46320,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 3,
+      "drawCalls": 3,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "aquatic mosquito larva with segmented wriggling trunk and breathing siphon"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "f480b20c913ab34cd61efd7575909b270ed8222297562543a6e1473da64a586a",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "mosquito_2",
+      "dex_number": 146,
+      "family": "mosquito",
+      "stage": 2,
+      "asset_name": "MosquitoStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "MosquitoStage2.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "89cfc272e3b2028a80d94872f053fd636e63b5288996775ce33ae5ca46e947ef",
+      "bytes": 120212,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "93d3c003ae926a884cf382f95778c08342722d4a9689080b0d225644c3e76879",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "mosquito_3",
+      "dex_number": 147,
+      "family": "mosquito",
+      "stage": 3,
+      "asset_name": "MosquitoStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "MosquitoStage3.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "861ab08da2f9f0bd0f90ec1b67d84bc06fa4218b5223c92cecff34744e527409",
+      "bytes": 131248,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 5,
+      "drawCalls": 5,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "e6686f7ba84c3019cbaab5d0976f2ba8b253a84d9ebdcbb73d58ab4809986c21",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "snail_1",
+      "dex_number": 148,
+      "family": "snail",
+      "stage": 1,
+      "asset_name": "SnailStage1.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "SnailStage1.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "9244ca30391be1e31c61bece6a4b0a9be1584df49a3bf088d035f7e9b4fb2174",
+      "bytes": 80236,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "coiled continuous shell, muscular foot and long eye stalks"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "fc68abbc28de44e3112b5f5de4c03c12d70128058157fe3d96ac8a1ee6c83abc",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "snail_2",
+      "dex_number": 149,
+      "family": "snail",
+      "stage": 2,
+      "asset_name": "SnailStage2.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "SnailStage2.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "bb57d50265c081433a2c8a4ed51c02b93aabe59a1b43022faebbfc103ca61065",
+      "bytes": 79892,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "coiled continuous shell, muscular foot and long eye stalks"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "dff96ced05c57a009ea48b6676bd1a9faa5c888412e2d9eb32d826c04de9d2a9",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ]
+    },
+    {
+      "target_id": "snail_3",
+      "dex_number": 150,
+      "family": "snail",
+      "stage": 3,
+      "asset_name": "SnailStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "SnailStage3.glb",
+      "source": "OssuarySnail",
+      "sourceGeometryReused": true,
+      "sha256": "2701fc8283077f3432ece121291492860d1a5270f9d7c6edcacb4f11cb632424",
+      "bytes": 262272,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 12,
+      "drawCalls": 12,
+      "animations": [
+        "idle",
+        "move",
+        "attack",
+        "walk"
+      ],
+      "authoredFeatures": [
+        "coiled continuous shell, muscular foot and long eye stalks"
+      ],
+      "author": "Ariescar",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://gobkit.com/s/5qt3rbmwnh4u",
+      "downloadUrl": "https://gobkit.com/api/community/file/5qt3rbmwnh4u/model",
+      "sourceSha256": "0cc3966fb3736f20112c2ac5310fcfeb92d923d8e3688ba62ca1354649187c1b",
+      "geometrySha256": "1c9e08da169a5a7b305c0094c700f01e4fbff1d0fafb89cdef546fa5465223b3",
+      "materialFixes": []
+    }
+  ],
+  "count": 85,
+  "runtimeBytes": 18932788,
+  "pipeline": "One skinned mesh per animal; source rig preserved; animation aliasing; quantized positions and normals; embedded resources.",
+  "notes": [
+    "Original anatomy-specific geometry is distinct from the supplied 85 draft shapes.",
+    "Third stages are game evolutions, not claims about biological life cycles.",
+    "First 92 published IDs, stats and owned values are preserved; 58 entries append to the dex.",
+    "Shiny body palettes use the same runtime shader as the 2D render pipeline."
+  ],
+  "uniqueGeometryHashes": 85,
+  "textures": [
+    {
+      "file": "T_Spiderling.png",
+      "source": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/textures/T_Spiderling.png",
+      "license": "CC0-1.0",
+      "author": "danielgruginski / algumacoisaqq",
+      "sha256": "6d73ff34e4ffe517b72ae27fbc1eef9253b7f69752ce69446aa28eeebaf1c10f",
+      "bytes": 421670
+    },
+    {
+      "file": "T_Spider.png",
+      "source": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/textures/T_Spider.png",
+      "license": "CC0-1.0",
+      "author": "danielgruginski / algumacoisaqq",
+      "sha256": "611375f5c1d8955a7f97260bb4c60462e89b9a3e66d772f67f2c3b229b1396bc",
+      "bytes": 1253578
+    },
+    {
+      "file": "T_Broodmother.png",
+      "source": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/textures/T_Broodmother.png",
+      "license": "CC0-1.0",
+      "author": "danielgruginski / algumacoisaqq",
+      "sha256": "3ac753c7482949ecfe2bda6fc10203b395e5cd179d23069b6e51b020fd59cdea",
+      "bytes": 1461192
+    },
+    {
+      "file": "T_Wasp.png",
+      "source": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/textures/T_Wasp.png",
+      "license": "CC0-1.0",
+      "author": "danielgruginski / algumacoisaqq",
+      "sha256": "dc6f78b9d67a80989f13a39344197ecfa58ffd8fdb3c666a17a57062abaede06",
+      "bytes": 728228
+    },
+    {
+      "file": "T_Wasp_Wing.png",
+      "source": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/textures/T_Wasp_Wing.png",
+      "license": "CC0-1.0",
+      "author": "danielgruginski / algumacoisaqq",
+      "sha256": "23438991241044a1f8637dabcf6cbc48897de7e77c60aa6dea784b719a7729dc",
+      "bytes": 167245
+    },
+    {
+      "file": "T_Centipede.png",
+      "source": "https://raw.githubusercontent.com/danielgruginski/Insectoids/main/textures/T_Centipede.png",
+      "license": "CC0-1.0",
+      "author": "danielgruginski / algumacoisaqq",
+      "sha256": "4e7542e488071ee2fd15ce5146f3a2b18643de357709d5283f2e8a034c14ecde",
+      "bytes": 1435321
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "verifiedOn": "2026-10-26",
+  "license": "CC0-1.0",
+  "licenseFile": "LICENSE.txt",
+  "scope": "Three genuinely distinct replacement models for existing evolution IDs. Game stats, family keys, owned specimens and dex numbers are unchanged. These are game evolutions, not biological life cycles.",
+  "models": [
+    {
+      "id": "ant_elite",
+      "base": "ant",
+      "name": "GardenAntAdult",
+      "author": "mujtaba-io",
+      "source": "https://opengameart.org/content/ant-3d-model-rigging-animated-low-poly-ish",
+      "download": "https://opengameart.org/sites/default/files/ant.blend",
+      "originalSha256": "6f4de1451333964f8ffffe6ca9d15aaf6ef01fd089a8185b0268bd0d032fb662",
+      "changes": "Blender GLB conversion. Author bite clip also exposed as attack; a static idle uses the first walk pose. Original mesh and skeletal walk retained.",
+      "file": "GardenAntAdult.glb",
+      "license": "CC0-1.0",
+      "bytes": 177084,
+      "sha256": "80e4ce8d9edbdc6d73d8ac8f29b571858c20754119a9799c5c758713423c09b2",
+      "meshes": 1,
+      "skins": 1,
+      "animations": [
+        "idle",
+        "bite",
+        "walk",
+        "attack"
+      ],
+      "geometrySha256": "4c3cd609dde97d4251895530e5791eefd851d0745b0fce255e954d07a1a9ca74"
+    },
+    {
+      "id": "mantis_elite",
+      "base": "mantis",
+      "name": "EmeraldMantisAdult",
+      "author": "Linus via Gobkit Community",
+      "source": "https://gobkit.com/s/w637mbvvd3ah",
+      "download": "https://gobkit.com/api/community/file/w637mbvvd3ah/model",
+      "originalSha256": "21b6302640083d2b2354016e5dbe02cd32d625d14f59fbfc2ca56d934ff384a9",
+      "changes": "Author idle and attack retained. Author move clip also exposed as walk.",
+      "file": "EmeraldMantisAdult.glb",
+      "license": "CC0-1.0",
+      "bytes": 359124,
+      "sha256": "62f70050a05a603de6281435773cb657f2c5cb2244f2ce10ad522480c7f12f90",
+      "meshes": 1,
+      "skins": 1,
+      "animations": [
+        "idle",
+        "move",
+        "attack",
+        "walk"
+      ],
+      "geometrySha256": "37dad24bf95cb29a3c0c44ba390ef67550c30446ee2ff3860b77cd5a78c327f2"
+    },
+    {
+      "id": "butterfly_elite",
+      "base": "butterfly",
+      "name": "MonarchButterflyAdult",
+      "author": "Cestmir Dammer / TinyWorlds; source photo documentation by Rick Hoppmann",
+      "source": "https://opengameart.org/content/butterfly-animated",
+      "download": "https://opengameart.org/sites/default/files/Butterfly.zip",
+      "originalSha256": "043c530f9ce15f031903fbabab4e74e1fe58e77cf2e1d6c4abed0ffaca306eb6",
+      "changes": "Blender GLB conversion; legacy diffuse/alpha image rebuilt as embedded Principled texture. Author Flying exposed as fly/walk; static idle uses first Flying pose. Original rig and wing animation retained.",
+      "file": "MonarchButterflyAdult.glb",
+      "license": "CC0-1.0",
+      "bytes": 227368,
+      "sha256": "d2b8dc085ecf7d3344e7ce0d1b54a1aa96045954da29834244a6b692a8cc2d69",
+      "meshes": 1,
+      "skins": 1,
+      "animations": [
+        "idle",
+        "Flying",
+        "Sitting1",
+        "Sitting2",
+        "fly",
+        "walk"
+      ],
+      "geometrySha256": "af450c63b39bf565897c90427bddaeb26c7eebfbf6ebf147f47f7ebb8c6bb812"
+    }
+  ]
+}

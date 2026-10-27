@@ -1,0 +1,17 @@
+Creative Commons CC0 1.0 Universal (Public Domain Dedication)
+
+These three assets were publicly released as CC0 by their named authors.
+Commercial use, modification, source redistribution and game distribution are allowed.
+Full legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+GardenAntAdult
+Author: mujtaba-io
+Source and CC0 dedication: https://opengameart.org/content/ant-3d-model-rigging-animated-low-poly-ish
+
+EmeraldMantisAdult
+Author: Linus via Gobkit Community
+Source and CC0 dedication: https://gobkit.com/s/w637mbvvd3ah
+
+MonarchButterflyAdult
+Author: Cestmir Dammer / TinyWorlds; source photo documentation by Rick Hoppmann
+Source and CC0 dedication: https://opengameart.org/content/butterfly-animated

@@ -1,0 +1,684 @@
+{
+  "mappedAssets": [
+    {
+      "target_id": "beetle_elite",
+      "dex_number": 33,
+      "family": "beetle",
+      "stage": 2,
+      "asset_name": "beetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "beetle_ultimate",
+      "dex_number": 93,
+      "family": "beetle",
+      "stage": 3,
+      "asset_name": "beetleUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "ant_ultimate",
+      "dex_number": 94,
+      "family": "ant",
+      "stage": 3,
+      "asset_name": "antUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "aphid_elite",
+      "dex_number": 35,
+      "family": "aphid",
+      "stage": 2,
+      "asset_name": "aphidEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "aphid_ultimate",
+      "dex_number": 95,
+      "family": "aphid",
+      "stage": 3,
+      "asset_name": "aphidUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "weevil_elite",
+      "dex_number": 36,
+      "family": "weevil",
+      "stage": 2,
+      "asset_name": "weevilEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "weevil_ultimate",
+      "dex_number": 96,
+      "family": "weevil",
+      "stage": 3,
+      "asset_name": "weevilUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "earwig_elite",
+      "dex_number": 38,
+      "family": "earwig",
+      "stage": 2,
+      "asset_name": "earwigEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "earwig_ultimate",
+      "dex_number": 97,
+      "family": "earwig",
+      "stage": 3,
+      "asset_name": "earwigUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "grasshopper_elite",
+      "dex_number": 39,
+      "family": "grasshopper",
+      "stage": 2,
+      "asset_name": "grasshopperEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "grasshopper_ultimate",
+      "dex_number": 98,
+      "family": "grasshopper",
+      "stage": 3,
+      "asset_name": "grasshopperUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "lacewing_elite",
+      "dex_number": 40,
+      "family": "lacewing",
+      "stage": 2,
+      "asset_name": "lacewingEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "lacewing_ultimate",
+      "dex_number": 99,
+      "family": "lacewing",
+      "stage": 3,
+      "asset_name": "lacewingUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "dungbeetle_elite",
+      "dex_number": 41,
+      "family": "dungbeetle",
+      "stage": 2,
+      "asset_name": "dungbeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "dungbeetle_ultimate",
+      "dex_number": 100,
+      "family": "dungbeetle",
+      "stage": 3,
+      "asset_name": "dungbeetleUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "mantis_ultimate",
+      "dex_number": 101,
+      "family": "mantis",
+      "stage": 3,
+      "asset_name": "mantisUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "butterfly_ultimate",
+      "dex_number": 102,
+      "family": "butterfly",
+      "stage": 3,
+      "asset_name": "butterflyUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "divingbeetle_elite",
+      "dex_number": 44,
+      "family": "divingbeetle",
+      "stage": 2,
+      "asset_name": "divingbeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "divingbeetle_ultimate",
+      "dex_number": 103,
+      "family": "divingbeetle",
+      "stage": 3,
+      "asset_name": "divingbeetleUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "waterstrider_elite",
+      "dex_number": 45,
+      "family": "waterstrider",
+      "stage": 2,
+      "asset_name": "waterstriderEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "waterstrider_ultimate",
+      "dex_number": 104,
+      "family": "waterstrider",
+      "stage": 3,
+      "asset_name": "waterstriderUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "hoverfly_elite",
+      "dex_number": 46,
+      "family": "hoverfly",
+      "stage": 2,
+      "asset_name": "hoverflyEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "hoverfly_ultimate",
+      "dex_number": 105,
+      "family": "hoverfly",
+      "stage": 3,
+      "asset_name": "hoverflyUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "leafhopper_elite",
+      "dex_number": 47,
+      "family": "leafhopper",
+      "stage": 2,
+      "asset_name": "leafhopperEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "leafhopper_ultimate",
+      "dex_number": 106,
+      "family": "leafhopper",
+      "stage": 3,
+      "asset_name": "leafhopperUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "cricket_elite",
+      "dex_number": 48,
+      "family": "cricket",
+      "stage": 2,
+      "asset_name": "cricketEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "cricket_ultimate",
+      "dex_number": 107,
+      "family": "cricket",
+      "stage": 3,
+      "asset_name": "cricketUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "stick_elite",
+      "dex_number": 49,
+      "family": "stick",
+      "stage": 2,
+      "asset_name": "stickEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "stick_ultimate",
+      "dex_number": 108,
+      "family": "stick",
+      "stage": 3,
+      "asset_name": "stickUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "leaf_elite",
+      "dex_number": 50,
+      "family": "leaf",
+      "stage": 2,
+      "asset_name": "leafEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "leaf_ultimate",
+      "dex_number": 109,
+      "family": "leaf",
+      "stage": 3,
+      "asset_name": "leafUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "silverfish_elite",
+      "dex_number": 51,
+      "family": "silverfish",
+      "stage": 2,
+      "asset_name": "silverfishEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "silverfish_ultimate",
+      "dex_number": 110,
+      "family": "silverfish",
+      "stage": 3,
+      "asset_name": "silverfishUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "moth_elite",
+      "dex_number": 37,
+      "family": "caterpillar",
+      "stage": 3,
+      "asset_name": "mothEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "antlion_elite",
+      "dex_number": 53,
+      "family": "antlion",
+      "stage": 2,
+      "asset_name": "antlionEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "antlion_ultimate",
+      "dex_number": 111,
+      "family": "antlion",
+      "stage": 3,
+      "asset_name": "antlionUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "cockroach_elite",
+      "dex_number": 54,
+      "family": "cockroach",
+      "stage": 2,
+      "asset_name": "cockroachEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "cockroach_ultimate",
+      "dex_number": 112,
+      "family": "cockroach",
+      "stage": 3,
+      "asset_name": "cockroachUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "cranefly_elite",
+      "dex_number": 55,
+      "family": "cranefly",
+      "stage": 2,
+      "asset_name": "craneflyEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "cranefly_ultimate",
+      "dex_number": 113,
+      "family": "cranefly",
+      "stage": 3,
+      "asset_name": "craneflyUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "flea_elite",
+      "dex_number": 56,
+      "family": "flea",
+      "stage": 2,
+      "asset_name": "fleaEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "flea_ultimate",
+      "dex_number": 114,
+      "family": "flea",
+      "stage": 3,
+      "asset_name": "fleaUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "giantwaterbug_elite",
+      "dex_number": 57,
+      "family": "giantwaterbug",
+      "stage": 2,
+      "asset_name": "giantwaterbugEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "giantwaterbug_ultimate",
+      "dex_number": 115,
+      "family": "giantwaterbug",
+      "stage": 3,
+      "asset_name": "giantwaterbugUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "mayfly_elite",
+      "dex_number": 58,
+      "family": "mayfly",
+      "stage": 2,
+      "asset_name": "mayflyEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "mayfly_ultimate",
+      "dex_number": 116,
+      "family": "mayfly",
+      "stage": 3,
+      "asset_name": "mayflyUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "termite_elite",
+      "dex_number": 59,
+      "family": "termite",
+      "stage": 2,
+      "asset_name": "termiteEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "termite_ultimate",
+      "dex_number": 117,
+      "family": "termite",
+      "stage": 3,
+      "asset_name": "termiteUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "tigerbeetle_elite",
+      "dex_number": 60,
+      "family": "tigerbeetle",
+      "stage": 2,
+      "asset_name": "tigerbeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "tigerbeetle_ultimate",
+      "dex_number": 118,
+      "family": "tigerbeetle",
+      "stage": 3,
+      "asset_name": "tigerbeetleUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "tortoisebeetle_elite",
+      "dex_number": 61,
+      "family": "tortoisebeetle",
+      "stage": 2,
+      "asset_name": "tortoisebeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "tortoisebeetle_ultimate",
+      "dex_number": 119,
+      "family": "tortoisebeetle",
+      "stage": 3,
+      "asset_name": "tortoisebeetleUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "hercules_elite",
+      "dex_number": 52,
+      "family": "beetlegrub",
+      "stage": 3,
+      "asset_name": "herculesEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "bee_elite",
+      "dex_number": 62,
+      "family": "bee",
+      "stage": 2,
+      "asset_name": "beeEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite"
+    },
+    {
+      "target_id": "bee_ultimate",
+      "dex_number": 120,
+      "family": "bee",
+      "stage": 3,
+      "asset_name": "beeUltimate.glb",
+      "intent": "Append third evolution stage"
+    },
+    {
+      "target_id": "spider_1",
+      "dex_number": 121,
+      "family": "spider",
+      "stage": 1,
+      "asset_name": "SpiderStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "spider_2",
+      "dex_number": 122,
+      "family": "spider",
+      "stage": 2,
+      "asset_name": "SpiderStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "spider_3",
+      "dex_number": 123,
+      "family": "spider",
+      "stage": 3,
+      "asset_name": "SpiderStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "armabee_1",
+      "dex_number": 124,
+      "family": "armabee",
+      "stage": 1,
+      "asset_name": "ArmabeeStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "armabee_2",
+      "dex_number": 125,
+      "family": "armabee",
+      "stage": 2,
+      "asset_name": "ArmabeeStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "armabee_3",
+      "dex_number": 126,
+      "family": "armabee",
+      "stage": 3,
+      "asset_name": "ArmabeeStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "scorpion_1",
+      "dex_number": 127,
+      "family": "scorpion",
+      "stage": 1,
+      "asset_name": "ScorpionStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "scorpion_2",
+      "dex_number": 128,
+      "family": "scorpion",
+      "stage": 2,
+      "asset_name": "ScorpionStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "scorpion_3",
+      "dex_number": 129,
+      "family": "scorpion",
+      "stage": 3,
+      "asset_name": "ScorpionStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "centipede_1",
+      "dex_number": 130,
+      "family": "centipede",
+      "stage": 1,
+      "asset_name": "CentipedeStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "centipede_2",
+      "dex_number": 131,
+      "family": "centipede",
+      "stage": 2,
+      "asset_name": "CentipedeStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "centipede_3",
+      "dex_number": 132,
+      "family": "centipede",
+      "stage": 3,
+      "asset_name": "CentipedeStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "wasp_1",
+      "dex_number": 133,
+      "family": "wasp",
+      "stage": 1,
+      "asset_name": "WaspStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "wasp_2",
+      "dex_number": 134,
+      "family": "wasp",
+      "stage": 2,
+      "asset_name": "WaspStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "wasp_3",
+      "dex_number": 135,
+      "family": "wasp",
+      "stage": 3,
+      "asset_name": "WaspStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "dragonfly_1",
+      "dex_number": 136,
+      "family": "dragonfly",
+      "stage": 1,
+      "asset_name": "DragonflyStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "dragonfly_2",
+      "dex_number": 137,
+      "family": "dragonfly",
+      "stage": 2,
+      "asset_name": "DragonflyStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "dragonfly_3",
+      "dex_number": 138,
+      "family": "dragonfly",
+      "stage": 3,
+      "asset_name": "DragonflyStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "firefly_1",
+      "dex_number": 139,
+      "family": "firefly",
+      "stage": 1,
+      "asset_name": "FireflyStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "firefly_2",
+      "dex_number": 140,
+      "family": "firefly",
+      "stage": 2,
+      "asset_name": "FireflyStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "firefly_3",
+      "dex_number": 141,
+      "family": "firefly",
+      "stage": 3,
+      "asset_name": "FireflyStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "cicada_1",
+      "dex_number": 142,
+      "family": "cicada",
+      "stage": 1,
+      "asset_name": "CicadaStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "cicada_2",
+      "dex_number": 143,
+      "family": "cicada",
+      "stage": 2,
+      "asset_name": "CicadaStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "cicada_3",
+      "dex_number": 144,
+      "family": "cicada",
+      "stage": 3,
+      "asset_name": "CicadaStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "mosquito_1",
+      "dex_number": 145,
+      "family": "mosquito",
+      "stage": 1,
+      "asset_name": "MosquitoStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "mosquito_2",
+      "dex_number": 146,
+      "family": "mosquito",
+      "stage": 2,
+      "asset_name": "MosquitoStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "mosquito_3",
+      "dex_number": 147,
+      "family": "mosquito",
+      "stage": 3,
+      "asset_name": "MosquitoStage3.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "snail_1",
+      "dex_number": 148,
+      "family": "snail",
+      "stage": 1,
+      "asset_name": "SnailStage1.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "snail_2",
+      "dex_number": 149,
+      "family": "snail",
+      "stage": 2,
+      "asset_name": "SnailStage2.glb",
+      "intent": "New three-stage family"
+    },
+    {
+      "target_id": "snail_3",
+      "dex_number": 150,
+      "family": "snail",
+      "stage": 3,
+      "asset_name": "SnailStage3.glb",
+      "intent": "New three-stage family"
+    }
+  ]
+}

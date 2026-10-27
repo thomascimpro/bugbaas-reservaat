@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "source": "Gobkit CC0 models and original BugBaas HawkCaterpillar; rendered using src/bugModelV2.ts materials",
+  "source": "CC0 imported insect models and original BugBaas anatomy; rendered with src/bugModelV2.ts normal/shiny materials",
   "species": {
     "beetle": {
       "model": "ClickBeetle",
@@ -356,18 +356,18 @@
       "shiny": "bee-shiny.png"
     },
     "beetle_elite": {
-      "model": "ClickBeetle",
+      "model": "beetleEliteUnique",
       "palette": [
-        "#291C42",
-        "#9B4BB7",
-        "#E7AF65"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "beetle_elite.png",
       "shiny": "beetle_elite-shiny.png"
     },
     "ant_elite": {
-      "model": "LeafcutterAnt",
+      "model": "GardenAntAdult",
       "palette": [
         "#14243D",
         "#2597B1",
@@ -378,95 +378,95 @@
       "shiny": "ant_elite-shiny.png"
     },
     "aphid_elite": {
-      "model": "Aphid",
+      "model": "aphidEliteUnique",
       "palette": [
-        "#4D203E",
-        "#DB78AF",
-        "#FFE0BD"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "aphid_elite.png",
       "shiny": "aphid_elite-shiny.png"
     },
     "weevil_elite": {
-      "model": "GiraffeWeevil",
+      "model": "weevilEliteUnique",
       "palette": [
-        "#173B43",
-        "#39B8A0",
-        "#DDF1A4"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "weevil_elite.png",
       "shiny": "weevil_elite-shiny.png"
     },
     "moth_elite": {
-      "model": "HawkMoth",
+      "model": "mothEliteUnique",
       "palette": [
-        "#213D50",
-        "#5BB8CD",
-        "#E4E2FF"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "moth_elite.png",
       "shiny": "moth_elite-shiny.png"
     },
     "earwig_elite": {
-      "model": "Earwig",
+      "model": "earwigEliteUnique",
       "palette": [
-        "#173B3A",
-        "#51B79A",
-        "#F2D797"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "earwig_elite.png",
       "shiny": "earwig_elite-shiny.png"
     },
     "grasshopper_elite": {
-      "model": "Katydid",
+      "model": "grasshopperEliteUnique",
       "palette": [
-        "#432744",
-        "#BE76B6",
-        "#F5DAC2"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "grasshopper_elite.png",
       "shiny": "grasshopper_elite-shiny.png"
     },
     "lacewing_elite": {
-      "model": "Lacewing",
+      "model": "lacewingEliteUnique",
       "palette": [
-        "#433649",
-        "#D19C66",
-        "#FFF1C1"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "lacewing_elite.png",
       "shiny": "lacewing_elite-shiny.png"
     },
     "dungbeetle_elite": {
-      "model": "DungBeetle",
+      "model": "dungbeetleEliteUnique",
       "palette": [
-        "#173E48",
-        "#418AB2",
-        "#B9F0DC"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "dungbeetle_elite.png",
       "shiny": "dungbeetle_elite-shiny.png"
     },
     "mantis_elite": {
-      "model": "OrchidMantis",
+      "model": "EmeraldMantisAdult",
       "palette": [
-        "#293B32",
-        "#6EAE83",
-        "#F2DEA8"
+        "#2D2146",
+        "#A66FD0",
+        "#F5D6F3"
       ],
       "size": 1024,
       "normal": "mantis_elite.png",
       "shiny": "mantis_elite-shiny.png"
     },
     "butterfly_elite": {
-      "model": "Swallowtail",
+      "model": "MonarchButterflyAdult",
       "palette": [
         "#233558",
         "#668DDB",
@@ -477,209 +477,209 @@
       "shiny": "butterfly_elite-shiny.png"
     },
     "divingbeetle_elite": {
-      "model": "DivingBeetle",
+      "model": "divingbeetleEliteUnique",
       "palette": [
-        "#342446",
-        "#A16DC5",
-        "#D4EDFC"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "divingbeetle_elite.png",
       "shiny": "divingbeetle_elite-shiny.png"
     },
     "waterstrider_elite": {
-      "model": "WaterStrider",
+      "model": "waterstriderEliteUnique",
       "palette": [
-        "#253247",
-        "#7A93B4",
-        "#E8C782"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "waterstrider_elite.png",
       "shiny": "waterstrider_elite-shiny.png"
     },
     "hoverfly_elite": {
-      "model": "Hoverfly",
+      "model": "hoverflyEliteUnique",
       "palette": [
-        "#193C3A",
-        "#5FC9BA",
-        "#E5FFE4"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "hoverfly_elite.png",
       "shiny": "hoverfly_elite-shiny.png"
     },
     "leafhopper_elite": {
-      "model": "Treehopper",
+      "model": "leafhopperEliteUnique",
       "palette": [
-        "#382950",
-        "#B48AD9",
-        "#F8DAB8"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "leafhopper_elite.png",
       "shiny": "leafhopper_elite-shiny.png"
     },
     "cricket_elite": {
-      "model": "MoleCricket",
+      "model": "cricketEliteUnique",
       "palette": [
-        "#34354A",
-        "#7998C9",
-        "#E2D8B2"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "cricket_elite.png",
       "shiny": "cricket_elite-shiny.png"
     },
     "stick_elite": {
-      "model": "StickInsect",
+      "model": "stickEliteUnique",
       "palette": [
-        "#292E48",
-        "#7D77B8",
-        "#D7E3EC"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "stick_elite.png",
       "shiny": "stick_elite-shiny.png"
     },
     "leaf_elite": {
-      "model": "LeafInsect",
+      "model": "leafEliteUnique",
       "palette": [
-        "#493E23",
-        "#C8A04E",
-        "#F6EDB8"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "leaf_elite.png",
       "shiny": "leaf_elite-shiny.png"
     },
     "silverfish_elite": {
-      "model": "Silverfish",
+      "model": "silverfishEliteUnique",
       "palette": [
-        "#49332B",
-        "#CF9870",
-        "#F9D8AD"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "silverfish_elite.png",
       "shiny": "silverfish_elite-shiny.png"
     },
     "hercules_elite": {
-      "model": "HerculesBeetle",
+      "model": "herculesEliteUnique",
       "palette": [
-        "#20343E",
-        "#639BA3",
-        "#F0CD7C"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "hercules_elite.png",
       "shiny": "hercules_elite-shiny.png"
     },
     "antlion_elite": {
-      "model": "AntlionLarva",
+      "model": "antlionEliteUnique",
       "palette": [
-        "#253746",
-        "#5990A8",
-        "#D9EBC9"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "antlion_elite.png",
       "shiny": "antlion_elite-shiny.png"
     },
     "cockroach_elite": {
-      "model": "Cockroach",
+      "model": "cockroachEliteUnique",
       "palette": [
-        "#183B48",
-        "#428D9C",
-        "#D2E8E5"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "cockroach_elite.png",
       "shiny": "cockroach_elite-shiny.png"
     },
     "cranefly_elite": {
-      "model": "CraneFly",
+      "model": "craneflyEliteUnique",
       "palette": [
-        "#422C49",
-        "#AF7BBE",
-        "#F1D6B3"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "cranefly_elite.png",
       "shiny": "cranefly_elite-shiny.png"
     },
     "flea_elite": {
-      "model": "Flea",
+      "model": "fleaEliteUnique",
       "palette": [
-        "#233A3A",
-        "#6FB5A3",
-        "#D5EFBA"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "flea_elite.png",
       "shiny": "flea_elite-shiny.png"
     },
     "giantwaterbug_elite": {
-      "model": "GiantWaterBug",
+      "model": "giantwaterbugEliteUnique",
       "palette": [
-        "#43284D",
-        "#AA79B4",
-        "#F1DAA4"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "giantwaterbug_elite.png",
       "shiny": "giantwaterbug_elite-shiny.png"
     },
     "mayfly_elite": {
-      "model": "Mayfly",
+      "model": "mayflyEliteUnique",
       "palette": [
-        "#233B52",
-        "#79B7D1",
-        "#EFF5D8"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "mayfly_elite.png",
       "shiny": "mayfly_elite-shiny.png"
     },
     "termite_elite": {
-      "model": "SoldierTermite",
+      "model": "termiteEliteUnique",
       "palette": [
-        "#313256",
-        "#8A92C5",
-        "#F2DBA8"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "termite_elite.png",
       "shiny": "termite_elite-shiny.png"
     },
     "tigerbeetle_elite": {
-      "model": "TigerBeetle",
+      "model": "tigerbeetleEliteUnique",
       "palette": [
-        "#3D2945",
-        "#BB6E9A",
-        "#F4CF87"
+        "#281B45",
+        "#AB75D2",
+        "#ECDDF3"
       ],
       "size": 1024,
       "normal": "tigerbeetle_elite.png",
       "shiny": "tigerbeetle_elite-shiny.png"
     },
     "tortoisebeetle_elite": {
-      "model": "TortoiseBeetle",
+      "model": "tortoisebeetleEliteUnique",
       "palette": [
-        "#293E45",
-        "#53BEB0",
-        "#F2DEA0"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "tortoisebeetle_elite.png",
       "shiny": "tortoisebeetle_elite-shiny.png"
     },
     "bee_elite": {
-      "model": "Bee",
+      "model": "beeEliteUnique",
       "palette": [
-        "#24334B",
-        "#5EA6C4",
-        "#E8F4D4"
+        "#1D2D4A",
+        "#659DCB",
+        "#CCE7E4"
       ],
       "size": 1024,
       "normal": "bee_elite.png",
@@ -1014,6 +1014,644 @@
       "size": 1024,
       "normal": "jewelchafer.png",
       "shiny": "jewelchafer-shiny.png"
+    },
+    "beetle_ultimate": {
+      "model": "beetleUltimate",
+      "palette": [
+        "#26324F",
+        "#79BCE0",
+        "#F4D58C"
+      ],
+      "size": 1024,
+      "normal": "beetle_ultimate.png",
+      "shiny": "beetle_ultimate-shiny.png"
+    },
+    "ant_ultimate": {
+      "model": "antUltimate",
+      "palette": [
+        "#3A244A",
+        "#BE83DD",
+        "#E8F0BD"
+      ],
+      "size": 1024,
+      "normal": "ant_ultimate.png",
+      "shiny": "ant_ultimate-shiny.png"
+    },
+    "aphid_ultimate": {
+      "model": "aphidUltimate",
+      "palette": [
+        "#213E43",
+        "#68D0C5",
+        "#F5D49A"
+      ],
+      "size": 1024,
+      "normal": "aphid_ultimate.png",
+      "shiny": "aphid_ultimate-shiny.png"
+    },
+    "weevil_ultimate": {
+      "model": "weevilUltimate",
+      "palette": [
+        "#44243C",
+        "#E088BD",
+        "#C4E8F1"
+      ],
+      "size": 1024,
+      "normal": "weevil_ultimate.png",
+      "shiny": "weevil_ultimate-shiny.png"
+    },
+    "earwig_ultimate": {
+      "model": "earwigUltimate",
+      "palette": [
+        "#253A54",
+        "#7EADEB",
+        "#F0DEB1"
+      ],
+      "size": 1024,
+      "normal": "earwig_ultimate.png",
+      "shiny": "earwig_ultimate-shiny.png"
+    },
+    "grasshopper_ultimate": {
+      "model": "grasshopperUltimate",
+      "palette": [
+        "#3D2D45",
+        "#C59AE1",
+        "#C6F0D7"
+      ],
+      "size": 1024,
+      "normal": "grasshopper_ultimate.png",
+      "shiny": "grasshopper_ultimate-shiny.png"
+    },
+    "lacewing_ultimate": {
+      "model": "lacewingUltimate",
+      "palette": [
+        "#263F43",
+        "#84D3B8",
+        "#F1CE8E"
+      ],
+      "size": 1024,
+      "normal": "lacewing_ultimate.png",
+      "shiny": "lacewing_ultimate-shiny.png"
+    },
+    "dungbeetle_ultimate": {
+      "model": "dungbeetleUltimate",
+      "palette": [
+        "#432940",
+        "#DE9AB6",
+        "#E5EDBB"
+      ],
+      "size": 1024,
+      "normal": "dungbeetle_ultimate.png",
+      "shiny": "dungbeetle_ultimate-shiny.png"
+    },
+    "mantis_ultimate": {
+      "model": "mantisUltimate",
+      "palette": [
+        "#26324F",
+        "#79BCE0",
+        "#F4D58C"
+      ],
+      "size": 1024,
+      "normal": "mantis_ultimate.png",
+      "shiny": "mantis_ultimate-shiny.png"
+    },
+    "butterfly_ultimate": {
+      "model": "butterflyUltimate",
+      "palette": [
+        "#3A244A",
+        "#BE83DD",
+        "#E8F0BD"
+      ],
+      "size": 1024,
+      "normal": "butterfly_ultimate.png",
+      "shiny": "butterfly_ultimate-shiny.png"
+    },
+    "divingbeetle_ultimate": {
+      "model": "divingbeetleUltimate",
+      "palette": [
+        "#213E43",
+        "#68D0C5",
+        "#F5D49A"
+      ],
+      "size": 1024,
+      "normal": "divingbeetle_ultimate.png",
+      "shiny": "divingbeetle_ultimate-shiny.png"
+    },
+    "waterstrider_ultimate": {
+      "model": "waterstriderUltimate",
+      "palette": [
+        "#44243C",
+        "#E088BD",
+        "#C4E8F1"
+      ],
+      "size": 1024,
+      "normal": "waterstrider_ultimate.png",
+      "shiny": "waterstrider_ultimate-shiny.png"
+    },
+    "hoverfly_ultimate": {
+      "model": "hoverflyUltimate",
+      "palette": [
+        "#253A54",
+        "#7EADEB",
+        "#F0DEB1"
+      ],
+      "size": 1024,
+      "normal": "hoverfly_ultimate.png",
+      "shiny": "hoverfly_ultimate-shiny.png"
+    },
+    "leafhopper_ultimate": {
+      "model": "leafhopperUltimate",
+      "palette": [
+        "#3D2D45",
+        "#C59AE1",
+        "#C6F0D7"
+      ],
+      "size": 1024,
+      "normal": "leafhopper_ultimate.png",
+      "shiny": "leafhopper_ultimate-shiny.png"
+    },
+    "cricket_ultimate": {
+      "model": "cricketUltimate",
+      "palette": [
+        "#263F43",
+        "#84D3B8",
+        "#F1CE8E"
+      ],
+      "size": 1024,
+      "normal": "cricket_ultimate.png",
+      "shiny": "cricket_ultimate-shiny.png"
+    },
+    "stick_ultimate": {
+      "model": "stickUltimate",
+      "palette": [
+        "#432940",
+        "#DE9AB6",
+        "#E5EDBB"
+      ],
+      "size": 1024,
+      "normal": "stick_ultimate.png",
+      "shiny": "stick_ultimate-shiny.png"
+    },
+    "leaf_ultimate": {
+      "model": "leafUltimate",
+      "palette": [
+        "#26324F",
+        "#79BCE0",
+        "#F4D58C"
+      ],
+      "size": 1024,
+      "normal": "leaf_ultimate.png",
+      "shiny": "leaf_ultimate-shiny.png"
+    },
+    "silverfish_ultimate": {
+      "model": "silverfishUltimate",
+      "palette": [
+        "#3A244A",
+        "#BE83DD",
+        "#E8F0BD"
+      ],
+      "size": 1024,
+      "normal": "silverfish_ultimate.png",
+      "shiny": "silverfish_ultimate-shiny.png"
+    },
+    "antlion_ultimate": {
+      "model": "antlionUltimate",
+      "palette": [
+        "#213E43",
+        "#68D0C5",
+        "#F5D49A"
+      ],
+      "size": 1024,
+      "normal": "antlion_ultimate.png",
+      "shiny": "antlion_ultimate-shiny.png"
+    },
+    "cockroach_ultimate": {
+      "model": "cockroachUltimate",
+      "palette": [
+        "#44243C",
+        "#E088BD",
+        "#C4E8F1"
+      ],
+      "size": 1024,
+      "normal": "cockroach_ultimate.png",
+      "shiny": "cockroach_ultimate-shiny.png"
+    },
+    "cranefly_ultimate": {
+      "model": "craneflyUltimate",
+      "palette": [
+        "#253A54",
+        "#7EADEB",
+        "#F0DEB1"
+      ],
+      "size": 1024,
+      "normal": "cranefly_ultimate.png",
+      "shiny": "cranefly_ultimate-shiny.png"
+    },
+    "flea_ultimate": {
+      "model": "fleaUltimate",
+      "palette": [
+        "#3D2D45",
+        "#C59AE1",
+        "#C6F0D7"
+      ],
+      "size": 1024,
+      "normal": "flea_ultimate.png",
+      "shiny": "flea_ultimate-shiny.png"
+    },
+    "giantwaterbug_ultimate": {
+      "model": "giantwaterbugUltimate",
+      "palette": [
+        "#263F43",
+        "#84D3B8",
+        "#F1CE8E"
+      ],
+      "size": 1024,
+      "normal": "giantwaterbug_ultimate.png",
+      "shiny": "giantwaterbug_ultimate-shiny.png"
+    },
+    "mayfly_ultimate": {
+      "model": "mayflyUltimate",
+      "palette": [
+        "#432940",
+        "#DE9AB6",
+        "#E5EDBB"
+      ],
+      "size": 1024,
+      "normal": "mayfly_ultimate.png",
+      "shiny": "mayfly_ultimate-shiny.png"
+    },
+    "termite_ultimate": {
+      "model": "termiteUltimate",
+      "palette": [
+        "#26324F",
+        "#79BCE0",
+        "#F4D58C"
+      ],
+      "size": 1024,
+      "normal": "termite_ultimate.png",
+      "shiny": "termite_ultimate-shiny.png"
+    },
+    "tigerbeetle_ultimate": {
+      "model": "tigerbeetleUltimate",
+      "palette": [
+        "#3A244A",
+        "#BE83DD",
+        "#E8F0BD"
+      ],
+      "size": 1024,
+      "normal": "tigerbeetle_ultimate.png",
+      "shiny": "tigerbeetle_ultimate-shiny.png"
+    },
+    "tortoisebeetle_ultimate": {
+      "model": "tortoisebeetleUltimate",
+      "palette": [
+        "#213E43",
+        "#68D0C5",
+        "#F5D49A"
+      ],
+      "size": 1024,
+      "normal": "tortoisebeetle_ultimate.png",
+      "shiny": "tortoisebeetle_ultimate-shiny.png"
+    },
+    "bee_ultimate": {
+      "model": "beeUltimate",
+      "palette": [
+        "#44243C",
+        "#E088BD",
+        "#C4E8F1"
+      ],
+      "size": 1024,
+      "normal": "bee_ultimate.png",
+      "shiny": "bee_ultimate-shiny.png"
+    },
+    "spider_1": {
+      "model": "SpiderStage1",
+      "palette": [
+        "#26324F",
+        "#79BCE0",
+        "#F4D58C"
+      ],
+      "size": 1024,
+      "normal": "spider_1.png",
+      "shiny": "spider_1-shiny.png"
+    },
+    "spider_2": {
+      "model": "SpiderStage2",
+      "palette": [
+        "#213E43",
+        "#68D0C5",
+        "#F5D49A"
+      ],
+      "size": 1024,
+      "normal": "spider_2.png",
+      "shiny": "spider_2-shiny.png"
+    },
+    "spider_3": {
+      "model": "SpiderStage3",
+      "palette": [
+        "#253A54",
+        "#7EADEB",
+        "#F0DEB1"
+      ],
+      "size": 1024,
+      "normal": "spider_3.png",
+      "shiny": "spider_3-shiny.png"
+    },
+    "armabee_1": {
+      "model": "ArmabeeStage1",
+      "palette": [
+        "#3A244A",
+        "#BE83DD",
+        "#E8F0BD"
+      ],
+      "size": 1024,
+      "normal": "armabee_1.png",
+      "shiny": "armabee_1-shiny.png"
+    },
+    "armabee_2": {
+      "model": "ArmabeeStage2",
+      "palette": [
+        "#44243C",
+        "#E088BD",
+        "#C4E8F1"
+      ],
+      "size": 1024,
+      "normal": "armabee_2.png",
+      "shiny": "armabee_2-shiny.png"
+    },
+    "armabee_3": {
+      "model": "ArmabeeStage3",
+      "palette": [
+        "#3D2D45",
+        "#C59AE1",
+        "#C6F0D7"
+      ],
+      "size": 1024,
+      "normal": "armabee_3.png",
+      "shiny": "armabee_3-shiny.png"
+    },
+    "scorpion_1": {
+      "model": "ScorpionStage1",
+      "palette": [
+        "#213E43",
+        "#68D0C5",
+        "#F5D49A"
+      ],
+      "size": 1024,
+      "normal": "scorpion_1.png",
+      "shiny": "scorpion_1-shiny.png"
+    },
+    "scorpion_2": {
+      "model": "ScorpionStage2",
+      "palette": [
+        "#253A54",
+        "#7EADEB",
+        "#F0DEB1"
+      ],
+      "size": 1024,
+      "normal": "scorpion_2.png",
+      "shiny": "scorpion_2-shiny.png"
+    },
+    "scorpion_3": {
+      "model": "ScorpionStage3",
+      "palette": [
+        "#263F43",
+        "#84D3B8",
+        "#F1CE8E"
+      ],
+      "size": 1024,
+      "normal": "scorpion_3.png",
+      "shiny": "scorpion_3-shiny.png"
+    },
+    "centipede_1": {
+      "model": "CentipedeStage1",
+      "palette": [
+        "#44243C",
+        "#E088BD",
+        "#C4E8F1"
+      ],
+      "size": 1024,
+      "normal": "centipede_1.png",
+      "shiny": "centipede_1-shiny.png"
+    },
+    "centipede_2": {
+      "model": "CentipedeStage2",
+      "palette": [
+        "#3D2D45",
+        "#C59AE1",
+        "#C6F0D7"
+      ],
+      "size": 1024,
+      "normal": "centipede_2.png",
+      "shiny": "centipede_2-shiny.png"
+    },
+    "centipede_3": {
+      "model": "CentipedeStage3",
+      "palette": [
+        "#432940",
+        "#DE9AB6",
+        "#E5EDBB"
+      ],
+      "size": 1024,
+      "normal": "centipede_3.png",
+      "shiny": "centipede_3-shiny.png"
+    },
+    "wasp_1": {
+      "model": "WaspStage1",
+      "palette": [
+        "#253A54",
+        "#7EADEB",
+        "#F0DEB1"
+      ],
+      "size": 1024,
+      "normal": "wasp_1.png",
+      "shiny": "wasp_1-shiny.png"
+    },
+    "wasp_2": {
+      "model": "WaspStage2",
+      "palette": [
+        "#263F43",
+        "#84D3B8",
+        "#F1CE8E"
+      ],
+      "size": 1024,
+      "normal": "wasp_2.png",
+      "shiny": "wasp_2-shiny.png"
+    },
+    "wasp_3": {
+      "model": "WaspStage3",
+      "palette": [
+        "#26324F",
+        "#79BCE0",
+        "#F4D58C"
+      ],
+      "size": 1024,
+      "normal": "wasp_3.png",
+      "shiny": "wasp_3-shiny.png"
+    },
+    "dragonfly_1": {
+      "model": "DragonflyStage1",
+      "palette": [
+        "#3D2D45",
+        "#C59AE1",
+        "#C6F0D7"
+      ],
+      "size": 1024,
+      "normal": "dragonfly_1.png",
+      "shiny": "dragonfly_1-shiny.png"
+    },
+    "dragonfly_2": {
+      "model": "DragonflyStage2",
+      "palette": [
+        "#432940",
+        "#DE9AB6",
+        "#E5EDBB"
+      ],
+      "size": 1024,
+      "normal": "dragonfly_2.png",
+      "shiny": "dragonfly_2-shiny.png"
+    },
+    "dragonfly_3": {
+      "model": "DragonflyStage3",
+      "palette": [
+        "#3A244A",
+        "#BE83DD",
+        "#E8F0BD"
+      ],
+      "size": 1024,
+      "normal": "dragonfly_3.png",
+      "shiny": "dragonfly_3-shiny.png"
+    },
+    "firefly_1": {
+      "model": "FireflyStage1",
+      "palette": [
+        "#263F43",
+        "#84D3B8",
+        "#F1CE8E"
+      ],
+      "size": 1024,
+      "normal": "firefly_1.png",
+      "shiny": "firefly_1-shiny.png"
+    },
+    "firefly_2": {
+      "model": "FireflyStage2",
+      "palette": [
+        "#26324F",
+        "#79BCE0",
+        "#F4D58C"
+      ],
+      "size": 1024,
+      "normal": "firefly_2.png",
+      "shiny": "firefly_2-shiny.png"
+    },
+    "firefly_3": {
+      "model": "FireflyStage3",
+      "palette": [
+        "#213E43",
+        "#68D0C5",
+        "#F5D49A"
+      ],
+      "size": 1024,
+      "normal": "firefly_3.png",
+      "shiny": "firefly_3-shiny.png"
+    },
+    "cicada_1": {
+      "model": "CicadaStage1",
+      "palette": [
+        "#432940",
+        "#DE9AB6",
+        "#E5EDBB"
+      ],
+      "size": 1024,
+      "normal": "cicada_1.png",
+      "shiny": "cicada_1-shiny.png"
+    },
+    "cicada_2": {
+      "model": "CicadaStage2",
+      "palette": [
+        "#3A244A",
+        "#BE83DD",
+        "#E8F0BD"
+      ],
+      "size": 1024,
+      "normal": "cicada_2.png",
+      "shiny": "cicada_2-shiny.png"
+    },
+    "cicada_3": {
+      "model": "CicadaStage3",
+      "palette": [
+        "#44243C",
+        "#E088BD",
+        "#C4E8F1"
+      ],
+      "size": 1024,
+      "normal": "cicada_3.png",
+      "shiny": "cicada_3-shiny.png"
+    },
+    "mosquito_1": {
+      "model": "MosquitoStage1",
+      "palette": [
+        "#26324F",
+        "#79BCE0",
+        "#F4D58C"
+      ],
+      "size": 1024,
+      "normal": "mosquito_1.png",
+      "shiny": "mosquito_1-shiny.png"
+    },
+    "mosquito_2": {
+      "model": "MosquitoStage2",
+      "palette": [
+        "#213E43",
+        "#68D0C5",
+        "#F5D49A"
+      ],
+      "size": 1024,
+      "normal": "mosquito_2.png",
+      "shiny": "mosquito_2-shiny.png"
+    },
+    "mosquito_3": {
+      "model": "MosquitoStage3",
+      "palette": [
+        "#253A54",
+        "#7EADEB",
+        "#F0DEB1"
+      ],
+      "size": 1024,
+      "normal": "mosquito_3.png",
+      "shiny": "mosquito_3-shiny.png"
+    },
+    "snail_1": {
+      "model": "SnailStage1",
+      "palette": [
+        "#3A244A",
+        "#BE83DD",
+        "#E8F0BD"
+      ],
+      "size": 1024,
+      "normal": "snail_1.png",
+      "shiny": "snail_1-shiny.png"
+    },
+    "snail_2": {
+      "model": "SnailStage2",
+      "palette": [
+        "#44243C",
+        "#E088BD",
+        "#C4E8F1"
+      ],
+      "size": 1024,
+      "normal": "snail_2.png",
+      "shiny": "snail_2-shiny.png"
+    },
+    "snail_3": {
+      "model": "SnailStage3",
+      "palette": [
+        "#3D2D45",
+        "#C59AE1",
+        "#C6F0D7"
+      ],
+      "size": 1024,
+      "normal": "snail_3.png",
+      "shiny": "snail_3-shiny.png"
     }
   }
 }

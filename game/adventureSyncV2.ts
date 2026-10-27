@@ -8,7 +8,7 @@ const day=(now:number)=>new Date(now).toISOString().slice(0,10);
 const DAY_CAP=8000;
 export function gpsWalkMeters(p:PlayerV2){return p.field?.walk?.gpsMeters??p.field?.walk?.meters??0;}
 function healthMeters(h:HealthProgress){return Math.max(0,Math.min(h.meters-h.baselineMeters,(h.steps-h.baselineSteps)*1.15));}
-function desiredDay(h:HealthProgress){return Math.floor(Math.min(DAY_CAP,h.gpsBaseline+Math.max(h.gpsMeters-h.gpsBaseline,healthMeters(h))));}
+function desiredDay(h:HealthProgress){return Math.floor(h.gpsBaseline+Math.max(h.gpsMeters-h.gpsBaseline,Math.min(healthMeters(h),Math.max(0,DAY_CAP-h.gpsBaseline))));}
 /** GPS has already passed movement validation. Keep its independent total for routes and lures. */
 export function mergeGPSWalk(p:PlayerV2,priorTotal:number,priorDay:number,now:number){
  const w=p.field?.walk;if(!w)return;const raw=Math.max(0,w.meters-priorTotal);w.gpsMeters=(w.gpsMeters??priorTotal)+raw;

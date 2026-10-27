@@ -18,10 +18,11 @@ window.renderBug=async(id,shiny)=>{
  const camera=new THREE.OrthographicCamera(-2.1,2.1,2.1,-2.1,.1,100);camera.position.copy(center).add(new THREE.Vector3(4,3.7,6));camera.lookAt(center);camera.updateMatrixWorld();camera.updateProjectionMatrix();
  let extent=0;for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){const p=new THREE.Vector3(x,y,z).project(camera);extent=Math.max(extent,Math.abs(p.x),Math.abs(p.y));}
  camera.zoom=.85/extent;camera.updateProjectionMatrix();renderer.render(scene,camera);const png=renderer.domElement.toDataURL('image/png');mixer.stopAllAction();
- if(shiny)group.traverse(o=>{if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();});
- return {png,palette:SHINY_PALETTES[baseSpeciesId(id)],model:WALK_MODELS[id]};
+ group.traverse(o=>{if(o.isSkinnedMesh)o.skeleton.dispose();if(shiny&&o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();});
+ if(shiny){const model=cache.get(id);model.root.traverse(o=>{if(o.isSkinnedMesh)o.skeleton.dispose();if(o.isMesh){o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){for(const value of Object.values(m))if(value instanceof THREE.Texture)value.dispose();m.dispose();}}});cache.delete(id);renderer.renderLists.dispose();}
+ return {png,palette:SHINY_PALETTES[id]??SHINY_PALETTES[baseSpeciesId(id)],model:WALK_MODELS[id]};
 };
 `,resolveDir:process.cwd(),loader:'ts'},bundle:true,write:false,format:'iife',platform:'browser',target:'es2022',logLevel:'warning'});
 const script=compiled.outputFiles[0].contents;
-const server=createServer(async(req,res)=>{try{const path=new URL(req.url,'http://localhost').pathname;if(path==='/'){res.setHeader('Content-Type','text/html');res.end('<html><body style="margin:0"><script src="/studio.js"></script></body></html>');}else if(path==='/studio.js'){res.setHeader('Content-Type','application/javascript');res.end(script);}else if(/^\/models\/[A-Za-z]+\.glb$/.test(path)){res.setHeader('Content-Type','model/gltf-binary');res.end(await readFile(resolve('public','.'+path)));}else{res.statusCode=404;res.end();}}catch{res.statusCode=500;res.end('Asset unavailable');}});
-server.listen(8094,'127.0.0.1',()=>console.log('Portrait renderer http://127.0.0.1:8094'));
+const server=createServer(async(req,res)=>{try{const path=new URL(req.url,'http://localhost').pathname;if(path==='/'){res.setHeader('Content-Type','text/html');res.end('<html><body style="margin:0"><script src="/studio.js"></script></body></html>');}else if(path==='/studio.js'){res.setHeader('Content-Type','application/javascript');res.end(script);}else if(/^\/models\/[A-Za-z0-9_-]+\.glb$/.test(path)){res.setHeader('Content-Type','model/gltf-binary');res.end(await readFile(resolve('public','.'+path)));}else{res.statusCode=404;res.end();}}catch{res.statusCode=500;res.end('Asset unavailable');}});
+const port=Number(process.env.PORTRAIT_PORT??8094);server.listen(port,'127.0.0.1',()=>console.log('Portrait renderer http://127.0.0.1:'+port));

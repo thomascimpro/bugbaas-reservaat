@@ -2,6 +2,7 @@ import type {GymProgress} from './gymsV2';
 import type {DailyChallengeProgress} from './dailyChallengeV2';
 import {ensureTrainer,catchXP,grantXP} from './trainerV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
+import {EXPANDED_BY_ID,ULTIMATE_BASES} from './dexExpansionV2';
 import {EVOLUTIONS,candyFamily,baseSpeciesId,ELITE_FORMS} from './dexV2';
 import type {EchoProgress} from './echoArenaV2';
 import type {GoCocoonsProgress} from './goCocoonsV2';
@@ -63,12 +64,23 @@ export type GoProfile={
  ratedDay?:string;ratedCount?:number;dex?:string[];version:1;dust:number;candy:Record<string,number>;xl:Record<string,number>;items:Record<Held,number>;fastTMs:number;chargedTMs:number;
  team:string[];league:League;rating:number;wins:number;losses:number;history:{id:string;opponent:string;result:string;delta:number;at:number}[];
  battle:string|null;queue:{league:League;at:number;until:number}|null;
- auto:{enabled:boolean;lastAt:number;attempted:string[];last?:{species:string;caught:boolean;at:number};status:'off'|'waiting'|'moving'|'too-fast'|'gps'|'empty';moving:number};
+ auto:{enabled:boolean;lastAt:number;attempted:string[];last?:{species:string;caught:boolean;at:number};totals?:{caught:number;missed:number;dust:number;xp:number;spins?:number};status:'off'|'waiting'|'moving'|'too-fast'|'gps'|'empty';moving:number};
  motion?:{fix:Fix;at:number};buddyMeters:number;
 };
 export function eligible(s:Specimen){return !!s.go||['walking','cocoon','metamorphosis'].includes(s.source);}
 export const family=candyFamily;
 export function movePool(id:string):{types:Element[];fast:Fast[];charged:Charged[]}{
+ const role=EXPANDED_BY_ID[id]?.moveRole;
+ if(role==='spider')return {types:['bug','poison'],fast:['fury','poison'],charged:['cut','venom','dark']};
+ if(role==='armabee')return {types:['bug','steel'],fast:['bite','fury'],charged:['iron','buzz','cut']};
+ if(role==='scorpion')return {types:['bug','poison'],fast:['poison','mud'],charged:['venom','earth','dark']};
+ if(role==='centipede')return {types:['bug','dark'],fast:['bite','poison'],charged:['dark','venom','cut']};
+ if(role==='wasp')return {types:['bug','flying'],fast:['wing','poison'],charged:['air','venom','cut']};
+ if(role==='dragonfly')return {types:['bug','flying'],fast:['wing','fury'],charged:['air','buzz','stream']};
+ if(role==='firefly')return {types:['bug','fire'],fast:['bite','fury'],charged:['flare','buzz','seed']};
+ if(role==='cicada')return {types:['bug','flying'],fast:['wing','bite'],charged:['buzz','air','rock']};
+ if(role==='mosquito')return {types:['bug','poison'],fast:['poison','fury'],charged:['venom','stream','cut']};
+ if(role==='snail')return {types:['bug','rock'],fast:['mud','bite'],charged:['rock','earth','stream']};
  id=baseSpeciesId(id);
  const fieldFamily=FIELD_FAMILY_SPECIES.find(s=>s.id===id)?.family;
  if(fieldFamily==='lesserstag'||fieldFamily==='manticora')return {types:['bug','dark'],fast:['bite','fury'],charged:['cut','dark','rock']};
@@ -130,7 +142,7 @@ export function evolveGo(p:PlayerV2,id:unknown,seed:string,now=Date.now()){
  const s=ownedGo(p,id),g=p.go!,key=family(s.species),evo=EVOLUTIONS[s.species];
  check(evo&&(g.candy[key]??0)>=evo.candy,'Deze evolutie vraagt voldoende soortnectar.');
  g.candy[key]-=evo.candy;s.species=evo.to;
- if(!ELITE_FORMS[s.species]){const slots=s.go!.charged.length,moves=rollGoBug(s.species,seed);s.go={...s.go!,fast:moves.fast,charged:slots>1?[...new Set([...moves.charged,...movePool(s.species).charged])].slice(0,2):moves.charged};}
+ if(!ELITE_FORMS[s.species]&&!ULTIMATE_BASES[s.species]){const slots=s.go!.charged.length,moves=rollGoBug(s.species,seed);s.go={...s.go!,fast:moves.fast,charged:slots>1?[...new Set([...moves.charged,...movePool(s.species).charged])].slice(0,2):moves.charged};}
  if(!g.dex!.includes(s.species))g.dex!.push(s.species);if(!p.discovered.includes(s.species))p.discovered.push(s.species);if(s.shiny&&!p.shinies.includes(s.species))p.shinies.push(s.species);
  markGoSeen(p,s.species,now);g.entries![s.species].caughtAt??=now;if(s.shiny)g.entries![s.species].shinyAt??=now;
 }

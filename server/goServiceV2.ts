@@ -14,7 +14,7 @@ import {ensureBosses,makeBossBattle,settleBoss} from '../game/goBossV2';
 import type {BossDifficulty} from '../game/goBossV2';
 import {claimGoDaily} from '../game/dailyResearchV2';
 import {grantXP,claimTrainer,ensureTrainer} from '../game/trainerV2';
-import {spinPost,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute,cancelRoute} from '../game/worldSitesV2';
+import {spinPost,POST_COOLDOWN,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute,cancelRoute} from '../game/worldSitesV2';
 import {unknownHabitat} from '../game/habitatsV2';
 import type {HabitatContext} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
@@ -131,9 +131,26 @@ export class GoServiceV2{
   const visible=battle?structuredClone(battle) as GoBattleView:null;if(visible){check(visible.players.includes(uid),'Dit gevecht is niet van jou.',403);visible.side=visible.players.indexOf(uid) as Side;if(visible.gym)visible.gym.defenders=[];const other=(1-visible.side) as Side;if(visible.queued)visible.queued[other]=null;visible.teams[other].forEach((f,i)=>{f.energy=0;f.attack=0;f.defense=0;f.readyAt=0;f.go={level:0,iv:[0,0,0],fast:'bite',charged:[],item:null};if(i!==visible.active[other]){f.id='opponent-'+i;f.species='unknown';f.cp=0;f.shiny=false;f.hp=f.hp>0?1:0;f.maxHP=1;}else{f.hp=Math.ceil(f.hp/f.maxHP*100);f.maxHP=100;}});}
   return {dailyChallenge:dailyChallengeView(publicPlayer,this.clock()),dailyChallengeLeaderboard,goGyms:gyms.map(g=>publicGym(g,uid,this.clock())),goTrades:trades.map(t=>publicGoTrade(t,this.clock())),echoLeaderboard:echoRanks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),player:publicPlayer,now:this.clock(),mode:this.mode,linked:linked||this.mode==='local',match:null,ticket:null,friends:friends.filter(f=>!f.removed),leaderboard:ranks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),goBattle:visible};
  }
- private auto(p:PlayerV2,now:number,secret:string){const g=p.go!,a=g.auto,w=p.walking;if(!w)return;const previous=g.motion;g.motion={fix:{...w.fix},at:now};if(!a.enabled){a.status='off';return;}if(w.blockedUntil&&w.blockedUntil>now){a.status='too-fast';a.moving=0;return;}if(!previous||w.fix.accuracy>25||previous.fix.accuracy>25){a.status='gps';a.moving=0;return;}
-  const seconds=(now-previous.at)/1000,meters=distance(previous.fix,w.fix),speed=meters/seconds;if(seconds<5||seconds>60||meters<Math.max(12,w.fix.accuracy,previous.fix.accuracy)||speed<.7){a.status='waiting';a.moving=0;return;}if(speed>7){a.status='too-fast';a.moving=0;return;}a.status='moving';a.moving++;if(a.moving<2||now-a.lastAt<30000)return;const f=p.field!;if(f.inventory.basic<1){a.status='empty';return;}a.attempted=a.attempted.filter(id=>w.spawns.some(s=>s.id===id&&s.expiresAt>now));const s=w.spawns.find(s=>s.expiresAt>now&&!w.caught.includes(s.id)&&!a.attempted.includes(s.id)&&g.dex?.includes(s.species)&&f.encounter?.spawn!==s.id&&distance(w.fix,s)<=CATCH_RADIUS);if(!s)return;
-  a.lastAt=now;a.attempted.push(s.id);f.inventory.basic--;const caught=rng(secret+':auto')()<catchChance(s.species,'basic',null);if(caught){catchWild(p,s.id,now);const bug=p.specimens.at(-1)!,priorDust=g.dust,priorXP=g.trainer!.xp;awardGoCatch(p,bug,w.seed+':go:'+s.id);f.total.catches++;f.daily.catches++;if(!f.daily.species.includes(s.species))f.daily.species.push(s.species);if(s.source==='lure'&&f.lure)f.lure.caught++;awardGoCatchCard(p,bug,s.id,now);awardCocoon(p,secret,now);w.lastCatch!.nectar=g.dust-priorDust;this.note(p,'catch','catch:'+s.id,bug,now,{method:'auto',dust:g.dust-priorDust,xp:g.trainer!.xp-priorXP});}else{w.caught.push(s.id);appendGoJournal(p,{id:'autoMiss:'+s.id,kind:'autoMiss',at:now,species:s.species,method:'auto'});}a.last={species:s.species,caught,at:now};
+ private auto(p:PlayerV2,now:number,secret:string){
+  const g=p.go!,a=g.auto,w=p.walking;if(!w)return;const previous=g.motion;g.motion={fix:{...w.fix},at:now};
+  if(!a.enabled){a.status='off';return;}if(w.blockedUntil&&w.blockedUntil>now){a.status='too-fast';a.moving=0;return;}
+  if(!previous||w.fix.accuracy>25||previous.fix.accuracy>25){a.status='gps';a.moving=0;return;}
+  const seconds=(now-previous.at)/1000,meters=distance(previous.fix,w.fix),speed=meters/seconds;
+  if(seconds<5||seconds>60||meters<Math.max(12,w.fix.accuracy,previous.fix.accuracy)||speed<.7){a.status='waiting';a.moving=0;return;}
+  if(speed>7){a.status='too-fast';a.moving=0;return;}a.status='moving';a.moving++;if(a.moving<2||now-a.lastAt<30000)return;
+  const f=p.field!,before={dust:g.dust,xp:g.trainer!.xp},totals=a.totals??={caught:0,missed:0,dust:0,xp:0};
+  // A moving autovanger replenishes at the same server-validated posts and cooldown as manual spinning.
+  const post=w.posts?.find(post=>distance(w.fix,post)<=CATCH_RADIUS&&now-(g.sites?.visits[post.id]??0)>=POST_COOLDOWN);
+  if(post){spinPost(p,post.id,secret+':auto-post',now);totals.spins=(totals.spins??0)+1;}
+  const accountRewards=()=>{totals.dust+=g.dust-before.dust;totals.xp+=g.trainer!.xp-before.xp;};
+  if(f.inventory.basic<1){a.status='empty';accountRewards();return;}
+  a.attempted=a.attempted.filter(id=>w.spawns.some(s=>s.id===id&&s.expiresAt>now));
+  const s=w.spawns.find(s=>s.expiresAt>now&&!w.caught.includes(s.id)&&!a.attempted.includes(s.id)&&f.encounter?.spawn!==s.id&&distance(w.fix,s)<=CATCH_RADIUS);
+  if(!s||!w.seed){accountRewards();return;}
+  a.lastAt=now;a.attempted.push(s.id);f.inventory.basic--;const caught=rng(secret+':auto')()<.75*catchChance(s.species,'basic',null);
+  if(caught){catchWild(p,s.id,now);const bug=p.specimens.at(-1)!,priorDust=g.dust,priorXP=g.trainer!.xp;awardGoCatch(p,bug,w.seed+':go:'+s.id);f.total.catches++;f.daily.catches++;if(!f.daily.species.includes(s.species))f.daily.species.push(s.species);if(s.source==='lure'&&f.lure)f.lure.caught++;awardGoCatchCard(p,bug,s.id,now);awardCocoon(p,secret,now);w.lastCatch!.nectar=g.dust-priorDust;this.note(p,'catch','catch:'+s.id,bug,now,{method:'auto',dust:g.dust-priorDust,xp:g.trainer!.xp-priorXP});totals.caught++;}
+  else{w.caught.push(s.id);appendGoJournal(p,{id:'autoMiss:'+s.id,kind:'autoMiss',at:now,species:s.species,method:'auto'});totals.missed++;}
+  a.last={species:s.species,caught,at:now};accountRewards();
  }
  private npc(p:PlayerV2,id:string,now:number){const q=freshV2('training-'+p.uid,'TRAINING',now);ensureGo(q,now);q.name='Veldwachter';q.go!.league=p.go!.league;const average=p.go!.team.map(id=>ownedGo(p,id).go!.level).reduce((a,b)=>a+b,0)/3;q.specimens=['ant','beetle','moth'].map((species,i)=>{const s={id:'trainer-'+i,species,level:1,shiny:false,favorite:false,obtainedAt:now,source:'training',hearts:0,item:null,go:rollGoBug(species,id+i)};s.go.level=Math.min(50,Math.max(1,Math.round(average)));while(stats(s).cp>LEAGUES[q.go!.league].cap&&s.go.level>1)s.go.level-=.5;return s;});q.go!.team=q.specimens.map(s=>s.id);return q;}
  private commandSnapshot(d:Documents,player:PlayerV2){

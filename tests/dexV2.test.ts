@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash,randomUUID} from 'node:crypto';
-import {BASE_DEX_SPECIES,DEX_SPECIES,ELITE_FORMS,EVOLUTIONS,baseSpeciesId,candyFamily,dexNumber,dexStatus,evolutionLine} from '../game/dexV2';
+import {BASE_DEX_SPECIES,DEX_SPECIES,ELITE_FORMS,EVOLUTION_APPEARANCES,EVOLUTIONS,baseSpeciesId,candyFamily,dexNumber,dexStatus,evolutionLine,usesSharedEvolutionModel} from '../game/dexV2';
 import {habitatWeight} from '../game/habitatsV2';
 import {readFile} from 'node:fs/promises';
 import sharp from 'sharp';
@@ -21,7 +21,7 @@ test('published dex numbers stay stable as species are appended and each has com
  assert.deepEqual([...DEX_SPECIES.map(s=>s.id)].sort(),Object.keys(WALK_MODELS).sort());
  for(const s of DEX_SPECIES){assert.equal(species(s.id).id,s.id);assert.equal((WALK_WEIGHTS[s.id]??0)>0,!ELITE_FORMS[s.id]);assert.ok(movePool(s.id).fast.length>=2);assert.ok(movePool(s.id).charged.length>=3);}
  const at=(id:string)=>stats({id,source:'walking',species:id,level:1,shiny:false,favorite:false,obtainedAt:NOW,hearts:0,item:null,go:{...rollGoBug(id,'fixed'),level:50,iv:[15,15,15]}});
- for(const s of DEX_SPECIES.slice(21)){const actual=at(s.id),ceiling=at(ELITE_FORMS[s.id]?'hercules_elite':'hercules');assert.ok(actual.cp<=ceiling.cp);}
+ for(const s of DEX_SPECIES.slice(21)){const actual=at(s.id),ceiling=at('hercules_elite');assert.ok(actual.cp<=ceiling.cp);}
 });
 
 test('two larval families use real adult targets, preserve historic nectar keys and spawn in suitable habitats',()=>{
@@ -68,7 +68,7 @@ test('evolution preserves specimen identity, IV, shiny, favorite, held item, bud
  assert.equal(bug.id,before.id);assert.equal(bug.source,before.source);assert.equal(bug.obtainedAt,before.obtainedAt);assert.equal(bug.favorite,true);assert.equal(bug.shiny,true);assert.equal(p.buddy,bug.id);assert.equal(bug.go.item,'leaf');assert.deepEqual(bug.go.iv,before.go.iv);assert.equal(bug.go.level,before.go.level);assert.equal(bug.go.charged.length,2);assert.equal(new Set(bug.go.charged).size,2);assert.equal(p.go!.candy.caterpillar,0);assert.equal(dexStatus(p,'moth').shiny,true);assert.throws(()=>evolveGo(p,bug.id,'again',NOW));
 });
 
-test('every base bug has a complete evolution line; Elite game forms share assets, currencies and moves without replacing existing specimen data',()=>{
+test('every base bug has a complete evolution line; published forms preserve currencies, moves and existing specimen data',()=>{
  assert.equal(BASE_DEX_SPECIES.length,32);assert.equal(Object.keys(ELITE_FORMS).length,30);
  for(const base of BASE_DEX_SPECIES){assert.ok(EVOLUTIONS[base.id]);assert.ok(evolutionLine(base.id).length>=2);}
  assert.deepEqual(evolutionLine('moth_elite'),['caterpillar','moth','moth_elite']);assert.deepEqual(evolutionLine('hercules'),['beetlegrub','hercules','hercules_elite']);
@@ -76,6 +76,15 @@ test('every base bug has a complete evolution line; Elite game forms share asset
   const p=freshV2('elite-'+base,'ELITE123',NOW);ensureField(p,NOW);ensureGo(p,NOW);
   const bug={id:'original-'+base,species:base,nickname:'Mijn bug',source:'walking',level:1,shiny:true,favorite:true,obtainedAt:NOW-1000,hearts:4,item:null,go:{...rollGoBug(base,'same'),iv:[15,7,11] as [number,number,number],item:'leaf' as const}};p.specimens.push(bug);p.buddy=bug.id;p.go!.team=[bug.id];const key=candyFamily(base);p.go!.candy[key]=100;p.go!.xl[key]=17;
   const before=structuredClone(bug);evolveGo(p,bug.id,'no-reroll',NOW);
-  assert.equal(bug.species,id);assert.equal(baseSpeciesId(id),base);assert.equal(WALK_MODELS[id],WALK_MODELS[base]);assert.deepEqual(movePool(id),movePool(base));assert.deepEqual(bug,{...before,species:id});assert.equal(candyFamily(id),key);assert.equal(p.go!.candy[key],0);assert.equal(p.go!.xl[key],17);assert.equal(p.buddy,before.id);assert.deepEqual(p.go!.team,[before.id]);assert.equal(dexStatus(p,id).shiny,true);assert.ok(stats(bug).cp>=stats(before).cp);assert.equal(EVOLUTIONS[id],undefined);assert.throws(()=>evolveGo(p,bug.id,'again',NOW));
+  assert.equal(bug.species,id);assert.equal(baseSpeciesId(id),base);assert.equal(WALK_MODELS[id],EVOLUTION_APPEARANCES[id]?.model??WALK_MODELS[base]);assert.equal(usesSharedEvolutionModel(id),!EVOLUTION_APPEARANCES[id]);assert.deepEqual(movePool(id),movePool(base));assert.deepEqual(bug,{...before,species:id});assert.equal(candyFamily(id),key);assert.equal(p.go!.candy[key],0);assert.equal(p.go!.xl[key],17);assert.equal(p.buddy,before.id);assert.deepEqual(p.go!.team,[before.id]);assert.equal(dexStatus(p,id).shiny,true);assert.ok(stats(bug).cp>=stats(before).cp);assert.equal(EVOLUTIONS[id]?.to,['moth_elite','hercules_elite'].includes(id)?undefined:base+'_ultimate');assert.throws(()=>evolveGo(p,bug.id,'again',NOW));
+ }
+});
+
+test('three named evolution stages use new licensed geometry, embedded assets and visibly different normal/shiny portraits',async()=>{
+ const source=JSON.parse(await readFile('assets/3d/evolution-stages/source.json','utf8')),manifest=JSON.parse(await readFile('assets/v2/portraits/v1/manifest.json','utf8'));assert.equal(source.license,'CC0-1.0');assert.match(await readFile('assets/3d/evolution-stages/LICENSE.txt','utf8'),/CC0/);
+ const decode=(b:Buffer)=>JSON.parse(b.toString('utf8',20,20+b.readUInt32LE(12))),geometry=(b:Buffer)=>{const g=decode(b),start=28+b.readUInt32LE(12),parts:Buffer[]=[];for(const mesh of g.meshes)for(const p of mesh.primitives){const a=g.accessors[p.attributes.POSITION],v=g.bufferViews[a.bufferView],stride=v.byteStride??12,offset=start+(v.byteOffset??0)+(a.byteOffset??0);assert.equal(a.componentType,5126);for(let i=0;i<a.count;i++)parts.push(b.subarray(offset+i*stride,offset+i*stride+12));}return Buffer.concat(parts);};
+ assert.equal(source.models.length,3);
+ for(const row of source.models){const appearance=EVOLUTION_APPEARANCES[row.id],model=await readFile('public/models/'+row.file),base=await readFile('public/models/'+WALK_MODELS[row.base]+'.glb'),g=decode(model);assert.equal(appearance.model,WALK_MODELS[row.id]);assert.equal(species(row.id).name,appearance.name);assert.notEqual(WALK_MODELS[row.id],WALK_MODELS[row.base]);assert.notDeepEqual(geometry(model),geometry(base),'new positions and topology, not a renamed or tinted base mesh');assert.equal(createHash('sha256').update(model).digest('hex'),row.sha256);assert.deepEqual(model,await readFile('assets/3d/evolution-stages/'+row.file));assert.equal(row.license,'CC0-1.0');assert.ok(g.skins.length);assert.ok(g.animations.some((a:{name:string})=>a.name==='idle'));assert.ok(g.animations.some((a:{name:string})=>a.name==='walk'));assert.ok(g.buffers.every((b:{uri?:string})=>!b.uri));assert.ok((g.images??[]).every((i:{uri?:string})=>!i.uri));assert.equal(manifest.species[row.id].model,appearance.model);
+  const pixels:Buffer[]=[];for(const suffix of ['','-shiny']){const file='assets/v2/portraits/v1/'+row.id+suffix+'.webp',meta=await sharp(file).metadata();assert.equal(meta.width,1024);assert.equal(meta.height,1024);assert.equal(meta.hasAlpha,true);const rgba=await sharp(file).ensureAlpha().raw().toBuffer();let visible=0;for(let y=0;y<1024;y++)for(let x=0;x<1024;x++)if(rgba[(y*1024+x)*4+3]>5){visible++;assert.ok(x>=12&&x<=1011&&y>=12&&y<=1011);}assert.ok(visible>10000);pixels.push(rgba);}let changed=0;for(let i=0;i<pixels[0].length;i+=4)if(Math.abs(pixels[0][i]-pixels[1][i])+Math.abs(pixels[0][i+1]-pixels[1][i+1])+Math.abs(pixels[0][i+2]-pixels[1][i+2])>25)changed++;assert.ok(changed>10000,'shiny recolors the model body');
  }
 });

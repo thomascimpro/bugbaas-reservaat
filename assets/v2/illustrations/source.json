@@ -1,0 +1,344 @@
+{
+  "sourceProject": "CimPro BugBaas-3.0",
+  "sourceDirectory": "assets/bugdex",
+  "rights": "Existing BugBaas artwork reused in BugBaas; original rights retained.",
+  "processing": "Transparent original resolution WebP; 256px list thumbnails. No upscaling or recolouring.",
+  "species": [
+    {
+      "id": "ant",
+      "file": "rode-bosmier.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "8fa5b1e75fc39ddf6854cae70ced4ee1f86e69e3742f1a8d227fa97624600e32"
+    },
+    {
+      "id": "aphid",
+      "file": "groene-bladluis.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "63543a36bad4a685a4c02c10a68f34413a52aac39f36992c8226e400323f2d04"
+    },
+    {
+      "id": "weevil",
+      "file": "snuitkever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "763f5d06a038962eb00a48c32c532da7267f1732658772012c77045900244e91"
+    },
+    {
+      "id": "earwig",
+      "file": "oorworm.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "26a9b7d574672da484e9b0b233712e39b6bbdbe17e88dfa339bcfd534e177afd"
+    },
+    {
+      "id": "grasshopper",
+      "file": "sabelsprinkhaan.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "62b5a48be0c533c8d559b0a0d4fd3e28ac61454fc83cfd2ad19a023d24dfe41b"
+    },
+    {
+      "id": "lacewing",
+      "file": "gaasvlieg.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "c5634284588dde6896468ac30f00b26d3f4b860078a22c28cc2a3f916727fb03"
+    },
+    {
+      "id": "dungbeetle",
+      "file": "mestkever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "da8a7b4f515284eb54dcd857fb1533b549193a085f0f0f5865f7e38e47ffad75"
+    },
+    {
+      "id": "mantis",
+      "file": "bidsprinkhaan.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "5d20d78bd144c6ec1cff4dbf19a232e5d0a3d66b900792b8c84884afa1d5a979"
+    },
+    {
+      "id": "butterfly",
+      "file": "koninginnenpage.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "8ce703edf8fd5de1b1f9961e503f4132ade21240514561223584773c1c399dd9"
+    },
+    {
+      "id": "divingbeetle",
+      "file": "waterkever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "37914e91a0da08205fb34bde2f11ee8b0a9526ff90c9ec0ecd1b07c01a4d89ba"
+    },
+    {
+      "id": "waterstrider",
+      "file": "schaatsenrijder.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "392e9c9af41cd9da4bb9d85812264d3f1888c0e476f6c6e5bd319edf525df9a7"
+    },
+    {
+      "id": "hoverfly",
+      "file": "zweefvlieg.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "df09f02c03c288f64864ed0bf90b5dbcbbfbe1db82ae5615cb4738fac14043c3"
+    },
+    {
+      "id": "cricket",
+      "file": "veenmol.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "0ae959cfae3707cd39fa2816e5f6a6bd07b1a5cfc8086bdaaeff6a6c3dfa5cad"
+    },
+    {
+      "id": "stick",
+      "file": "wandelende-tak.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "732e159831abf41aaccc33e548b91578b67601ab58f4a142fe08aa1badccf571"
+    },
+    {
+      "id": "leaf",
+      "file": "wandelend-blad.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "3fe033b5940c9da503e9c66f2fb3b3f215157071f8137c6cf68a97a76dd6761b"
+    },
+    {
+      "id": "silverfish",
+      "file": "zilvervisje.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "268c04c7ae964b0c9fb200efe4aafafda327f1a23da9182b87867bd337d27b86"
+    },
+    {
+      "id": "hercules",
+      "file": "herculeskever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "14cd55cad821ab1a358d41f1a4e2d0cabe71dc096a8401eac1fbb65ca20c52a3"
+    },
+    {
+      "id": "cockroach",
+      "file": "kakkerlak.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "c3e3d50ad26c1a77fb3772348a43a6b73c79fad4560916ecb565a9959bf67514"
+    },
+    {
+      "id": "cranefly",
+      "file": "langpootmug.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "843a9c59ab9a2e6aa50c10512a3407faa57134839f75be29fa833710225ff19b"
+    },
+    {
+      "id": "flea",
+      "file": "vlo.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "9e8cddb593a2aed9cfbd48c88f81f40a07b2e6d53c66cc16aaa633c3b4b39792"
+    },
+    {
+      "id": "giantwaterbug",
+      "file": "reuzenwaterwants.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "38cd89b3574810ac09c41dbf0c6189ff58caa60759bbd892837a66faf6cb52da"
+    },
+    {
+      "id": "mayfly",
+      "file": "eendagsvlieg.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "856cfb90c37dbf8300708d19306f571f138b89c3a07f78f3bcc8ae46a61aebf4"
+    },
+    {
+      "id": "tortoisebeetle",
+      "file": "schildpadkever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "d155c21bfd9c8bcd672e57668e3b99b80bc408eda97dc074f19cc49de7cf817d"
+    },
+    {
+      "id": "bee",
+      "file": "honingbij.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "9deacde45e137dd460c2bd60a2e7c0d22a042c9d48601681a2b94cae1faa594a"
+    },
+    {
+      "id": "ant_elite",
+      "file": "zwarte-wegmier.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "ce77541ba8db21aaf4bf867fe65f17314f7e43c51736e5a7465286fd70286b3a"
+    },
+    {
+      "id": "weevil_elite",
+      "file": "eikelboorder.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "a1ef2aeaedf643449c3fba58648f5eef1a49065168f13c12cb64cd3cbeb66a8a"
+    },
+    {
+      "id": "grasshopper_elite",
+      "file": "groene-sabelsprinkhaan.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "91d0feb14bb65ca11c8f716967a0adddeb10375a428ddd69300976a9a91e38ad"
+    },
+    {
+      "id": "butterfly_elite",
+      "file": "monarchvlinder.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "1a1f001731731ae911aa7f1099bf11908267ffc3ef6d8372240407795b0b62b2"
+    },
+    {
+      "id": "silverfish_elite",
+      "file": "ovenvisje.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "51e0c245150ed451200bba9c040b4b47ee49acc26c2643b6751220de9d89a857"
+    },
+    {
+      "id": "lesserstag",
+      "file": "klein-vliegend-hert.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "9019f7a16dc730e8af0e275e0490177f18daf1705a3b4fe1001596825690f150"
+    },
+    {
+      "id": "atlasbeetle",
+      "file": "atlaskever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "c578df856dc573e1d384691cd1119672f40d782b251c83b825cf00588942b602"
+    },
+    {
+      "id": "rosechafer",
+      "file": "gouden-tor.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "e0571b3da6fad41f03681a6e279e67585644063bed970fe141e8d4a7945038f3"
+    },
+    {
+      "id": "rainbowscarab",
+      "file": "regenboogmestkever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "4320680378d52e559f6f70ae5b2cf833b091c561114b27c21a806bcd70323b68"
+    },
+    {
+      "id": "asianladybeetle",
+      "file": "aziatisch-lieveheersbeestje.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "c20bd688bc7be84a15b7aa6dd368f95ec9e6c41421940e0f3830c571ecc69128"
+    },
+    {
+      "id": "leafbeetle",
+      "file": "bladkever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "fb4c3c55b2381a0fafd36da0da0ce6176a2e82613a37f6841a7b8e5b970c9b86"
+    },
+    {
+      "id": "cucumberbeetle",
+      "file": "gevlekte-komkommerkever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "de6a3020c230815bd4701055338e32c32738feceea46da08f7e4fb3b19960745"
+    },
+    {
+      "id": "cardinalbeetle",
+      "file": "kardinaalkever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "bc98a5e5c367a606ed4a9967fff027eb4c1603fa8aaea1ce55fa1436ec7af125"
+    },
+    {
+      "id": "rosalialonghorn",
+      "file": "alpenboktor.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "2760cf0ed71d41ea47b2f9de8dfc8a63e5e193706763d3f07a0532810432a3dc"
+    },
+    {
+      "id": "elephantbeetle",
+      "file": "olifantskever.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "f58e30fd2fb917553c599c6d761c963c60697dc9bcfca552bbf71840214f5fbd"
+    },
+    {
+      "id": "titanbeetle",
+      "file": "reuzenboktor.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "5560bad73d38caa013244982c632f45100b3b520b416b5d34288fca728f5cf04"
+    },
+    {
+      "id": "leafhopper_ultimate",
+      "file": "doorncicade.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "e67f6910d6fc55843a65c172a57ed0a402a8776a0c9184ef6affe88c48dd4781"
+    },
+    {
+      "id": "spider_3",
+      "file": "vogelspin.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "b5dfe0c14fafb7142ec59c61eceb65a9205fe4b2ccee686e9f9a52b60ecd5680"
+    },
+    {
+      "id": "wasp_2",
+      "file": "gewone-wesp.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "421eb338b60d6a30f5cfd3def200fd6ce2a3c01c9ea9ed8944bb39b802060586"
+    },
+    {
+      "id": "wasp_3",
+      "file": "hoornaar.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "a4a31fe883fea8474e15b3c150941451e4eec1dfd9247c9473229cefd333ea0e"
+    },
+    {
+      "id": "dragonfly_3",
+      "file": "grote-keizerlibel.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "c9847d9e2112b16c6cbff4e060a4ab8160b68c09bf13111db99c8026232ff2ab"
+    },
+    {
+      "id": "mosquito_2",
+      "file": "gewone-steekmug.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "dd1bc3f7cc54e709223bafcf3d8edd4cc3c23b8a77695ca53c96e5cd4cd46f17"
+    },
+    {
+      "id": "mosquito_3",
+      "file": "grote-steekmug.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "543a01618e6c38a697ab671eca1a7d6844be9444045774d673d764d720488067"
+    },
+    {
+      "id": "snail_2",
+      "file": "tuinslak.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "67aa25fe5890b4d0f06f95c28ca685207867bb62bd0e8b19074ff63265637b2f"
+    }
+  ]
+}

@@ -13,10 +13,10 @@ import {habitatWeight} from '../game/habitatsV2';
 const NOW=Date.UTC(2026,9,24,12);
 
 test('new three-stage families append after all 62 published dex entries',()=>{
- assert.equal(DEX_SPECIES.length,92);assert.equal(dexNumber('beetle'),1);assert.equal(dexNumber('bee'),32);
+ assert.equal(DEX_SPECIES.length,150);assert.equal(dexNumber('beetle'),1);assert.equal(dexNumber('bee'),32);
  assert.equal(dexNumber('lesserstag'),63);assert.equal(dexNumber('rainbowscarab'),71);assert.equal(dexNumber('acornweevil'),72);
  assert.equal(dexNumber('beetle_elite'),33);assert.equal(dexNumber('bee_elite'),62);
- assert.deepEqual(DEX_SPECIES.slice(62).map(s=>s.id),FIELD_FAMILY_SPECIES.map(s=>s.id));
+ assert.deepEqual(DEX_SPECIES.slice(62,92).map(s=>s.id),FIELD_FAMILY_SPECIES.map(s=>s.id));
  for(const f of FIELD_FAMILIES){
   assert.deepEqual(evolutionLine(f.stages[1].id),f.stages.map(s=>s.id));
   assert.equal(new Set(f.stages.map(s=>WALK_MODELS[s.id])).size,3);

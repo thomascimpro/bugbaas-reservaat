@@ -1,20 +1,20 @@
 import React from 'react';
 import {Pressable,Text,View} from 'react-native';
 import {species} from '../game/catalogV2';
-import {dexNumber,ELITE_FORMS,EVOLUTIONS,evolutionLine} from '../game/dexV2';
+import {dexNumber,usesSharedEvolutionModel,EVOLUTIONS,evolutionLine} from '../game/dexV2';
 import {SpriteView} from './artV2';
 import {Glyph,Help,Label,V} from './uiV2';
 
 export function CollectionEvolutionV2({id,shiny,onEvolve}:{id:string;shiny:boolean;onEvolve?:()=>void}){
- const line=evolutionLine(id),elite=line.some(stage=>!!ELITE_FORMS[stage]);
+ const line=evolutionLine(id),elite=line.some(usesSharedEvolutionModel);
  return <View testID="collection-evolution-route" style={{gap:9,paddingVertical:12,borderTopWidth:1,borderColor:'#769D8A38'}}>
   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><Label small bold>EVOLUTIEROUTE</Label><Help title="Evolutieroute" body={elite?'Elite is een sterkere afwerking van dezelfde diersoort, met dezelfde anatomie. De route bewaart je IV, shiny, level en item.':'Deze spel-evoluties gebruiken verschillende insectmodellen. Dit is geen biologische levenscyclus. IV, shiny, level, item en je tweede aanvalslot blijven behouden.'}/></View>
   <View style={{flexDirection:'row',alignItems:'flex-start',gap:5}}>{line.map((stage,i)=>{
    const current=stage===id,cost=i>0?EVOLUTIONS[line[i-1]]?.candy:undefined;
    return <View key={stage} style={{flex:1,minWidth:0,alignItems:'center',gap:5}}>
     <View style={{width:'100%',height:90,alignItems:'center',justifyContent:'center',borderRadius:18,borderWidth:1,borderColor:current?'#BBDC9D':'#73968738',backgroundColor:current?'#34594A':'#153D33'}}><SpriteView id={stage} shiny={shiny} size={line.length>2?76:85}/>{current&&<View style={{position:'absolute',right:4,top:4}}><Glyph name="check" size={17}/></View>}</View>
-    <Text numberOfLines={2} style={{fontSize:11,lineHeight:15,color:V.ink,fontWeight:current?'700':'400',textAlign:'center',minHeight:30}}>{ELITE_FORMS[stage]?'Elite':species(stage).name}</Text>
-    <Text style={{fontSize:10,color:current?'#D7E9C8':V.muted}}>{current?'Jouw bug':ELITE_FORMS[stage]?'Zelfde soort':'Stadium '+(i+1)}</Text>
+    <Text numberOfLines={2} style={{fontSize:11,lineHeight:15,color:V.ink,fontWeight:current?'700':'400',textAlign:'center',minHeight:30}}>{usesSharedEvolutionModel(stage)?'Elite':species(stage).name}</Text>
+    <Text style={{fontSize:10,color:current?'#D7E9C8':V.muted}}>{current?'Jouw bug':usesSharedEvolutionModel(stage)?'Zelfde soort':'Stadium '+(i+1)}</Text>
     {cost!==undefined?<Pressable accessibilityRole="button" accessibilityLabel={cost+' nectar voor '+species(stage).name} onPress={onEvolve} disabled={!onEvolve||EVOLUTIONS[id]?.to!==stage} style={{minHeight:32,flexDirection:'row',alignItems:'center',gap:3,paddingHorizontal:6,borderRadius:12,backgroundColor:'#244C3F'}}><Glyph name="leaf" size={17}/><Text style={{fontSize:11,color:'#E8DBAC',fontWeight:'700'}}>{cost}</Text></Pressable>:<Text style={{fontSize:10,lineHeight:32,color:V.muted}}>#{String(dexNumber(stage)).padStart(3,'0')}</Text>}
    </View>;
   })}</View>

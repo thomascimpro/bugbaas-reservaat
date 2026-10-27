@@ -1,0 +1,4 @@
+External models listed in source.json are released under CC0 1.0 Universal by their credited authors.
+Official legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Insectoids author license is preserved as LICENSE-Insectoids.txt.
+Original authored BugBaas geometry is game project source, created for this project; no existing runtime insect mesh was relabeled as new.
