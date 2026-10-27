@@ -5,6 +5,7 @@ import {catchAccuracy,catchPeriod,catchTarget,judgeCatchRhythm} from '../game/ca
 import {SqliteStore} from '../server/sqlite';
 import {GoServiceV2} from '../server/goServiceV2';
 import type {PlayerV2} from '../game/typesV2';
+import {goCatchRewards} from '../game/goV2';
 const NOW=Date.UTC(2026,9,21,14),focus={id:'server-issued-random-focus',at:NOW};
 const perfect=(bait:null|'dew'=null)=>({focus:focus.id,taps:[0,1,2].map(i=>catchTarget(focus,i,bait))});
 test('three separate timing windows reward accurate play; slowing bait widens the windows',()=>{
@@ -26,7 +27,7 @@ test('a server-issued timing challenge consumes one net for three taps and settl
   const command={type:'worldCast',encounter:view.player.field!.encounter!.id,net:'royal',bait:null,rhythm,commandId:randomUUID(),expectedRevision:view.player.revision};
   await assert.rejects(()=>service.command(uid,command),'Cannot submit a future perfect result');assert.equal((await service.state(uid)).player.field!.inventory.royal,stock);
   now=f.at+rhythm.taps[2]+10;const accepted=await service.command(uid,command),replayed=await service.command(uid,command);
-  assert.equal(accepted.player.field!.lastCast!.grade,'perfect');assert.equal(accepted.player.field!.lastCast!.outcome,'caught');assert.equal(accepted.player.field!.inventory.royal,stock-1);assert.equal(accepted.player.go!.dust,dust+100);assert.deepEqual(replayed.player,accepted.player);
+  assert.equal(accepted.player.field!.lastCast!.grade,'perfect');assert.equal(accepted.player.field!.lastCast!.outcome,'caught');assert.equal(accepted.player.field!.inventory.royal,stock-1);assert.equal(accepted.player.go!.dust,dust+goCatchRewards(accepted.player.field!.lastCast!.species,null).dust);assert.deepEqual(replayed.player,accepted.player);
   await assert.rejects(()=>service.command(uid,{...command,commandId:randomUUID(),expectedRevision:accepted.player.revision}));
  }finally{store.close();}
 });

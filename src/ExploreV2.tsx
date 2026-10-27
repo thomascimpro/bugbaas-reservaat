@@ -20,17 +20,20 @@ export function ExploreV2(props:Props){
  const state=()=>{const p=latest.current;send({kind:'state',view:p.view,busy:p.busy,now:p.now,paused:!!p.paused,camera:p.camera?.current});};
  const stop=()=>{generation.current++;watches.current.stop();};
  const permission=async()=>{const p=await Location.getForegroundPermissionsAsync();send({kind:'permission',state:p.granted?'granted':p.canAskAgain?'prompt':'denied'});return p;};
+ const permissionRequest=useRef<Promise<Location.LocationPermissionResponse>|null>(null);
+ const acquirePermission=()=>{if(permissionRequest.current)return permissionRequest.current;const own=(async()=>{const p=await Location.getForegroundPermissionsAsync();return p.granted?p:Location.requestForegroundPermissionsAsync();})();permissionRequest.current=own;void own.finally(()=>{if(permissionRequest.current===own)permissionRequest.current=null;}).catch(()=>{});return own;};
  const gps=async(action:'get'|'watch'|'clear',id:number)=>{
   if(action==='clear'){watches.current.clear(id);return;}
    if(!active.current||latest.current.paused){send({kind:'geoError',id,code:2});return;}
    const ownGeneration=generation.current,watch=action==='watch'?watches.current.begin(id):null,current=()=>alive.current&&active.current&&!latest.current.paused&&ownGeneration===generation.current&&(!watch||watch.current()),error=(code:number)=>{if(current())send({kind:'geoError',id,code});};
   try{
-   let p=await Location.getForegroundPermissionsAsync();if(!current())return;if(!p.granted)p=await Location.requestForegroundPermissionsAsync();if(!current())return;
+   const p=await acquirePermission();if(!current())return;
    send({kind:'permission',state:p.granted?'granted':p.canAskAgain?'prompt':'denied'});if(!p.granted){error(1);return;}
    const servicesEnabled=await Location.hasServicesEnabledAsync();if(!current())return;if(!servicesEnabled){error(2);return;}
    const position=(p:Location.LocationObject)=>{if(!current())return;send({kind:'position',id,position:{coords:{latitude:p.coords.latitude,longitude:p.coords.longitude,accuracy:p.coords.accuracy??999},timestamp:p.timestamp}});};
-   if(action==='get')position(await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High}));
-   else{const subscription=await Location.watchPositionAsync({accuracy:Location.Accuracy.High,timeInterval:5000,distanceInterval:4},position,()=>error(2));watch!.attach(subscription);}
+   const cached=await Location.getLastKnownPositionAsync({maxAge:action==='get'?10000:86400000,requiredAccuracy:action==='get'?35:5000}).catch(()=>null);if(!current())return;
+   if(action==='get')position(cached&&Date.now()-cached.timestamp<=10000&&(cached.coords.accuracy??999)<=35?cached:await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High}));
+   else{if(cached)position(cached);const subscription=await Location.watchPositionAsync({accuracy:Location.Accuracy.High,timeInterval:5000,distanceInterval:0},position,()=>error(2));watch!.attach(subscription);}
   }catch{error(2);}
  };
   useEffect(()=>{alive.current=true;const listener=AppState.addEventListener('change',status=>{active.current=status==='active';if(!active.current)stop();send({kind:'active',active:active.current&&!latest.current.paused});if(active.current&&!latest.current.paused)void permission();});return()=>{alive.current=false;ready.current=false;stop();listener.remove();};},[]);

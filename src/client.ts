@@ -26,16 +26,19 @@ export class ApiError extends Error { constructor(message: string, public status
 async function token() { return mode === 'local' ? localToken : auth.currentUser?.getIdToken() ?? ''; }
 async function ownBackgroundToken(uid:string){await auth.authStateReady();const user=auth.currentUser;if(!user||user.uid!==uid)throw new ApiError('Autovangst is gestopt omdat het account is gewijzigd.',401);let value:string;try{value=await user.getIdToken();}catch(error){if(['auth/user-token-expired','auth/invalid-user-token','auth/user-disabled','auth/user-not-found'].includes((error as {code?:string})?.code??''))throw new ApiError('Log opnieuw in om autovangst te hervatten.',401);throw error;}if(auth.currentUser?.uid!==uid)throw new ApiError('Autovangst is gestopt omdat het account is gewijzigd.',401);return value;}
 async function request<T>(path: string, body?: unknown, anonymous = false,backgroundUid?:string,timeoutMs?:number): Promise<T> {
-  const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), timeoutMs??(backgroundUid||path==='v2/command'&&(body as {type?:string})?.type==='worldLocate'?8000:20000));
+  const controller = new AbortController(); let timeout:ReturnType<typeof setTimeout>;
+  const deadline=new Promise<never>((_,reject)=>{timeout=setTimeout(()=>{controller.abort();reject(new ApiError('Verbinding vertraagd. Probeer de opgeslagen actie opnieuw.',0));},timeoutMs??(backgroundUid||path==='v2/command'&&['worldLocate','worldEncounter','worldCast'].includes((body as {type:string})?.type)?8000:20000));});
   try {
+    return await Promise.race([deadline,(async()=>{
     const response = await fetch(`${base}/api/game/${path}`, { method: body === undefined ? 'GET' : 'POST', signal: controller.signal,
       headers: { ...(body === undefined ? {} : { 'Content-Type': 'application/json' }), ...(anonymous ? {} : { Authorization: `Bearer ${backgroundUid?await ownBackgroundToken(backgroundUid):await token()}` }) },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
     const data = await response.json(); if (!response.ok) throw new ApiError(data.error ?? 'Deze actie is niet gelukt.', response.status); return data as T;
+    })()]);
   } catch (e) {
     if (e instanceof ApiError) throw e;
     throw new ApiError('Verbinding onderbroken. Vernieuw om je opgeslagen voortgang te zien.', 0);
-  } finally { clearTimeout(timeout); }
+  } finally { clearTimeout(timeout!); }
 }
 export async function connectGame(): Promise<GameView> {
   const info = await request<{ mode: 'local' | 'cloud' }>('info', undefined, true); mode = info.mode;

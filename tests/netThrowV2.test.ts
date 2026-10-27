@@ -16,6 +16,14 @@ test('curve bonus requires a genuine curved path ending in a hit; plain drags do
  const curved=points().map((p,i)=>({...p,x:p.x+(i<4?Math.sin(i/3*Math.PI)*.2:0)}));assert.equal(judgeNet({kind:'flick',points:curved},null).curved,true);assert.equal(judgeNet(flick(),null).curved,false);
 });
 
+test('net sweep combines release timing with landing aim and preserves the quick throw option',()=>{
+ const sweep=(held:number,endX=.5)=>({kind:'sweep',points:held?[{x:.5,y:1,t:0},{x:.5,y:1,t:held},...points(endX).slice(1).map(p=>({...p,t:p.t+held}))]:points(endX)});
+ assert.equal(judgeNet(sweep(0),null).grade,'nice');assert.equal(judgeNet(sweep(900),null).grade,'great');assert.equal(judgeNet(sweep(1400),null).grade,'perfect');
+ assert.equal(judgeNet(sweep(1400,.55),null).grade,'hit');assert.equal(judgeNet(sweep(1400,.7),null).grade,'miss');assert.equal(judgeNet(sweep(1400),'dew').grade,'great');
+ assert.throws(()=>judgeNet({kind:'sweep',points:points(.5,1000)},null));assert.throws(()=>judgeNet({...sweep(1400),grade:'perfect'},null));
+ const curved=points().map((p,i)=>({...p,x:p.x+(i<4?Math.sin(i/3*Math.PI)*.2:0)}));assert.equal(judgeNet({kind:'sweep',points:curved},null).curved,true);
+});
+
 test('a slow drag, dropping onto the bug and stopping before release cannot replace a flick',()=>{
  const dropped=points().map((p,i)=>({...p,y:1-.58*i/6})),stopped=[...points(),{x:.5,y:.7,t:380}];
  for(const invalid of [points(.5,500),points(.5,1000),dropped,stopped]){assert.equal(validNetFlick(invalid),false);assert.throws(()=>judgeNet({kind:'flick',points:invalid},null));}

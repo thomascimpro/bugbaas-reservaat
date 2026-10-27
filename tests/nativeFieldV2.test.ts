@@ -3,6 +3,15 @@ import assert from 'node:assert/strict';
 import {runInNewContext} from 'node:vm';
 import {NATIVE_GPS_SHIM,nativeFieldURL,parseNativeFieldRequest} from '../src/nativeFieldProtocolV2';
 import {createNativeGPSWatches} from '../src/nativeGPSWatchesV2';
+import {displayGPSFixV2} from '../src/gpsFixV2';
+import {validFix} from '../game/walkingV2';
+
+test('last-known and coarse location can preview the map but cannot authorize gameplay or fabricate a fix',()=>{
+ const now=Date.UTC(2026,9,27,12),fresh={lat:51.44,lng:5.47,accuracy:5,timestamp:now},cached={...fresh,timestamp:now-60000},coarse={...fresh,accuracy:1200};
+ for(const fix of [fresh,cached,coarse])assert.deepEqual(displayGPSFixV2(fix,now),fix);
+ assert.deepEqual(validFix(displayGPSFixV2(fresh,now),now),fresh);assert.throws(()=>validFix(displayGPSFixV2(cached,now),now));assert.throws(()=>validFix(displayGPSFixV2(coarse,now),now));
+ for(const invalid of [null,{}, {...fresh,lat:91},{...fresh,lng:190},{...fresh,accuracy:NaN},{...fresh,accuracy:5001},{...fresh,timestamp:now-86400001},{...fresh,timestamp:now+5001}])assert.equal(displayGPSFixV2(invalid,now),null);
+});
 
 test('native clearWatch cancels a pending Expo subscription and removes its late result',async()=>{
  const watches=createNativeGPSWatches(),request=watches.begin(1);let removed=0,complete!:(value:{remove:()=>void})=>void;

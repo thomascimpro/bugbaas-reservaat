@@ -1,7 +1,14 @@
 import type {Bait,Grade,NetPoint} from './fieldV2';
 
-export type NetFlickTrace={kind:'flick';points:NetPoint[]};
+export type NetFlickTrace={kind:'flick'|'sweep';points:NetPoint[]};
 export const NET_FLIGHT_MS=400;
+/** Hold to shrink the net opening; release timing and landing accuracy both count. */
+export function netSweepRadius(ms:number,bait:Bait|null){return .19-.14*((Math.max(0,ms)%(bait==='dew'?2600:1800))/(bait==='dew'?2600:1800));}
+export function netSweepGrade(points:readonly NetPoint[],bait:Bait|null):{grade:Grade;curved:boolean;duration:number}{
+ const landed=projectNetFlick(points),duration=points.at(-1)!.t,radius=netSweepRadius(duration,bait),aim=Math.hypot(landed.x-.5,landed.y-.42)/(bait==='dew'?1.25:1);
+ const grade:Grade=aim>.26?'miss':aim>radius?'hit':radius<=.075?'perfect':radius<=.125?'great':'nice';
+ return {grade,curved:grade!=='miss'&&landed.curved,duration};
+}
 // The server and flight preview use the same release velocity, not a supplied grade.
 export function projectNetFlick(points:readonly NetPoint[]){
  const first=points[0],last=points.at(-1)!,tail=points.find(p=>p.t>=last.t-100&&p.t<last.t)??points.at(-2)??first,seconds=Math.max(.001,(last.t-tail.t)/1000),vx=Math.max(-4,Math.min(4,(last.x-tail.x)/seconds)),vy=Math.max(-4,Math.min(4,(last.y-tail.y)/seconds));
