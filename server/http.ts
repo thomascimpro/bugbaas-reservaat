@@ -1,3 +1,4 @@
+import { MIN_CLIENT_VERSION } from '../game/versionV2';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { GameError } from '../game/types';
 import type { GameService } from './service';
@@ -28,7 +29,7 @@ export function apiHandler(service: GameService, resolveUid: (token: string) => 
         if(!expected||!supplied||Buffer.byteLength(expected)!==Buffer.byteLength(supplied)||!timingSafeEqual(Buffer.from(expected),Buffer.from(supplied)))throw new GameError('Geen schedulerautorisatie.',403);
         result=await v2.advanceDue();
       }
-      else if (url.pathname === '/api/game/info' && req.method === 'GET') result = { mode: service.mode, rules:'bugbaas-field-league-1' };
+      else if (url.pathname === '/api/game/info' && req.method === 'GET') result = { mode: service.mode, rules:'bugbaas-field-league-1', minClient:MIN_CLIENT_VERSION };
       else if (url.pathname === '/api/game/session' && req.method === 'POST') result = await service.localSession();
       else {
         const bearer = req.headers.authorization;

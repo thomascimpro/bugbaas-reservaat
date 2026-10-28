@@ -14,7 +14,7 @@ export function surfaceTexture(kind:keyof typeof IMAGES,isDay=true){
  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
   const u=x/size*Math.PI*2,v=y/size*Math.PI*2;
   const wave=Math.pow(Math.max(0,Math.cos(v*4+Math.sin(u*2)*.65)),16);
-  const tint=kind==='water'?wave*10+Math.sin(u+v)*1.4:Math.sin(u*4)*Math.cos(v*4)*2+Math.sin(u*9+v*7)*1.1;
+  const tint=kind==='water'?wave*10+Math.sin(u+v)*1.4:Math.sin(u*4)*Math.cos(v*4)*3.6+Math.sin(u*9+v*7)*2.4;
   const i=(y*size+x)*4;for(let c=0;c<3;c++)data[i+c]=Math.round(Math.max(0,Math.min(255,base[c]+tint)));data[i+3]=255;
  }
  return {width:size,height:size,data};
@@ -44,7 +44,7 @@ export function applyWorldSurface(map:GameMap,initial:WorldSurfaceOptions={}){
   for(const id of shores)set(id,'line-color',p.shore);
   for(const l of layers){
    const source='source-layer' in l?l['source-layer']:'';
-   if(l.type==='background'){set(l.id,'background-color',p.ground);continue;}
+   if(l.type==='background'){set(l.id,'background-color',p.ground);set(l.id,'background-pattern',IMAGES.grass);continue;}
    if(l.type==='fill'){
     if(source==='water'){set(l.id,'fill-color',p.water);set(l.id,'fill-pattern',IMAGES.water);set(l.id,'fill-opacity',1);}
     else if(source==='landcover'){

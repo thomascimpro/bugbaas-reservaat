@@ -73,8 +73,11 @@ export async function accountLogin(email: string, password: string, link: boolea
   else await signInWithEmailAndPassword(auth, email.trim(), password);
   return refreshGame();
 }
+let requiredClient:string|undefined;
+/** Minimum app version announced by the server during the last connect, if any. */
+export const serverMinClient=()=>requiredClient;
 export async function connectV2(){
- const info=await request<{mode:'local'|'cloud'}>('info',undefined,true);mode=info.mode;
+ const info=await request<{mode:'local'|'cloud';minClient?:string}>('info',undefined,true);mode=info.mode;requiredClient=info.minClient;
  if(mode==='local'){localToken=await AsyncStorage.getItem('bugbaas-reservaat-local-token')??'';if(!localToken){localToken=(await request<{token:string}>('session',{},true)).token;await AsyncStorage.setItem('bugbaas-reservaat-local-token',localToken);}try{return await refreshV2();}catch(e){if(!(e instanceof ApiError)||e.status!==401)throw e;localToken=(await request<{token:string}>('session',{},true)).token;await AsyncStorage.setItem('bugbaas-reservaat-local-token',localToken);return refreshV2();}}
  await auth.authStateReady();if(!auth.currentUser)await signInAnonymously(auth);return refreshV2();
 }
