@@ -75,7 +75,7 @@ export type GoProfile={
  dailyChallenge?:DailyChallengeProgress;
  gyms?:GymProgress;
  journal?:GoJournalEntry[];trades?:GoTradeProgress;
- echo?:EchoProgress;cocoons?:GoCocoonsProgress;bosses?:BossProgress;
+ echo?:EchoProgress;cocoons?:GoCocoonsProgress;bosses?:BossProgress;raids?:import('./raidsV2').RaidProgress;
  sites?:SiteProgress;trainer?:TrainerProgress;
  entries?:Record<string,{seenAt:number|null;caughtAt:number|null;shinyAt:number|null}>;dexVersion?:1;
  ratedDay?:string;ratedCount?:number;dex?:string[];version:1;dust:number;candy:Record<string,number>;xl:Record<string,number>;items:Record<Held,number>;fastTMs:number;chargedTMs:number;
