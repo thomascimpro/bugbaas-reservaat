@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {castNet,encounterWild,ensureField,judgeNet} from '../game/fieldV2';
+import {castNet,encounterWild,ensureField,judgeNet,streakBonus} from '../game/fieldV2';
 import type {NetPoint} from '../game/fieldV2';
 import {bugPose,motionStyle,rollNetMotion} from '../game/netMotionV2';
 import type {NetMotion} from '../game/netMotionV2';
@@ -56,4 +56,13 @@ test('the server judges the same moving bug, keeps old clients working and rejec
  assert.throws(()=>judgeNet({kind:'sweep',points:sweep(.5),start:-5},null,e.motion,e.id),/werptijd/);
  const start=500,aimed=aimAt({...e.motion!,wind:e.motion!.wind},e.id,start);castNet(p,{encounter:'enc-m',net:'basic',bait:null,trace:{kind:'sweep',points:aimed,start}},'aimed',NOW+3000);
  const expected=netSweepGrade(aimed,null,e.motion,e.id,start);assert.equal(p.field!.lastCast!.grade,expected.grade);assert.notEqual(expected.grade,'miss');
+});
+
+test('a throw streak counts Mooi!/Perfect! in a row, resets on a weaker throw and pays XP from two',()=>{
+ const p=experienced(20);locate(p,FIX,'streak-secret',NOW);const spawn=p.walking!.spawns[0];encounterWild(p,spawn.id,'enc-s',NOW);p.field!.inventory.royal=0;
+ const good=sweep(.5,1500);assert.match(judgeNet({kind:'sweep',points:good},null).grade,/great|perfect/);
+ let t=NOW+3000;const cast=(points:NetPoint[],id:string)=>{const e=p.field!.encounter;if(!e)encounterWild(p,p.walking!.spawns.find(s=>!p.walking!.caught.includes(s.id))!.id,'enc-'+id,t-2500);castNet(p,{encounter:p.field!.encounter!.id,net:'basic',bait:null,trace:{kind:'sweep',points}},id,t);t+=1000;};
+ cast(good,'a');assert.equal(p.field!.streak,1);cast(good,'b');assert.equal(p.field!.streak,2);
+ cast(sweep(.75,1500),'c');assert.equal(p.field!.streak,0,'a weak or missed throw ends the streak');
+ assert.equal(streakBonus(1),0);assert.equal(streakBonus(2),50);assert.equal(streakBonus(9),125);
 });

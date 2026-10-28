@@ -27,3 +27,8 @@ export function recommendBait(inventory:Partial<Record<string,number>>,tier:numb
  if(tier===3)return first('pollen','silver');
  return first('fruit');
 }
+/** Type-only matchup for a bug on the bench: 👍 when one of its types hits hard and the opponent does not hit it hard. */
+export function typeMatchup(own:string,opponent:string){
+ const mine=movePool(own).types,theirs=movePool(opponent).types,offense=Math.max(...mine.map(t=>effectiveness(t,theirs))),defense=Math.max(...theirs.map(t=>effectiveness(t,mine)));
+ return {offense,defense,good:offense>1&&defense<=1,danger:defense>1};
+}

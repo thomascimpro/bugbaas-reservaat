@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text,View} from 'react-native';
-import {GRADES} from '../game/fieldV2';
+import {GRADES,streakBonus} from '../game/fieldV2';
 import type {CastResult} from '../game/fieldV2';
 import {HELD} from '../game/goV2';
 import {RevealV2,ShinyMarkV2} from './WorldEffectsV2';
@@ -14,7 +14,7 @@ export function CatchResultV2({result,demo,newSpecies,onContinue,onCollection}:{
    <Text style={{fontFamily:font,fontWeight:'800',fontSize:30,letterSpacing:-.3,color:caught?'#F8DE95':'#F2E9D1',textShadowColor:'#061914B3',textShadowOffset:{width:0,height:2},textShadowRadius:6}}>{caught?'Gevangen!':result.outcome==='miss'?'Mis':result.outcome==='fled'?'Weggevlogen':'Ontsnapt!'}</Text>
    <View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:7}}>
     {result.grade!=='hit'&&result.grade!=='miss'&&<View style={{paddingHorizontal:10,paddingVertical:3,borderRadius:12,backgroundColor:'#1B4F40'}}><Label small bold color="#F8DE95">{GRADES[result.grade].name}</Label></View>}
-    {result.curved&&<View style={{paddingHorizontal:10,paddingVertical:3,borderRadius:12,backgroundColor:'#1B4F40'}}><Label small color="#F8DE95">Boogzwaai</Label></View>}
+    {result.curved&&<View style={{paddingHorizontal:10,paddingVertical:3,borderRadius:12,backgroundColor:'#1B4F40'}}><Label small color="#F8DE95">Boogzwaai</Label></View>}{streakBonus(result.streak)>0&&<View testID="streak-bonus" style={{paddingHorizontal:10,paddingVertical:3,borderRadius:12,backgroundColor:'#5A3A1F'}}><Label small bold color="#FFD27A">{'🔥 Reeks '+result.streak+' · +'+streakBonus(result.streak)+' XP'}</Label></View>}
     {caught&&result.shiny&&<View testID="shiny-catch" style={{paddingHorizontal:10,paddingVertical:3,borderRadius:12,backgroundColor:'#E9E4FF',borderWidth:1,borderColor:'#FFFFFF',flexDirection:'row',alignItems:'center',gap:4,boxShadow:'0px 0px 12px #FFF6D6AA'}}><ShinyMarkV2 size={18}/><Label small bold color="#3B3A6B">Shiny!</Label></View>}
     {caught&&!demo&&newSpecies&&<View testID="new-dex-catch" style={{paddingHorizontal:10,paddingVertical:3,borderRadius:12,backgroundColor:'#F2D78C',flexDirection:'row',alignItems:'center',gap:4}}><Glyph name="book" size={19}/><Label small bold>Nieuwe soort</Label></View>}
    </View>

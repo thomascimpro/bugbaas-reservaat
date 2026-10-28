@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {bugRarity,RARITY_TIERS} from '../game/rarityDisplayV2';
 import {WALK_WEIGHTS} from '../game/walkingV2';
 import {DEX_SPECIES} from '../game/dexV2';
-import {matchup,recommendBait,recommendNet,recommendTeam} from '../game/recommendV2';
+import {matchup,recommendBait,recommendNet,recommendTeam,typeMatchup} from '../game/recommendV2';
 import {CHARGED,FAST,movePool,rollGoBug} from '../game/goV2';
 import {effectiveness} from '../game/goBattleV2';
 import type {Specimen} from '../game/typesV2';
@@ -38,4 +38,11 @@ test('catch advice saves good nets for rare bugs and only suggests what is in th
  assert.equal(recommendNet(bag,1,.8),'basic');assert.equal(recommendNet(bag,4,.5),'silk');assert.equal(recommendNet(bag,5,.2),'royal');assert.equal(recommendNet({basic:3},4,.1),'basic');
  assert.equal(recommendNet({basic:3,blue:1},2,.2),'blue','a hard catch gets a better net even if the bug is common');
  assert.equal(recommendBait(bag,1,.8),'fruit');assert.equal(recommendBait(bag,4,.5),'gold');assert.equal(recommendBait(bag,3,.5),'pollen');assert.equal(recommendBait({},5,.1),null);
+});
+
+test('bench thumbs follow the type chart: good when it hits hard and is not hit hard back',()=>{
+ const ids=(DEX_SPECIES as {id:string}[]).map(s=>s.id).slice(0,80);let good=0,danger=0;
+ for(const own of ids){const t=typeMatchup(own,'mantis'),mine=movePool(own).types,theirs=movePool('mantis').types;
+  assert.equal(t.danger,theirs.some(x=>effectiveness(x,mine)>1),own);assert.equal(t.good,mine.some(x=>effectiveness(x,theirs)>1)&&!t.danger,own);good+=+t.good;danger+=+t.danger;}
+ assert.ok(good>0&&danger>0);
 });

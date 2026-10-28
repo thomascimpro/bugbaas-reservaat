@@ -3,7 +3,7 @@ import {applyNatureStyle} from './natureMapV2';
 
 export type WorldSurfaceOptions={isDay?:boolean|null;reducedMotion?:boolean};
 // Deeper foliage and cool water frame warm paths; contrast comes from the same source layers.
-const DAY={ground:'#8BB66B',grass:'#80B65C',forest:'#3E7957',wetland:'#66A18A',sand:'#E4CF98',city:'#96BE72',built:'#A9B992',building:'#CBBB99',buildingEdge:'#899579',park:'#76AD59',water:'#399BA7',shore:'#74B49A',road:'#EDDFBC',path:'#F8EDCF',edge:'#63865A',rail:'#718A83',sky:'#8FCADB',horizon:'#C7DDB0'};
+const DAY={ground:'#86B566',grass:'#7AB357',forest:'#3A7453',wetland:'#66A18A',sand:'#E4CF98',city:'#96BE72',built:'#A9B992',building:'#CBBB99',buildingEdge:'#899579',park:'#76AD59',water:'#399BA7',shore:'#74B49A',road:'#EDDFBC',path:'#EADFB8',edge:'#5E8256',rail:'#718A83',sky:'#8FCADB',horizon:'#D3E6C2'};
 const NIGHT={ground:'#536E62',grass:'#5B7D62',forest:'#375D54',wetland:'#527A73',sand:'#9C9A82',city:'#61796A',built:'#6D7F76',building:'#8E9381',buildingEdge:'#6D7C6C',park:'#5B8060',water:'#36757F',shore:'#608F86',road:'#AEA98E',path:'#D0C5A2',edge:'#536B60',rail:'#637D78',sky:'#152C48',horizon:'#708988'};
 const IMAGES={grass:'bb-world-grass',forest:'bb-world-forest',water:'bb-world-water'} as const;
 type PaintName=Parameters<GameMap['setPaintProperty']>[1];
@@ -56,10 +56,13 @@ export function applyWorldSurface(map:GameMap,initial:WorldSurfaceOptions={}){
     else if(source==='building'){set(l.id,'fill-color',p.building);set(l.id,'fill-outline-color',p.buildingEdge);}
    }else if(l.type==='line'){
     if(source==='waterway'){set(l.id,'line-color',p.water);}
-    else if(source==='transportation')set(l.id,'line-color',/casing|outline/.test(l.id)?p.edge:['match',['get','class'],'path',p.path,'rail',p.rail,'transit',p.rail,p.road] satisfies ExpressionSpecification);
+    else if(source==='transportation'){set(l.id,'line-color',/casing|outline/.test(l.id)?p.edge:['match',['get','class'],'path',p.path,'rail',p.rail,'transit',p.rail,p.road] satisfies ExpressionSpecification);
+     // Footpaths as soft sand trails instead of busy white dashes; rails keep their pattern.
+     if(l.paint&&'line-dasharray' in l.paint&&!/rail|transit/.test(l.id))set(l.id,'line-dasharray',[1,0]);}
    }
   }
-  const sky:SkySpecification={'sky-color':p.sky,'horizon-color':p.horizon,'sky-horizon-blend':.65,'atmosphere-blend':.12,'horizon-fog-blend':0,'sky-color-transition':{duration:0},'horizon-color-transition':{duration:0}};
+  // Distant ground fades into a soft haze, so the tilted map gets depth like a game world.
+  const sky:SkySpecification={'sky-color':p.sky,'horizon-color':p.horizon,'fog-color':p.horizon,'fog-ground-blend':.6,'sky-horizon-blend':.65,'atmosphere-blend':.12,'horizon-fog-blend':.55,'sky-color-transition':{duration:0},'horizon-color-transition':{duration:0}};
   map.setSky(sky);
  }
  update();
