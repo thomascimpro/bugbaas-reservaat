@@ -1,7 +1,8 @@
 import React,{useState} from 'react';
 import {Pressable,ScrollView,View} from 'react-native';
 import {COCOON_CAP,COCOON_POOLS,COCOON_REWARDS,cocoonActive,cocoonChance,cocoonTier,cocoonWalked} from '../game/goCocoonsV2';
-const TIER_NAMES={1:'Gewoon',2:'Vaak',3:'Zeldzaam',4:'Erg zeldzaam',5:'Zeer zeldzaam'} as const,TIER_COLORS={1:'#B7CAB6',2:'#A5CE87',3:'#7FC4E8',4:'#C9A2F2',5:'#F2CF6E'} as const;
+import {RARITY_TIERS} from '../game/rarityDisplayV2';
+const TIER_NAMES={1:RARITY_TIERS[1].name,2:RARITY_TIERS[2].name,3:RARITY_TIERS[3].name,4:RARITY_TIERS[4].name,5:RARITY_TIERS[5].name},TIER_COLORS={1:RARITY_TIERS[1].color,2:RARITY_TIERS[2].color,3:RARITY_TIERS[3].color,4:RARITY_TIERS[4].color,5:RARITY_TIERS[5].color};
 import {species} from '../game/catalogV2';
 import {HELD,stats} from '../game/goV2';
 import type {GameViewV2} from '../game/typesV2';
