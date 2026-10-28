@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {awardGoCatchCard,friendshipProgress,GO_GIFT_REWARD,openGoGift,sendGoGift} from '../game/goGiftsV2';
+import {awardGoCatchCard,friendshipProgress,giftContents,GO_GIFT_REWARD,openGoGift,sendGoGift} from '../game/goGiftsV2';
 import {rng} from '../game/catalogV2';
 import {catchChance,ensureField} from '../game/fieldV2';
 import {awardGoCatch,ensureGo} from '../game/goV2';
@@ -56,7 +56,7 @@ test('GO gift commands retain atomic receipts and friendship/gift history across
   const receiver=await api.state('b'),open={type:'giftOpen',pair:'a_b',commandId:randomUUID(),expectedRevision:receiver.player.revision};const opened=await api.command('b',open),retried=await api.command('b',open);assert.deepEqual(opened.player.field!.inventory,retried.player.field!.inventory);assert.equal(retried.player.go!.dust,100);await assert.rejects(()=>cmd('b','giftOpen',{pair:'a_b'}));
   await cmd('b','giftSend',{pair:'a_b',card:'b-card'});await cmd('a','giftOpen',{pair:'a_b'});assert.equal((await api.state('a')).friends[0].points,1);
   await cmd('a','friendRemove',{pair:'a_b'});await cmd('a','friendRequest',{code:b.friendCode});await cmd('b','friendAccept',{pair:'a_b'});const restored=(await api.state('a')).friends[0];assert.equal(restored.points,1);assert.equal(restored.lastDay,dayV2(now));assert.equal(restored.gifts[0]!.opened,true);await assert.rejects(()=>cmd('a','giftSend',{pair:'a_b',card:'a-extra'}),/Vandaag/);
-  now+=86400000;await cmd('a','giftSend',{pair:'a_b',card:'a-extra'});await cmd('b','friendRemove',{pair:'a_b'});await cmd('b','friendRequest',{code:a.friendCode});await cmd('a','friendAccept',{pair:'a_b'});assert.equal((await api.state('b')).friends[0].gifts[0]!.opened,false);await cmd('b','giftOpen',{pair:'a_b'});assert.equal((await api.state('b')).friends[0].points,2);assert.equal((await api.state('b')).player.go!.dust,200);
+  now+=86400000;await cmd('a','giftSend',{pair:'a_b',card:'a-extra'});await cmd('b','friendRemove',{pair:'a_b'});await cmd('b','friendRequest',{code:a.friendCode});await cmd('a','friendAccept',{pair:'a_b'});assert.equal((await api.state('b')).friends[0].gifts[0]!.opened,false);await cmd('b','giftOpen',{pair:'a_b'});assert.equal((await api.state('b')).friends[0].points,2);assert.equal((await api.state('b')).player.go!.dust,100+giftContents('any',1).dust,'the second gift is opened as Goede vrienden: +50 stof');
   for(const extra of [{reward:9999},{habitat:3},{from:'b'},{lat:FIX.lat}])assert.throws(()=>parseGo({...send,...extra}));
  }finally{store.close();}
 });
@@ -71,4 +71,13 @@ test('the automatic catch success path awards the same first-catch card without 
  const store=new SqliteStore(':memory:');try{const api=new GoServiceV2(store,'local',()=>NOW),p=player(),fix={...FIX,lat:FIX.lat+.0002};p.walking={fix,at:NOW,seed:'auto-seed',spawns:[{id:'auto-bug',species:'ant',lat:fix.lat,lng:fix.lng,expiresAt:NOW+900000}],caught:[],day:dayV2(NOW),count:0};p.go!.dex=['ant'];p.go!.auto.enabled=true;p.go!.auto.moving=1;p.go!.auto.credit=20;p.go!.auto.lastAt=0;p.go!.motion={fix:FIX,at:NOW-15000};let secret='';for(let i=0;i<100;i++){if(rng('auto-'+i+':auto')()<catchChance('ant','basic',null)){secret='auto-'+i;break;}}assert.ok(secret);
   (api as unknown as {auto:(p:PlayerV2,now:number,secret:string)=>void}).auto(p,NOW,secret);assert.equal(p.go!.auto.last!.caught,true);assert.equal(p.field!.daily.catches,1);assert.equal(p.cards.length,1);assert.equal(p.giftDay,dayV2(NOW));
  }finally{store.close();}
+});
+
+test('every gift has a surprise and grows with friendship; opening grants exactly what the reveal shows',()=>{
+ const base=giftContents('g-1',0);assert.equal(base.dust,GO_GIFT_REWARD.dust);assert.equal(base.items.basic,5);assert.equal(base.items.pollen,1);assert.ok(Object.keys(base.items).length>=3,'a surprise item is included');
+ const best=giftContents('g-1',4);assert.ok(best.dust>base.dust&&best.items.basic>base.items.basic&&best.items.silk===1&&best.items.gold===1);
+ const kinds=new Set(Array.from({length:80},(_,i)=>Object.keys(giftContents('g'+i,0).items).sort().join()));assert.ok(kinds.size>=3,'surprises vary per gift');
+ const a=player(),b=player('b'),f=pair();f.points=30;a.cards=[{id:'a-card',habitat:1}];sendGoGift(a,f,'a-card','gift-x',NOW);
+ const before={...b.field!.inventory},dust=b.go!.dust,expected=giftContents('gift-x',friendshipProgress(30).level);openGoGift(b,f,NOW);
+ assert.equal(b.go!.dust,dust+expected.dust);for(const [id,n] of Object.entries(expected.items))assert.equal(b.field!.inventory[id as keyof typeof before],before[id as keyof typeof before]+n,id);
 });

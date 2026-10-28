@@ -1,4 +1,4 @@
-import {HABITATS,species} from './catalogV2';
+import {HABITATS,rng,species} from './catalogV2';
 import {grantField} from './fieldV2';
 import {dayV2} from './safariV2';
 import {checkV2 as check} from './shopV2';
@@ -6,6 +6,15 @@ import type {FriendPair,PlayerV2,Side,Specimen} from './typesV2';
 
 export const GO_GIFT_REWARD={dust:100,items:{basic:5,pollen:1}} as const;
 export const FRIEND_MILESTONES=[1,7,30,90] as const;
+/** What each friendship level adds to every gift you open from that friend. */
+export const FRIEND_PERKS=['Basiscadeau','+1 net en +50 stof per cadeau','+2 netten, +100 stof en extra lokbloem','+3 netten, +150 stof en een zijden net','+4 netten, +200 stof, zijden net en goudhoning'] as const;
+const SURPRISES=[{at:.4,items:{blue:2}},{at:.65,items:{fruit:1}},{at:.85,items:{dew:1}},{at:1,items:{silver:1}}] as const;
+/** Gift contents: the base gift, a friendship bonus and one surprise picked from the gift id (same on server and screen). */
+export function giftContents(giftId:string,level:number){
+ const roll=rng(giftId+':gift')(),items:Record<string,number>={basic:GO_GIFT_REWARD.items.basic+level,pollen:GO_GIFT_REWARD.items.pollen+(level>=2?1:0)};
+ for(const [id,n] of Object.entries(SURPRISES.find(s=>roll<s.at)!.items))items[id]=(items[id]??0)+n;if(level>=3)items.silk=(items.silk??0)+1;if(level>=4)items.gold=(items.gold??0)+1;
+ return {dust:GO_GIFT_REWARD.dust+50*level,items};
+}
 const FRIEND_NAMES=['Nieuwe vrienden','Goede vrienden','Grote vrienden','Beste vrienden','Boezemvrienden'];
 export function friendshipProgress(points:number){
  const level=FRIEND_MILESTONES.filter(n=>points>=n).length,next=FRIEND_MILESTONES[level]??null,base=level?FRIEND_MILESTONES[level-1]:0;
@@ -33,6 +42,6 @@ export function openGoGift(p:PlayerV2,pair:FriendPair|undefined,now:number){
  check(gift&&!gift.opened&&gift.from===pair!.users[1-side]&&gift.from!==p.uid,'Geen ongeopend cadeau.');
  check(p.go,'Open eerst de kaart.');check(Number.isInteger(gift.habitat)&&gift.habitat>=0&&gift.habitat<HABITATS.length,'Deze kaart is niet beschikbaar.');
  gift.opened=true;if(!p.album.includes(gift.habitat))p.album.push(gift.habitat);
- grantField(p,GO_GIFT_REWARD.items,now);p.go.dust+=GO_GIFT_REWARD.dust;
+ const reward=giftContents(gift.id,friendshipProgress(pair!.points).level);grantField(p,reward.items,now);p.go.dust+=reward.dust;
  if(pair!.lastDay!==dayV2(now)){pair!.points++;pair!.lastDay=dayV2(now);}
 }

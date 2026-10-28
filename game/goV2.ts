@@ -84,7 +84,7 @@ export type GoProfile={
  auto:{enabled:boolean;lastAt:number;attempted:string[];credit?:number;awayDay?:string;awayCount?:number;awayCredit?:number;last?:{species:string;caught:boolean;at:number};totals?:{caught:number;missed:number;dust:number;xp:number;spins?:number};status:'off'|'waiting'|'moving'|'too-fast'|'gps'|'empty';moving:number};
  motion?:{fix:Fix;at:number};buddyMeters:number;
 };
-export function eligible(s:Specimen){return !!s.go||['walking','cocoon','metamorphosis'].includes(s.source);}
+export function eligible(s:Specimen){return !!s.go||['walking','cocoon','metamorphosis','partner'].includes(s.source);}
 export const family=candyFamily;
 function legacyMovePool(id:string):{types:Element[];fast:Fast[];charged:Charged[]}{
  const role=EXPANDED_BY_ID[id]?.moveRole;
