@@ -1,4 +1,5 @@
 import {rng} from './catalogV2';
+import {WALK_WEIGHTS} from './walkingV2';
 import {COCOON_SHINY_ODDS} from './shinyV2';
 import {awardGoCatch} from './goV2';
 import {family} from './goV2';
@@ -12,11 +13,23 @@ export type GoCocoonIncubator={id:string;uses:number};
 export type GoCocoonsProgress={version:1;items:GoCocoon[];active:GoCocoonActive|null;parallel?:(GoCocoonActive&{incubatorId:string})[];incubators?:GoCocoonIncubator[];nextIncubatorId?:number;nextId:number;hatched:number;lastCatchId?:string;lastPostDrop?:string;lastHatch?:{id:string;species:string;shiny:boolean;at:number;held?:Held;dust?:number;candy?:number}};
 export const COCOON_CAP=3,COCOON_CATCH_CHANCE=.1;
 export const COCOON_POST_CHANCE=.2,COCOON_REWARDS={2:{dust:500,candy:10},5:{dust:1500,candy:20}};
-// Each entry in a distance pool has the same chance. All thirty existing walking species are represented.
+// All thirty existing walking species are represented. Chances follow Pokémon GO-style rarity tiers (see cocoonTier).
 export const COCOON_POOLS:Record<2|5,readonly string[]>={
  2:['beetle','ant','aphid','weevil','moth','earwig','grasshopper','lacewing','dungbeetle','hoverfly','leafhopper','cricket','silverfish','caterpillar','antlion','cockroach','cranefly','flea','mayfly','termite'],
  5:['mantis','butterfly','divingbeetle','waterstrider','stick','leaf','hercules','giantwaterbug','tigerbeetle','tortoisebeetle'],
 };
+/** Relative hatch weight per rarity tier: 1 common … 5 very rare (Pokémon GO shows the same five tiers in egg pools). */
+export const COCOON_TIER_WEIGHT={1:40,2:25,3:12,4:5,5:1.5} as const;
+export type CocoonTier=keyof typeof COCOON_TIER_WEIGHT;
+const TIER_SPLIT=[.3,.55,.75,.9,1];
+/** Tier inside a distance pool, ranked by the species' wild spawn weight so the map and cocoons agree on what is rare. */
+export function cocoonTier(kind:string,km:2|5):CocoonTier{
+ const pool=COCOON_POOLS[km],ranked=[...pool].sort((a,b)=>(WALK_WEIGHTS[b]??0)-(WALK_WEIGHTS[a]??0)||a.localeCompare(b)),index=ranked.indexOf(kind);
+ if(index<0)return 5;const share=(index+1)/ranked.length;return (TIER_SPLIT.findIndex(limit=>share<=limit+1e-9)+1) as CocoonTier;
+}
+/** Exact hatch chance of one species in a distance pool (0–1). */
+export function cocoonChance(kind:string,km:2|5){const pool=COCOON_POOLS[km];if(!pool.includes(kind))return 0;const total=pool.reduce((sum,id)=>sum+COCOON_TIER_WEIGHT[cocoonTier(id,km)],0);return COCOON_TIER_WEIGHT[cocoonTier(kind,km)]/total;}
+export function cocoonSpecies(km:2|5,roll:number){const pool=COCOON_POOLS[km];let left=roll*pool.reduce((sum,id)=>sum+COCOON_TIER_WEIGHT[cocoonTier(id,km)],0);for(const id of pool){left-=COCOON_TIER_WEIGHT[cocoonTier(id,km)];if(left<0)return id;}return pool[pool.length-1];}
 function meters(p:PlayerV2){const n=p.field?.walk?.meters??0;check(Number.isFinite(n)&&n>=0,'Je wandelafstand is niet beschikbaar.');return n;}
 function progress(p:PlayerV2){check(p.go?.cocoons,'Open eerst de kaart.');return p.go.cocoons;}
 function idle(p:PlayerV2){check(p.go&&!p.go.battle&&!p.go.queue,'Rond je gevecht of zoekopdracht eerst af.');}
@@ -70,7 +83,7 @@ export function hatchCocoon(p:PlayerV2,now:number,id?:unknown):Specimen{
  const incubator='incubatorId' in a?g.incubators?.find(i=>i.id===a.incubatorId&&i.uses>0):undefined;
  check(!('incubatorId' in a)||incubator,'De broedmachine is niet beschikbaar.');
  check(item.hatchSeed,'De cocon is niet beschikbaar.');
- const seed=item.hatchSeed,pool=COCOON_POOLS[item.km],kind=pool[Math.floor(rng(seed+':species')()*pool.length)];
+ const seed=item.hatchSeed,kind=cocoonSpecies(item.km,rng(seed+':species')());
  const s:Specimen={id:'hatched-'+item.id,species:kind,level:1,shiny:rng(seed+':shiny')()<1/COCOON_SHINY_ODDS,favorite:false,obtainedAt:now,source:'cocoon',hearts:0,item:null};
  check(!p.specimens.some(b=>b.id===s.id),'Deze cocon is al uitgekomen.');
  // Reuse collection, dust, nectar and dex accounting. Only this new specimen receives hatch IVs.
