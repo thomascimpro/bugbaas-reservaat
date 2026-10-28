@@ -79,11 +79,13 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
    const again=views[uid].player.go!.dust;await send(uid,'raidClaim',{lobby:lobbyId});assert.equal(views[uid].player.go!.dust,again,'no second reward');assert.equal(views[uid].raidLobby,null);}
   const spawn=views[B].player.walking!.spawns.find(s=>s.source==='raid')!;assert.ok(spawn&&spawn.raid!.nets>=5);assert.equal(spawn.boss!.seed,undefined,'seed stays private');
   assert.notEqual(spawn.lat,post.lat,'the remote catch never reveals the post position');
+  await store.run(['v2Players:'+B],d=>{(d.get('v2Players:'+B) as {field:{inventory:{basic:number}}}).field.inventory.basic=0;});
   await send(B,'worldEncounter',{spawn:spawn.id});assert.ok(views[B].player.field!.encounter,'remote players can open the raid catch');
   const count=views[B].player.specimens.length;
   for(let i=0;i<spawn.raid!.nets&&views[B].player.walking!.spawns.some(s=>s.id===spawn.id&&!views[B].player.walking!.caught.includes(s.id));i++){now+=1500;
    await send(B,'worldCast',{encounter:views[B].player.field!.encounter!.id,net:'basic',bait:null,trace:{kind:'flick',points:[{x:.5,y:1,t:0},{x:.5,y:.85,t:90},{x:.5,y:.7,t:180}]}});}
   const after=views[B].player;assert.ok(after.walking!.caught.includes(spawn.id),'caught or gone after the earned nets');
+  assert.ok(after.field!.lastCast,'a player without standard nets can still throw');assert.equal(after.field!.inventory.basic,0,'raid throws never spend bag nets');
   if(after.specimens.length>count){const bug=after.specimens.at(-1)!;assert.equal(bug.species,raid.species);assert.equal(bug.catchLocation,undefined);assert.ok(bug.go!.iv.every(v=>v>=10));}
  }finally{store.close();}
 });
