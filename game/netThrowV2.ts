@@ -1,13 +1,18 @@
 import type {Bait,Grade,NetPoint} from './fieldV2';
+import {bugPose} from './netMotionV2';
+import type {NetMotion} from './netMotionV2';
 
-export type NetFlickTrace={kind:'flick'|'sweep';points:NetPoint[]};
+/** `start`: ms between the encounter appearing on screen and the finger going down; it places the moving bug. */
+export type NetFlickTrace={kind:'flick'|'sweep';points:NetPoint[];start?:number};
 export const NET_FLIGHT_MS=400;
 /** Hold to shrink the net opening; release timing and landing accuracy both count. */
 export function netSweepRadius(ms:number,bait:Bait|null){return .19-.14*((Math.max(0,ms)%(bait==='dew'?2600:1800))/(bait==='dew'?2600:1800));}
-export function netSweepGrade(points:readonly NetPoint[],bait:Bait|null):{grade:Grade;curved:boolean;duration:number}{
- const landed=projectNetFlick(points),duration=points.at(-1)!.t,radius=netSweepRadius(duration,bait),aim=Math.hypot(landed.x-.5,landed.y-.42)/(bait==='dew'?1.25:1);
- const grade:Grade=aim>.26?'miss':aim>radius?'hit':radius<=.075?'perfect':radius<=.125?'great':'nice';
- return {grade,curved:grade!=='miss'&&landed.curved,duration};
+/** Where the net lands after wind: a curve throw cuts through the wind. */
+export function netLanding(points:readonly NetPoint[],motion?:NetMotion,bait:Bait|null=null){const landed=projectNetFlick(points),wind=(motion?.wind??0)*(bait==='dew'?.5:1)*(landed.curved?.35:1);return {...landed,x:landed.x+wind};}
+export function netSweepGrade(points:readonly NetPoint[],bait:Bait|null,motion?:NetMotion,seed='',start=0):{grade:Grade;curved:boolean;duration:number;dodged:boolean}{
+ const landed=netLanding(points,motion,bait),duration=points.at(-1)!.t,radius=netSweepRadius(duration,bait),bug=bugPose(motion,seed,start+duration+NET_FLIGHT_MS,bait),aim=Math.hypot(landed.x-bug.x,landed.y-bug.y)/(bait==='dew'?1.25:1);
+ const dodged=bug.dodge&&aim<=.26,grade:Grade=aim>.26||dodged?'miss':aim>radius?'hit':radius<=.075?'perfect':radius<=.125?'great':'nice';
+ return {grade,curved:grade!=='miss'&&landed.curved,duration,dodged};
 }
 // The server and flight preview use the same release velocity, not a supplied grade.
 export function projectNetFlick(points:readonly NetPoint[]){
