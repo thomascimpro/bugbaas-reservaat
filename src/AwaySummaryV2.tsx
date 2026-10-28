@@ -10,11 +10,14 @@ import {Button,Counter,Label,Panel,Title,V} from './uiV2';
 
 /** Only a notification: every catch, resource and distance comes from confirmed server state. */
 export function AwaySummaryV2({view,visible,open}:{view:GameViewV2|null;visible:boolean;open:(name:string,id?:string)=>void}){
- const current=useRef(view),uid=useRef(''),cursor=useRef<AwayCursorV2|null>(null),returning=useRef(false),ignore=useRef<GameViewV2|null>(null),[report,setReport]=useState<Report|null>(null);current.current=view;
+ const current=useRef(view),uid=useRef(''),cursor=useRef<AwayCursorV2|null>(null),returning=useRef(false),ignore=useRef<GameViewV2|null>(null),late=useRef<{cursor:AwayCursorV2;until:number;away:number}|null>(null),[report,setReport]=useState<Report|null>(null);current.current=view;
  const key=(id:string)=>'bugbaas-away-summary-v1:'+id;
  function consider(next:GameViewV2){
   if(uid.current!==next.player.uid||!cursor.current||AppState.currentState!=='active'||next===ignore.current)return;
-  if(returning.current){const found=awaySummaryV2(next.player,cursor.current);returning.current=false;if(found.caught||found.missed||found.spins||found.meters>=100)setReport(found);}
+  const away=next.player.go?.auto.awayCount??0;
+  if(returning.current){const found=awaySummaryV2(next.player,cursor.current);returning.current=false;late.current={cursor:cursor.current,until:Date.now()+150000,away};if(found.caught||found.missed||found.spins||found.meters>=100)setReport(found);}
+  // Adventure Sync kilometres arrive up to a minute after returning; their catches still belong in this summary.
+  else if(late.current&&Date.now()<late.current.until&&away>late.current.away){late.current.away=away;setReport(awaySummaryV2(next.player,late.current.cursor));}
   cursor.current=awayCursorV2(next.player);void AsyncStorage.setItem(key(next.player.uid),JSON.stringify(cursor.current)).catch(()=>{});
  }
  useEffect(()=>{

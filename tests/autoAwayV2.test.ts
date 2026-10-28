@@ -1,5 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
 import {freshV2,dayV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField} from '../game/fieldV2';
@@ -46,5 +47,17 @@ test('away attempts wait for a fresh GPS fix and keep the distance credit',()=>{
   service.awayCatch(p,1200,late,'stale');assert.equal(p.go!.auto.awayCount??0,0);assert.equal(p.go!.auto.awayCredit,1200);assert.equal(p.field!.inventory.basic,nets);
   p.walking!.at=late;service.awayCatch(p,0,late,'fresh');assert.equal(p.go!.auto.awayCount,1);assert.equal(p.field!.inventory.basic,nets-1);
   p.go!.auto.enabled=false;service.awayCatch(p,5000,late+60000,'off');assert.equal(p.go!.auto.awayCount,1,'autovangst uit = geen afwezigheidsvangsten');
+ }finally{store.close();}
+});
+
+test('kilometres synced before the first fresh GPS fix are spent as soon as that fix arrives',async()=>{
+ const store=new SqliteStore(':memory:');let now=NOW;const service=new GoServiceV2(store,'local',()=>now),uid='late-fix';try{
+  let v=await service.state(uid);const send=async(type:string,data:Record<string,unknown>={})=>v=await service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});
+  const snap=(steps:number,meters:number)=>({dayUTC:new Date(now).toISOString().slice(0,10),capturedAt:now,steps,meters,source:'health-connect'});
+  await send('worldLocate',{fix:{...FIX,timestamp:now}});await send('goAuto',{enabled:true});await send('adventureSync',{snapshot:snap(0,0)});
+  now+=3600000;await send('adventureSync',{snapshot:snap(2600,2000)});
+  assert.equal(v.player.go!.auto.awayCount??0,0,'no catch on an hour-old fix');assert.equal(v.player.go!.auto.awayCredit,2000);
+  now+=2000;await send('worldLocate',{fix:{...FIX,timestamp:now}});
+  assert.equal(v.player.go!.auto.awayCount,1,'the fresh fix spends one km of credit');assert.equal(v.player.go!.auto.awayCredit,1000);
  }finally{store.close();}
 });
