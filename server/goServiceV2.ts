@@ -17,12 +17,12 @@ import {ensurePostResearch,finishPostResearch} from '../game/postResearchV2';
 import {teamPreset} from '../game/teamPresetsV2';
 import {grantXP,claimTrainer,ensureTrainer,trainerLevel} from '../game/trainerV2';
 import {RAID_RULES,RAID_TIERS,raidAt,raidJoinableUntil,ensureRaids,claimFreePass,openLobby,lobbyOpen,joinLobby,leaveLobby,startLobby,resolveLobby,claimRaid,inviteIssue,raidInvite,addInvite,publicRaid,makeRaidBattle,syncRaidBattle,lobbyView} from '../game/raidsV2';
-import type {Raid,RaidLobby,RaidInvite,RaidLobbyView} from '../game/raidsV2';
+import type {Raid,RaidLobby,RaidInvite,RaidLobbyView,RaidToken} from '../game/raidsV2';
 import {spinPost,POST_COOLDOWN,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute,cancelRoute} from '../game/worldSitesV2';
 import {unknownHabitat} from '../game/habitatsV2';
 import type {HabitatContext} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
-import {createHash,randomBytes} from 'node:crypto';
+import {createHash,createHmac,randomBytes} from 'node:crypto';
 import {freshV2,dayV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField,encounterWild,castNet,claimFieldTask,catchChance} from '../game/fieldV2';
@@ -56,6 +56,13 @@ export class GoServiceV2{
  // Other raid members' pooled damage, read just before a battle transaction (keyed by battle document).
  private raidOthers=new Map<string,{sum:number;damage:Record<string,number>}>();
  private inboxCache=new Map<string,{until:number;value:Promise<RaidInvite[]>}>();
+ private raidSecret?:Promise<string>;
+ /** Keyed public raid ids. The key is created once in storage (never in Git, unreadable for clients) and shared by every server instance. */
+ private raidToken():Promise<RaidToken>{
+  const secret=this.raidSecret??=this.store.run(['v2RaidSecret:global'],d=>{let s=document<{key:string}>(d,'v2RaidSecret:global');if(!s){s={key:randomBytes(32).toString('hex')};d.set('v2RaidSecret:global',s);}return s.key;});
+  void secret.catch(()=>{if(this.raidSecret===secret)this.raidSecret=undefined;});
+  return secret.then(key=>(input:string)=>createHmac('sha256',key).update(input).digest('base64url').slice(0,22));
+ }
  // Cache document membership only; every player, battle and reward stays transactionally fresh.
  private battleDocumentKeys=new Map<string,readonly string[]>();
  private dailyRankCache=new Map<string,{until:number;value:Promise<DailyScoreRow[]>}>();
@@ -129,8 +136,8 @@ export class GoServiceV2{
   // Once the group has won, every member's own fight ends as a win too.
   if(l?.status==='won'&&b.phase!=='finished')syncRaidBattle(b,Infinity);
  }
- private localRaidSite(p:PlayerV2,raid:string,now:number){
-  const w=requireFieldLocation(p.walking,now),site=gymSites(w.posts??[]).find(s=>raidAt(s,now)?.id===raid);check(site,'Deze zwerm is niet in de buurt.');check(distance(w.fix,site)<=65,'Loop binnen 65 meter van de gympost.');return site;
+ private localRaidSite(p:PlayerV2,raid:string,now:number,token:RaidToken){
+  const w=requireFieldLocation(p.walking,now),site=gymSites(w.posts??[]).find(s=>raidAt(s,now,token)?.id===raid);check(site,'Deze zwerm is niet in de buurt.');check(distance(w.fix,site)<=65,'Loop binnen 65 meter van de gympost.');return site;
  }
  private inbox(uid:string){
   const cached=this.inboxCache.get(uid);if(cached&&cached.until>this.clock())return cached.value;
@@ -138,8 +145,8 @@ export class GoServiceV2{
   const entry={until:this.clock()+10000,value};this.inboxCache.set(uid,entry);void value.catch(()=>{if(this.inboxCache.get(uid)===entry)this.inboxCache.delete(uid);});return value;
  }
  private async raidView(uid:string,p:PlayerV2){
-  const now=this.clock(),w=p.walking,fresh=!!w&&now-w.at<45000;
-  const raids=w?gymSites(w.posts??[]).flatMap(site=>{const r=raidAt(site,now);return r?[{...publicRaid(r),joinableUntil:raidJoinableUntil(r),local:fresh&&distance(w.fix,site)<=65}]:[];}):[];
+  const now=this.clock(),w=p.walking,fresh=!!w&&now-w.at<45000,token=await this.raidToken();
+  const raids=w?gymSites(w.posts??[]).flatMap(site=>{const r=raidAt(site,now,token);return r?[{...publicRaid(r),joinableUntil:raidJoinableUntil(r),local:fresh&&distance(w.fix,site)<=65}]:[];}):[];
   let raidLobby:RaidLobbyView|null=null;const lobbyId=p.go?.raids?.lobby;
   if(lobbyId){const {lobby,damage}=await this.raidDamage(lobbyId),doc=lobby?await this.store.run([rk(lobby.raidId)],d=>document<RaidDoc>(d,rk(lobby.raidId))):undefined;
    if(lobby&&doc){const shown=structuredClone(lobby);resolveLobby(shown,damage,now);raidLobby=lobbyView(shown,doc.raid,uid,damage,p.go!.raids!);}}
@@ -221,8 +228,9 @@ export class GoServiceV2{
   if(c.type==='goTrain'||c.type==='goJoin'||c.type==='echoQueue'||c.type==='goBoss'||c.type==='dailyChallenge'||c.type==='gymAttack')keys.push(bk(id));
   if(c.type==='echoSave'||AUTO_DEFENSE_COMMANDS.has(c.type))keys.push('v2EchoDefenses:'+uid,...Object.keys(LEAGUES).map(league=>'v2EchoDefenses:'+uid+'-'+league));
   if(p.go!.battle){const battleKeys=await this.battleKeys(p.go!.battle);keys.push(...battleKeys);await this.prefetchRaid(battleKeys);}
+  const raidToken=c.type==='raidJoin'||c.type==='raidInvite'?await this.raidToken():undefined;
   const currentLobby=p.go!.raids?.lobby;let raidOthers=0,raidFriends:string[]=[],inviteFriends:string[]=[];
-  if(c.type==='raidJoin'||c.type==='raidInvite'){check(typeof c.raid==='string'&&/^\d{4}-\d\d-\d\d:[0-3]:gym-[\w:.-]{1,180}$/.test(c.raid),'Kies een zwerm.');keys.push(rk(c.raid));}
+  if(c.type==='raidJoin'||c.type==='raidInvite'){check(typeof c.raid==='string'&&/^\d{4}-\d\d-\d\d:[0-3]:[\w-]{22}$/.test(c.raid),'Kies een zwerm.');keys.push(rk(c.raid));}
   if(c.type==='raidJoin'){const doc=await this.store.run([rk(c.raid as string)],d=>document<RaidDoc>(d,rk(c.raid as string))),open=doc?.open??0;keys.push(lk(c.raid+'#'+open),lk(c.raid+'#'+(open+1)),ik(uid));}
   if(currentLobby&&(c.type==='raidJoin'||c.type==='raidLeave'||c.type==='raidFight'||c.type==='raidInvite'))keys.push(lk(currentLobby),dk(currentLobby,uid));
   if(c.type==='raidFight'){check(currentLobby,'Je zit niet in een zwerm.');const {damage}=await this.raidDamage(currentLobby);delete damage[uid];raidOthers=Object.values(damage).reduce((a,b)=>a+b,0);keys.push(bk(id));}
@@ -286,7 +294,7 @@ export class GoServiceV2{
      if(rg.lobby){const old=document<RaidLobby>(d,lk(rg.lobby));if(!old||old.status==='won'||old.status==='failed'||!old.members.some(m=>m.uid===uid))rg.lobby=null;}
      let doc=document<RaidDoc>(d,rk(raidId));
      if(c.remote){check(doc,'Deze zwerm is niet gevonden.');check((document<{items:RaidInvite[]}>(d,ik(uid))?.items??[]).some(i=>i.raidId===raidId&&i.endsAt>now),'Op afstand meedoen kan alleen met een uitnodiging van een vriend.');}
-     else{const site=this.localRaidSite(x,raidId,now);doc??={raid:raidAt(site,now)!,open:0,invited:{}};d.set(rk(raidId),doc);}
+     else{const site=this.localRaidSite(x,raidId,now,raidToken!);doc??={raid:raidAt(site,now,raidToken!)!,open:0,invited:{}};d.set(rk(raidId),doc);}
      const need=RAID_TIERS[doc.raid.tier].trainer;check(trainerLevel(g.trainer!.xp)>=need,'Trainerlevel '+need+' nodig.');
      let l=document<RaidLobby>(d,lk(raidId+'#'+doc.open));
      if(!l||!lobbyOpen(l,now)){const n=doc.open+1;check(d.has(lk(raidId+'#'+n)),'De zwerm is veranderd. Probeer opnieuw.',409);l=openLobby(doc.raid,n,now);doc.open=n;d.set(lk(l.id),l);}
@@ -294,7 +302,7 @@ export class GoServiceV2{
     case 'raidLeave':{const rg=ensureRaids(g,now);check(rg.lobby,'Je zit niet in een zwerm.');const l=document<RaidLobby>(d,lk(rg.lobby));if(l&&l.status==='lobby')leaveLobby(l,rg,uid,now);else{check(!l||l.status!=='fighting','Het gevecht is al begonnen.');rg.lobby=null;}break;}
     case 'raidInvite':{const rg=ensureRaids(g,now),raidId=c.raid as string;let doc=document<RaidDoc>(d,rk(raidId));
      const member=!!doc&&!!rg.lobby&&rg.lobby.startsWith(raidId+'#')&&!!document<RaidLobby>(d,lk(rg.lobby))?.members.some(m=>m.uid===uid);
-     if(!member){const site=this.localRaidSite(x,raidId,now);doc??={raid:raidAt(site,now)!,open:0,invited:{}};d.set(rk(raidId),doc);}
+     if(!member){const site=this.localRaidSite(x,raidId,now,raidToken!);doc??={raid:raidAt(site,now,raidToken!)!,open:0,invited:{}};d.set(rk(raidId),doc);}
      const raidDoc=doc!,friends=inviteFriends.filter(f=>{const pair=document<FriendPair>(d,'v2FriendPairs:'+[uid,f].sort().join('_'));return !!pair&&pair.accepted&&!pair.removed&&pair.users.includes(uid)&&pair.users.includes(f);});
      const issue=inviteIssue(rg,raidDoc.raid,inviteFriends,friends,raidDoc.invited[uid]??0,now);check(!issue,issue??'');
      const invite=raidInvite(raidDoc.raid,{uid,name:x.name},now);for(const f of inviteFriends){const inbox=document<{items:RaidInvite[]}>(d,ik(f))??{items:[]};inbox.items=addInvite(inbox.items,invite,now);d.set(ik(f),inbox);}

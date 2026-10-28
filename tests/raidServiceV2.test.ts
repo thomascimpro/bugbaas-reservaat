@@ -18,7 +18,7 @@ const DAY=Date.UTC(2026,9,28),FIX={lat:51.4416,lng:5.4697,accuracy:5};
 /** A post whose gym has a one-star raid, and a moment while it is active. */
 function raidPost(){
  for(let i=0;i<400;i++){const post={id:'raid-post-'+i,name:'Zwermpost',lat:FIX.lat,lng:FIX.lng,source:'virtual' as const},site=gymSites([post])[0];
-  for(let t=DAY;t<DAY+86400000;t+=15*60000){const r=raidAt(site,t);if(r&&r.tier===1&&t>=r.hatchAt&&t+20*60000<r.endsAt)return {post,raid:r,now:t};}}
+  for(let t=DAY;t<DAY+86400000;t+=15*60000){const r=raidAt(site,t,s=>s);if(r&&r.tier===1&&t>=r.hatchAt&&t+20*60000<r.endsAt)return {post,site,now:t};}}
  throw new Error('no fixture raid');
 }
 function player(uid:string,now:number,fix:{lat:number;lng:number},posts:unknown[]){
@@ -28,7 +28,7 @@ function player(uid:string,now:number,fix:{lat:number;lng:number},posts:unknown[
 }
 
 test('local player invites a friend, the friend joins remotely, pooled damage wins once and both can catch',async()=>{
- const store=new SqliteStore(':memory:'),{post,raid,now:start}=raidPost();let now=start;const service=new GoServiceV2(store,'local',()=>now);
+ const store=new SqliteStore(':memory:'),{post,site,now:start}=raidPost();let now=start;const service=new GoServiceV2(store,'local',()=>now);
  try{
   const A='raid-local-player',B='raid-remote-friend',C='raid-stranger';
   for(const uid of [A,B,C])await service.state(uid);
@@ -39,7 +39,7 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
   const views:Record<string,GameViewV2>={};for(const uid of [A,B,C])views[uid]=await service.state(uid);
   const send=async(uid:string,type:string,params:Record<string,unknown>={})=>views[uid]=await service.command(uid,{type,...params,commandId:randomUUID(),expectedRevision:views[uid].player.revision});
 
-  const seen=views[A].raids!.find(r=>r.id===raid.id)!;assert.ok(seen&&seen.local,'the local player sees the raid at the gym');assert.equal((seen.site as Record<string,unknown>).lat,undefined,'no coordinates in the raid view');
+  const seen=views[A].raids!.find(r=>r.site.id===site.id)!,raid=seen;assert.ok(!raid.id.includes(post.id)&&/^\d{4}-\d\d-\d\d:[0-3]:[\w-]{22}$/.test(raid.id),'public raid id is opaque');assert.ok(seen&&seen.local,'the local player sees the raid at the gym');assert.equal((seen.site as Record<string,unknown>).lat,undefined,'no coordinates in the raid view');
   assert.equal(views[B].raids!.length,0,'a far-away player sees no local raid');
   await assert.rejects(send(B,'raidJoin',{raid:raid.id,remote:true}),/niet gevonden|uitnodiging/);
   await send(A,'raidJoin',{raid:raid.id,remote:false});assert.equal(views[A].raidLobby!.members.length,1);
@@ -62,6 +62,7 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
   // The group is close to winning: one more of B's hits finishes it for both players.
   await store.run(['v2RaidDamage:'+lobbyId+':'+A],d=>d.set('v2RaidDamage:'+lobbyId+':'+A,{uid:A,damage:max-1}));
   for(let i=0;i<40&&views[B].goBattle!.phase!=='finished';i++){now+=600;views[B]=await service.state(B);const b=views[B].goBattle!,a=b.teams[0][b.active[0]];if(b.phase==='fight'&&a.readyAt<=now&&!b.fast[0]&&a.hp>0)await send(B,'goAct',{action:'fast',value:null});}
+  const publicState=JSON.stringify([views[A].raidLobby,views[B].raidLobby,views[B].goBattle!.raid,views[B].raidInvites]);assert.equal(publicState.includes(post.id),false,'no post id reaches other players');
   assert.equal(views[B].goBattle!.winner,0);views[A]=await service.state(A);assert.equal(views[A].goBattle!.phase,'finished');assert.equal(views[A].goBattle!.winner,0,'the group win ends every member\'s fight');
   const lobby=await store.run(['v2RaidLobbies:'+lobbyId],d=>d.get('v2RaidLobbies:'+lobbyId) as RaidLobby);assert.equal(lobby.status,'won');
 

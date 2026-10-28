@@ -1,4 +1,5 @@
 import {test} from 'node:test';
+import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {species} from '../game/catalogV2';
 import {movePool} from '../game/goV2';
@@ -6,20 +7,22 @@ import {RAID_RULES,RAID_TIERS,FIGHT_MS,LOBBY_MS,SLOT_MS,addInvite,claimFreePass,
 import type {Raid,RaidProgress} from '../game/raidsV2';
 
 const DAY=Date.UTC(2026,9,28);
+const TOKEN=(input:string)=>createHash('sha256').update('test-key:'+input).digest('base64url').slice(0,22);
 const site=(i:number)=>({id:'gym-post-'+i,name:'Post '+i,lat:52.09+i/1000,lng:5.12});
 /** First post/slot combination that has a raid, observed while it is active. */
 function activeRaid(tier?:number):Raid{
- for(let i=0;i<500;i++)for(let slot=0;slot<4;slot++){const start=DAY+slot*SLOT_MS;for(let t=start;t<start+SLOT_MS;t+=15*60000){const r=raidAt(site(i),t);if(r&&t>=r.hatchAt&&(!tier||r.tier===tier))return r;}}
+ for(let i=0;i<500;i++)for(let slot=0;slot<4;slot++){const start=DAY+slot*SLOT_MS;for(let t=start;t<start+SLOT_MS;t+=15*60000){const r=raidAt(site(i),t,TOKEN);if(r&&t>=r.hatchAt&&(!tier||r.tier===tier))return r;}}
  throw new Error('no raid');
 }
 const progress=(now:number):RaidProgress=>ensureRaids({},now);
 
 test('raids are deterministic per post and slot, use real species and hide coordinates',()=>{
  const seen=new Set<number>();let none=0;
- for(let i=0;i<300;i++){const r=raidAt(site(i),DAY+3*3600000);if(!r){none++;continue;}seen.add(r.tier);
-  assert.deepEqual(raidAt(site(i),DAY+3*3600000),r,'everyone sees the same raid');
+ for(let i=0;i<300;i++){const r=raidAt(site(i),DAY+3*3600000,TOKEN);if(!r){none++;continue;}seen.add(r.tier);
+  assert.deepEqual(raidAt(site(i),DAY+3*3600000,TOKEN),r,'everyone sees the same raid');
   assert.ok(species(r.species).name&&movePool(r.species).fast.length,'boss is a playable species');
   assert.ok(r.hatchAt-r.visibleAt<=3600000&&r.visibleAt>=Math.floor(r.hatchAt/SLOT_MS)*SLOT_MS&&r.endsAt<=Math.floor(r.hatchAt/SLOT_MS)*SLOT_MS+SLOT_MS,'egg at most an hour, active window fits in the slot');
+  assert.ok(!r.id.includes(site(i).id),'raid id hides the post id');
   const shown=publicRaid(r) as {site:Record<string,unknown>};assert.equal(shown.site.lat,undefined);assert.equal(shown.site.lng,undefined);}
  assert.ok(none>0&&seen.has(1)&&seen.has(3),'some posts rest, both one and three star raids occur');
  assert.ok(!seen.has(5),'no five-star raid while Oerbug models are not approved');
@@ -86,5 +89,5 @@ test('invites: friends only, bounded, no coordinates, deduplicated inbox',()=>{
 
 test('hatch times are spread so raids exist throughout the day',()=>{
  // Only the first minutes after a slot boundary can be empty.
- for(let t=DAY+15*60000;t<DAY+86400000;t+=30*60000){let active=0;for(let i=0;i<200;i++){const r=raidAt(site(i),t);if(r&&t>=r.hatchAt)active++;}assert.ok(active>0,'some raid is active at '+new Date(t).toISOString());}
+ for(let t=DAY+15*60000;t<DAY+86400000;t+=30*60000){let active=0;for(let i=0;i<200;i++){const r=raidAt(site(i),t,TOKEN);if(r&&t>=r.hatchAt)active++;}assert.ok(active>0,'some raid is active at '+new Date(t).toISOString());}
 });

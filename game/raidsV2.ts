@@ -29,13 +29,15 @@ const POOLS:Record<RaidTier,readonly string[]>={1:['grasshopper','mantis','moth'
 export const LEGENDARY_RAID_SPECIES:readonly string[]=POOLS[5];
 
 export function raidSlot(now:number){const slot=Math.floor((now%86400000)/SLOT_MS);return {day:dayV2(now),slot,start:Math.floor(now/SLOT_MS)*SLOT_MS};}
+/** Public part of a raid id. The server passes a keyed hash: post ids of virtual posts encode a 170 m grid cell, OSM ids a public node. */
+export type RaidToken=(input:string)=>string;
 /** The same raid for everyone at this post and slot, or null when the post rests or the raid is not visible. */
-export function raidAt(site:RaidSite,now:number):Raid|null{
+export function raidAt(site:RaidSite,now:number,token:RaidToken):Raid|null{
  const {day,slot,start}=raidSlot(now),random=rng('raid:'+day+':'+slot+':'+site.id),roll=random();
  if(roll<.4)return null;
  let tier:RaidTier=roll<.8?1:roll<.95?3:5;if(tier===5&&!POOLS[5].length)tier=3;
  const pool=POOLS[tier],kind=pool[Math.floor(random()*pool.length)],hatchAt=start+Math.floor(random()*(SLOT_MS-ACTIVE_MS)/60000)*60000;
- const raid:Raid={id:day+':'+slot+':'+site.id,day,slot,site:{id:site.id,name:site.name,lat:site.lat,lng:site.lng},tier,species:kind,visibleAt:Math.max(start,hatchAt-EGG_MS),hatchAt,endsAt:hatchAt+ACTIVE_MS};
+ const raid:Raid={id:day+':'+slot+':'+token(day+':'+slot+':'+site.id),day,slot,site:{id:site.id,name:site.name,lat:site.lat,lng:site.lng},tier,species:kind,visibleAt:Math.max(start,hatchAt-EGG_MS),hatchAt,endsAt:hatchAt+ACTIVE_MS};
  return now>=raid.visibleAt&&now<raid.endsAt?raid:null;
 }
 export function raidPhase(r:Raid,now:number){return now<r.hatchAt?'egg':now<r.endsAt?'active':'ended';}
