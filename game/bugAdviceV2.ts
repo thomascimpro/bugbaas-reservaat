@@ -20,10 +20,10 @@ export function bugAdvice(p:PlayerV2,s:Specimen){
  const g=p.go!,st=stats(s),grade=appraisal(s),maxCp=stats(s,{...s.go!,level:50}).cp,name=species(s.species).name,key=family(s.species);
  const same=p.specimens.filter(b=>b.go&&b.species===s.species),better=same.filter(b=>b.id!==s.id&&score(b)>score(s)).sort((a,b)=>score(b)-score(a))[0],only=same.length<=1,best=!better;
  const evo=EVOLUTIONS[s.species],candy=g.candy[key]??0,cost=powerCost(s.go!.level),canPower=!!cost&&g.dust>=cost.dust&&candy>=cost.candy&&(g.xl[key]??0)>=cost.xl,tips:BugTip[]=[];
- if(evo&&candy>=evo.candy)tips.push({good:true,text:'Je kunt evolueren! CP '+st.cp+' → '+stats({...s,species:evo.to}).cp+'.'});
- if(best&&canPower)tips.push({good:true,text:only?'Sterker maken geeft meer CP. Dit is je enige '+name+'.':'Slim om sterker te maken: dit is je beste '+name+'.'});
- if(better)tips.push({good:false,text:'Je hebt een betere '+name+' (CP '+stats(better).cp+', '+GRADE_NAMES[appraisal(better)].toLowerCase()+'). Geef je stof liever aan die.'});
- if(evo&&candy<evo.candy)tips.push({good:false,text:'Nog '+(evo.candy-candy)+' nectar om te evolueren. Vang meer '+name+' of kies hem als buddy.'});
- if(!cost)tips.push({good:true,text:'Maximaal sterk: hoger kan niet meer.'});
- return {grade,gradeName:GRADE_NAMES[grade],cp:st.cp,maxCp,best,only,better,tips:tips.slice(0,3)};
+ if(evo&&candy>=evo.candy)tips.push({good:true,text:'Evolueer! CP '+st.cp+' → '+stats({...s,species:evo.to}).cp});
+ if(best&&canPower)tips.push({good:true,text:only?'Sterker maken = meer CP':'Je beste '+name+': maak sterker'});
+ if(better)tips.push({good:false,text:'Betere '+name+' in je tas (CP '+stats(better).cp+')'});
+ if(evo&&candy<evo.candy)tips.push({good:false,text:'Nog '+(evo.candy-candy)+' nectar voor evolutie'});
+ if(!cost)tips.push({good:true,text:'Maximaal sterk!'});
+ return {grade,gradeName:GRADE_NAMES[grade],cp:st.cp,maxCp,best,only,better,tips:tips.slice(0,2)};
 }

@@ -16,7 +16,7 @@ test('the first partner is a real buddy bug, chosen once; outfit colours are val
   await assert.rejects(()=>send('profile',{name:'Kever Jager',avatar:'amber',outfit:'sea',starter:'mantis'}),/maatje/);
   await send('profile',{name:'Kever Jager',avatar:'amber',outfit:'sea',starter:'waterstrider'});
   const p=get().player,partner=p.specimens.find(s=>s.source==='partner')!;
-  assert.equal(p.onboarded,true);assert.equal(p.outfit,'sea');assert.equal(partner.species,'waterstrider');assert.ok(partner.go&&partner.go.level===8&&partner.favorite);
+  assert.equal(p.onboarded,true);assert.equal(p.outfit,'sea');assert.equal(partner.species,'waterstrider');assert.ok(partner.go&&partner.go.level===12&&partner.favorite);
   assert.equal(p.buddy,partner.id);assert.ok(p.go!.dex!.includes('waterstrider'));assert.ok(Object.values(p.go!.candy).some(n=>n>=10),'starter nectar for its family');
   assert.equal(beginnerSteps(p,1,[]).find(s=>s.id==='first-catch')!.done,false,'the partner does not count as your first catch');
   await send('profile',{name:'Kever Jager',avatar:'fern',starter:'firefly_1'});

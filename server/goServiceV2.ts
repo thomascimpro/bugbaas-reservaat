@@ -249,8 +249,8 @@ export class GoServiceV2{
   w.spawns.push(spawn);const totals=a.totals??={caught:0,missed:0,dust:0,xp:0},before={dust:g.dust,xp:g.trainer!.xp};
   this.autoCatch(p,spawn,now,secret+':away',totals);totals.dust+=g.dust-before.dust;totals.xp+=g.trainer!.xp-before.xp;
  }
- /** The chosen first partner: a real GO bug (level 8, favourite) that becomes the buddy; only once, at the start. */
- private givePartner(p:PlayerV2,kind:string,now:number){const g=ensureGo(p,now),id='partner-'+kind;p.specimens.push({id,species:kind,level:1,shiny:false,favorite:true,obtainedAt:now,source:'partner',hearts:0,item:null,go:{...rollGoBug(kind,p.uid+':partner'),level:8}});ensureGo(p,now);g.candy[family(kind)]=(g.candy[family(kind)]??0)+10;p.buddy=id;markGoSeen(p,kind,now);}
+ /** The chosen first partner: a real GO bug (level 12, good IV, favourite) that becomes the buddy; only once, at the start. */
+ private givePartner(p:PlayerV2,kind:string,now:number){const g=ensureGo(p,now),id='partner-'+kind;p.specimens.push({id,species:kind,level:1,shiny:false,favorite:true,obtainedAt:now,source:'partner',hearts:0,item:null,go:rollGoBug(kind,p.uid+':partner',{level:12})});ensureGo(p,now);g.candy[family(kind)]=(g.candy[family(kind)]??0)+10;p.buddy=id;markGoSeen(p,kind,now);}
  private npc(p:PlayerV2,id:string,now:number){const q=freshV2('training-'+p.uid,'TRAINING',now);ensureGo(q,now);q.name='Veldwachter';q.go!.league=p.go!.league;const average=p.go!.team.map(id=>ownedGo(p,id).go!.level).reduce((a,b)=>a+b,0)/3;q.specimens=['ant','beetle','moth'].map((species,i)=>{const s={id:'trainer-'+i,species,level:1,shiny:false,favorite:false,obtainedAt:now,source:'training',hearts:0,item:null,go:rollGoBug(species,id+i)};s.go.level=Math.min(50,Math.max(1,Math.round(average)));while(stats(s).cp>LEAGUES[q.go!.league].cap&&s.go.level>1)s.go.level-=.5;return s;});q.go!.team=q.specimens.map(s=>s.id);return q;}
  private commandSnapshot(d:Documents,player:PlayerV2){
   const id=player.go!.battle;

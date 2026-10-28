@@ -16,13 +16,13 @@ test('the best bug of a species gets the thumbs-up, a weaker duplicate points to
  assert.deepEqual([...bestOfSpecies(p.specimens)],['a'],'only species you own twice get a best mark');
  const a=bugAdvice(p,good),w=bugAdvice(p,weak);
  assert.equal(a.best,true);assert.equal(a.gradeName,'Super');assert.ok(a.tips.some(t=>t.good&&t.text.includes('beste')));
- assert.equal(w.best,false);assert.equal(w.better?.id,'a');assert.ok(w.tips.some(t=>!t.good&&t.text.includes('betere')));
+ assert.equal(w.best,false);assert.equal(w.better?.id,'a');assert.ok(w.tips.some(t=>!t.good&&t.text.includes('Betere')));
  assert.ok(a.maxCp>=a.cp&&a.cp===stats(good).cp);
 });
 
 test('evolve advice follows the nectar you have',()=>{
  const id=Object.keys(EVOLUTIONS).find(k=>EVOLUTIONS[k].candy>0)!,b=bug('e',id,[10,10,10]),p=player(b),key=family(id);
  p.go!.candy[key]=0;assert.ok(bugAdvice(p,b).tips.some(t=>!t.good&&t.text.startsWith('Nog '+EVOLUTIONS[id].candy+' nectar')));
- p.go!.candy[key]=EVOLUTIONS[id].candy;assert.ok(bugAdvice(p,b).tips.some(t=>t.good&&t.text.startsWith('Je kunt evolueren')));
- assert.ok(bugAdvice(p,b).tips.length<=3);
+ p.go!.candy[key]=EVOLUTIONS[id].candy;assert.ok(bugAdvice(p,b).tips.some(t=>t.good&&t.text.startsWith('Evolueer')));
+ assert.ok(bugAdvice(p,b).tips.length<=2);
 });

@@ -1,5 +1,6 @@
 import type {GymProgress} from './gymsV2';
 import type {DailyChallengeProgress} from './dailyChallengeV2';
+import {bugRarity} from './rarityDisplayV2';
 import {ensureTrainer,catchXP,grantXP} from './trainerV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
 import {EXPANDED_BY_ID,ULTIMATE_BASES} from './dexExpansionV2';
@@ -123,7 +124,7 @@ export function movePool(id:string){
  const charged:Charged=has('poison')?'needle':has('fire')?'burst':has('steel')?'shell':has('dark')?'night':has('grass')?'sap':has('rock')||has('ground')?'crush':has('flying')?'dive':'web';
  return {...pool,fast:[...pool.fast,fast],charged:[...pool.charged,...(pick<.5?['web' as Charged,charged]:[charged])].filter((m,i,a)=>a.indexOf(m)===i)};
 }
-export function rollGoBug(kind:string,seed:string,bonus?:{level:number}):GoBug{const random=rng(seed),pool=movePool(kind);const rolled=1+Math.floor(random()*20),iv=()=>bonus?10+Math.floor(random()*6):Math.floor(random()*16);return {level:bonus?.level??rolled,iv:[iv(),iv(),iv()],fast:pool.fast[Math.floor(random()*pool.fast.length)],charged:[pool.charged[Math.floor(random()*pool.charged.length)]],item:null};}
+export function rollGoBug(kind:string,seed:string,bonus?:{level:number}):GoBug{const random=rng(seed),pool=movePool(kind);const rolled=1+Math.floor(random()*20)+[0,0,0,0,2,4][bugRarity(kind)],iv=()=>bonus?10+Math.floor(random()*6):Math.floor(random()*16);return {level:bonus?.level??rolled,iv:[iv(),iv(),iv()],fast:pool.fast[Math.floor(random()*pool.fast.length)],charged:[pool.charged[Math.floor(random()*pool.charged.length)]],item:null};}
 export function ensureGo(p:PlayerV2,now:number){
  if(!p.go){p.go={version:1,dust:0,candy:{},xl:{},items:{leaf:0,thorn:0,bark:0,wing:0,honey:0,dew:0,moon:0,sun:0},fastTMs:0,chargedTMs:0,team:[],league:'great',rating:1000,wins:0,losses:0,history:[],battle:null,queue:null,auto:{enabled:false,lastAt:0,attempted:[],status:'off',moving:0},buddyMeters:0};p.revision++;}
  const g=p.go;for(const key of Object.keys(HELD) as Held[])g.items[key]??=0;ensureTrainer(p);g.dex??=[];g.entries??={};g.dexVersion=1;for(const id of g.dex)g.entries[id]??={seenAt:null,caughtAt:null,shinyAt:null};for(const s of p.specimens.filter(eligible)){g.entries[s.species]??={seenAt:s.obtainedAt,caughtAt:s.obtainedAt,shinyAt:s.shiny?s.obtainedAt:null};if(!g.dex.includes(s.species))g.dex.push(s.species);}for(const s of p.specimens.filter(eligible))if(!s.go){if(!g.dex.includes(s.species))g.dex.push(s.species);s.go=rollGoBug(s.species,p.uid+':existing:'+s.id);g.candy[family(s.species)]=(g.candy[family(s.species)]??0)+3;g.dust+=100;p.revision++;}
