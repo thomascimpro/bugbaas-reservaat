@@ -16,7 +16,7 @@ import {claimGoDaily} from '../game/dailyResearchV2';
 import {ensurePostResearch,finishPostResearch} from '../game/postResearchV2';
 import {teamPreset} from '../game/teamPresetsV2';
 import {grantXP,claimTrainer,ensureTrainer,trainerLevel} from '../game/trainerV2';
-import {RAID_RULES,RAID_TIERS,raidAt,raidJoinableUntil,ensureRaids,claimFreePass,openLobby,lobbyOpen,joinLobby,leaveLobby,startLobby,resolveLobby,claimRaid,inviteIssue,raidInvite,addInvite,publicRaid,makeRaidBattle,syncRaidBattle,lobbyView} from '../game/raidsV2';
+import {ACTIVE_MS,EGG_MS,RAID_RULES,RAID_TIERS,raidAt,raidJoinableUntil,ensureRaids,claimFreePass,openLobby,lobbyOpen,joinLobby,leaveLobby,startLobby,resolveLobby,claimRaid,inviteIssue,raidInvite,addInvite,publicRaid,makeRaidBattle,syncRaidBattle,lobbyView} from '../game/raidsV2';
 import type {Raid,RaidLobby,RaidInvite,RaidLobbyView,RaidToken} from '../game/raidsV2';
 import {spinPost,POST_COOLDOWN,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute,cancelRoute} from '../game/worldSitesV2';
 import {unknownHabitat} from '../game/habitatsV2';
@@ -120,9 +120,23 @@ export class GoServiceV2{
  private checkBattleKeys(d:Documents,b:GoBattle){check(this.rememberBattleKeys(b).every(key=>d.has(key)),'Je gevecht is veranderd. Probeer opnieuw.',409);}
  private async advance(id:string,uid?:string){const keys=await this.battleKeys(id);if(!keys.length)return;await this.prefetchRaid(keys);return this.store.run([...keys],d=>{const b=document<GoBattle>(d,bk(id));if(!b)return;this.checkBattleKeys(d,b);advanceGoBattle(b,this.clock());this.settle(d,b,this.clock());return {battle:b,player:uid?document<PlayerV2>(d,pk(uid)):undefined};});}
  /** Reads all members' pooled damage. Outside the battle transaction a stale read only underestimates damage. */
+ // Lobby member lists (fixed once the fight starts), pooled damage per lobby (1.5 s) and immutable raid documents.
+ private raidMembers=new Map<string,string[]>();
+ private raidDamageCache=new Map<string,{until:number;value:Promise<{lobby:RaidLobby|undefined;damage:Record<string,number>}>}>();
+ private raidDocs=new Map<string,Promise<RaidDoc|undefined>>();
+ /** One transaction for a lobby and its known members' damage, shared by all polls for 1.5 s. Stale or missing values only underestimate damage. */
  private async raidDamage(lobbyId:string){
-  const lobby=await this.store.run([lk(lobbyId)],d=>document<RaidLobby>(d,lk(lobbyId)));if(!lobby)return {lobby,damage:{} as Record<string,number>};
-  const damage=await this.store.run(lobby.members.map(m=>dk(lobbyId,m.uid)),d=>Object.fromEntries(lobby.members.map(m=>[m.uid,document<DamageDoc>(d,dk(lobbyId,m.uid))?.damage??0])) as Record<string,number>);return {lobby,damage};
+  let entry=this.raidDamageCache.get(lobbyId);
+  if(!entry||entry.until<=this.clock()){
+   const members=this.raidMembers.get(lobbyId)??[],value=this.store.run([lk(lobbyId),...members.map(uid=>dk(lobbyId,uid))],d=>{const lobby=document<RaidLobby>(d,lk(lobbyId));return {lobby,damage:Object.fromEntries((lobby?.members??[]).map(m=>[m.uid,document<DamageDoc>(d,dk(lobbyId,m.uid))?.damage??0])) as Record<string,number>};});
+   if(this.raidDamageCache.size>=1000){this.raidDamageCache.clear();this.raidMembers.clear();}
+   const created={until:this.clock()+1500,value};entry=created;this.raidDamageCache.set(lobbyId,created);void value.then(r=>{if(r.lobby)this.raidMembers.set(lobbyId,r.lobby.members.map(m=>m.uid));},()=>{if(this.raidDamageCache.get(lobbyId)===created)this.raidDamageCache.delete(lobbyId);});
+  }
+  const {lobby,damage}=await entry.value;return {lobby,damage:{...damage}};
+ }
+ private raidDoc(raidId:string){
+  let doc=this.raidDocs.get(raidId);if(!doc){if(this.raidDocs.size>=1000)this.raidDocs.clear();const created=this.store.run([rk(raidId)],d=>document<RaidDoc>(d,rk(raidId)));doc=created;this.raidDocs.set(raidId,created);void created.then(r=>{if(!r&&this.raidDocs.get(raidId)===created)this.raidDocs.delete(raidId);},()=>{if(this.raidDocs.get(raidId)===created)this.raidDocs.delete(raidId);});}
+  return doc;
  }
  private async prefetchRaid(keys:readonly string[]){
   const lobbyKey=keys.find(k=>k.startsWith('v2RaidLobbies:')),own=keys.find(k=>k.startsWith('v2RaidDamage:'));if(!lobbyKey||!own)return;
@@ -148,9 +162,10 @@ export class GoServiceV2{
   const now=this.clock(),w=p.walking,fresh=!!w&&now-w.at<45000,token=await this.raidToken();
   const raids=w?gymSites(w.posts??[]).flatMap(site=>{const r=raidAt(site,now,token);return r?[{...publicRaid(r),joinableUntil:raidJoinableUntil(r),local:fresh&&distance(w.fix,site)<=65}]:[];}):[];
   let raidLobby:RaidLobbyView|null=null;const lobbyId=p.go?.raids?.lobby;
-  if(lobbyId){const {lobby,damage}=await this.raidDamage(lobbyId),doc=lobby?await this.store.run([rk(lobby.raidId)],d=>document<RaidDoc>(d,rk(lobby.raidId))):undefined;
+  if(lobbyId){const {lobby,damage}=await this.raidDamage(lobbyId),doc=lobby?await this.raidDoc(lobby.raidId):undefined;
    if(lobby&&doc){const shown=structuredClone(lobby);resolveLobby(shown,damage,now);raidLobby=lobbyView(shown,doc.raid,uid,damage,p.go!.raids!);}}
-  return {raids,raidLobby,raidInvites:(await this.inbox(uid)).filter(i=>i.endsAt>now)};
+  const invited=(p.go?.raids?.invitedAt??0)>now-EGG_MS-ACTIVE_MS;
+  return {raids,raidLobby,raidInvites:invited?(await this.inbox(uid)).filter(i=>i.endsAt>now):[]};
  }
  private async gyms(p:PlayerV2){
   const now=this.clock(),sites=new Map<string,GymSite>([...gymSites(p.walking?.posts??[]),...(p.go!.gyms?.deployed??[])].map(site=>[site.id,site]));
@@ -234,7 +249,7 @@ export class GoServiceV2{
   if(c.type==='raidJoin'){const doc=await this.store.run([rk(c.raid as string)],d=>document<RaidDoc>(d,rk(c.raid as string))),open=doc?.open??0;keys.push(lk(c.raid+'#'+open),lk(c.raid+'#'+(open+1)),ik(uid));}
   if(currentLobby&&(c.type==='raidJoin'||c.type==='raidLeave'||c.type==='raidFight'||c.type==='raidInvite'))keys.push(lk(currentLobby),dk(currentLobby,uid));
   if(c.type==='raidFight'){check(currentLobby,'Je zit niet in een zwerm.');const {damage}=await this.raidDamage(currentLobby);delete damage[uid];raidOthers=Object.values(damage).reduce((a,b)=>a+b,0);keys.push(bk(id));}
-  if(c.type==='raidInvite'){check(Array.isArray(c.friends)&&c.friends.length>0&&c.friends.length<=RAID_RULES.invitesPerRaid&&c.friends.every(f=>typeof f==='string'&&f.length>0&&f.length<128&&f!==uid),'Kies maximaal vijf vrienden.');inviteFriends=c.friends as string[];keys.push(...inviteFriends.flatMap(f=>['v2FriendPairs:'+[uid,f].sort().join('_'),ik(f)]));}
+  if(c.type==='raidInvite'){check(Array.isArray(c.friends)&&c.friends.length>0&&c.friends.length<=RAID_RULES.invitesPerRaid&&c.friends.every(f=>typeof f==='string'&&f.length>0&&f.length<128&&f!==uid),'Kies maximaal vijf vrienden.');inviteFriends=c.friends as string[];keys.push(...inviteFriends.flatMap(f=>['v2FriendPairs:'+[uid,f].sort().join('_'),ik(f),pk(f)]));}
   if(c.type==='raidClaim'){check(typeof c.lobby==='string'&&c.lobby.length<320,'Kies een zwerm.');const lobby=await this.store.run([lk(c.lobby)],d=>document<RaidLobby>(d,lk(c.lobby as string)));check(lobby&&lobby.members.some(m=>m.uid===uid),'Je zat niet in deze zwerm.',403);keys.push(lk(c.lobby),rk(lobby.raidId),...lobby.members.map(m=>dk(lobby.id,m.uid)));const {friends}=await this.social(uid);raidFriends=friends.filter(pair=>pair.accepted&&!pair.removed).flatMap(pair=>pair.users).filter(u=>u!==uid);}
   const snapshot=await this.store.run([...new Set(keys)],d=>{
    const fingerprint=hash(JSON.stringify(c)),old=document<{fingerprint:string}>(d,receipt);if(old){check(old.fingerprint===fingerprint,'Dit actie-ID is al voor iets anders gebruikt.',409);const player=this.get(d,uid,now);if(c.type==='goAct'){const battle=player.go!.battle?document<GoBattle>(d,bk(player.go!.battle)):undefined;if(battle){this.checkBattleKeys(d,battle);advanceGoBattle(battle,now);this.settle(d,battle,now);}}return this.commandSnapshot(d,player);}
@@ -305,7 +320,7 @@ export class GoServiceV2{
      if(!member){const site=this.localRaidSite(x,raidId,now,raidToken!);doc??={raid:raidAt(site,now,raidToken!)!,open:0,invited:{}};d.set(rk(raidId),doc);}
      const raidDoc=doc!,friends=inviteFriends.filter(f=>{const pair=document<FriendPair>(d,'v2FriendPairs:'+[uid,f].sort().join('_'));return !!pair&&pair.accepted&&!pair.removed&&pair.users.includes(uid)&&pair.users.includes(f);});
      const issue=inviteIssue(rg,raidDoc.raid,inviteFriends,friends,raidDoc.invited[uid]??0,now);check(!issue,issue??'');
-     const invite=raidInvite(raidDoc.raid,{uid,name:x.name},now);for(const f of inviteFriends){const inbox=document<{items:RaidInvite[]}>(d,ik(f))??{items:[]};inbox.items=addInvite(inbox.items,invite,now);d.set(ik(f),inbox);}
+     const invite=raidInvite(raidDoc.raid,{uid,name:x.name},now);for(const f of inviteFriends){const inbox=document<{items:RaidInvite[]}>(d,ik(f))??{items:[]};inbox.items=addInvite(inbox.items,invite,now);d.set(ik(f),inbox);const friend=document<PlayerV2>(d,pk(f));if(friend?.go)ensureRaids(friend.go,now).invitedAt=now;}
      raidDoc.invited[uid]=(raidDoc.invited[uid]??0)+inviteFriends.length;rg.invites+=inviteFriends.length;this.inboxCache.clear();break;}
     case 'raidFight':{idle();const rg=ensureRaids(g,now),l=document<RaidLobby>(d,lk(rg.lobby!));check(l,'Deze zwerm bestaat niet meer.');startLobby(l,now);check(l.status!=='lobby','De lobby wacht nog op spelers.');
      const dealt=document<DamageDoc>(d,dk(l.id,uid))?.damage??0,b=makeRaidBattle(x,l,c.ids,dealt,raidOthers,id,now);d.set(bk(id),b);d.set(dk(l.id,uid),{uid,damage:dealt});g.battle=id;break;}
@@ -327,7 +342,7 @@ export class GoServiceV2{
    }
     if(AUTO_DEFENSE_COMMANDS.has(c.type)&&(linked||this.mode==='local')&&!competitionTeamIssue(x)){const defense=saveEchoDefense(x,now);d.set('v2EchoDefenses:'+uid+'-'+g.league,defense);}
     x.revision++;d.set(receipt,{fingerprint,at:now,type:c.type});return this.commandSnapshot(d,x);
-  });if(SOCIAL_COMMANDS.has(c.type))this.socialCache.clear();if(snapshot?.battle)this.rememberBattleKeys(snapshot.battle);return snapshot?this.view(uid,snapshot.player,snapshot.battle,linked):this.state(uid,linked);
+  });if(SOCIAL_COMMANDS.has(c.type))this.socialCache.clear();if(c.type.startsWith('raid'))this.raidDamageCache.clear();if(snapshot?.battle)this.rememberBattleKeys(snapshot.battle);return snapshot?this.view(uid,snapshot.player,snapshot.battle,linked):this.state(uid,linked);
  }
  private async matchmake(uid:string){const now=this.clock(),mine=await this.store.run([tk(uid)],d=>document<Ticket>(d,tk(uid)));if(!mine||mine.status!=='waiting')return;
   if(mine.until<=now){await this.store.run([pk(uid),tk(uid)],d=>{const t=document<Ticket>(d,tk(uid));if(t?.status==='waiting'){t.status='expired';const p=this.get(d,uid,now);p.go!.queue=null;p.revision++;}});return;}

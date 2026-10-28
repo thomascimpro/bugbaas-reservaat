@@ -13,7 +13,7 @@ export type RaidSite={id:string;name:string;lat:number;lng:number};
 export type Raid={id:string;day:string;slot:number;site:RaidSite;tier:RaidTier;species:string;visibleAt:number;hatchAt:number;endsAt:number};
 export type RaidMember={uid:string;name:string;remote:boolean;joinedAt:number};
 export type RaidLobby={id:string;raidId:string;n:number;tier:RaidTier;species:string;members:RaidMember[];lobbyUntil:number;status:'lobby'|'fighting'|'won'|'failed';fight:{startedAt:number;until:number;maxHP:number}|null;revision:number;createdAt:number};
-export type RaidProgress={day:string;claimed:string[];rewards:number;remote:number;passes:number;freeDay:string;invites:number;lobby:string|null};
+export type RaidProgress={day:string;claimed:string[];rewards:number;remote:number;passes:number;freeDay:string;invites:number;lobby:string|null;invitedAt?:number};
 export type RaidInvite={raidId:string;from:{uid:string;name:string};postName:string;tier:RaidTier;species:string;endsAt:number;at:number};
 export type RaidReward={dust:number;xp:number;nets:number;catchLevel:number};
 

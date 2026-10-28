@@ -54,6 +54,14 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
 
   now+=LOBBY_MS+1000;
   for(const uid of [A,B]){await send(uid,'raidFight',{ids:['bug-0','bug-1','bug-2']});assert.ok(views[uid].goBattle!.raid,'personal raid battle');}
+  // Load: polls share one pooled-damage read per lobby for 1.5 s, and never-invited players skip the inbox.
+  const runs:string[][]=[],run=store.run.bind(store);store.run=((keys:string[],cb:never)=>{runs.push(keys);return run(keys,cb);}) as typeof store.run;
+  for(let i=0;i<4;i++){views[A]=await service.state(A);views[B]=await service.state(B);}await service.state(C);
+  const damageReads=()=>runs.filter(k=>k.every(key=>key.startsWith('v2RaidLobbies:')||key.startsWith('v2RaidDamage:'))).length;
+  assert.ok(damageReads()<=1,'eight polls share at most one pooled-damage read');const before=damageReads();
+  now+=1600;views[A]=await service.state(A);views[B]=await service.state(B);assert.equal(damageReads()-before,1,'after 1.5 s both players share one fresh read');
+  assert.equal(runs.filter(k=>k.some(key=>key==='v2RaidInbox:'+C)).length,0,'no inbox read without an invite');
+  store.run=run;
   // A hits until some damage lands; B then sees the same lower shared HP.
   for(let i=0;i<40&&views[A].goBattle!.teams[1][0].hp>=100;i++){now+=600;views[A]=await service.state(A);const b=views[A].goBattle!,a=b.teams[0][b.active[0]];if(b.phase==='fight'&&a.readyAt<=now&&!b.fast[0]&&a.hp>0)await send(A,'goAct',{action:'fast',value:null});}
   now+=600;views[A]=await service.state(A);views[B]=await service.state(B);
