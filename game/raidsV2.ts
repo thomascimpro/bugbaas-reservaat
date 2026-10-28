@@ -21,7 +21,7 @@ export const SLOT_MS=6*3600000,LOBBY_MS=90000,FIGHT_MS=180000,ACTIVE_MS=45*60000
 export const RAID_RULES={maxMembers:6,maxRemote:4,remotePerDay:3,maxPasses:3,rewardsPerDay:5,invitesPerRaid:5,invitesPerDay:20,inboxSize:10} as const;
 export const RAID_TIERS={
  1:{name:'Zwerm',level:20,hp:5,trainer:5,dust:300,xp:300,nets:5,catchLevel:15},
- 3:{name:'Grote zwerm',level:30,hp:14,trainer:10,dust:600,xp:800,nets:6,catchLevel:20},
+ 3:{name:'Grote zwerm',level:30,hp:10,trainer:10,dust:600,xp:800,nets:6,catchLevel:20},
  5:{name:'Oerzwerm',level:40,hp:30,trainer:20,dust:1000,xp:1500,nets:7,catchLevel:20},
 } as const satisfies Record<RaidTier,unknown>;
 const POOLS:Record<RaidTier,readonly string[]>={1:['grasshopper','mantis','moth','dragonfly','beetle','weevil'],3:['hercules','mantis','giantwaterbug','moth','antlion','tortoisebeetle'],5:[]};

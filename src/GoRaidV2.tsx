@@ -55,7 +55,7 @@ export function RaidLobbyV2({view,run,busy,now,onBattle}:{view:GameViewV2;run:Ru
    :fighting?<Button small icon="swords" disabled={busy||!!view.goBattle} onPress={()=>setChoosing(true)}>{view.goBattle?'Sluit eerst je vorige gevecht':'Vecht mee'}</Button>
    :<><Button small secondary icon="friends" disabled={busy} onPress={()=>setInviting(v=>!v)}>{inviting?'Sluit uitnodigen':'Nodig vrienden uit'}</Button><Button small secondary icon="back" disabled={busy} onPress={()=>void run('raidLeave')}>Verlaat lobby</Button></>}
   {inviting&&!fighting&&!ended&&<InviteFriends {...{view,run,busy}} raid={l.raidId} onDone={()=>setInviting(false)}/>}
- </Panel>{choosing&&<GoTeamPickerV2 raid player={view.player} {...{run,busy}} onClose={()=>setChoosing(false)} onConfirm={fight}/>}</>;
+ </Panel>{choosing&&<GoTeamPickerV2 raid title="Team voor de zwerm" player={view.player} {...{run,busy}} onClose={()=>setChoosing(false)} onConfirm={fight}/>}</>;
 }
 
 /** Invitations from friends: join remotely with a Zwermfluit. Shows the post name only. */
