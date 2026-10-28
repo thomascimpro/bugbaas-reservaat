@@ -1,5 +1,8 @@
 import {gymSites,ensureGyms,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym,ensureNpcGym,settleExpiredGym,GYM_RULES} from '../game/gymsV2';
 import {ensureDailyChallenge,dailyChallengeView,makeDailyChallengeBattle,settleDailyChallenge,dailyWeekKey,weeklyDailyScore} from '../game/dailyChallengeV2';
+/** Autovanger: one attempt per walked step, gaps up to 15 min, and at most a few Adventure Sync catches per day. */
+import type {WildBug} from '../game/walkingV2';
+export const AUTO_STEP=40,AUTO_MAX_GAP=900,AWAY_PER_DAY=5;
 import type {Gym,GymSite} from '../game/gymsV2';
 import {buyCoinOffer} from '../game/coinShopV2';
 import {awardGoCatchCard,sendGoGift,openGoGift} from '../game/goGiftsV2';
@@ -26,7 +29,7 @@ import {createHash,createHmac,randomBytes} from 'node:crypto';
 import {freshV2,dayV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField,encounterWild,castNet,claimFieldTask,catchChance} from '../game/fieldV2';
-import {locate,catchWild,distance,CATCH_RADIUS,validFix,requireFieldLocation,GPS_MAX_AGE,wildSeed} from '../game/walkingV2';
+import {locate,catchWild,distance,CATCH_RADIUS,validFix,requireFieldLocation,GPS_MAX_AGE,GPS_CATCH_ACCURACY,wildSeed,wildSpawns} from '../game/walkingV2';
 import {recordWalk} from '../game/walkingRewardsV2';
 import {mergeGPSWalk,syncAdventure} from '../game/adventureSyncV2';
 import {startFieldLure,advanceFieldActivities} from '../game/fieldActivitiesV2';
@@ -201,12 +204,18 @@ export class GoServiceV2{
   return {...raidState,dailyChallenge:dailyChallengeView(publicPlayer,this.clock()),dailyChallengeLeaderboard,goGyms:gyms.map(g=>publicGym(g,uid,this.clock())),goTrades:trades.map(t=>publicGoTrade(t,this.clock())),echoLeaderboard:echoRanks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),player:publicPlayer,now:this.clock(),mode:this.mode,linked:linked||this.mode==='local',match:null,ticket:null,friends:friends.filter(f=>!f.removed),leaderboard:ranks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),goBattle:visible};
  }
  private auto(p:PlayerV2,now:number,secret:string){
-  const g=p.go!,a=g.auto,w=p.walking;if(!w)return;const previous=g.motion;g.motion={fix:{...w.fix},at:now};
+  const g=p.go!,a=g.auto,w=p.walking;if(!w)return;const previous=g.motion;
+  // Keep the older anchor for very short GPS intervals so small steps still add up to distance.
+  if(a.enabled&&previous&&now-previous.at<5000)return;g.motion={fix:{...w.fix},at:now};
   if(!a.enabled){a.status='off';return;}if(w.blockedUntil&&w.blockedUntil>now){a.status='too-fast';a.moving=0;return;}
   if(!previous||w.fix.accuracy>25||previous.fix.accuracy>25){a.status='gps';a.moving=0;return;}
-  const seconds=(now-previous.at)/1000,meters=distance(previous.fix,w.fix),speed=meters/seconds;
-  if(seconds<5||seconds>60||meters<Math.max(12,w.fix.accuracy,previous.fix.accuracy)||speed<.7){a.status='waiting';a.moving=0;return;}
-  if(speed>7){a.status='too-fast';a.moving=0;return;}a.status='moving';a.moving++;if(a.moving<2||now-a.lastAt<30000)return;
+  // Background Android delivers sparse fixes; credit plausible walking distance across gaps up to 15 minutes instead of
+  // demanding back-to-back fixes. Driving speed still voids the credit.
+  const seconds=(now-previous.at)/1000,meters=distance(previous.fix,w.fix),speed=meters/Math.max(1,seconds);
+  if(seconds>AUTO_MAX_GAP){a.status='waiting';a.moving=0;a.credit=0;return;}
+  if(speed>7){a.status='too-fast';a.moving=0;a.credit=0;return;}
+  if(meters<Math.max(12,w.fix.accuracy,previous.fix.accuracy)){a.status='waiting';a.moving=0;return;}
+  a.status='moving';a.moving++;a.credit=Math.min(AUTO_STEP*4,(a.credit??0)+meters);if(a.credit<AUTO_STEP||now-a.lastAt<30000)return;a.credit-=AUTO_STEP;
   const f=p.field!,before={dust:g.dust,xp:g.trainer!.xp},totals=a.totals??={caught:0,missed:0,dust:0,xp:0};
   // A moving autovanger replenishes at the same server-validated posts and cooldown as manual spinning.
   const post=w.posts?.find(post=>distance(w.fix,post)<=CATCH_RADIUS&&now-(g.sites?.visits[post.id]??0)>=POST_COOLDOWN);
@@ -216,10 +225,28 @@ export class GoServiceV2{
   a.attempted=a.attempted.filter(id=>w.spawns.some(s=>s.id===id&&s.expiresAt>now));
   const s=w.spawns.find(s=>!s.boss&&s.expiresAt>now&&!w.caught.includes(s.id)&&!a.attempted.includes(s.id)&&f.encounter?.spawn!==s.id&&distance(w.fix,s)<=CATCH_RADIUS);
   if(!s||!w.seed){accountRewards();return;}
+  this.autoCatch(p,s,now,secret,totals);accountRewards();
+ }
+ /** One autovanger attempt on a spawn: consumes a basic net and records a catch or a miss. */
+ private autoCatch(p:PlayerV2,s:WildBug,now:number,secret:string,totals:{caught:number;missed:number}){
+  const g=p.go!,a=g.auto,f=p.field!,w=p.walking!;
   a.lastAt=now;a.attempted.push(s.id);f.inventory.basic--;const caught=rng(secret+':auto')()<.75*catchChance(s.species,'basic',null);
   if(caught){catchWild(p,s.id,now);const bug=p.specimens.at(-1)!,priorDust=g.dust,priorXP=g.trainer!.xp;awardGoCatch(p,bug,w.seed+':go:'+s.id);f.total.catches++;f.daily.catches++;if(!f.daily.species.includes(s.species))f.daily.species.push(s.species);if(s.source==='lure'&&f.lure)f.lure.caught++;awardGoCatchCard(p,bug,s.id,now);awardCocoon(p,secret,now);w.lastCatch!.nectar=g.dust-priorDust;this.note(p,'catch','catch:'+s.id,bug,now,{method:'auto',dust:g.dust-priorDust,xp:g.trainer!.xp-priorXP});totals.caught++;}
   else{w.caught.push(s.id);appendGoJournal(p,{id:'autoMiss:'+s.id,kind:'autoMiss',at:now,species:s.species,method:'auto'});totals.missed++;}
-  a.last={species:s.species,caught,at:now};accountRewards();
+  a.last={species:s.species,caught,at:now};
+ }
+ /** Kilometres from Adventure Sync while the app was closed: one auto attempt per full km, max per day, at the fresh current location. */
+ private awayCatch(p:PlayerV2,meters:number,now:number,secret:string){
+  const g=p.go!,a=g.auto,w=p.walking,f=p.field!,day=dayV2(now);if(!a.enabled||!w?.seed||!(meters>=0))return;
+  if(a.awayDay!==day){a.awayDay=day;a.awayCount=0;}
+  a.awayCredit=Math.min(AWAY_PER_DAY*1000,(a.awayCredit??0)+meters);
+  if(a.awayCredit<1000||(a.awayCount??0)>=AWAY_PER_DAY||f.inventory.basic<1)return;
+  // catchWild needs a fresh fix and a short gap after the previous catch; otherwise keep the credit for the next sync.
+  if(now-w.at>=40000||w.fix.accuracy>GPS_CATCH_ACCURACY||(w.lastCatch&&now-w.lastCatch.at<900))return;
+  a.awayCount=(a.awayCount??0)+1;a.awayCredit-=1000;
+  const spawn={...wildSpawns(w.fix,secret+':away:'+day+':'+a.awayCount,now)[0],id:'away-'+day+'-'+a.awayCount+'-'+hash(secret).slice(0,8)};
+  w.spawns.push(spawn);const totals=a.totals??={caught:0,missed:0,dust:0,xp:0},before={dust:g.dust,xp:g.trainer!.xp};
+  this.autoCatch(p,spawn,now,secret+':away',totals);totals.dust+=g.dust-before.dust;totals.xp+=g.trainer!.xp-before.xp;
  }
  private npc(p:PlayerV2,id:string,now:number){const q=freshV2('training-'+p.uid,'TRAINING',now);ensureGo(q,now);q.name='Veldwachter';q.go!.league=p.go!.league;const average=p.go!.team.map(id=>ownedGo(p,id).go!.level).reduce((a,b)=>a+b,0)/3;q.specimens=['ant','beetle','moth'].map((species,i)=>{const s={id:'trainer-'+i,species,level:1,shiny:false,favorite:false,obtainedAt:now,source:'training',hearts:0,item:null,go:rollGoBug(species,id+i)};s.go.level=Math.min(50,Math.max(1,Math.round(average)));while(stats(s).cp>LEAGUES[q.go!.league].cap&&s.go.level>1)s.go.level-=.5;return s;});q.go!.team=q.specimens.map(s=>s.id);return q;}
  private commandSnapshot(d:Documents,player:PlayerV2){
@@ -265,7 +292,7 @@ export class GoServiceV2{
     case 'profile':check(typeof c.name==='string'&&/^[\p{L}\p{N} _-]{2,18}$/u.test(c.name),'Gebruik 2 tot 18 letters of cijfers.');if(c.avatar!==undefined){check(['fern','amber','tidal'].includes(c.avatar as string),'Kies een ranger.');x.avatar=c.avatar as 'fern'|'amber'|'tidal';}x.name=c.name;x.onboarded=true;break;
     case 'settings':for(const k of ['sound','reducedMotion','largeText'] as const){check(typeof c[k]==='boolean','Ongeldige instelling.');x.settings[k]=c[k] as boolean;}if(c.music!==undefined){check(typeof c.music==='boolean','Ongeldige muziekinstelling.');x.settings.music=c.music;}for(const k of ['volume','sfxVolume'] as const)if(c[k]!==undefined){check(typeof c[k]==='number'&&Number.isFinite(c[k])&&c[k]>=0&&c[k]<=1,'Kies een volume tussen 0 en 100%.');x.settings[k]=c[k] as number;}if(c.graphics!==undefined){check(['low','normal','high'].includes(c.graphics as string),'Kies lage, normale of hoge kwaliteit.');x.settings.graphics=c.graphics as 'low'|'normal'|'high';}break;
     case 'worldLocate':idle();if(locate(x,validFix(c.fix,now),secret,now,habitat)===false)break;x.walking!.siteSource=habitat?.sites&&habitat.sites.available!==false?'osm':'unavailable';x.walking!.posts=habitat?.sites?.posts??[];x.walking!.routes=habitat?.sites?.routes??[];const priorWalk=f.walk?.meters??0,priorDayWalk=f.walk?.dayMeters??0;recordWalk(x,now);mergeGPSWalk(x,priorWalk,priorDayWalk,now);advanceRoute(x,now);advanceFieldActivities(x,now,habitat);this.auto(x,now,secret);if(x.buddy&&x.field!.walk){const b=ownedGo(x,x.buddy),meters=x.field!.walk!.meters,required=buddyDistance(b.species),steps=Math.floor((meters-g.buddyMeters)/required);if(steps>0){const key=family(b.species);g.candy[key]=(g.candy[key]??0)+steps;g.buddyMeters+=steps*required;}}break;
-    case 'adventureSync':{idle();syncAdventure(x,c.snapshot,now);if(x.buddy&&f.walk){const b=ownedGo(x,x.buddy),required=buddyDistance(b.species),steps=Math.floor((f.walk.meters-g.buddyMeters)/required);if(steps>0){const key=family(b.species);g.candy[key]=(g.candy[key]??0)+steps;g.buddyMeters+=steps*required;}}break;}
+    case 'adventureSync':{idle();const priorHealthWalk=f.walk?.meters??0;syncAdventure(x,c.snapshot,now);this.awayCatch(x,Math.max(0,(f.walk?.meters??0)-priorHealthWalk),now,secret);if(x.buddy&&f.walk){const b=ownedGo(x,x.buddy),required=buddyDistance(b.species),steps=Math.floor((f.walk.meters-g.buddyMeters)/required);if(steps>0){const key=family(b.species);g.candy[key]=(g.candy[key]??0)+steps;g.buddyMeters+=steps*required;}}break;}
     case 'worldEncounter':{idle();if(x.walking?.spawns.find(s=>s.id===c.spawn)?.source!=='raid')requireFieldLocation(x.walking,now);encounterWild(x,c.spawn,secret,now);const s=x.walking!.spawns.find(s=>s.id===c.spawn)!;markGoSeen(x,s.species,now);f.encounter!.cp=stats({...x.specimens[0],species:s.species},rollGoBug(s.species,wildSeed(x.walking!,s)+':go:'+s.id,s.boss)).cp;break;}
     case 'worldFocus':{idle();requireFieldLocation(x.walking,now);const e=f.encounter;check(e&&e.id===c.encounter,'Open deze bug opnieuw.');check(x.walking!.spawns.some(s=>s.id===e.spawn&&s.expiresAt>now&&!x.walking!.caught.includes(s.id)),'Deze bug is verdwenen.');e.focus={id,at:now+800};break;}
     case 'worldCast':{idle();const raidCast=x.walking?.spawns.find(s=>s.id===f.encounter?.spawn)?.source==='raid';if(!raidCast)requireFieldLocation(x.walking,now);check(raidCast||c.net!=='basic'||f.inventory.basic>0,'Je standaardnetten zijn op.');const bait=f.encounter?.bait??c.bait as string|null;castNet(x,c,id,now);if(c.net==='basic'&&!raidCast)f.inventory.basic--;if(f.lastCast?.outcome==='caught'){const spawn=x.walking!.spawns.find(s=>s.id===f.lastCast!.spawn)!,priorXP=ensureTrainer(x).xp,priorDust=g.dust,held=awardGoCatch(x,x.specimens.at(-1)!,wildSeed(x.walking!,spawn)+':go:'+f.lastCast.spawn,bait,f.lastCast.grade,f.lastCast.curved,spawn.boss);awardGoCatchCard(x,x.specimens.at(-1)!,f.lastCast.spawn,now);awardCocoon(x,secret,now);f.lastCast.xp=ensureTrainer(x).xp-priorXP;if(held)f.lastCast.held=held;f.lastCast.nectar=g.dust-priorDust;f.lastCast.candy=goCatchRewards(f.lastCast.species,bait).candy;f.lastCast.cp=stats(x.specimens.at(-1)!).cp;x.walking!.lastCatch!.nectar=f.lastCast.nectar;this.note(x,'catch','catch:'+f.lastCast.spawn,x.specimens.at(-1)!,now,{method:'manual',dust:f.lastCast.nectar,xp:f.lastCast.xp});}break;}

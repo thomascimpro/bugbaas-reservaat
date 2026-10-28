@@ -68,7 +68,7 @@ test('a real server catch creates one card and retrying the capture never create
 });
 
 test('the automatic catch success path awards the same first-catch card without a login or training grant',()=>{
- const store=new SqliteStore(':memory:');try{const api=new GoServiceV2(store,'local',()=>NOW),p=player(),fix={...FIX,lat:FIX.lat+.0002};p.walking={fix,at:NOW,seed:'auto-seed',spawns:[{id:'auto-bug',species:'ant',lat:fix.lat,lng:fix.lng,expiresAt:NOW+900000}],caught:[],day:dayV2(NOW),count:0};p.go!.dex=['ant'];p.go!.auto.enabled=true;p.go!.auto.moving=1;p.go!.auto.lastAt=0;p.go!.motion={fix:FIX,at:NOW-15000};let secret='';for(let i=0;i<100;i++){if(rng('auto-'+i+':auto')()<catchChance('ant','basic',null)){secret='auto-'+i;break;}}assert.ok(secret);
+ const store=new SqliteStore(':memory:');try{const api=new GoServiceV2(store,'local',()=>NOW),p=player(),fix={...FIX,lat:FIX.lat+.0002};p.walking={fix,at:NOW,seed:'auto-seed',spawns:[{id:'auto-bug',species:'ant',lat:fix.lat,lng:fix.lng,expiresAt:NOW+900000}],caught:[],day:dayV2(NOW),count:0};p.go!.dex=['ant'];p.go!.auto.enabled=true;p.go!.auto.moving=1;p.go!.auto.credit=20;p.go!.auto.lastAt=0;p.go!.motion={fix:FIX,at:NOW-15000};let secret='';for(let i=0;i<100;i++){if(rng('auto-'+i+':auto')()<catchChance('ant','basic',null)){secret='auto-'+i;break;}}assert.ok(secret);
   (api as unknown as {auto:(p:PlayerV2,now:number,secret:string)=>void}).auto(p,NOW,secret);assert.equal(p.go!.auto.last!.caught,true);assert.equal(p.field!.daily.catches,1);assert.equal(p.cards.length,1);assert.equal(p.giftDay,dayV2(NOW));
  }finally{store.close();}
 });

@@ -104,7 +104,7 @@ test('automatic seventh-day capture shares the streak award and reports actual d
  const store=new SqliteStore(':memory:');try{
   const service=new GoServiceV2(store,'local',()=>NOW),p=player(),fix={...FIX,lat:FIX.lat+.0002,timestamp:NOW};
   p.go!.trainer!.catchDay='2026-10-18';p.go!.trainer!.catchStreak={days:6,lastDay:'2026-10-18'};
-  locate(p,fix,'streak-auto-map',NOW);p.walking!.spawns=[{id:'streak-auto',species:'ant',...fix,expiresAt:NOW+900000}];p.go!.auto.enabled=true;p.go!.auto.moving=1;p.go!.motion={fix:{...FIX,timestamp:NOW-15000},at:NOW-15000};
+  locate(p,fix,'streak-auto-map',NOW);p.walking!.spawns=[{id:'streak-auto',species:'ant',...fix,expiresAt:NOW+900000}];p.go!.auto.enabled=true;p.go!.auto.moving=1;p.go!.auto.credit=20;p.go!.motion={fix:{...FIX,timestamp:NOW-15000},at:NOW-15000};
   const failed=structuredClone(p),dust=p.go!.dust,xp=p.go!.trainer!.xp,auto=service as unknown as {auto:(player:PlayerV2,now:number,secret:string)=>void};let success='streak',failure='streak';
   while(rng(success+':auto')()>=catchChance('ant','basic',null))success+='x';while(rng(failure+':auto')()<catchChance('ant','basic',null))failure+='x';
   auto.auto(failed,NOW,failure);assert.equal(failed.go!.auto.last!.caught,false);assert.equal(failed.go!.dust,dust);assert.equal(failed.go!.trainer!.catchStreak!.days,6);

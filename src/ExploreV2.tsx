@@ -1,5 +1,5 @@
 import React,{useEffect,useRef,useState} from 'react';
-import {ActivityIndicator,AppState,BackHandler,View} from 'react-native';
+import {ActivityIndicator,AppState,BackHandler,ToastAndroid,View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import * as Location from 'expo-location';
 import type {GameViewV2} from '../game/typesV2';
@@ -14,7 +14,7 @@ import {Button,Label,V} from './uiV2';
 export const browserExploration=false;
 type Props={paused?:boolean;view:GameViewV2;run:RunV2;busy:boolean;now:number;open:(name:string,specimenId?:string)=>void;camera?:React.MutableRefObject<MapCameraV2|null>};
 export function ExploreV2(props:Props){
- const web=useRef<WebView>(null),latest=useRef(props),alive=useRef(true),ready=useRef(false),active=useRef(AppState.currentState==='active'),sequence=useRef(0),generation=useRef(0),watches=useRef(createNativeGPSWatches()),backPending=useRef(false),[problem,setProblem]=useState(''),[loading,setLoading]=useState(true);latest.current=props;
+ const web=useRef<WebView>(null),latest=useRef(props),alive=useRef(true),ready=useRef(false),active=useRef(AppState.currentState==='active'),sequence=useRef(0),generation=useRef(0),watches=useRef(createNativeGPSWatches()),backPending=useRef(false),exitPrompt=useRef(0),[problem,setProblem]=useState(''),[loading,setLoading]=useState(true);latest.current=props;
  let uri='';try{uri=nativeFieldURL(gameServerURL,__DEV__);}catch{}
  const send=(value:Record<string,unknown>)=>{if(alive.current&&ready.current)web.current?.postMessage(JSON.stringify({...value,seq:++sequence.current}));};
  const state=()=>{const p=latest.current;send({kind:'state',view:p.view,busy:p.busy,now:p.now,paused:!!p.paused,camera:p.camera?.current});};
@@ -45,7 +45,7 @@ export function ExploreV2(props:Props){
   else if(m.kind==='geo')await gps(m.action,m.id);
    else if(m.kind==='command'){if(!active.current||latest.current.paused){send({kind:'result',id:m.id,ok:false});return;}const ok=await latest.current.run(m.command,m.params);state();send({kind:'result',id:m.id,ok});}
    else if(m.kind==='navigate'&&!latest.current.paused){if(m.camera&&latest.current.camera)latest.current.camera.current=m.camera;latest.current.open(m.name,m.specimenId);}
-  else if(m.kind==='backResult'&&backPending.current){backPending.current=false;if(!m.handled)BackHandler.exitApp();}
+  else if(m.kind==='backResult'&&backPending.current){backPending.current=false;if(!m.handled){if(Date.now()-exitPrompt.current<2000)BackHandler.exitApp();else{exitPrompt.current=Date.now();ToastAndroid.show('Druk nog een keer op terug om BugBaas te sluiten',ToastAndroid.SHORT);}}}
  }
  if(!uri)return <View style={{flex:1,justifyContent:'center',padding:24}}><Label>De beveiligde kaartverbinding is nog niet ingesteld.</Label></View>;
  // Android also reports history.pushState as load start; only a new frame handshake resets GPS.
