@@ -1,10 +1,10 @@
 import {rng,species} from './catalogV2';
-import {fighterGo} from './goBattleV2';
-import type {GoFighter} from './goBattleV2';
-import {rollGoBug} from './goV2';
+import {fighterGo,makeGoBattle} from './goBattleV2';
+import type {GoBattle,GoFighter} from './goBattleV2';
+import {rollGoBug,teamIssue} from './goV2';
 import {dayV2} from './safariV2';
 import {checkV2 as check} from './shopV2';
-import type {Specimen} from './typesV2';
+import type {PlayerV2,Specimen} from './typesV2';
 
 // Zwermraids: a deterministic raid per gym post and six-hour UTC slot, fought by up to six players in one lobby.
 // Every player fights an own server-clocked boss battle; damage is pooled per player so no shared document is hot.
@@ -97,6 +97,27 @@ export function claimRaid(l:RaidLobby,g:RaidProgress,uid:string,damage:Record<st
  return {dust:config.dust,xp:config.xp,nets:config.nets+(m.remote?0:1)+friendBonus+((damage[uid]??0)===top?1:0),catchLevel:config.catchLevel};
 }
 
+export type RaidBattleMeta={lobbyId:string;raidId:string;tier:RaidTier;species:string;remote:boolean;dealt:number;synced:number;until:number};
+/** A personal, server-clocked fight against the shared boss; it starts at the shared HP still left. */
+export function makeRaidBattle(p:PlayerV2,l:RaidLobby,ids:unknown,dealt:number,others:number,id:string,now:number):GoBattle{
+ check(l.status==='fighting'&&l.fight&&now<l.fight.until,'Het zwermgevecht is niet bezig.');const m=l.members.find(m=>m.uid===p.uid);check(m,'Je zit niet in deze zwerm.',403);
+ const issue=teamIssue(p,ids,'master',true);check(!issue,issue??'Kies een geldig team.');
+ const hp=Math.max(0,l.fight.maxHP-dealt-others);check(hp>0,'Deze zwerm is al verslagen.');
+ const attacker=structuredClone(p),opponent=structuredClone(p);attacker.go!.league='master';attacker.go!.team=[...ids as string[]];opponent.go!.league='master';
+ opponent.uid='zwerm-'+l.id;opponent.name=raidLabel(l);
+ opponent.specimens=[l.species,...['ant','cricket','ladybug'].filter(k=>k!==l.species).slice(0,2)].map((kind,i)=>({id:'raid-'+i,species:kind,shiny:false,favorite:false,level:1,obtainedAt:now,source:'raid',hearts:0,item:null,go:{...rollGoBug(kind,l.raidId+':'+i),level:1,iv:[10,10,10]}} satisfies Specimen));
+ opponent.go!.team=opponent.specimens.map(s=>s.id);
+ const b=makeGoBattle(attacker,opponent,id,now,false,true,true),boss=raidBossFighter({id:l.raidId,tier:l.tier,species:l.species});boss.hp=hp;
+ b.teams[1]=[boss,...b.teams[1].slice(1).map(f=>({...f,hp:0}))];b.shields[1]=0;b.endsAt=Math.min(b.endsAt,l.fight.until);
+ b.raid={lobbyId:l.id,raidId:l.raidId,tier:l.tier,species:l.species,remote:m.remote,dealt,synced:hp,until:l.fight.until};return b;
+}
+/** Books own damage since the last sync and lowers the boss to the pooled HP. Other players never raise it again. */
+export function syncRaidBattle(b:GoBattle,others:number){
+ const r=b.raid;if(!r)return 0;const boss=b.teams[1][0];r.dealt+=Math.max(0,r.synced-boss.hp);boss.hp=Math.min(boss.hp,Math.max(0,boss.maxHP-r.dealt-others));r.synced=boss.hp;
+ if(boss.hp<=0&&b.phase!=='finished'){b.phase='finished';b.winner=0;b.charge=null;b.fast=[null,null];b.queued=[null,null];b.events.push({id:++b.serial,side:0,kind:'result',amount:0});b.events=b.events.slice(-12);b.revision++;}
+ return r.dealt;
+}
+
 /** Invites go only to accepted friends, never carry coordinates and are bounded per raid and per day. */
 export function inviteIssue(g:RaidProgress,r:Raid,targets:unknown,friends:readonly string[],alreadyInvited:number,now:number):string|null{
  if(!Array.isArray(targets)||!targets.length||targets.some(t=>typeof t!=='string'))return 'Kies vrienden om uit te nodigen.';
@@ -112,4 +133,12 @@ export function addInvite(inbox:RaidInvite[],invite:RaidInvite,now:number):RaidI
 }
 /** What any participant may see. Coordinates stay on the server: a post can sit close to someone's home. */
 export function publicRaid(r:Raid){const {site,...rest}=r;return {...rest,site:{id:site.id,name:site.name}};}
+export type RaidView=ReturnType<typeof publicRaid>&{joinableUntil:number;local:boolean};
+export type RaidLobbyView={id:string;raidId:string;postName:string;tier:RaidTier;species:string;status:RaidLobby['status'];lobbyUntil:number;fightUntil:number|null;maxHP:number;hp:number;remote:boolean;claimed:boolean;members:{name:string;remote:boolean;damage:number;me:boolean}[]};
+/** Lobby summary for one member: names and damage, never other players' ids or positions. */
+export function lobbyView(l:RaidLobby,raid:Raid,uid:string,damage:Record<string,number>,g:RaidProgress):RaidLobbyView{
+ const maxHP=l.fight?.maxHP??raidBossFighter({id:l.raidId,tier:l.tier,species:l.species}).maxHP;
+ return {id:l.id,raidId:l.raidId,postName:raid.site.name,tier:l.tier,species:l.species,status:l.status,lobbyUntil:l.lobbyUntil,fightUntil:l.fight?.until??null,maxHP,hp:l.fight?raidHP(l,damage):maxHP,
+  remote:!!l.members.find(m=>m.uid===uid)?.remote,claimed:g.claimed.includes(l.raidId),members:l.members.map(m=>({name:m.name,remote:m.remote,damage:Math.max(0,Math.floor(damage[m.uid]??0)),me:m.uid===uid}))};
+}
 export const raidLabel=(r:Pick<Raid,'tier'|'species'>)=>RAID_TIERS[r.tier].name+' · '+species(r.species).name;

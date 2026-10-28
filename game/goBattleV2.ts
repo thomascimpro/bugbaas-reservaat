@@ -9,7 +9,7 @@ import type {Held} from './goV2';
 import {checkV2 as check} from './shopV2';
 export type GoFighter={id:string;species:string;shiny:boolean;go:GoBug;cp:number;attack:number;defense:number;maxHP:number;hp:number;energy:number;readyAt:number};
 export type GoBattleInput={index:number;due:number;kind:'fast'|'charged'|'switch';value:string|number|null};
-export type GoBattle={dailyChallenge?:DailyChallengeBattleMeta;queued?:[GoBattleInput|null,GoBattleInput|null];gym?:GymBattleMeta;echo?:EchoBattleMeta;boss?:BossBattleMeta;id:string;revision:number;players:[string,string];names:[string,string];ratings:[number,number];league:League;ranked:boolean;training:boolean;teams:[GoFighter[],GoFighter[]];active:[number,number];shields:[number,number];swapAt:[number,number];replaceAt:[number,number];fast:[{index:number;due:number}|null,{index:number;due:number}|null];phase:'fight'|'charge'|'finished';charge:{side:Side;move:Charged;startedAt:number;deadline:number;hits:number[];lastTap:number;shield:boolean|null}|null;winner:Side|null;settled:boolean;delta:number;rewards?:GoBattleReward[];createdAt:number;endsAt:number;events:{id:number;side:Side;kind:string;amount:number}[];serial:number};
+export type GoBattle={dailyChallenge?:DailyChallengeBattleMeta;queued?:[GoBattleInput|null,GoBattleInput|null];gym?:GymBattleMeta;echo?:EchoBattleMeta;boss?:BossBattleMeta;raid?:import('./raidsV2').RaidBattleMeta;id:string;revision:number;players:[string,string];names:[string,string];ratings:[number,number];league:League;ranked:boolean;training:boolean;teams:[GoFighter[],GoFighter[]];active:[number,number];shields:[number,number];swapAt:[number,number];replaceAt:[number,number];fast:[{index:number;due:number}|null,{index:number;due:number}|null];phase:'fight'|'charge'|'finished';charge:{side:Side;move:Charged;startedAt:number;deadline:number;hits:number[];lastTap:number;shield:boolean|null}|null;winner:Side|null;settled:boolean;delta:number;rewards?:GoBattleReward[];createdAt:number;endsAt:number;events:{id:number;side:Side;kind:string;amount:number}[];serial:number};
 export type GoBattleView=GoBattle&{side:Side};
 export type GoBattleReward={item?:Held|null;dust:number;xp:number;fastTMs:number;chargedTMs:number};
 export const SWITCH_COOLDOWN=45000;
@@ -67,7 +67,7 @@ export function advanceGoBattle(b:GoBattle,now:number){
   for(const h of hits){const d=active(b,(1-h.side) as Side);d.hp=Math.max(0,d.hp-h.amount);active(b,h.side).energy=Math.min(100,active(b,h.side).energy+h.energy);event(b,(1-h.side) as Side,'damage',h.amount);}
   finishCheck(b,due);if(b.replaceAt.some(Boolean))break;nextInputs(b,due);
  }
- if(b.phase==='fight'&&now>=b.endsAt){const score=b.teams.map(t=>t.filter(f=>f.hp>0).length*1000+t.reduce((n,f)=>n+f.hp/f.maxHP,0));b.phase='finished';b.queued=[null,null];b.winner=b.boss||b.gym?1:score[0]===score[1]?null:score[0]>score[1]?0:1;event(b,0,'result');}
+ if(b.phase==='fight'&&now>=b.endsAt){const score=b.teams.map(t=>t.filter(f=>f.hp>0).length*1000+t.reduce((n,f)=>n+f.hp/f.maxHP,0));b.phase='finished';b.queued=[null,null];b.winner=b.boss||b.gym||b.raid?1:score[0]===score[1]?null:score[0]>score[1]?0:1;event(b,0,'result');}
  nextInputs(b,now);
 }
 export function actGoBattle(b:GoBattle,side:Side,kind:unknown,value:unknown,now:number){
