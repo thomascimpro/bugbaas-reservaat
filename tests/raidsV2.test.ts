@@ -19,7 +19,7 @@ test('raids are deterministic per post and slot, use real species and hide coord
  for(let i=0;i<300;i++){const r=raidAt(site(i),DAY+3*3600000);if(!r){none++;continue;}seen.add(r.tier);
   assert.deepEqual(raidAt(site(i),DAY+3*3600000),r,'everyone sees the same raid');
   assert.ok(species(r.species).name&&movePool(r.species).fast.length,'boss is a playable species');
-  assert.ok(r.hatchAt-r.visibleAt===3600000&&r.endsAt<=Math.floor(r.hatchAt/SLOT_MS)*SLOT_MS+SLOT_MS,'egg hour and active window fit in the slot');
+  assert.ok(r.hatchAt-r.visibleAt<=3600000&&r.visibleAt>=Math.floor(r.hatchAt/SLOT_MS)*SLOT_MS&&r.endsAt<=Math.floor(r.hatchAt/SLOT_MS)*SLOT_MS+SLOT_MS,'egg at most an hour, active window fits in the slot');
   const shown=publicRaid(r) as {site:Record<string,unknown>};assert.equal(shown.site.lat,undefined);assert.equal(shown.site.lng,undefined);}
  assert.ok(none>0&&seen.has(1)&&seen.has(3),'some posts rest, both one and three star raids occur');
  assert.ok(!seen.has(5),'no five-star raid while Oerbug models are not approved');
@@ -82,4 +82,9 @@ test('invites: friends only, bounded, no coordinates, deduplicated inbox',()=>{
  let inbox=addInvite([],invite,now);inbox=addInvite(inbox,{...invite,at:now+1},now+1);assert.equal(inbox.length,1);
  for(let i=0;i<20;i++)inbox=addInvite(inbox,{...invite,raidId:'x'+i},now);assert.equal(inbox.length,RAID_RULES.inboxSize);
  assert.equal(addInvite(inbox,{...invite,raidId:'new'},r.endsAt).length,1,'expired invites are pruned');
+});
+
+test('hatch times are spread so raids exist throughout the day',()=>{
+ // Only the first minutes after a slot boundary can be empty.
+ for(let t=DAY+15*60000;t<DAY+86400000;t+=30*60000){let active=0;for(let i=0;i<200;i++){const r=raidAt(site(i),t);if(r&&t>=r.hatchAt)active++;}assert.ok(active>0,'some raid is active at '+new Date(t).toISOString());}
 });

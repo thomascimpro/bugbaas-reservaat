@@ -6,7 +6,7 @@ import {dayV2} from './safariV2';
 import {checkV2 as check} from './shopV2';
 import type {PlayerV2,Specimen} from './typesV2';
 
-// Zwermraids: a deterministic raid per gym post and six-hour UTC slot, fought by up to six players in one lobby.
+// Zwermraids: a deterministic raid per gym post and six-hour UTC slot (hatch times spread over the slot), fought by up to six players in one lobby.
 // Every player fights an own server-clocked boss battle; damage is pooled per player so no shared document is hot.
 export type RaidTier=1|3|5;
 export type RaidSite={id:string;name:string;lat:number;lng:number};
@@ -34,8 +34,8 @@ export function raidAt(site:RaidSite,now:number):Raid|null{
  const {day,slot,start}=raidSlot(now),random=rng('raid:'+day+':'+slot+':'+site.id),roll=random();
  if(roll<.4)return null;
  let tier:RaidTier=roll<.8?1:roll<.95?3:5;if(tier===5&&!POOLS[5].length)tier=3;
- const pool=POOLS[tier],kind=pool[Math.floor(random()*pool.length)],hatchAt=start+EGG_MS+Math.floor(random()*150)*60000;
- const raid:Raid={id:day+':'+slot+':'+site.id,day,slot,site:{id:site.id,name:site.name,lat:site.lat,lng:site.lng},tier,species:kind,visibleAt:hatchAt-EGG_MS,hatchAt,endsAt:hatchAt+ACTIVE_MS};
+ const pool=POOLS[tier],kind=pool[Math.floor(random()*pool.length)],hatchAt=start+Math.floor(random()*(SLOT_MS-ACTIVE_MS)/60000)*60000;
+ const raid:Raid={id:day+':'+slot+':'+site.id,day,slot,site:{id:site.id,name:site.name,lat:site.lat,lng:site.lng},tier,species:kind,visibleAt:Math.max(start,hatchAt-EGG_MS),hatchAt,endsAt:hatchAt+ACTIVE_MS};
  return now>=raid.visibleAt&&now<raid.endsAt?raid:null;
 }
 export function raidPhase(r:Raid,now:number){return now<r.hatchAt?'egg':now<r.endsAt?'active':'ended';}
