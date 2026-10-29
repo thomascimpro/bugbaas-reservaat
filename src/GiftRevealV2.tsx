@@ -24,7 +24,7 @@ export function GiftRevealV2({gift,onClose}:{gift:GiftReveal|null;onClose:()=>vo
    <Text style={{fontSize:22,fontWeight:'800',color:V.ink,textAlign:'center'}}>Cadeau van {gift.friend}!</Text>
    <View style={{height:110,borderRadius:18,overflow:'hidden',justifyContent:'flex-end',padding:7}}><Scene index={gift.habitat}/><View style={{padding:5,borderRadius:8,backgroundColor:'#214B40EE'}}><Label small bold>{'📮 '+(HABITATS[gift.habitat]?.name??'Habitatkaart')+' · in je album'}</Label></View></View>
    <View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:10}}>
-    <Counter icon="nectar" value={gift.dust} label="Nectarstof"/>
+    <Counter icon="nectar" value={gift.dust} label="✨ Stof"/>
     {Object.entries(gift.items).map(([id,n])=><View key={id} accessibilityLabel={itemName(id)+': +'+n} style={{alignItems:'center',minWidth:64}}><FieldArt id={id as never} size={42}/><Label small bold>+{n}</Label><Label small>{itemName(id)}</Label></View>)}
    </View>
    <Button onPress={onClose}>Super!</Button>

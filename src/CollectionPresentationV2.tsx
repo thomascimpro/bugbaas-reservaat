@@ -1,7 +1,8 @@
 import React from 'react';
 import {Pressable,Text,View} from 'react-native';
 import {species} from '../game/catalogV2';
-import {dexNumber,usesSharedEvolutionModel,EVOLUTIONS,evolutionLine} from '../game/dexV2';
+import {candyFamily,dexNumber,usesSharedEvolutionModel,EVOLUTIONS,evolutionLine} from '../game/dexV2';
+import {CandyIconV2} from './CandyIconV2';
 import {SpriteView} from './artV2';
 import {Glyph,Help,Label,V} from './uiV2';
 
@@ -15,7 +16,7 @@ export function CollectionEvolutionV2({id,shiny,onEvolve}:{id:string;shiny:boole
     <View style={{width:'100%',height:90,alignItems:'center',justifyContent:'center',borderRadius:18,borderWidth:1,borderColor:current?'#BBDC9D':'#73968738',backgroundColor:current?'#34594A':'#153D33'}}><SpriteView id={stage} shiny={shiny} size={line.length>2?76:85}/>{current&&<View style={{position:'absolute',right:4,top:4}}><Glyph name="check" size={17}/></View>}</View>
     <Text numberOfLines={2} style={{fontSize:11,lineHeight:15,color:V.ink,fontWeight:current?'700':'400',textAlign:'center',minHeight:30}}>{usesSharedEvolutionModel(stage)?'Elite':species(stage).name}</Text>
     <Text style={{fontSize:10,color:current?'#D7E9C8':V.muted}}>{current?'Jouw bug':usesSharedEvolutionModel(stage)?'Zelfde soort':'Stadium '+(i+1)}</Text>
-    {cost!==undefined?<Pressable accessibilityRole="button" accessibilityLabel={cost+' nectar voor '+species(stage).name} onPress={onEvolve} disabled={!onEvolve||EVOLUTIONS[id]?.to!==stage} style={{minHeight:32,flexDirection:'row',alignItems:'center',gap:3,paddingHorizontal:6,borderRadius:12,backgroundColor:'#244C3F'}}><Glyph name="leaf" size={17}/><Text style={{fontSize:11,color:'#E8DBAC',fontWeight:'700'}}>{cost}</Text></Pressable>:<Text style={{fontSize:10,lineHeight:32,color:V.muted}}>#{String(dexNumber(stage)).padStart(3,'0')}</Text>}
+    {cost!==undefined?<Pressable accessibilityRole="button" accessibilityLabel={cost+' nectar voor '+species(stage).name} onPress={onEvolve} disabled={!onEvolve||EVOLUTIONS[id]?.to!==stage} style={{minHeight:32,flexDirection:'row',alignItems:'center',gap:3,paddingHorizontal:6,borderRadius:12,backgroundColor:'#244C3F'}}><CandyIconV2 family={candyFamily(id)} size={17}/><Text style={{fontSize:11,color:'#E8DBAC',fontWeight:'700'}}>{cost}</Text></Pressable>:<Text style={{fontSize:10,lineHeight:32,color:V.muted}}>#{String(dexNumber(stage)).padStart(3,'0')}</Text>}
    </View>;
   })}</View>
   {elite&&<Text style={{fontSize:10,lineHeight:15,color:V.muted}}>Elite · dezelfde diersoort, sterkere afwerking</Text>}

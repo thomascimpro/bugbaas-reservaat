@@ -16,7 +16,9 @@ const sites=buildWorldSites(elements,FIX,()=>true);
 function player(){const p=freshV2('sites','SITES123',NOW);ensureField(p,NOW);ensureGo(p,NOW);p.walking={fix:FIX,at:NOW,seed:'server',spawns:[],caught:[],day:'2026-10-20',count:0,posts:structuredClone(sites.posts),routes:structuredClone(sites.routes)};return p;}
 test('world sites come from real tagged objects near allowed footways and never invent private, blocked or off-path posts',()=>{
  assert.equal(sites.posts.length,1);assert.equal(sites.posts[0].osmId,'node/2');assert.equal(sites.posts[0].name,'Natuurbord');assert.ok(sites.routes.length>0);assert.deepEqual(sites.routes[0].points[0],sites.routes[0].points.at(-1));assert.ok(sites.routes[0].meters>=320);
- assert.deepEqual(buildWorldSites(elements,FIX,()=>false),{posts:[],routes:[]});assert.deepEqual(buildWorldSites(elements.map(e=>({...e,tags:{...e.tags,access:'private'}})),FIX,()=>true),{posts:[],routes:[]});
+ assert.deepEqual(buildWorldSites(elements,FIX,()=>false,()=>true),{posts:[],routes:[],map:[]});assert.deepEqual(buildWorldSites(elements.map(e=>({...e,tags:{...e.tags,access:'private'}})),FIX,()=>true),{posts:[],routes:[],map:[]});
+ // Unknown walkability (map tile not loaded) keeps a display-only marker but never a playable post.
+ assert.deepEqual(buildWorldSites(elements,FIX,()=>false).map?.map(s=>s.id),[sites.posts[0].id]);assert.deepEqual(buildWorldSites(elements,FIX,()=>false).posts,[]);
 });
 
 test('posts use distance to a footpath segment rather than only its source vertices',()=>{

@@ -1,5 +1,6 @@
 import {getWorldSites} from './worldSitesDataV2';
 import {virtualPosts} from '../game/virtualPostsV2';
+import {MAP_SITE_LIMIT} from '../game/worldSitesV2';
 import {biomeAt,canSpawnAt,UNKNOWN_WEATHER} from '../game/habitatsV2';
 import type {AreaFeature,FieldWeather,HabitatContext,WeatherKind} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
@@ -18,7 +19,9 @@ export async function getFieldEnvironment(f:Fix,now:number,sitesProvider:typeof 
  const dx=320/(111320*Math.cos(f.lat*Math.PI/180)),dy=320/111320,a=tileXY({lat:f.lat+dy,lng:f.lng-dx}),b=tileXY({lat:f.lat-dy,lng:f.lng+dx}),requests:Promise<AreaFeature[]|null>[]=[],requestedTiles=new Set<string>();
  for(let x=a.x;x<=b.x&&requests.length<9;x++)for(let y=a.y;y<=b.y&&requests.length<9;y++){requests.push(tile(x,y));requestedTiles.add(x+','+y);}
  const [maps,w]=await Promise.all([Promise.all(requests),currentWeather(f)]),features=maps.flatMap(v=>v??[]),known=maps.length>0&&maps.every(v=>v!==null);
- const sites=known?await sitesProvider(f,p=>{const t=tileXY(p);return requestedTiles.has(t.x+','+t.y)&&canSpawnAt(p,features);}):{posts:[],routes:[]};
- if(known){sites.posts=[...sites.posts,...virtualPosts(f,features,sites.posts)].slice(0,8);if(sites.posts.length)sites.available=true;}
+ const loaded=(p:{lat:number;lng:number})=>{const t=tileXY(p);return requestedTiles.has(t.x+','+t.y);};
+ // Horizon markers outside the loaded tiles stay display-only; inside them, mapped water/buildings/rail are excluded like posts.
+ const sites=known?await sitesProvider(f,p=>loaded(p)&&canSpawnAt(p,features),false,p=>loaded(p)&&!canSpawnAt(p,features)):{posts:[],routes:[]};
+ if(known){sites.posts=[...sites.posts,...virtualPosts(f,features,sites.posts)].slice(0,8);if(sites.posts.length)sites.available=true;const playable=new Set(sites.posts.map(p=>p.id));sites.map=(sites.map??[]).filter(s=>!playable.has(s.id)).slice(0,MAP_SITE_LIMIT);}
  return {sites,environment:{biome:biomeAt(f,features,known),mapSource:known?'osm':'unavailable',weather:w,at:now},biomeAt:p=>biomeAt(p,features,known),canSpawnAt:p=>canSpawnAt(p,features)};
 }

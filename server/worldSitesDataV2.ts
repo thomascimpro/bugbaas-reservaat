@@ -1,7 +1,8 @@
 import {createHash} from 'node:crypto';
 import {distance} from '../game/walkingV2';
 import type {Fix} from '../game/walkingV2';
-import type {WorldSites,FieldPost,FieldRoute} from '../game/worldSitesV2';
+import type {WorldSites,FieldPost,FieldRoute,MapSite} from '../game/worldSitesV2';
+import {MAP_SITE_LIMIT,MAP_SITE_RADIUS,gymCandidate} from '../game/worldSitesV2';
 import {edgeDistance} from '../game/habitatsV2';
 
 type Element={type:string;id:number;lat?:number;lon?:number;tags?:Record<string,string|undefined>;geometry?:{lat:number;lon:number}[]};
@@ -22,22 +23,43 @@ function routePoints(points:Point[],walkable:(p:Point)=>boolean){
  }
  return total>=160&&samples.length>=5?samples:null;
 }
-export function buildWorldSites(elements:Element[],fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean):WorldSites{
- const ways=elements.filter(e=>e.type==='way'&&allowed(e)&&['footway','path','pedestrian','steps'].includes(e.tags?.highway??'')&&e.geometry&&e.geometry.length>1),posts:FieldPost[]=[],routes:FieldRoute[]=[];
- const nearPath=(p:Point)=>ways.some(w=>edgeDistance(p,{type:'LineString',coordinates:w.geometry!.map(n=>[n.lon,n.lat])})<40);
- for(const e of elements.filter(e=>e.type==='node'&&allowed(e)&&Number.isFinite(e.lat)&&Number.isFinite(e.lon)).sort((a,b)=>distance(fix,{lat:a.lat!,lng:a.lon!})-distance(fix,{lat:b.lat!,lng:b.lon!}))){
-  const point={lat:e.lat!,lng:e.lon!};if(distance(fix,point)>600||!walkable(point)||!nearPath(point)||posts.some(p=>distance(p,point)<80))continue;
-  const kind=e.tags?.tourism??e.tags?.historic??e.tags?.amenity??'';if(!['artwork','information','viewpoint','picnic_site','memorial','monument','drinking_water'].includes(kind))continue;
-  const name=(e.tags?.name??({artwork:'Kunstwerk',information:'Informatiebord',viewpoint:'Uitzichtpunt',picnic_site:'Picknickplek',memorial:'Gedenkplek',monument:'Monument',drinking_water:'Waterpunt'} as Record<string,string>)[kind]).slice(0,70),osmId='node/'+e.id;posts.push({id:id('post-',osmId),name,...point,source:'osm',osmId});if(posts.length===12)break;
+const KINDS:Record<string,string>={artwork:'Kunstwerk',information:'Informatiebord',viewpoint:'Uitzichtpunt',picnic_site:'Picknickplek',memorial:'Gedenkplek',monument:'Monument',drinking_water:'Waterpunt'};
+const POST_RANGE=600,SPACING=80;
+/** Grid of allowed footways (100 m cells, bbox grown by the 40 m rule) so a 1.2 km horizon stays cheap; distances still use edgeDistance. */
+function pathIndex(ways:Element[],origin:Point){
+ const sx=111320*Math.cos(origin.lat*Math.PI/180),sy=111320,size=100,grid=new Map<string,number[]>(),wide:number[]=[],lines=ways.map(w=>({type:'LineString' as const,coordinates:w.geometry!.map(n=>[n.lon,n.lat])}));
+ ways.forEach((w,i)=>{let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;for(const n of w.geometry!){const x=(n.lon-origin.lng)*sx,y=(n.lat-origin.lat)*sy;x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);}
+  const a=Math.floor((x0-40)/size),b=Math.floor((x1+40)/size),c=Math.floor((y0-40)/size),d=Math.floor((y1+40)/size);if((b-a+1)*(d-c+1)>400){wide.push(i);return;}
+  for(let x=a;x<=b;x++)for(let y=c;y<=d;y++){const key=x+','+y,list=grid.get(key);if(list)list.push(i);else grid.set(key,[i]);}});
+ return (p:Point)=>[...(grid.get(Math.floor((p.lng-origin.lng)*sx/size)+','+Math.floor((p.lat-origin.lat)*sy/size))??[]),...wide].some(i=>edgeDistance(p,lines[i])<40);
+}
+/** posts: playable (<=600 m, walkable, max 12). map: display-only horizon markers (<=MAP_SITE_RADIUS) without known-blocked spots. */
+export function buildWorldSites(elements:Element[],fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean,unwalkable:(p:{lat:number;lng:number})=>boolean=()=>false):WorldSites{
+ const ways=elements.filter(e=>e.type==='way'&&allowed(e)&&['footway','path','pedestrian','steps'].includes(e.tags?.highway??'')&&e.geometry&&e.geometry.length>1),posts:FieldPost[]=[],routes:FieldRoute[]=[],map:MapSite[]=[];
+ const nearPath=pathIndex(ways,fix),spaced:{lat:number;lng:number;meters:number;id:string;osmId:string;name:string}[]=[];
+ // Spacing follows OSM id order, not the player's position: the post seen on the horizon is the post you walk up to.
+ for(const e of elements.filter(e=>e.type==='node'&&allowed(e)&&Number.isFinite(e.lat)&&Number.isFinite(e.lon)).sort((a,b)=>a.id-b.id)){
+  const point={lat:e.lat!,lng:e.lon!},meters=distance(fix,point),kind=e.tags?.tourism??e.tags?.historic??e.tags?.amenity??'';
+  if(!Object.hasOwn(KINDS,kind)||meters>MAP_SITE_RADIUS+SPACING||spaced.some(p=>distance(p,point)<SPACING)||!nearPath(point))continue;
+  const osmId='node/'+e.id;spaced.push({...point,meters,id:id('post-',osmId),osmId,name:(e.tags?.name??KINDS[kind]).slice(0,70)});
  }
+ spaced.sort((a,b)=>a.meters-b.meters||a.id.localeCompare(b.id));
+ for(const s of spaced){if(s.meters>POST_RANGE)break;if(!walkable(s))continue;posts.push({id:s.id,name:s.name,lat:s.lat,lng:s.lng,source:'osm',osmId:s.osmId});if(posts.length===12)break;}
+ for(const s of spaced){if(s.meters>MAP_SITE_RADIUS||map.length>=MAP_SITE_LIMIT+12)break;if(!posts.some(p=>p.id===s.id)&&unwalkable(s))continue;map.push({id:s.id,name:s.name,lat:s.lat,lng:s.lng,...(gymCandidate(s.id)?{gym:true as const}:{})});}
  for(const way of ways){let points=way.geometry!.map(p=>({lat:p.lat,lng:p.lon}));if(points.some(p=>distance(fix,p)>900||!walkable(p)))continue;if(distance(fix,points.at(-1)!)<distance(fix,points[0]))points.reverse();if(distance(fix,points[0])>500)continue;
   const samples=routePoints(points,walkable);if(!samples)continue;const path=[...samples,...samples.slice(0,-1).reverse()],meters=Math.round(path.slice(1).reduce((sum,p,i)=>sum+distance(path[i],p),0)),osmId='way/'+way.id;if(routes.some(r=>distance(r.points[0],path[0])<120))continue;
   routes.push({id:id('route-',osmId),name:('Rondje '+(way.tags?.name??'natuurpad')).slice(0,70),points:path,meters,source:'osm',osmId});
  }
- return {posts,routes:routes.sort((a,b)=>distance(fix,a.points[0])-distance(fix,b.points[0])).slice(0,3)};
+ return {posts,routes:routes.sort((a,b)=>distance(fix,a.points[0])-distance(fix,b.points[0])).slice(0,3),map};
 }
 type CacheEntry={until:number;data:Element[];available:boolean;at:number;pending?:Promise<void>};
-const CACHE_MS=900000,MIN_REQUEST_MS=30000,MAX_BODY_BYTES=6000000;
+const CACHE_MS=900000,MIN_REQUEST_MS=30000,MAX_BODY_BYTES=6000000,CELL_DEG=.01,MAX_CELLS=288;
+type Cell={key:string;s:number;w:number;n:number;e:number};
+/** Fixed ~1.1 x 1.1 km grid (0.01 deg rows; one longitude step per whole-degree band, so columns line up). Cells never move with the player, so walking only fetches new edge cells. */
+export function worldCell(lat:number,lng:number,dr=0,dc=0):Cell{const row=Math.floor(lat/CELL_DEG)+dr,step=CELL_DEG/Math.max(.15,Math.cos((Math.floor(row*CELL_DEG)+.5)*Math.PI/180)),col=Math.floor(lng/step)+dc,r=(v:number)=>Math.round(v*1e6)/1e6;return {key:row+':'+col,s:r(Math.max(-90,row*CELL_DEG)),n:r(Math.min(90,(row+1)*CELL_DEG)),w:r(Math.max(-180,col*step)),e:r(Math.min(180,(col+1)*step))};}
+/** The 3x3 cells around a fix: at least ~1 km of data in every direction, the centre first. */
+export function worldCells(fix:{lat:number;lng:number}){const cells=[worldCell(fix.lat,fix.lng)];for(const dr of [-1,0,1])for(const dc of [-1,0,1])if(dr||dc)cells.push(worldCell(fix.lat,fix.lng,dr,dc));return cells;}
+function inCell(e:Element,c:Cell){if(e.type==='node')return e.lat!>=c.s&&e.lat!<c.n&&e.lon!>=c.w&&e.lon!<c.e;let s=90,n=-90,w=180,east=-180;for(const p of e.geometry!){s=Math.min(s,p.lat);n=Math.max(n,p.lat);w=Math.min(w,p.lon);east=Math.max(east,p.lon);}return s<=c.n&&n>=c.s&&w<=c.e&&east>=c.w;}
 const coordinate=(lat:unknown,lon:unknown)=>typeof lat==='number'&&Number.isFinite(lat)&&Math.abs(lat)<=90&&typeof lon==='number'&&Number.isFinite(lon)&&Math.abs(lon)<=180;
 function parseElements(body:string):Element[]{
  const json=JSON.parse(body);
@@ -63,13 +85,17 @@ function worldSitesUrl(configured:string|undefined){
 export function createWorldSitesProvider(request:typeof fetch=fetch,clock:()=>number=Date.now,configuredUrl:string|undefined=process.env.GAME_WORLD_SITES_URL){
  const endpoint=worldSitesUrl(configuredUrl);
  const cache=new Map<string,CacheEntry>();let busy=false,nextRequestAt=0,blocked=false,failures=0;
- return async function(fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean,waitForNetwork=false):Promise<WorldSites>{
+ // Serve a cell while its refresh runs (up to twice the TTL), but never after a failed refresh.
+ const usable=(e:CacheEntry|undefined)=>!!e?.available&&clock()-e.at<(e.pending?2*CACHE_MS:CACHE_MS);
+ return async function(fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean,waitForNetwork=false,unwalkable?:(p:{lat:number;lng:number})=>boolean):Promise<WorldSites>{
   if(endpoint===null)return {posts:[],routes:[],available:false,dataAt:0};
-  const lat=Math.round(fix.lat*100)/100,lng=Math.round(fix.lng*100)/100,key=lat+','+lng;let entry=cache.get(key);
-  if((!entry||entry.until<=clock())&&!entry?.pending&&!blocked&&!busy&&clock()>=nextRequestAt){
-   const dy=.012,dx=.012/Math.max(.15,Math.cos(lat*Math.PI/180)),box=[lat-dy,lng-dx,lat+dy,lng+dx].join(','),query=`[out:json][timeout:8];(node["tourism"~"^(artwork|information|viewpoint|picnic_site)$"](${box});node["historic"~"^(memorial|monument)$"](${box});node["amenity"="drinking_water"](${box});way["highway"~"^(footway|path|pedestrian|steps)$"](${box}););out geom;`;
-   entry={until:0,data:entry?.data??[],available:false,at:entry?.at??0};const current=entry;busy=true;nextRequestAt=clock()+MIN_REQUEST_MS;
-   current.pending=(async()=>{try{
+  const cells=worldCells(fix),due=cells.filter(c=>{const e=cache.get(c.key);return (!e||e.until<=clock())&&!e?.pending;});
+  if(due.length&&!blocked&&!busy&&clock()>=nextRequestAt){
+   // One request per batch of missing cells (fair use); after a failure only the nearest cell, which keeps the box small.
+   const batch=failures?due.slice(0,1):due,dy=[Math.min(...batch.map(c=>c.s)),Math.min(...batch.map(c=>c.w)),Math.max(...batch.map(c=>c.n)),Math.max(...batch.map(c=>c.e))],box=dy.join(','),query=`[out:json][timeout:8];(node["tourism"~"^(artwork|information|viewpoint|picnic_site)$"](${box});node["historic"~"^(memorial|monument)$"](${box});node["amenity"="drinking_water"](${box});way["highway"~"^(footway|path|pedestrian|steps)$"](${box}););out geom;`;
+   const entries=batch.map(c=>{const old=cache.get(c.key),entry:CacheEntry={until:0,data:old?.data??[],available:old?.available??false,at:old?.at??0};cache.delete(c.key);cache.set(c.key,entry);return entry;});
+   busy=true;nextRequestAt=clock()+MIN_REQUEST_MS;
+   const pending=(async()=>{try{
     const r=await request(endpoint,{method:'POST',body:new URLSearchParams({data:query}),headers:{'User-Agent':'BugBaas-Preview/0.1','Content-Type':'application/x-www-form-urlencoded'},signal:AbortSignal.timeout(12000)});
     if(!r.ok){
      // A refusal is not a reason to rotate endpoints or identity. Stop until restart.
@@ -77,13 +103,16 @@ export function createWorldSitesProvider(request:typeof fetch=fetch,clock:()=>nu
      if(r.status===429){const value=r.headers.get('retry-after'),seconds=value===null?NaN:Number(value),until=Number.isFinite(seconds)?clock()+Math.max(0,seconds)*1000:Date.parse(value??'');nextRequestAt=Math.max(nextRequestAt,clock()+60000,Number.isFinite(until)?until:0);}
      await r.body?.cancel();throw new Error('World provider unavailable');
     }
-    const data=parseElements(await responseText(r));current.data=data;current.available=true;current.at=clock();current.until=clock()+CACHE_MS;failures=0;
-   }catch{failures++;nextRequestAt=Math.max(nextRequestAt,clock()+Math.min(CACHE_MS,60000*2**Math.min(failures-1,4)));current.until=nextRequestAt;current.available=false;
-   }finally{busy=false;delete current.pending;}})();cache.set(key,current);if(cache.size>64)cache.delete(cache.keys().next().value!);
+    const data=parseElements(await responseText(r)),at=clock();batch.forEach((c,i)=>{const e=entries[i];e.data=data.filter(el=>inCell(el,c));e.available=true;e.at=at;e.until=at+CACHE_MS;});failures=0;
+   }catch{failures++;nextRequestAt=Math.max(nextRequestAt,clock()+Math.min(CACHE_MS,60000*2**Math.min(failures-1,4)));for(const e of entries){e.until=nextRequestAt;e.available=false;}
+   }finally{busy=false;for(const e of entries)delete e.pending;}})();
+   for(const e of entries)e.pending=pending;while(cache.size>MAX_CELLS)cache.delete(cache.keys().next().value!);
   }
-  if(waitForNetwork&&entry?.pending)await entry.pending;
-  const available=!!entry?.available&&clock()-entry.at<CACHE_MS;
-  return {...(available?buildWorldSites(entry!.data,fix,walkable):{posts:[],routes:[]}),available,dataAt:entry?.at??0};
+  if(waitForNetwork&&cache.get(cells[0].key)?.pending)await cache.get(cells[0].key)!.pending;
+  const centre=cache.get(cells[0].key);
+  if(!usable(centre))return {posts:[],routes:[],available:false,dataAt:centre?.at??0};
+  const seen=new Set<string>(),elements:Element[]=[];for(const c of cells){const e=cache.get(c.key);if(usable(e))for(const el of e!.data){const key=el.type+el.id;if(!seen.has(key)){seen.add(key);elements.push(el);}}}
+  return {...buildWorldSites(elements,fix,walkable,unwalkable),available:true,dataAt:centre!.at};
  };
 }
 export const getWorldSites=createWorldSitesProvider();

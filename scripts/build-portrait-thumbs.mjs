@@ -22,7 +22,9 @@ for(const id of ids){
 // Preflight all sources before touching thumbnails or their static Metro require map.
 await mkdir(output,{recursive:true});let thumbBytes=0;
 for(const image of images){
- const {data,info}=await sharp(image.png).resize(256,256,{fit:'contain',background:{r:0,g:0,b:0,alpha:0}}).webp({quality:80,alphaQuality:100,effort:3}).toBuffer({resolveWithObject:true});
+ // Trim like the HD encoder (900/1024 fill) so small-list sprites use the frame instead of the renderer's camera margin.
+ const clear={r:0,g:0,b:0,alpha:0},trimmed=await sharp(image.png).trim().png().toBuffer();
+ const {data,info}=await sharp(trimmed).resize(225,225,{fit:'contain',background:clear}).extend({top:15,bottom:16,left:15,right:16,background:clear}).webp({quality:80,alphaQuality:100,effort:3}).toBuffer({resolveWithObject:true});
  if(info.width!==256||info.height!==256||!(await sharp(data).metadata()).hasAlpha)throw new Error('Thumbnail dimensions or transparency differ for '+image.name);
  await writeFile(join(output,image.name+'.webp'),data);thumbBytes+=data.length;
 }

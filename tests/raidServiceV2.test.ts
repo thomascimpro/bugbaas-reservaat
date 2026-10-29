@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {randomUUID} from 'node:crypto';
+import {createHmac,randomUUID} from 'node:crypto';
 import {freshV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField} from '../game/fieldV2';
@@ -15,10 +15,12 @@ import {SqliteStore} from '../server/sqlite';
 import type {GameViewV2} from '../game/typesV2';
 
 const DAY=Date.UTC(2026,9,28),FIX={lat:51.4416,lng:5.4697,accuracy:5};
+/** The schedule is seeded with the server's raid key, so the test stores a known key and derives the same token. */
+const KEY='raid-service-test-key',TOKEN=(input:string)=>createHmac('sha256',KEY).update(input).digest('base64url').slice(0,22);
 /** A post whose gym has a one-star raid, and a moment while it is active. */
 function raidPost(){
  for(let i=0;i<400;i++){const post={id:'raid-post-'+i,name:'Zwermpost',lat:FIX.lat,lng:FIX.lng,source:'virtual' as const},site=gymSites([post])[0];
-  for(let t=DAY;t<DAY+86400000;t+=15*60000){const r=raidAt(site,t,s=>s);if(r&&r.tier===1&&t>=r.hatchAt&&t+20*60000<r.endsAt)return {post,site,now:t};}}
+  for(let t=DAY;t<DAY+86400000;t+=15*60000){const r=raidAt(site,t,TOKEN);if(r&&r.tier===1&&t>=r.hatchAt&&t+20*60000<r.endsAt)return {post,site,now:t};}}
  throw new Error('no fixture raid');
 }
 function player(uid:string,now:number,fix:{lat:number;lng:number},posts:unknown[]){
@@ -28,7 +30,7 @@ function player(uid:string,now:number,fix:{lat:number;lng:number},posts:unknown[
 }
 
 test('local player invites a friend, the friend joins remotely, pooled damage wins once and both can catch',async()=>{
- const store=new SqliteStore(':memory:'),{post,site,now:start}=raidPost();let now=start;const service=new GoServiceV2(store,'local',()=>now);
+ const store=new SqliteStore(':memory:'),{post,site,now:start}=raidPost();let now=start;await store.run(['v2RaidSecret:global'],d=>d.set('v2RaidSecret:global',{key:KEY}));const service=new GoServiceV2(store,'local',()=>now);
  try{
   const A='raid-local-player',B='raid-remote-friend',C='raid-stranger';
   for(const uid of [A,B,C])await service.state(uid);
@@ -39,7 +41,7 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
   const views:Record<string,GameViewV2>={};for(const uid of [A,B,C])views[uid]=await service.state(uid);
   const send=async(uid:string,type:string,params:Record<string,unknown>={})=>views[uid]=await service.command(uid,{type,...params,commandId:randomUUID(),expectedRevision:views[uid].player.revision});
 
-  const seen=views[A].raids!.find(r=>r.site.id===site.id)!,raid=seen;assert.ok(!raid.id.includes(post.id)&&/^\d{4}-\d\d-\d\d:[0-3]:[\w-]{22}$/.test(raid.id),'public raid id is opaque');assert.ok(seen&&seen.local,'the local player sees the raid at the gym');assert.equal((seen.site as Record<string,unknown>).lat,undefined,'no coordinates in the raid view');
+  const seen=views[A].raids!.find(r=>r.site.id===site.id)!,raid=seen;assert.ok(!raid.id.includes(post.id)&&/^\d{4}-\d\d-\d\d:\d{1,2}:[\w-]{22}$/.test(raid.id),'public raid id is opaque');assert.ok(seen&&seen.local,'the local player sees the raid at the gym');assert.equal((seen.site as Record<string,unknown>).lat,undefined,'no coordinates in the raid view');
   assert.equal(views[B].raids!.length,0,'a far-away player sees no local raid');
   await assert.rejects(send(B,'raidJoin',{raid:raid.id,remote:true}),/niet gevonden|uitnodiging/);
   await send(A,'raidJoin',{raid:raid.id,remote:false});assert.equal(views[A].raidLobby!.members.length,1);
@@ -47,8 +49,9 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
   await send(A,'raidInvite',{raid:raid.id,friends:[B]});
   views[B]=await service.state(B);const invite=views[B].raidInvites![0];assert.equal(invite.raidId,raid.id);assert.equal(invite.from.uid,A);assert.equal(JSON.stringify(invite).includes(String(FIX.lat)),false,'invite carries no coordinates');
   await assert.rejects(send(C,'raidJoin',{raid:raid.id,remote:true}),/uitnodiging/,'remote play needs an invite');
-  await assert.rejects(send(B,'raidJoin',{raid:raid.id,remote:true}),/Zwermfluit/);
-  await send(B,'raidPass');await send(B,'raidJoin',{raid:raid.id,remote:true});assert.equal(views[B].player.go!.raids!.passes,0);assert.equal(views[B].raidLobby!.members.length,2);
+  // The first remote raid of the day is free: no Zwermfluit needed, and a retried command (same id) spends nothing twice.
+  const join={type:'raidJoin',raid:raid.id,remote:true,commandId:randomUUID(),expectedRevision:views[B].player.revision};views[B]=await service.command(B,join);views[B]=await service.command(B,join);
+  assert.equal(views[B].player.go!.raids!.passes,0);assert.equal(views[B].player.go!.raids!.freeRemote,new Date(now).toISOString().slice(0,10));assert.equal(views[B].player.go!.raids!.remote,1);assert.equal(views[B].raidLobby!.members.length,2);
   const lobbyId=views[B].raidLobby!.id;
   await assert.rejects(send(A,'raidFight',{ids:['bug-0','bug-1','bug-2']}),/wacht nog/);
 

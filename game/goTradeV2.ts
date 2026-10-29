@@ -44,7 +44,7 @@ export function confirmGoTrade(t:GoTrade,players:[PlayerV2,PlayerV2],pair:Friend
  check(bugs[0].id!==bugs[1].id&&!players[0].specimens.some(s=>s.id===bugs[1].id)&&!players[1].specimens.some(s=>s.id===bugs[0].id),'Deze exemplaren kunnen niet veilig worden geruild.',409);
  const terms=tradeTerms(t,players),day=dayV2(now);
  check(typeof special==='boolean'&&(!terms.special||special),'Bevestig expliciet de speciale ruil en de stofkosten.');
- for(const p of players){const progress=p.go!.trades;check((progress?.day===day?progress.count:0)<GO_TRADE.daily,'Vandaag zijn alle 20 ruilen gebruikt.');check(!terms.special||progress?.specialDay!==day,'Vandaag is de speciale ruil al gebruikt.');check(p.go!.dust>=terms.dust,'Allebei hebben jullie voldoende nectarstof nodig.');}
+ for(const p of players){const progress=p.go!.trades;check((progress?.day===day?progress.count:0)<GO_TRADE.daily,'Vandaag zijn alle 20 ruilen gebruikt.');check(!terms.special||progress?.specialDay!==day,'Vandaag is de speciale ruil al gebruikt.');check(p.go!.dust>=terms.dust,'Allebei hebben jullie voldoende stof nodig.');}
  check(!t.accepted[side],'Je hebt dit aanbod al bevestigd.',409);
  if(!t.accepted[1-side]){t.accepted[side]=true;return false;}
  check(t.seed,'De ruil is verlopen. Start opnieuw.');

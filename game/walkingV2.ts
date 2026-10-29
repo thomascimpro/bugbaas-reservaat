@@ -2,7 +2,7 @@ import {wildShiny} from './shinyV2';
 import {ELITE_FORMS,EVOLUTION_APPEARANCES} from './dexV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
 import {EXPANDED_SPECIES} from './dexExpansionV2';
-import type {FieldPost,FieldRoute} from './worldSitesV2';
+import type {FieldPost,FieldRoute,MapSite} from './worldSitesV2';
 import {rng} from './catalogV2';
 import type {PlayerV2} from './typesV2';
 import {checkV2 as check} from './shopV2';
@@ -13,7 +13,7 @@ import type {Biome,FieldWeather,FieldEnvironment,HabitatContext} from './habitat
 export type Fix={lat:number;lng:number;accuracy:number;timestamp?:number};
 export type WildBug={id:string;species:string;lat:number;lng:number;expiresAt:number;biome?:Biome;source?:'lure'|'boss'|'raid';boss?:{seed?:string;level:number};raid?:{nets:number}};
 export function wildSeed(w:Walking,s:WildBug){return s.boss?.seed??w.seed!;}
-export type Walking={siteSource?:'osm'|'unavailable';posts?:FieldPost[];routes?:FieldRoute[];fix:Fix;at:number;environment?:FieldEnvironment;blockedUntil?:number;seed?:string;spawns:WildBug[];caught:string[];day:string;count:number;lastCatch?:{id:string;species:string;shiny:boolean;nectar:number;at:number}};
+export type Walking={siteSource?:'osm'|'unavailable';posts?:FieldPost[];mapSites?:MapSite[];routes?:FieldRoute[];fix:Fix;at:number;environment?:FieldEnvironment;blockedUntil?:number;seed?:string;spawns:WildBug[];caught:string[];day:string;count:number;lastCatch?:{id:string;species:string;shiny:boolean;nectar:number;at:number}};
 export const GPS_MAX_AGE=30000,GPS_CATCH_ACCURACY=35;
 export const CATCH_RADIUS=65,SPAWN_LIFETIME=15*60000,DAILY_CATCH_LIMIT=60;
 // Only species with an imported, matching 3D model enter the walking pool.

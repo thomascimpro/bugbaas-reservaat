@@ -1,6 +1,6 @@
 import {fighterGo,makeGoBattle} from './goBattleV2';
 import type {GoBattle,GoFighter} from './goBattleV2';
-import {CHARGED,FAST,HELD,LEAGUES,movePool,rollGoBug,stats,teamIssue} from './goV2';
+import {HELD,LEAGUES,knownMove,rollGoBug,stats,teamIssue} from './goV2';
 import type {League} from './goV2';
 import {dayV2} from './safariV2';
 import {checkV2 as check} from './shopV2';
@@ -51,7 +51,7 @@ export function saveEchoDefense(p:PlayerV2,now:number):EchoDefense{
 }
 
 function eligible(e:EchoProgress,defense:Pick<EchoDefense,'uid'|'snapshotId'>){return e.rewarded<ECHO_DAILY_LIMIT&&!e.defeated.includes(defense.uid)&&!e.snapshots.includes(defense.snapshotId);}
-function validDefense(d:EchoDefense){try{return !!d.uid&&!!d.snapshotId&&Object.hasOwn(LEAGUES,d.league)&&Number.isFinite(d.rating)&&d.team.length===3&&new Set(d.team.map(f=>f.species)).size===3&&d.team.every(f=>{const pool=movePool(f.species);return !!f.go&&Object.hasOwn(FAST,f.go.fast)&&pool.fast.includes(f.go.fast)&&Array.isArray(f.go.charged)&&f.go.charged.length>=1&&f.go.charged.length<=2&&f.go.charged.every(m=>Object.hasOwn(CHARGED,m)&&pool.charged.includes(m))&&(f.go.item===null||Object.hasOwn(HELD,f.go.item))&&Number.isFinite(f.cp)&&f.cp>0&&f.cp<=LEAGUES[d.league].cap&&Number.isFinite(f.attack)&&f.attack>0&&Number.isFinite(f.defense)&&f.defense>0&&Number.isFinite(f.maxHP)&&f.maxHP>0;});}catch{return false;}}
+function validDefense(d:EchoDefense){try{return !!d.uid&&!!d.snapshotId&&Object.hasOwn(LEAGUES,d.league)&&Number.isFinite(d.rating)&&d.team.length===3&&new Set(d.team.map(f=>f.species)).size===3&&d.team.every(f=>{return !!f.go&&knownMove(f.species,'fast',f.go.fast)&&Array.isArray(f.go.charged)&&f.go.charged.length>=1&&f.go.charged.length<=2&&f.go.charged.every(m=>knownMove(f.species,'charged',m))&&(f.go.item===null||Object.hasOwn(HELD,f.go.item))&&Number.isFinite(f.cp)&&f.cp>0&&f.cp<=LEAGUES[d.league].cap&&Number.isFinite(f.attack)&&f.attack>0&&Number.isFinite(f.defense)&&f.defense>0&&Number.isFinite(f.maxHP)&&f.maxHP>0;});}catch{return false;}}
 
 export function echoNPCDefenses(league:League,now:number):EchoDefense[]{
  const day=dayV2(now),teams=[['ant','beetle','moth'],['bee','mantis','hoverfly'],['moth','antlion','tortoisebeetle'],['beetle','bee','mantis'],['ant','hoverfly','hercules']],names=['Linde','Bram','Noor','Sem','Roos'];

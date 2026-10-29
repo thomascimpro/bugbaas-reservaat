@@ -6,8 +6,9 @@ import {FieldArt,FieldActivityArt} from './FieldArtV2';
 import type {Net,Bait} from '../game/fieldV2';
 import type {RewardRow} from './resourceGainV2';
 import {RewardHost} from './RewardHostV2';
+import {CandyIconV2} from './CandyIconV2';
 export type RewardBatch={id:number;rows:RewardRow[];dismissed:string[]};
-function Art({row,size=36}:{row:RewardRow;size?:number}){return row.art==='field'?<FieldArt id={row.icon as Net|Bait} size={size}/>:row.art==='cocoon'?<FieldActivityArt id="cocoon" size={size}/>:<Glyph name={row.icon as GlyphName} size={size}/>;}
+function Art({row,size=36}:{row:RewardRow;size?:number}){return row.art==='candy'||row.art==='xl'?<CandyIconV2 family={row.icon} size={size} xl={row.art==='xl'}/>:row.art==='field'?<FieldArt id={row.icon as Net|Bait} size={size}/>:row.art==='cocoon'?<FieldActivityArt id="cocoon" size={size}/>:<Glyph name={row.icon as GlyphName} size={size}/>;}
 export function RewardFeedbackV2({batch,visible=true,onDismiss}:{batch:RewardBatch|null;visible?:boolean;onDismiss:(id:string)=>void}){
  const info=useInfo(),dismiss=useRef(onDismiss);dismiss.current=onDismiss;
  useEffect(()=>{if(!batch||!visible)return;const timer=setTimeout(()=>batch.rows.forEach(row=>dismiss.current(row.id)),3200);return()=>clearTimeout(timer);},[batch?.id,visible]);

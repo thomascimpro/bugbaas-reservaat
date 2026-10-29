@@ -2,7 +2,11 @@
   "sourceProject": "CimPro BugBaas-3.0",
   "sourceDirectory": "assets/bugdex",
   "rights": "Existing BugBaas artwork reused in BugBaas; original rights retained.",
-  "processing": "Transparent original resolution WebP; 256px list thumbnails. No upscaling or recolouring.",
+  "processing": "Transparent original resolution WebP; 256px list thumbnails. No upscaling or recolouring. Detached specks removed for atlasbeetle, mantis, rosalialonghorn, wasp_3.",
+  "rejected": {
+    "weevil": "snuitkever.png depicts a cockroach, not a weevil",
+    "waterstrider": "schaatsenrijder.png has detached floating legs and is unreadable as a thumbnail"
+  },
   "species": [
     {
       "id": "ant",
@@ -17,13 +21,6 @@
       "width": 768,
       "height": 768,
       "sha256": "63543a36bad4a685a4c02c10a68f34413a52aac39f36992c8226e400323f2d04"
-    },
-    {
-      "id": "weevil",
-      "file": "snuitkever.png",
-      "width": 768,
-      "height": 768,
-      "sha256": "763f5d06a038962eb00a48c32c532da7267f1732658772012c77045900244e91"
     },
     {
       "id": "earwig",
@@ -73,13 +70,6 @@
       "width": 768,
       "height": 768,
       "sha256": "37914e91a0da08205fb34bde2f11ee8b0a9526ff90c9ec0ecd1b07c01a4d89ba"
-    },
-    {
-      "id": "waterstrider",
-      "file": "schaatsenrijder.png",
-      "width": 768,
-      "height": 768,
-      "sha256": "392e9c9af41cd9da4bb9d85812264d3f1888c0e476f6c6e5bd319edf525df9a7"
     },
     {
       "id": "hoverfly",

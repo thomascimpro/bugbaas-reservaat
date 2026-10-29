@@ -18,6 +18,21 @@ import {checkV2 as check} from './shopV2';
 import type {PlayerV2,Specimen} from './typesV2';
 import type {Fix} from './walkingV2';
 export type Element='bug'|'flying'|'poison'|'grass'|'ground'|'rock'|'steel'|'dark'|'normal'|'fire'|'water';
+// Fair cycles: every type beats two types and is blocked by two (mostly the two that beat it).
+export const TYPE_CHART:Record<Element,{strong:Element[];weak:Element[]}>={
+ bug:{strong:['grass','dark'],weak:['flying','poison']},
+ flying:{strong:['bug','normal'],weak:['rock','dark']},
+ poison:{strong:['bug','water'],weak:['ground','normal']},
+ grass:{strong:['water','rock'],weak:['fire','bug']},
+ ground:{strong:['steel','poison'],weak:['water','grass']},
+ rock:{strong:['fire','flying'],weak:['grass','steel']},
+ steel:{strong:['rock','ground'],weak:['fire','water']},
+ dark:{strong:['flying','normal'],weak:['bug','dark']},
+ normal:{strong:['dark','poison'],weak:['flying','steel']},
+ fire:{strong:['grass','steel'],weak:['water','rock']},
+ water:{strong:['fire','ground'],weak:['grass','poison']},
+};
+export const ELEMENTS=Object.keys(TYPE_CHART) as Element[];
 export type League='great'|'ultra'|'master';
 export const LEAGUES={great:{name:'Great League',cap:1500},ultra:{name:'Ultra League',cap:2500},master:{name:'Master League',cap:Infinity}};
 export const HELD={
@@ -45,6 +60,17 @@ export const FAST={
  metal:{name:'Schildslag',type:'steel',power:7,energy:6,turns:2},
  gust:{name:'Stormvleugel',type:'flying',power:11,energy:9,turns:3},
  spark:{name:'Gloeipuls',type:'fire',power:4,energy:9,turns:2},
+ bubble:{name:'Bubbelstraal',type:'water',power:7,energy:6,turns:2},
+ acid:{name:'Zuurspat',type:'poison',power:5,energy:7,turns:2},
+ sand:{name:'Zandschop',type:'ground',power:2,energy:4,turns:1},
+ vine:{name:'Rankzwiep',type:'grass',power:3,energy:3,turns:1},
+ sneak:{name:'Sluipbeet',type:'dark',power:3,energy:3,turns:1},
+ pincer:{name:'Stalen knip',type:'steel',power:3,energy:3,turns:1},
+ ember:{name:'Vonkje',type:'fire',power:7,energy:6,turns:2},
+ pebble:{name:'Kiezelworp',type:'rock',power:3,energy:3,turns:1},
+ stone:{name:'Steenklap',type:'rock',power:8,energy:5,turns:2},
+ tackle:{name:'Duwstoot',type:'normal',power:3,energy:3,turns:1},
+ kick:{name:'Springtrap',type:'normal',power:5,energy:8,turns:2},
 } as const;
 export const CHARGED={
  stream:{name:'Stroomstoot',type:'water',power:55,energy:35},
@@ -66,6 +92,10 @@ export const CHARGED={
  night:{name:'Nachtstorm',type:'dark',power:100,energy:60},
  sap:{name:'Wortelstorm',type:'grass',power:90,energy:55},
  burst:{name:'Vonkregen',type:'fire',power:55,energy:35},
+ wave:{name:'Golfslag',type:'water',power:90,energy:55},
+ sandstorm:{name:'Zandwervel',type:'ground',power:55,energy:35},
+ stomp:{name:'Stamper',type:'normal',power:55,energy:35},
+ rush:{name:'Volle vaart',type:'normal',power:90,energy:55},
 } as const;
 export type Fast=keyof typeof FAST;
 export type Charged=keyof typeof CHARGED;
@@ -118,12 +148,43 @@ function legacyMovePool(id:string):{types:Element[];fast:Fast[];charged:Charged[
  if(/beetle|stag|rhino|hercules|scarab|goliath|shieldbug/.test(id))return {types:['bug','steel'],fast:['bite','mud'],charged:['iron','rock','earth']};
  return {types:['bug'],fast:['bite','fury'],charged:['cut','rock','buzz']};
 }
-export function movePool(id:string){
+/** The attack pool before the type rework (0.1.20). Only used so attacks that bugs already own stay legal. */
+export function legacyMoves(id:string){
  const pool=legacyMovePool(id),pick=rng('family-moves:'+candyFamily(id))(),has=(type:Element)=>pool.types.includes(type);
  const fast:Fast=pick<.35?'siphon':pick<.7?'claw':has('fire')?'spark':has('steel')?'metal':has('dark')?'snap':has('flying')?'gust':'claw';
  const charged:Charged=has('poison')?'needle':has('fire')?'burst':has('steel')?'shell':has('dark')?'night':has('grass')?'sap':has('rock')||has('ground')?'crush':has('flying')?'dive':'web';
  return {...pool,fast:[...pool.fast,fast],charged:[...pool.charged,...(pick<.5?['web' as Charged,charged]:[charged])].filter((m,i,a)=>a.indexOf(m)===i)};
 }
+// One main type per family (about 4–5 families per type); a second type is shared by the whole family.
+export const FAMILY_TYPES:Record<string,Element[]>={
+ ant:['bug','ground'],bee:['bug','flying'],hoverfly:['bug','flying'],mantis:['bug','grass'],weevil:['bug'],
+ butterfly:['flying'],dragonfly:['flying','water'],lacewing:['flying'],cranefly:['flying'],
+ spider:['poison','dark'],scorpion:['poison','ground'],centipede:['poison','dark'],wasp:['poison','flying'],mosquito:['poison','flying'],
+ aphid:['grass'],leafhopper:['grass'],stick:['grass'],leaf:['grass'],leafbeetle:['grass'],
+ dungbeetle:['ground'],cricket:['ground'],antlion:['ground'],sacredscarab:['ground'],termite:['ground'],
+ hercules:['rock','steel'],minotaurbeetle:['rock'],eyedclickbeetle:['rock'],snail:['rock','water'],
+ beetle:['steel'],tortoisebeetle:['steel'],rosechafer:['steel','grass'],armabee:['steel','flying'],lesserstag:['steel','dark'],
+ caterpillar:['dark','flying'],earwig:['dark'],cockroach:['dark'],manticora:['dark'],
+ grasshopper:['normal','grass'],flea:['normal'],tigerbeetle:['normal'],cicada:['normal','flying'],acornweevil:['normal','grass'],
+ firefly:['fire'],cardinalbeetle:['fire'],silverfish:['fire'],asianladybeetle:['fire'],
+ divingbeetle:['water'],waterstrider:['water'],giantwaterbug:['water'],mayfly:['water','flying'],
+};
+// Larvae keep only the main type; the second type arrives with evolution.
+const LARVAE=new Set(['caterpillar','beetlegrub','cicada_1','wasp_1','mosquito_1']);
+export function speciesTypes(id:string):Element[]{const t=FAMILY_TYPES[candyFamily(id)];return !t?legacyMovePool(id).types:LARVAE.has(id)?t.slice(0,1):t;}
+const ofType=<K extends string>(moves:Record<K,{type:string;energy:number}>,type:Element)=>(Object.keys(moves) as K[]).filter(m=>moves[m].type===type);
+const POOLS=new Map<string,{types:Element[];fast:Fast[];charged:Charged[]}>();
+/** Own-type (STAB) attacks plus one cover attack against a type that beats this bug's counters. */
+export function movePool(id:string):{types:Element[];fast:Fast[];charged:Charged[]}{
+ const cached=POOLS.get(id);if(cached)return cached;
+ const types=speciesTypes(id),[main,second]=types,pick=rng('type-moves:'+candyFamily(id)),threats=ELEMENTS.filter(t=>types.some(own=>TYPE_CHART[t].strong.includes(own))),covers=ELEMENTS.filter(t=>!types.includes(t)&&TYPE_CHART[t].strong.some(x=>threats.includes(x))),cover=covers[Math.floor(pick()*covers.length)];
+ const mainFast=ofType(FAST,main),extra=mainFast.slice(2),secondCharged=second?ofType(CHARGED,second):[];
+ const fast=[...mainFast.slice(0,2),...(extra.length?[extra[Math.floor(pick()*extra.length)]]:[]),...ofType(FAST,second??cover).slice(0,1)];
+ const charged=[...ofType(CHARGED,main),...(second?[secondCharged[Math.floor(pick()*secondCharged.length)]]:[]),[...ofType(CHARGED,cover)].sort((a,b)=>CHARGED[a].energy-CHARGED[b].energy)[0]];
+ const pool={types,fast:[...new Set(fast)],charged:[...new Set(charged)]};POOLS.set(id,pool);return pool;
+}
+/** A stored attack stays legal when it is in the current pool or was in the pool before the type rework. */
+export function knownMove(id:string,slot:'fast'|'charged',move:unknown){if(typeof move!=='string')return false;if(slot==='fast')return Object.hasOwn(FAST,move)&&(movePool(id).fast.includes(move as Fast)||legacyMoves(id).fast.includes(move as Fast));return Object.hasOwn(CHARGED,move)&&(movePool(id).charged.includes(move as Charged)||legacyMoves(id).charged.includes(move as Charged));}
 export function rollGoBug(kind:string,seed:string,bonus?:{level:number}):GoBug{const random=rng(seed),pool=movePool(kind);const rolled=1+Math.floor(random()*20)+[0,0,0,0,2,4][bugRarity(kind)],iv=()=>bonus?10+Math.floor(random()*6):Math.floor(random()*16);return {level:bonus?.level??rolled,iv:[iv(),iv(),iv()],fast:pool.fast[Math.floor(random()*pool.fast.length)],charged:[pool.charged[Math.floor(random()*pool.charged.length)]],item:null};}
 export function ensureGo(p:PlayerV2,now:number){
  if(!p.go){p.go={version:1,dust:0,candy:{},xl:{},items:{leaf:0,thorn:0,bark:0,wing:0,honey:0,dew:0,moon:0,sun:0},fastTMs:0,chargedTMs:0,team:[],league:'great',rating:1000,wins:0,losses:0,history:[],battle:null,queue:null,auto:{enabled:false,lastAt:0,attempted:[],status:'off',moving:0},buddyMeters:0};p.revision++;}
@@ -142,9 +203,9 @@ export function appraisal(s:Specimen){const total=s.go!.iv.reduce((a,b)=>a+b,0);
 export function availableGo(p:PlayerV2,id:unknown){check(!p.go?.gyms?.deployed.some(d=>d.specimen===id),'Deze bug verdedigt een gym en komt terug na een nederlaag of na 12 uur.');}
 export function ownedGo(p:PlayerV2,id:unknown){const s=p.specimens.find(s=>s.id===id&&s.go);check(s,'Kies een zelfgevangen bug.');return s;}
 export function renameGo(p:PlayerV2,id:unknown,raw:unknown){const s=ownedGo(p,id);check(typeof raw==='string','Kies een geldige bijnaam.');const name=(raw as string).trim().normalize('NFC');check(name.length<=18&&(!name||/^[\p{L}\p{N} _'’\-]+$/u.test(name)),'Gebruik maximaal 18 letters of cijfers.');if(name)s.nickname=name;else delete s.nickname;}
-export function powerUp(p:PlayerV2,id:unknown,steps:unknown=1){availableGo(p,id);check(typeof steps==='number'&&Number.isInteger(steps)&&steps>=1&&steps<=10,'Kies 1 tot 10 power-ups.');const s=ownedGo(p,id),g=p.go!,cost=powerCost(s.go!.level,steps),key=family(s.species);check(cost,'Deze power-ups passen niet binnen level 50.');check(g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy&&(g.xl[key]??0)>=cost.xl,'Niet genoeg nectarstof, soortnectar of XL.');g.dust-=cost.dust;g.candy[key]=(g.candy[key]??0)-cost.candy;if(cost.xl)g.xl[key]-=cost.xl;s.go!.level+=steps*.5;}
+export function powerUp(p:PlayerV2,id:unknown,steps:unknown=1){availableGo(p,id);check(typeof steps==='number'&&Number.isInteger(steps)&&steps>=1&&steps<=10,'Kies 1 tot 10 power-ups.');const s=ownedGo(p,id),g=p.go!,cost=powerCost(s.go!.level,steps),key=family(s.species);check(cost,'Deze power-ups passen niet binnen level 50.');check(g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy&&(g.xl[key]??0)>=cost.xl,'Niet genoeg stof, nectar of XL-nectar.');g.dust-=cost.dust;g.candy[key]=(g.candy[key]??0)-cost.candy;if(cost.xl)g.xl[key]-=cost.xl;s.go!.level+=steps*.5;}
 export function secondCost(kind:string){const tier=species(evolutionLine(kind)[0]).tier;return tier<=2?{dust:10000,candy:25}:tier<=4?{dust:50000,candy:50}:tier<=6?{dust:75000,candy:75}:{dust:100000,candy:100};}
-export function secondAttack(p:PlayerV2,id:unknown,seed:string){availableGo(p,id);const s=ownedGo(p,id),g=p.go!,key=family(s.species),cost=secondCost(s.species);check(s.go!.charged.length===1&&g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy,'Niet genoeg nectarstof of soortnectar voor de tweede aanval.');const pool=movePool(s.species).charged.filter(m=>!s.go!.charged.includes(m));s.go!.charged.push(pool[Math.floor(rng(seed)()*pool.length)]);g.dust-=cost.dust;g.candy[key]-=cost.candy;}
+export function secondAttack(p:PlayerV2,id:unknown,seed:string){availableGo(p,id);const s=ownedGo(p,id),g=p.go!,key=family(s.species),cost=secondCost(s.species);check(s.go!.charged.length===1&&g.dust>=cost.dust&&(g.candy[key]??0)>=cost.candy,'Niet genoeg stof of nectar voor de tweede aanval.');const pool=movePool(s.species).charged.filter(m=>!s.go!.charged.includes(m));s.go!.charged.push(pool[Math.floor(rng(seed)()*pool.length)]);g.dust-=cost.dust;g.candy[key]-=cost.candy;}
 export function teachMove(p:PlayerV2,id:unknown,slot:unknown,seed:string){availableGo(p,id);const s=ownedGo(p,id),g=p.go!,pool=movePool(s.species);if(slot==='fast'){check(g.fastTMs>0,'Je hebt een snelle TM nodig.');const options=pool.fast.filter(m=>m!==s.go!.fast);s.go!.fast=options[Math.floor(rng(seed)()*options.length)];g.fastTMs--;}else{check((slot===0||slot===1)&&slot<s.go!.charged.length&&g.chargedTMs>0,'Kies een bestaande aanval en gebruik een opgeladen TM.');const options=pool.charged.filter(m=>!s.go!.charged.includes(m));check(options.length,'Geen andere aanval beschikbaar.');s.go!.charged[slot as number]=options[Math.floor(rng(seed)()*options.length)];g.chargedTMs--;}}
 export function equipGo(p:PlayerV2,id:unknown,item:unknown){availableGo(p,id);const s=ownedGo(p,id);check(item===null||typeof item==='string'&&Object.hasOwn(HELD,item),'Kies een held item.');if(item)check((p.go!.items[item as Held]??0)>p.specimens.filter(o=>o.id!==s.id&&o.go?.item===item).length,'Dit item is al uitgerust of nog niet gevonden.');s.go!.item=item as Held|null;}
 export function teamIssue(p:PlayerV2,raw:unknown,league:unknown,npc=false):string|null{

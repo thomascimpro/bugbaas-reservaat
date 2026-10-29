@@ -60,7 +60,7 @@ test('new commands reject client defense stats, hatch rolls and legacy cocoon pa
 });
 test('second evolution family spends existing Hercules currency and preserves identity, IV, shiny, item and slots',()=>{
  const p=player(),s=p.specimens[0];s.species='beetlegrub';s.shiny=true;s.favorite=true;s.hearts=7;s.go!.charged=['cut','buzz'];s.go!.item='thorn';const before=structuredClone(s);
- p.go!.candy.hercules=75;p.go!.xl.hercules=4;assert.equal(family(s.species),'hercules');assert.deepEqual(movePool(s.species).types,['bug']);evolveGo(p,s.id,'evolve',NOW);
+ p.go!.candy.hercules=75;p.go!.xl.hercules=4;assert.equal(family(s.species),'hercules');assert.deepEqual(movePool(s.species).types,['rock']);evolveGo(p,s.id,'evolve',NOW);
  assert.equal(s.species,'hercules');assert.equal(s.id,before.id);assert.equal(s.go!.level,before.go!.level);assert.deepEqual(s.go!.iv,before.go!.iv);assert.equal(s.go!.item,'thorn');assert.equal(s.go!.charged.length,2);assert.equal(s.shiny,true);assert.equal(s.favorite,true);assert.equal(s.hearts,7);
  assert.equal(p.go!.candy.hercules,51);assert.equal(p.go!.xl.hercules,4);assert.ok(p.shinies.includes('hercules'));assert.throws(()=>evolveGo(p,s.id,'again',NOW));
 });
@@ -117,10 +117,10 @@ test('first cocoon gives an unequipped player real starter gear once and preserv
 test('every collectible type combination has a reachable super-effective counter, including Bug-Steel',()=>{
  const reachable=new Set(DEX_SPECIES.flatMap(s=>movePool(s.id).charged));
  for(const s of DEX_SPECIES)assert.ok([...reachable].some(m=>effectiveness(CHARGED[m].type,movePool(s.id).types)>1),'No counter for '+s.id);
- assert.ok(Math.abs(effectiveness('fire',['bug','steel'])-2.56)<1e-9);assert.ok(Math.abs(effectiveness('rock',['bug','flying'])-2.56)<1e-9);
+ assert.ok(Math.abs(effectiveness('fire',['grass','steel'])-2.56)<1e-9);assert.ok(Math.abs(effectiveness('rock',['fire','flying'])-2.56)<1e-9);
  const p=player(),moth=p.specimens[2],beetle=p.specimens[1],old=structuredClone(moth.go);ensureGo(p,NOW);assert.deepEqual(moth.go,old);
  assert.ok(damage(fighterGo(moth),fighterGo(beetle),'fire',90)>damage(fighterGo(moth),fighterGo(beetle),'bug',90));
- p.go!.chargedTMs=100;let learned=false;for(let i=0;i<100&&!learned;i++){teachMove(p,moth.id,0,'fire-tm-'+i);learned=moth.go!.charged.includes('flare');}assert.equal(learned,true);
+ const cover=movePool(moth.species).charged.find(m=>!movePool(moth.species).types.includes(CHARGED[m].type))!;assert.ok(cover);p.go!.chargedTMs=100;let learned=false;for(let i=0;i<100&&!learned;i++){teachMove(p,moth.id,0,'cover-tm-'+i);learned=moth.go!.charged.includes(cover);}assert.equal(learned,true);
 });
 test('saved-team defense banks energy for a strong matchup move instead of wasting it on a resisted cheap attack',()=>{
  const a=player(),owner=player('defender');a.go!.team=['owned-1','owned-0','owned-2'];owner.go!.team=['owned-2','owned-0','owned-1'];owner.specimens[2].go!.charged=['cut','flare'];
@@ -128,7 +128,7 @@ test('saved-team defense banks energy for a strong matchup move instead of wasti
  const ready=makeEchoBattle(a,defense,'use-fire',NOW);ready.teams[1][0].energy=55;advanceGoBattle(ready,NOW);assert.equal(ready.phase,'charge');assert.equal(ready.charge!.move,'flare');assert.equal(ready.teams[1][0].energy,0);
 });
 test('water specialists cover Ground and neutralize Fire, while their existing captured moves stay owned',()=>{
- for(const kind of ['waterstrider','giantwaterbug']){assert.deepEqual(movePool(kind).types,['bug','water']);assert.ok(movePool(kind).fast.includes('water'));assert.ok(movePool(kind).charged.includes('stream'));assert.ok(Math.abs(effectiveness('fire',movePool(kind).types)-1)<1e-9);}
- assert.ok(effectiveness('water',movePool('antlion').types)>1);assert.ok(effectiveness('flying',movePool('waterstrider').types)>1);
+ for(const kind of ['waterstrider','giantwaterbug']){assert.deepEqual(movePool(kind).types,['water']);assert.ok(movePool(kind).fast.includes('water'));assert.ok(movePool(kind).charged.includes('stream'));assert.ok(effectiveness('fire',movePool(kind).types)<1);}
+ assert.ok(effectiveness('water',movePool('antlion').types)>1);assert.ok(effectiveness('grass',movePool('waterstrider').types)>1);
  const p=player(),s=p.specimens[0];s.species='giantwaterbug';s.go!.fast='mud';s.go!.charged=['dark','earth'];const old=structuredClone(s.go);ensureGo(p,NOW);assert.deepEqual(s.go,old);
 });

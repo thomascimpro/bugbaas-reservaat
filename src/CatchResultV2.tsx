@@ -2,7 +2,9 @@ import React from 'react';
 import {Text,View} from 'react-native';
 import {GRADES,streakBonus} from '../game/fieldV2';
 import type {CastResult} from '../game/fieldV2';
-import {HELD} from '../game/goV2';
+import {HELD,family} from '../game/goV2';
+import {CandyIconV2} from './CandyIconV2';
+import {familyName} from './resourceGainV2';
 import {RevealV2,ShinyMarkV2} from './WorldEffectsV2';
 import {Button,font,Glyph,Label,V} from './uiV2';
 
@@ -22,7 +24,7 @@ export function CatchResultV2({result,demo,newSpecies,onContinue,onCollection}:{
   {caught&&(demo?<Label small center color="#F1E5C9">Demo · geen beloningen</Label>:<View testID="catch-rewards" style={{padding:12,borderRadius:23,backgroundColor:'#214B40F2',gap:9,borderWidth:1,borderColor:'#F2DCAB',boxShadow:'0px 10px 28px #06191466'}}>
    {!!result.cp&&<Label bold center>CP {result.cp}</Label>}
    <View style={{flexDirection:'row',justifyContent:'space-around',gap:6}}>
-    {([{icon:'nectar',value:result.nectar,label:'Stof'},{icon:'profile',value:result.xp??0,label:'XP'},{icon:'leaf',value:result.candy??3,label:'Nectar'}] as const).map(reward=><View key={reward.icon} accessibilityLabel={reward.label+': +'+reward.value} style={{flex:1,minWidth:0,alignItems:'center',gap:2}}><Glyph name={reward.icon} size={35}/><Text style={{fontFamily:font,fontSize:20,fontWeight:'800',fontVariant:['tabular-nums'],color:V.ink}}>+{reward.value}</Text><Label small center>{reward.label}</Label></View>)}
+    {([{icon:'nectar',value:result.nectar,label:'Stof'},{icon:'profile',value:result.xp??0,label:'XP'},{icon:'candy',value:result.candy??3,label:familyName(family(result.species))+'-nectar'}] as const).map(reward=><View key={reward.icon} accessibilityLabel={reward.label+': +'+reward.value} style={{flex:1,minWidth:0,alignItems:'center',gap:2}}>{reward.icon==='candy'?<CandyIconV2 family={family(result.species)} size={35}/>:<Glyph name={reward.icon} size={35}/>}<Text style={{fontFamily:font,fontSize:20,fontWeight:'800',fontVariant:['tabular-nums'],color:V.ink}}>+{reward.value}</Text><Label small center>{reward.label}</Label></View>)}
    </View>
    {result.held&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:6,borderTopWidth:1,borderColor:'#D7CDAE',paddingTop:6}}><Glyph name={HELD[result.held].icon} size={28}/><Label small bold>+1 {HELD[result.held].name}</Label></View>}
   </View>)}

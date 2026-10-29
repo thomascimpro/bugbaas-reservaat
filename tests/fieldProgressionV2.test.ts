@@ -36,7 +36,7 @@ test('team presets copy slots, revalidate ownership and CP, and cannot alter ite
  const p=player();p.specimens.forEach(s=>s.go!.level=1);const ids=[...p.go!.team],before=structuredClone(p.specimens);teamPreset(p,'save','great',0,ids);ids.reverse();assert.deepEqual(p.go!.teamPresets!.great![0],p.go!.team);p.go!.team=['bug-3','bug-2','bug-1'];teamPreset(p,'load','great',0,undefined);assert.deepEqual(p.go!.team,['bug-0','bug-1','bug-2']);assert.deepEqual(p.specimens,before);assert.throws(()=>teamPreset(p,'save','great',3,ids));assert.throws(()=>teamPreset(p,'save','great',1,['bug-0','bug-0','bug-1']));p.specimens=p.specimens.filter(s=>s.id!=='bug-0');assert.throws(()=>teamPreset(p,'load','great',0,undefined));
 });
 test('expanded attack kits are valid for every form and retain existing moves with distinct energy tradeoffs',()=>{
- assert.equal(Object.keys(FAST).length,13);assert.equal(Object.keys(CHARGED).length,19);const sets=new Set<string>();
+ assert.equal(Object.keys(FAST).length,24);assert.equal(Object.keys(CHARGED).length,23);const sets=new Set<string>();
  for(const s of DEX_SPECIES){const p=movePool(s.id);sets.add(JSON.stringify(p));assert.equal(new Set(p.fast).size,p.fast.length);assert.equal(new Set(p.charged).size,p.charged.length);assert.ok(p.fast.length>=3);for(const f of p.fast)assert.ok(FAST[f].turns>=1&&FAST[f].energy>0);for(const m of p.charged)assert.ok(CHARGED[m].energy>=30&&CHARGED[m].energy<=70);}
  assert.ok(sets.size>25);for(const id of ['bite','fury'])assert.ok(movePool('ant').fast.includes(id as 'bite'));assert.ok(FAST.siphon.energy/FAST.siphon.turns>FAST.claw.energy/FAST.claw.turns);assert.ok(FAST.siphon.power/FAST.siphon.turns<FAST.claw.power/FAST.claw.turns);
 });

@@ -3,7 +3,6 @@ import type {ImageSourcePropType} from 'react-native';
 export const bugIllustrations:Record<string,{hd:ImageSourcePropType;thumb:ImageSourcePropType}>={
  'ant':{hd:require('../assets/v2/illustrations/ant.webp'),thumb:require('../assets/v2/illustrations/thumbs/ant.webp')},
  'aphid':{hd:require('../assets/v2/illustrations/aphid.webp'),thumb:require('../assets/v2/illustrations/thumbs/aphid.webp')},
- 'weevil':{hd:require('../assets/v2/illustrations/weevil.webp'),thumb:require('../assets/v2/illustrations/thumbs/weevil.webp')},
  'earwig':{hd:require('../assets/v2/illustrations/earwig.webp'),thumb:require('../assets/v2/illustrations/thumbs/earwig.webp')},
  'grasshopper':{hd:require('../assets/v2/illustrations/grasshopper.webp'),thumb:require('../assets/v2/illustrations/thumbs/grasshopper.webp')},
  'lacewing':{hd:require('../assets/v2/illustrations/lacewing.webp'),thumb:require('../assets/v2/illustrations/thumbs/lacewing.webp')},
@@ -11,7 +10,6 @@ export const bugIllustrations:Record<string,{hd:ImageSourcePropType;thumb:ImageS
  'mantis':{hd:require('../assets/v2/illustrations/mantis.webp'),thumb:require('../assets/v2/illustrations/thumbs/mantis.webp')},
  'butterfly':{hd:require('../assets/v2/illustrations/butterfly.webp'),thumb:require('../assets/v2/illustrations/thumbs/butterfly.webp')},
  'divingbeetle':{hd:require('../assets/v2/illustrations/divingbeetle.webp'),thumb:require('../assets/v2/illustrations/thumbs/divingbeetle.webp')},
- 'waterstrider':{hd:require('../assets/v2/illustrations/waterstrider.webp'),thumb:require('../assets/v2/illustrations/thumbs/waterstrider.webp')},
  'hoverfly':{hd:require('../assets/v2/illustrations/hoverfly.webp'),thumb:require('../assets/v2/illustrations/thumbs/hoverfly.webp')},
  'cricket':{hd:require('../assets/v2/illustrations/cricket.webp'),thumb:require('../assets/v2/illustrations/thumbs/cricket.webp')},
  'stick':{hd:require('../assets/v2/illustrations/stick.webp'),thumb:require('../assets/v2/illustrations/thumbs/stick.webp')},

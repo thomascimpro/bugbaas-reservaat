@@ -22,9 +22,9 @@ export const NETS={
 export const BAITS={
  pollen:{name:'Lokbloem',multiplier:1.5,cell:4,color:'#E8C358',hint:'50% hogere vangkans voor je volgende rake vangpoging.'},
  dew:{name:'Dauwdruppel',multiplier:1,cell:5,color:'#66BCD6',hint:'Meer raakruimte voor je net. De bug vlucht niet na deze poging.'},
- fruit:{name:'Bosframboos',multiplier:1,cell:6,color:'#DA7955',hint:'Verdubbelt de soortnectar van deze vangst.'},
+ fruit:{name:'Bosframboos',multiplier:1,cell:6,color:'#DA7955',hint:'Verdubbelt de nectar van die soort van deze vangst.'},
  gold:{name:'Gouden lokbloem',multiplier:2.5,cell:7,color:'#EDC45E',hint:'Vangkans ×2,5 voor de volgende rake vangpoging.'},
- silver:{name:'Zilverbes',multiplier:1.8,cell:8,color:'#B5CEDE',hint:'80% hogere vangkans en extra soortnectar: 7, 11 of 23 per evolutiestadium.'},
+ silver:{name:'Zilverbes',multiplier:1.8,cell:8,color:'#B5CEDE',hint:'80% hogere vangkans en extra nectar van die soort: 7, 11 of 23 per evolutiestadium.'},
 } as const;
 export type Net=keyof typeof NETS;
 export type Bait=keyof typeof BAITS;

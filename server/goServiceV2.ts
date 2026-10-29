@@ -21,7 +21,7 @@ import {teamPreset} from '../game/teamPresetsV2';
 import {grantXP,claimTrainer,ensureTrainer,trainerLevel} from '../game/trainerV2';
 import {ACTIVE_MS,EGG_MS,RAID_RULES,RAID_TIERS,raidAt,raidJoinableUntil,ensureRaids,claimFreePass,openLobby,lobbyOpen,joinLobby,leaveLobby,startLobby,resolveLobby,claimRaid,inviteIssue,raidInvite,addInvite,publicRaid,makeRaidBattle,syncRaidBattle,lobbyView} from '../game/raidsV2';
 import type {Raid,RaidLobby,RaidInvite,RaidLobbyView,RaidToken} from '../game/raidsV2';
-import {spinPost,POST_COOLDOWN,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute,cancelRoute} from '../game/worldSitesV2';
+import {spinPost,POST_COOLDOWN,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute,cancelRoute,MAP_GYM_TEAM_LIMIT} from '../game/worldSitesV2';
 import {unknownHabitat} from '../game/habitatsV2';
 import type {HabitatContext} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
@@ -32,6 +32,7 @@ import {ensureField,encounterWild,castNet,claimFieldTask,catchChance,streakBonus
 import {locate,catchWild,distance,CATCH_RADIUS,validFix,requireFieldLocation,GPS_MAX_AGE,GPS_CATCH_ACCURACY,wildSeed,wildSpawns} from '../game/walkingV2';
 import {recordWalk} from '../game/walkingRewardsV2';
 import {mergeGPSWalk,syncAdventure} from '../game/adventureSyncV2';
+import {trackWeeklyWalk} from '../game/weeklyWalkV2';
 import {startFieldLure,advanceFieldActivities} from '../game/fieldActivitiesV2';
 import {isOutfit,STARTER_PARTNERS} from '../game/avatarV2';
 import {ensureGo,markGoSeen,eligible,ownedGo,availableGo,renameGo,powerUp,secondAttack,teachMove,equipGo,teamGo,transferGo,transferManyGo,evolveGo,awardGoCatch,goCatchRewards,family,rollGoBug,stats,LEAGUES,buddyDistance} from '../game/goV2';
@@ -70,6 +71,9 @@ export class GoServiceV2{
  // Cache document membership only; every player, battle and reward stays transactionally fresh.
  private battleDocumentKeys=new Map<string,readonly string[]>();
  private dailyRankCache=new Map<string,{until:number;value:Promise<DailyScoreRow[]>}>();
+ private mapGymCache=new Map<string,{until:number;value:Promise<Record<string,Gym['team']>>}>();
+ // Horizon gyms only show a team colour: a cached read-only lookup, never creating gym documents or NPC defenders.
+ private async markMapGyms(p:PlayerV2){const sites=(p.walking?.mapSites??[]).filter(s=>s.gym).slice(0,MAP_GYM_TEAM_LIMIT);if(!sites.length)return;const keys=sites.map(s=>gyk('gym-'+s.id)),cacheKey=[...keys].sort().join(','),now=this.clock();let entry=this.mapGymCache.get(cacheKey);if(!entry||entry.until<=now){if(this.mapGymCache.size>=1000)this.mapGymCache.clear();const value=this.store.run(keys,d=>Object.fromEntries(keys.map(k=>[k,document<Gym>(d,k)?.team??null]))),fresh={until:now+30000,value};entry=fresh;this.mapGymCache.set(cacheKey,fresh);void value.catch(()=>{if(this.mapGymCache.get(cacheKey)===fresh)this.mapGymCache.delete(cacheKey);});}const teams=await entry.value.catch(()=>({} as Record<string,Gym['team']>));for(const s of sites)s.team=teams[gyk('gym-'+s.id)]??null;}
  private socialCache=new Map<string,{until:number;value:Promise<{friends:FriendPair[];ranks:{uid:string;name:string;rating:number;wins:number}[];trades:GoTrade[];echoRanks:{uid:string;name:string;rating:number;wins:number}[]}>}>();
  constructor(public store:Store,public mode:'local'|'cloud',public clock=Date.now,public environment:(fix:Fix,now:number)=>Promise<HabitatContext>=async(_fix,now)=>unknownHabitat(now)){}
  private get(d:Documents,uid:string,now:number){let p=document<PlayerV2>(d,pk(uid));if(!p){const code=BigInt('0x'+hash(uid).slice(0,12)).toString(32).toUpperCase().padStart(10,'0').slice(-8);p=freshV2(uid,code,now);d.set(pk(uid),p);}ensureAdventure(p,now);ensureField(p,now);ensureGo(p,now);ensureGyms(p,now);ensureEcho(p,now);ensureBosses(p,now);ensureDailyChallenge(p,now);ensurePostResearch(p);ensureCocoons(p,randomBytes(24).toString('hex'),now);if(p.go!.ratedDay!==dayV2(now)){p.go!.ratedDay=dayV2(now);p.go!.ratedCount=0;}return p;}
@@ -191,7 +195,7 @@ export class GoServiceV2{
  async state(uid:string,linked=false):Promise<GameViewV2>{let p=await this.ensure(uid),battle:GoBattle|null=null;if(p.go!.queue){await this.matchmake(uid);p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));}if(p.go!.battle){const snapshot=await this.advance(p.go!.battle,uid);if(snapshot){p=snapshot.player??p;battle=snapshot.battle;}}return this.view(uid,p,battle,linked);}
  private async view(uid:string,p:PlayerV2,battle:GoBattle|null,linked:boolean):Promise<GameViewV2>{
   const gymState=await this.gyms(p),gyms=gymState.items;if(gymState.changed){p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));battle=p.go!.battle?await this.store.run([bk(p.go!.battle)],d=>document<GoBattle>(d,bk(p.go!.battle!))??null):null;}
-  const publicPlayer=structuredClone(p);
+  const publicPlayer=structuredClone(p);await this.markMapGyms(publicPlayer);
   if(publicPlayer.go?.cocoons)for(const item of publicPlayer.go.cocoons.items)delete item.hatchSeed;
   if(publicPlayer.walking){delete publicPlayer.walking.seed;for(const s of publicPlayer.walking.spawns)if(s.boss)delete s.boss.seed;}if(publicPlayer.field?.lure)delete publicPlayer.field.lure.seed;if(publicPlayer.field?.cocoon)delete publicPlayer.field.cocoon.seed;
   if(publicPlayer.go!.auto.enabled&&(!publicPlayer.walking||this.clock()-Math.min(publicPlayer.walking.at,publicPlayer.walking.fix.timestamp??publicPlayer.walking.at)>=GPS_MAX_AGE))publicPlayer.go!.auto.status='gps';
@@ -275,7 +279,7 @@ export class GoServiceV2{
   if(p.go!.battle){const battleKeys=await this.battleKeys(p.go!.battle);keys.push(...battleKeys);await this.prefetchRaid(battleKeys);}
   const raidToken=c.type==='raidJoin'||c.type==='raidInvite'?await this.raidToken():undefined;
   const currentLobby=p.go!.raids?.lobby;let raidOthers=0,raidFriends:string[]=[],inviteFriends:string[]=[];
-  if(c.type==='raidJoin'||c.type==='raidInvite'){check(typeof c.raid==='string'&&/^\d{4}-\d\d-\d\d:[0-3]:[\w-]{22}$/.test(c.raid),'Kies een zwerm.');keys.push(rk(c.raid));}
+  if(c.type==='raidJoin'||c.type==='raidInvite'){check(typeof c.raid==='string'&&/^\d{4}-\d\d-\d\d:\d{1,2}:[\w-]{22}$/.test(c.raid),'Kies een zwerm.');keys.push(rk(c.raid));}
   if(c.type==='raidJoin'){const doc=await this.store.run([rk(c.raid as string)],d=>document<RaidDoc>(d,rk(c.raid as string))),open=doc?.open??0;keys.push(lk(c.raid+'#'+open),lk(c.raid+'#'+(open+1)),ik(uid));}
   if(currentLobby&&(c.type==='raidJoin'||c.type==='raidLeave'||c.type==='raidFight'||c.type==='raidInvite'))keys.push(lk(currentLobby),dk(currentLobby,uid));
   if(c.type==='raidFight'){check(currentLobby,'Je zit niet in een zwerm.');const {damage}=await this.raidDamage(currentLobby);delete damage[uid];raidOthers=Object.values(damage).reduce((a,b)=>a+b,0);keys.push(bk(id));}
@@ -294,7 +298,7 @@ export class GoServiceV2{
     case 'coinBuy':idle();buyCoinOffer(x,c.offer,now);break;
     case 'profile':check(typeof c.name==='string'&&/^[\p{L}\p{N} _-]{2,18}$/u.test(c.name),'Gebruik 2 tot 18 letters of cijfers.');if(c.avatar!==undefined){check(['fern','amber','tidal'].includes(c.avatar as string),'Kies een ranger.');x.avatar=c.avatar as 'fern'|'amber'|'tidal';}if(c.outfit!==undefined){check(isOutfit(c.outfit),'Kies een kleur.');x.outfit=c.outfit;}if(c.starter!==undefined){check((STARTER_PARTNERS as readonly unknown[]).includes(c.starter),'Kies een eerste maatje.');if(!x.onboarded&&!x.specimens.some(s=>s.source==='partner'))this.givePartner(x,c.starter as string,now);}x.name=c.name;x.onboarded=true;break;
     case 'settings':for(const k of ['sound','reducedMotion','largeText'] as const){check(typeof c[k]==='boolean','Ongeldige instelling.');x.settings[k]=c[k] as boolean;}if(c.music!==undefined){check(typeof c.music==='boolean','Ongeldige muziekinstelling.');x.settings.music=c.music;}for(const k of ['volume','sfxVolume'] as const)if(c[k]!==undefined){check(typeof c[k]==='number'&&Number.isFinite(c[k])&&c[k]>=0&&c[k]<=1,'Kies een volume tussen 0 en 100%.');x.settings[k]=c[k] as number;}if(c.graphics!==undefined){check(['low','normal','high'].includes(c.graphics as string),'Kies lage, normale of hoge kwaliteit.');x.settings.graphics=c.graphics as 'low'|'normal'|'high';}break;
-    case 'worldLocate':idle();if(locate(x,validFix(c.fix,now),secret,now,habitat)===false)break;x.walking!.siteSource=habitat?.sites&&habitat.sites.available!==false?'osm':'unavailable';x.walking!.posts=habitat?.sites?.posts??[];x.walking!.routes=habitat?.sites?.routes??[];const priorWalk=f.walk?.meters??0,priorDayWalk=f.walk?.dayMeters??0;recordWalk(x,now);mergeGPSWalk(x,priorWalk,priorDayWalk,now);advanceRoute(x,now);advanceFieldActivities(x,now,habitat);this.auto(x,now,secret);if((g.auto.awayCredit??0)>=1000)this.awayCatch(x,0,now,secret);if(x.buddy&&x.field!.walk){const b=ownedGo(x,x.buddy),meters=x.field!.walk!.meters,required=buddyDistance(b.species),steps=Math.floor((meters-g.buddyMeters)/required);if(steps>0){const key=family(b.species);g.candy[key]=(g.candy[key]??0)+steps;g.buddyMeters+=steps*required;}}break;
+    case 'worldLocate':idle();if(locate(x,validFix(c.fix,now),secret,now,habitat)===false)break;x.walking!.siteSource=habitat?.sites&&habitat.sites.available!==false?'osm':'unavailable';x.walking!.posts=habitat?.sites?.posts??[];x.walking!.mapSites=habitat?.sites?.map??[];x.walking!.routes=habitat?.sites?.routes??[];const priorWalk=f.walk?.meters??0,priorDayWalk=f.walk?.dayMeters??0;recordWalk(x,now);mergeGPSWalk(x,priorWalk,priorDayWalk,now);advanceRoute(x,now);advanceFieldActivities(x,now,habitat);this.auto(x,now,secret);if((g.auto.awayCredit??0)>=1000)this.awayCatch(x,0,now,secret);if(x.buddy&&x.field!.walk){const b=ownedGo(x,x.buddy),meters=x.field!.walk!.meters,required=buddyDistance(b.species),steps=Math.floor((meters-g.buddyMeters)/required);if(steps>0){const key=family(b.species);g.candy[key]=(g.candy[key]??0)+steps;g.buddyMeters+=steps*required;}}break;
     case 'adventureSync':{idle();const priorHealthWalk=f.walk?.meters??0;syncAdventure(x,c.snapshot,now);this.awayCatch(x,Math.max(0,(f.walk?.meters??0)-priorHealthWalk),now,secret);if(x.buddy&&f.walk){const b=ownedGo(x,x.buddy),required=buddyDistance(b.species),steps=Math.floor((f.walk.meters-g.buddyMeters)/required);if(steps>0){const key=family(b.species);g.candy[key]=(g.candy[key]??0)+steps;g.buddyMeters+=steps*required;}}break;}
     case 'worldEncounter':{idle();if(x.walking?.spawns.find(s=>s.id===c.spawn)?.source!=='raid')requireFieldLocation(x.walking,now);encounterWild(x,c.spawn,secret,now);const s=x.walking!.spawns.find(s=>s.id===c.spawn)!;markGoSeen(x,s.species,now);f.encounter!.cp=stats({...x.specimens[0],species:s.species},rollGoBug(s.species,wildSeed(x.walking!,s)+':go:'+s.id,s.boss)).cp;break;}
     case 'worldFocus':{idle();requireFieldLocation(x.walking,now);const e=f.encounter;check(e&&e.id===c.encounter,'Open deze bug opnieuw.');check(x.walking!.spawns.some(s=>s.id===e.spawn&&s.expiresAt>now&&!x.walking!.caught.includes(s.id)),'Deze bug is verdwenen.');e.focus={id,at:now+800};break;}
@@ -370,6 +374,7 @@ export class GoServiceV2{
     case 'giftOpen':openGoGift(x,document<FriendPair>(d,'v2FriendPairs:'+c.pair),now);break;
     case 'friendAccept':case 'friendRemove':{const pair=document<FriendPair>(d,'v2FriendPairs:'+c.pair);check(pair&&pair.users.includes(uid)&&!pair.removed,'Deze vriendschap bestaat niet.',403);if(c.type==='friendRemove')pair.removed=true;else{check(pair.requestedBy!==uid,'Alleen de ontvanger kan accepteren.');pair.accepted=true;}break;}
    }
+    trackWeeklyWalk(x,now,secret);
     if(AUTO_DEFENSE_COMMANDS.has(c.type)&&(linked||this.mode==='local')&&!competitionTeamIssue(x)){const defense=saveEchoDefense(x,now);d.set('v2EchoDefenses:'+uid+'-'+g.league,defense);}
     x.revision++;d.set(receipt,{fingerprint,at:now,type:c.type});return this.commandSnapshot(d,x);
   });if(SOCIAL_COMMANDS.has(c.type))this.socialCache.clear();if(c.type.startsWith('raid'))this.raidDamageCache.clear();if(snapshot?.battle)this.rememberBattleKeys(snapshot.battle);return snapshot?this.view(uid,snapshot.player,snapshot.battle,linked):this.state(uid,linked);

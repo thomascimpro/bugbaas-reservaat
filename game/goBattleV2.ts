@@ -1,6 +1,6 @@
 import type {GymBattleMeta} from './gymsV2';
 import type {DailyChallengeBattleMeta} from './dailyChallengeV2';
-import {CHARGED,FAST,LEAGUES,movePool,stats,teamGo} from './goV2';
+import {CHARGED,FAST,LEAGUES,movePool,stats,teamGo,TYPE_CHART} from './goV2';
 import type {Charged,Element,GoBug,League} from './goV2';
 import type {PlayerV2,Side,Specimen} from './typesV2';
 import type {EchoBattleMeta} from './echoArenaV2';
@@ -13,18 +13,7 @@ export type GoBattle={dailyChallenge?:DailyChallengeBattleMeta;queued?:[GoBattle
 export type GoBattleView=GoBattle&{side:Side};
 export type GoBattleReward={item?:Held|null;dust:number;xp:number;fastTMs:number;chargedTMs:number};
 export const SWITCH_COOLDOWN=45000;
-const chart:Partial<Record<Element,{strong:Element[];weak:Element[]}>>={
- bug:{strong:['grass','dark'],weak:['flying','poison','steel','fire']},
- flying:{strong:['bug','grass'],weak:['rock','steel']},
- poison:{strong:['grass'],weak:['poison','ground','rock','steel']},
- grass:{strong:['ground','rock','water'],weak:['grass','poison','flying','bug','steel','fire']},
- ground:{strong:['poison','rock','steel','fire'],weak:['grass','bug','flying']},
- rock:{strong:['bug','flying','fire'],weak:['ground','steel']},
- steel:{strong:['rock'],weak:['steel','fire','water']},
- dark:{strong:[],weak:['dark']},
- fire:{strong:['bug','grass','steel'],weak:['fire','rock','water']},
- water:{strong:['fire','ground','rock'],weak:['grass','water']},
-};
+const chart=TYPE_CHART;
 export function effectiveness(type:Element,defender:Element[]){return defender.reduce((n,t)=>n*(type==='ground'&&t==='flying'||type==='poison'&&t==='steel'?.390625:chart[type]?.strong.includes(t)?1.6:chart[type]?.weak.includes(t)?.625:1),1);}
 export function damage(a:GoFighter,d:GoFighter,type:Element,power:number,quality=1){return Math.max(1,Math.floor(.5*power*a.attack/d.defense*(movePool(a.species).types.includes(type)?1.2:1)*effectiveness(type,movePool(d.species).types)*1.3*quality)+1);}
 export function fighterGo(s:Specimen):GoFighter{const st=stats(s);return {id:s.id,species:s.species,shiny:s.shiny,go:structuredClone(s.go!),cp:st.cp,attack:st.attack,defense:st.defense,maxHP:st.hp,hp:st.hp,energy:0,readyAt:0};}
