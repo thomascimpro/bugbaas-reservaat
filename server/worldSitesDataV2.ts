@@ -24,7 +24,7 @@ function routePoints(points:Point[],walkable:(p:Point)=>boolean){
  return total>=160&&samples.length>=5?samples:null;
 }
 const KINDS:Record<string,string>={artwork:'Kunstwerk',information:'Informatiebord',viewpoint:'Uitzichtpunt',picnic_site:'Picknickplek',memorial:'Gedenkplek',monument:'Monument',drinking_water:'Waterpunt'};
-const POST_RANGE=600,SPACING=80;
+const POST_RANGE=600,SPACING=80,ROUTE_LIMIT=6;
 /** Grid of allowed footways (100 m cells, bbox grown by the 40 m rule) so a 1.2 km horizon stays cheap; distances still use edgeDistance. */
 function pathIndex(ways:Element[],origin:Point){
  const sx=111320*Math.cos(origin.lat*Math.PI/180),sy=111320,size=100,grid=new Map<string,number[]>(),wide:number[]=[],lines=ways.map(w=>({type:'LineString' as const,coordinates:w.geometry!.map(n=>[n.lon,n.lat])}));
@@ -46,11 +46,13 @@ export function buildWorldSites(elements:Element[],fix:Fix,walkable:(p:{lat:numb
  spaced.sort((a,b)=>a.meters-b.meters||a.id.localeCompare(b.id));
  for(const s of spaced){if(s.meters>POST_RANGE)break;if(!walkable(s))continue;posts.push({id:s.id,name:s.name,lat:s.lat,lng:s.lng,source:'osm',osmId:s.osmId});if(posts.length===12)break;}
  for(const s of spaced){if(s.meters>MAP_SITE_RADIUS||map.length>=MAP_SITE_LIMIT+12)break;if(!posts.some(p=>p.id===s.id)&&unwalkable(s))continue;map.push({id:s.id,name:s.name,lat:s.lat,lng:s.lng,...(gymCandidate(s.id)?{gym:true as const}:{})});}
- for(const way of ways){let points=way.geometry!.map(p=>({lat:p.lat,lng:p.lon}));if(points.some(p=>distance(fix,p)>900||!walkable(p)))continue;if(distance(fix,points.at(-1)!)<distance(fix,points[0]))points.reverse();if(distance(fix,points[0])>500)continue;
+ // Routes up to the visible horizon (start <=1.2 km), nearest first: stop after ROUTE_LIMIT so a big area stays cheap.
+ const candidates=ways.map(way=>({way,near:Math.min(distance(fix,{lat:way.geometry![0].lat,lng:way.geometry![0].lon}),distance(fix,{lat:way.geometry!.at(-1)!.lat,lng:way.geometry!.at(-1)!.lon}))})).filter(c=>c.near<=MAP_SITE_RADIUS).sort((a,b)=>a.near-b.near||a.way.id-b.way.id);
+ for(const {way} of candidates){if(routes.length>=ROUTE_LIMIT)break;let points=way.geometry!.map(p=>({lat:p.lat,lng:p.lon}));if(points.some(p=>distance(fix,p)>MAP_SITE_RADIUS+200||!walkable(p)))continue;if(distance(fix,points.at(-1)!)<distance(fix,points[0]))points.reverse();if(distance(fix,points[0])>MAP_SITE_RADIUS)continue;
   const samples=routePoints(points,walkable);if(!samples)continue;const path=[...samples,...samples.slice(0,-1).reverse()],meters=Math.round(path.slice(1).reduce((sum,p,i)=>sum+distance(path[i],p),0)),osmId='way/'+way.id;if(routes.some(r=>distance(r.points[0],path[0])<120))continue;
   routes.push({id:id('route-',osmId),name:('Rondje '+(way.tags?.name??'natuurpad')).slice(0,70),points:path,meters,source:'osm',osmId});
  }
- return {posts,routes:routes.sort((a,b)=>distance(fix,a.points[0])-distance(fix,b.points[0])).slice(0,3),map};
+ return {posts,routes:routes.sort((a,b)=>distance(fix,a.points[0])-distance(fix,b.points[0])).slice(0,ROUTE_LIMIT),map};
 }
 type CacheEntry={until:number;data:Element[];available:boolean;at:number;pending?:Promise<void>};
 const CACHE_MS=900000,MIN_REQUEST_MS=30000,MAX_BODY_BYTES=6000000,CELL_DEG=.01,MAX_CELLS=288;

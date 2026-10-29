@@ -8,10 +8,11 @@ import type {PlayerV2} from './typesV2';
 import {checkV2 as check} from './shopV2';
 import {duplicateNectar} from './progressionV2';
 import {habitatWeight} from './habitatsV2';
+import {weatherBoosted,weatherSpawnFactor} from './weatherBoostV2';
 import type {Biome,FieldWeather,FieldEnvironment,HabitatContext} from './habitatsV2';
 
 export type Fix={lat:number;lng:number;accuracy:number;timestamp?:number};
-export type WildBug={id:string;species:string;lat:number;lng:number;expiresAt:number;biome?:Biome;source?:'lure'|'boss'|'raid';boss?:{seed?:string;level:number};raid?:{nets:number}};
+export type WildBug={id:string;species:string;lat:number;lng:number;expiresAt:number;biome?:Biome;source?:'lure'|'boss'|'raid';weather?:boolean;boss?:{seed?:string;level:number};raid?:{nets:number}};
 export function wildSeed(w:Walking,s:WildBug){return s.boss?.seed??w.seed!;}
 export type Walking={siteSource?:'osm'|'unavailable';posts?:FieldPost[];mapSites?:MapSite[];routes?:FieldRoute[];fix:Fix;at:number;environment?:FieldEnvironment;blockedUntil?:number;seed?:string;spawns:WildBug[];caught:string[];day:string;count:number;lastCatch?:{id:string;species:string;shiny:boolean;nectar:number;at:number}};
 export const GPS_MAX_AGE=30000,GPS_CATCH_ACCURACY=35;
@@ -24,7 +25,7 @@ for(const s of EXPANDED_SPECIES)WALK_MODELS[s.id]=s.model;
 export const WALK_WEIGHTS:Record<string,number>={beetle:14,ant:18,aphid:18,weevil:12,moth:10,earwig:14,grasshopper:10,lacewing:10,dungbeetle:12,mantis:5,butterfly:6,divingbeetle:6,waterstrider:6,hoverfly:8,leafhopper:5,cricket:12,stick:3,leaf:3,silverfish:3,hercules:1,caterpillar:12,antlion:4,cockroach:10,cranefly:9,flea:6,giantwaterbug:2,mayfly:7,termite:7,tigerbeetle:3,tortoisebeetle:3,beetlegrub:10,bee:8};
 for(const s of FIELD_FAMILY_SPECIES)WALK_WEIGHTS[s.id]=s.weight;
 for(const s of EXPANDED_SPECIES)WALK_WEIGHTS[s.id]=s.weight;
-export function walkingSpecies(random:()=>number,biome?:Biome,weather?:FieldWeather){const weights=Object.entries(WALK_WEIGHTS).map(([id,w])=>[id,habitatWeight(id,w,biome,weather)] as const);let roll=random()*weights.reduce((sum,[,w])=>sum+w,0);for(const [id,weight] of weights){roll-=weight;if(roll<0)return id;}return 'ant';}
+export function walkingSpecies(random:()=>number,biome?:Biome,weather?:FieldWeather){const weights=Object.entries(WALK_WEIGHTS).map(([id,w])=>[id,habitatWeight(id,w,biome,weather)*weatherSpawnFactor(id,weather)] as const);let roll=random()*weights.reduce((sum,[,w])=>sum+w,0);for(const [id,weight] of weights){roll-=weight;if(roll<0)return id;}return 'ant';}
 export function distance(a:Pick<Fix,'lat'|'lng'>,b:Pick<Fix,'lat'|'lng'>){const r=Math.PI/180,dlat=(b.lat-a.lat)*r,dlng=(b.lng-a.lng)*r,h=Math.sin(dlat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dlng/2)**2;return 6371000*2*Math.atan2(Math.sqrt(h),Math.sqrt(Math.max(0,1-h)));}
 export function validFix(raw:unknown,now?:number):Fix{check(raw&&typeof raw==='object'&&!Array.isArray(raw),'Geen geldige locatie.');const f=raw as Fix;check(Object.keys(f).every(k=>['lat','lng','accuracy','timestamp'].includes(k))&&[f.lat,f.lng,f.accuracy].every(Number.isFinite)&&Math.abs(f.lat)<=85&&Math.abs(f.lng)<=180&&f.accuracy>0&&f.accuracy<=80,'Wacht op een nauwkeurige GPS-locatie (max. 80 m).');if(now!==undefined)check(Number.isFinite(f.timestamp)&&now-f.timestamp!<=15000&&f.timestamp!-now<=5000,'Je GPS-meting is verouderd. Vernieuw je locatie.');else if(f.timestamp!==undefined)check(Number.isFinite(f.timestamp),'Geen geldige GPS-meettijd.');return {lat:f.lat,lng:f.lng,accuracy:f.accuracy,...(f.timestamp===undefined?{}:{timestamp:f.timestamp})};}
 export function requireFieldLocation(w:Walking|undefined,now:number){check(w&&now-Math.min(w.at,w.fix.timestamp??w.at)<GPS_MAX_AGE,'Vernieuw je GPS-locatie.');check(w.fix.accuracy<=GPS_CATCH_ACCURACY,'Wacht op nauwkeurige GPS (max. 35 m).');check(!w.blockedUntil||w.blockedUntil<=now,'Je beweegt te snel. Wacht tot je weer stilstaat of rustig beweegt.');return w;}
@@ -33,7 +34,7 @@ export function wildSpawns(f:Fix,seed:string,now:number,habitat?:HabitatContext)
  for(let i=0;i<7;i++)for(let attempt=0;attempt<24;attempt++){
   const angle=i/7*Math.PI*2+random()*.4+attempt*2.39996,radius=i<3?22+i*12:85+random()*65,point={lat:f.lat+Math.cos(angle)*radius/111320,lng:f.lng+Math.sin(angle)*radius/(111320*Math.cos(f.lat*Math.PI/180))};
   if(habitat&&!habitat.canSpawnAt(point))continue;const biome=habitat?.biomeAt(point);
-  spawns.push({id:seed.slice(0,16)+'-'+i,species:walkingSpecies(random,biome,habitat?.environment.weather),...point,expiresAt:now+SPAWN_LIFETIME,...(biome?{biome}:{})});break;
+  const species=walkingSpecies(random,biome,habitat?.environment.weather);spawns.push({id:seed.slice(0,16)+'-'+i,species,...point,expiresAt:now+SPAWN_LIFETIME,...(biome?{biome}:{}),...(weatherBoosted(species,habitat?.environment.weather)?{weather:true}:{})});break;
  }return spawns;
 }
 export function locate(p:PlayerV2,raw:unknown,seed:string,now:number,habitat?:HabitatContext){const fix=validFix(raw),w=p.walking,day=new Date(now).toISOString().slice(0,10);if(w){const elapsed=Math.max(0,now-w.at)/1000,meters=distance(w.fix,fix);check(meters<=80+elapsed*(p.go?60:12),'Je locatie verspringt te snel. Wacht even op een nieuwe GPS-meting.');if(p.go&&fix.timestamp!==undefined&&w.fix.timestamp!==undefined){if(fix.timestamp===w.fix.timestamp){check(fix.lat===w.fix.lat&&fix.lng===w.fix.lng&&fix.accuracy===w.fix.accuracy,'Een GPS-meting mag niet worden gewijzigd.');return false;}check(fix.timestamp>w.fix.timestamp,'Wacht op een nieuwe GPS-meting.');}if(p.go&&elapsed>=5&&elapsed<=60&&(meters-w.fix.accuracy-fix.accuracy)/elapsed>7)w.blockedUntil=now+30000;const hadHabitat=!!w.environment;w.fix=fix;w.at=now;if(habitat)w.environment=habitat.environment;if(w.day!==day){w.day=day;w.count=0;}const wild=w.spawns.filter(s=>s.source!=='boss');if((!habitat||hadHabitat)&&wild.some(s=>s.expiresAt>now)&&distance(wild[0],fix)<230)return;}

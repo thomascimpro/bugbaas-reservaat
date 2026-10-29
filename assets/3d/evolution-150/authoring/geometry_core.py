@@ -149,11 +149,13 @@ class GLB:
         self.accessors.append(acc)
         return len(self.accessors)-1
 
-    def material(self,col,emissive=False,alpha=None):
-        key=(tuple(col),emissive,alpha)
+    def material(self,col,emissive=False,alpha=None,metal=0.):
+        # metal>0: polished evolution plates; numeric emissive: glow strength (True keeps .45).
+        key=(tuple(col),emissive,alpha) if not metal else (tuple(col),emissive,alpha,metal)
         if key not in self.material_ids:
             mat={'name':'mat'+str(len(self.materials)),'pbrMetallicRoughness':{'baseColorFactor':list(col),'metallicFactor':0.,'roughnessFactor':.72},'doubleSided':True}
-            if emissive:mat['emissiveFactor']=[min(1,c*.45) for c in col[:3]]
+            if metal:mat['pbrMetallicRoughness']['metallicFactor']=metal;mat['pbrMetallicRoughness']['roughnessFactor']=.36
+            if emissive:mat['emissiveFactor']=[min(1,c*(.45 if emissive is True else float(emissive))) for c in col[:3]]
             if alpha is not None:mat['alphaMode']='BLEND';mat['pbrMetallicRoughness']['baseColorFactor'][3]=alpha
             self.materials.append(mat);self.material_ids[key]=len(self.materials)-1
         return self.material_ids[key]
@@ -168,19 +170,19 @@ class GLB:
         self.mesh_ids[key]=len(self.meshes)-1
         return self.mesh_ids[key]
 
-    def part(self,shape,col,name,pos,scale,par=None,rotation=None,emissive=False,alpha=None):
-        mat=self.material(col,emissive,alpha)
+    def part(self,shape,col,name,pos,scale,par=None,rotation=None,emissive=False,alpha=None,metal=0.):
+        mat=self.material(col,emissive,alpha,metal)
         mesh=self.newmesh(shape,mat)
         return self.node(name,par if par is not None else self.root,pos,rotation,scale,mesh)
 
-    def sphere(self,name,pos,scale,colour,par=None,emissive=False):
-        return self.part('Sphere',colour,name,pos,scale,par,emissive=emissive)
+    def sphere(self,name,pos,scale,colour,par=None,emissive=False,metal=0.):
+        return self.part('Sphere',colour,name,pos,scale,par,emissive=emissive,metal=metal)
 
-    def tube(self,name,a,b,r0,r1,col,par=None,shape='Tube'):
+    def tube(self,name,a,b,r0,r1,col,par=None,shape='Tube',metal=0.,emissive=False):
         delta=tuple(b[i]-a[i] for i in range(3));length=math.sqrt(sum(x*x for x in delta))
         if length<1e-5:return None
         if abs(r0)<1e-5 or abs(r1)<1e-5:shape='Needle'
-        return self.part(shape,col,name,a,(r0,length,r0),par,quat_y_to(delta))
+        return self.part(shape,col,name,a,(r0,length,r0),par,quat_y_to(delta),emissive=emissive,metal=metal)
 
     def wing(self,name,pos,scale,col,rot=None,par=None):
         return self.part('Wing',col,name,pos,scale,par,rot or qaxis((0,1,0),0),alpha=.8)

@@ -12,11 +12,11 @@ export async function syncAdventureNowV2(run:RunV2):Promise<{ok:boolean;status:s
 /** The connect flow (permission, first sync, store 'on'); shared by settings and the first-time prompt. */
 export async function connectAdventureSyncV2(uid:string,run:RunV2):Promise<{ok:boolean;status:string;meters?:number}>{try{if(!await requestAdventureSyncPermission())return {ok:false,status:'Geen toegang. Je kunt op de kaart blijven wandelen.'};const result=await syncAdventureNowV2(run);if(result.ok)await AsyncStorage.setItem(key(uid),'on');return result;}catch{return {ok:false,status:'Health Connect kon niet openen.'};}}
 // Opt-in belongs to the current account on this device. Never reads health data for a new guest.
-export function useAdventureSyncV2(uid:string|undefined,run:RunV2,canSync:()=>boolean=()=>true){
- const latest=useRef({run,canSync});latest.current={run,canSync};
+export function useAdventureSyncV2(uid:string|undefined,run:RunV2,canSync:()=>boolean=()=>true,onSynced?:(done:boolean)=>void){
+ const latest=useRef({run,canSync,onSynced});latest.current={run,canSync,onSynced};
  useEffect(()=>{if(!uid||Platform.OS!=='android')return;let alive=true,reading=false,retry:ReturnType<typeof setTimeout>|undefined;
   const later=()=>{if(alive&&!retry)retry=setTimeout(()=>{retry=undefined;void sync();},2500);};
-  async function sync(){if(reading||!alive||AppState.currentState!=='active')return;if(!latest.current.canSync()){later();return;}reading=true;try{if(await AsyncStorage.getItem(key(uid!))!=='on'||!alive)return;const result=await readAdventureSync();if(alive&&AppState.currentState==='active'&&result.available&&result.snapshot){if(!latest.current.canSync()||!await latest.current.run('adventureSync',{snapshot:result.snapshot}))later();}}catch{later();}finally{reading=false;}}
+  async function sync(){if(reading||!alive||AppState.currentState!=='active')return;if(!latest.current.canSync()){later();return;}reading=true;try{if(await AsyncStorage.getItem(key(uid!))!=='on'||!alive)return;const result=await readAdventureSync();if(alive&&AppState.currentState==='active'&&result.available&&result.snapshot){latest.current.onSynced?.(false);if(!latest.current.canSync()||!await latest.current.run('adventureSync',{snapshot:result.snapshot}))later();else latest.current.onSynced?.(true);}}catch{later();}finally{reading=false;}}
   void sync();const subscription=AppState.addEventListener('change',state=>{if(state==='active')void sync();}),timer=setInterval(()=>void sync(),60000);return()=>{alive=false;subscription.remove();clearInterval(timer);if(retry)clearTimeout(retry);};
  },[uid]);
 }

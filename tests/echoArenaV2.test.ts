@@ -37,7 +37,7 @@ test('echo chooses genuine other owners in the same league closest to the separa
  assert.equal(chooseEchoMatch(p,[own,wrong,far,near],NOW)?.uid,'near');
  assert.equal(chooseEchoMatch(p,[own,wrong],NOW).npc,true);
  assert.throws(()=>makeEchoBattle(p,own,'self',NOW),/eigen verdediging/);
- assert.throws(()=>makeEchoBattle(p,wrong,'league',NOW),/dezelfde league/);
+ assert.throws(()=>makeEchoBattle(p,wrong,'league',NOW),/dezelfde arena/);
  const invalid={...near,team:near.team.slice(0,2)};assert.equal(chooseEchoMatch(p,[invalid],NOW).npc,true);
 });
 

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<defs>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FFF7B0"/><stop offset=".38" stop-color="#FFD83A"/>
+    <stop offset=".78" stop-color="#FFAE1A"/><stop offset="1" stop-color="#F28400"/>
+  </linearGradient>
+  <radialGradient id="goldBall" cx=".35" cy=".3" r=".8">
+    <stop offset="0" stop-color="#FFFBD0"/><stop offset=".45" stop-color="#FFD23A"/><stop offset="1" stop-color="#E88A00"/>
+  </radialGradient>
+  <radialGradient id="shell" cx=".36" cy=".34" r=".78">
+    <stop offset="0" stop-color="#D4FF72"/><stop offset=".32" stop-color="#7EE03E"/>
+    <stop offset=".72" stop-color="#22A64A"/><stop offset="1" stop-color="#0E6A3A"/>
+  </radialGradient>
+  <linearGradient id="head" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#2F6470"/><stop offset="1" stop-color="#123039"/>
+  </linearGradient>
+  <radialGradient id="jewel" cx=".38" cy=".32" r=".75">
+    <stop offset="0" stop-color="#FFC2E4"/><stop offset=".4" stop-color="#FF3FA4"/><stop offset="1" stop-color="#B0106A"/>
+  </radialGradient>
+  <radialGradient id="lime" cx=".35" cy=".3" r=".8">
+    <stop offset="0" stop-color="#F4FFB8"/><stop offset=".5" stop-color="#A8F046"/><stop offset="1" stop-color="#3FA83A"/>
+  </radialGradient>
+  <filter id="stickerS" x="-15%" y="-15%" width="130%" height="140%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6.90"/>
+    <feComponentTransfer result="d"><feFuncA type="linear" slope="20" intercept="-1"/></feComponentTransfer>
+    <feFlood flood-color="#FFF4CF"/><feComposite in2="d" operator="in" result="rim"/>
+    <feGaussianBlur in="d" stdDeviation="10"/><feOffset dy="12" result="b"/>
+    <feFlood flood-color="#021510" flood-opacity=".6"/><feComposite in2="b" operator="in" result="shadow"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="rim"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter></defs>
+<g filter="url(#stickerS)" transform="translate(245.76 252) scale(1.04)">
+<g id="mascot" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#0A2A1F" stroke-width="30">
+  <path d="M128,286 Q84,270 66,236" /><path d="M114,334 Q70,340 50,322" /><path d="M130,388 Q92,414 86,446" /><g transform="translate(512,0) scale(-1,1)">
+  <path d="M128,286 Q84,270 66,236" /><path d="M114,334 Q70,340 50,322" /><path d="M130,388 Q92,414 86,446" /></g></g>
+  <g fill="none" stroke="#2F7356" stroke-width="13">
+  <path d="M128,286 Q84,270 66,236" /><path d="M114,334 Q70,340 50,322" /><path d="M130,388 Q92,414 86,446" /><g transform="translate(512,0) scale(-1,1)">
+  <path d="M128,286 Q84,270 66,236" /><path d="M114,334 Q70,340 50,322" /><path d="M130,388 Q92,414 86,446" /></g></g>
+  <circle cx="256" cy="318" r="152" fill="url(#shell)" stroke="#0A2A1F" stroke-width="14"/>
+  <path d="M256,190 V466" stroke="#0A2A1F" stroke-width="11" fill="none"/>
+  <g stroke="#0A2A1F" stroke-width="8" fill="url(#goldBall)">
+    <circle cx="186" cy="334" r="28"/><circle cx="326" cy="334" r="28"/>
+    <circle cx="212" cy="414" r="19"/><circle cx="300" cy="414" r="19"/>
+  </g>
+  <path d="M136,380 A128,128 0 0 1 146,262" fill="none" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="13"/>
+  <circle cx="150" cy="410" r="7" fill="#FFFFFF" fill-opacity=".55"/>
+  <path d="M396,300 A142,142 0 0 1 330,444" fill="none" stroke="#0A4F2E" stroke-opacity=".35" stroke-width="16"/>
+  <g fill="none" stroke="#0A2A1F" stroke-width="13">
+    <path d="M204,130 Q186,76 142,62"/><path d="M308,130 Q326,76 370,62"/>
+  </g>
+  <g stroke="#0A2A1F" stroke-width="7" fill="url(#lime)"><circle cx="138" cy="60" r="18"/><circle cx="374" cy="60" r="18"/></g>
+  <ellipse cx="256" cy="200" rx="118" ry="90" fill="url(#head)" stroke="#0A2A1F" stroke-width="14"/>
+  <ellipse cx="226" cy="146" rx="52" ry="15" fill="#FFFFFF" fill-opacity=".16" transform="rotate(-8 226 146)"/>
+  <ellipse cx="210" cy="204" rx="37" ry="43" fill="#FFFFFF"/><ellipse cx="302" cy="204" rx="37" ry="43" fill="#FFFFFF"/>
+  <circle cx="218" cy="212" r="24" fill="#0B1C22"/><circle cx="294" cy="212" r="24" fill="#0B1C22"/>
+  <circle cx="227" cy="200" r="9.5" fill="#FFFFFF"/><circle cx="303" cy="200" r="9.5" fill="#FFFFFF"/>
+  <circle cx="210" cy="224" r="4" fill="#FFFFFF"/><circle cx="286" cy="224" r="4" fill="#FFFFFF"/>
+  <ellipse cx="164" cy="246" rx="15" ry="9" fill="#FF7FAE" fill-opacity=".85"/><ellipse cx="348" cy="246" rx="15" ry="9" fill="#FF7FAE" fill-opacity=".85"/>
+  <path d="M232,244 Q256,282 280,244 Q256,252 232,244 Z" fill="#FF6B8E" stroke="#0A2A1F" stroke-width="6"/>
+  <path d="M246,262 Q256,270 266,262" fill="none" stroke="#FFB3C6" stroke-width="5"/>
+  <g transform="rotate(-7 256 110)">
+    <path d="M194,134 L182,66 L224,98 L256,50 L288,98 L330,66 L318,134 Q256,148 194,134 Z" fill="url(#gold)" stroke="#0A2A1F" stroke-width="10"/>
+    <path d="M200,122 Q256,134 312,122" fill="none" stroke="#C86A00" stroke-opacity=".55" stroke-width="5"/>
+    <path d="M204,112 L198,84" fill="none" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="6"/>
+    <g stroke="#0A2A1F" stroke-width="6" fill="url(#goldBall)"><circle cx="182" cy="64" r="11"/><circle cx="256" cy="47" r="12"/><circle cx="330" cy="64" r="11"/></g>
+    <ellipse cx="256" cy="112" rx="14" ry="16" fill="url(#jewel)" stroke="#0A2A1F" stroke-width="5"/>
+    <circle cx="251" cy="106" r="4" fill="#FFFFFF" fill-opacity=".9"/>
+  </g>
+</g></g>
+</svg>

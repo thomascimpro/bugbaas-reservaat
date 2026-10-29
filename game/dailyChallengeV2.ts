@@ -21,7 +21,7 @@ export function ensureDailyChallenge(p:PlayerV2,now:number):DailyChallengeProgre
  const cutoff=dayV2(now-14*86400000);g.days=g.days.filter(d=>d.day>=cutoff);g.claimed=g.claimed.filter(d=>d>=cutoff);return g;
 }
 export function dailyChallenge(league:League,now:number):{id:string;day:string;league:League;seed:string;team:GoFighter[]}{
- check(Object.hasOwn(LEAGUES,league),'Kies een league.');const day=dayV2(now),id=day+':'+league,seed='dagstrijd:'+id,random=rng(seed),pool=['ant','beetle','moth','bee','mantis','hoverfly','antlion','tortoisebeetle','hercules'],kinds:string[]=[];
+ check(Object.hasOwn(LEAGUES,league),'Kies een arena.');const day=dayV2(now),id=day+':'+league,seed='dagstrijd:'+id,random=rng(seed),pool=['ant','beetle','moth','bee','mantis','hoverfly','antlion','tortoisebeetle','hercules'],kinds:string[]=[];
  while(kinds.length<3){const at=Math.floor(random()*pool.length);kinds.push(pool.splice(at,1)[0]);}
  return {id,day,league,seed,team:kinds.map((kind,i)=>normalizeCompetitionFighter(fighterGo({id:'daily:'+id+':'+i,species:kind,shiny:false,go:rollGoBug(kind,seed+':'+i)} as Specimen),league))};
 }

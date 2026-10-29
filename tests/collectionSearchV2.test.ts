@@ -46,8 +46,8 @@ test('ampersand and exclusion combine status, CP, stars and name without modifyi
 });
 
 test('power-up warning appears only when crossing a league cap, including a current CP exactly at the cap',()=>{
- assert.equal(powerUpLeagueWarning(1499,1500),'');assert.match(powerUpLeagueWarning(1500,1501),/Great League \(1500 CP\)/);
+ assert.equal(powerUpLeagueWarning(1499,1500),'');assert.match(powerUpLeagueWarning(1500,1501),/Kleine Arena \(1500 CP\)/);
  assert.equal(powerUpLeagueWarning(1501,1600),'');assert.equal(powerUpLeagueWarning(2499,2500),'');
- assert.match(powerUpLeagueWarning(2500,2501),/Ultra League \(2500 CP\)/);assert.equal(powerUpLeagueWarning(2501,2600),'');
- const both=powerUpLeagueWarning(1499,2501);assert.match(both,/Great League/);assert.match(both,/Ultra League/);assert.match(both,/niet terugdraaien/);
+ assert.match(powerUpLeagueWarning(2500,2501),/Grote Arena \(2500 CP\)/);assert.equal(powerUpLeagueWarning(2501,2600),'');
+ const both=powerUpLeagueWarning(1499,2501);assert.match(both,/Kleine Arena/);assert.match(both,/Grote Arena/);assert.match(both,/niet terugdraaien/);
 });

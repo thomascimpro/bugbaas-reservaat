@@ -66,7 +66,7 @@ export function chooseEchoMatch(p:PlayerV2,defenses:EchoDefense[],now:number):Ec
 
 export function makeEchoBattle(p:PlayerV2,defense:EchoDefense,id:string,now:number):GoBattle{
  check(defense.uid!==p.uid,'Je kunt niet tegen je eigen verdediging spelen.');
- check(defense.league===p.go?.league&&validDefense(defense),'Kies een opgeslagen team in dezelfde league.');
+ check(defense.league===p.go?.league&&validDefense(defense),'Kies een opgeslagen team in dezelfde arena.');
  const e=ensureEcho(p,now),opponent=structuredClone(p);opponent.uid=defense.uid;opponent.name=defense.name;
  opponent.specimens=defense.team.map(f=>({id:f.id,species:f.species,shiny:f.shiny,go:structuredClone(f.go),level:1,favorite:false,obtainedAt:defense.savedAt,source:'echo',hearts:0,item:null} satisfies Specimen));
  opponent.go!.team=opponent.specimens.map(s=>s.id);opponent.go!.league=defense.league;

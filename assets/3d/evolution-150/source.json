@@ -13,8 +13,8 @@
       "file": "beetleEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "14a2c934e9469a05dff11b4802ec7d37a6530b3b2cba9322b79ab7cb82d4bd37",
-      "bytes": 78076,
+      "sha256": "c0db797e2be9376fc0358e3a5347efd5a5f80ff1be128323c74bdae1cda9c8c6",
+      "bytes": 86208,
       "meshes": 1,
       "skins": 1,
       "materials": 4,
@@ -31,10 +31,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "5add91ad5628e886ac7829c38c2d8d124c2577cdd23154853eb07402d8397e15",
+      "geometrySha256": "a2c4b6f1127b4b96c63d2f3fa8a4585913ff0f7e6348e6e0ca588e1714b5587d",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "beetle_ultimate",
@@ -47,12 +48,12 @@
       "file": "beetleUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "7e86a0e8b75843de10877a1badc6b9f3693a950495716e192d86f2eac6ca73c3",
-      "bytes": 81620,
+      "sha256": "a828191fd1056b5437ea7b9b0e6ad4590995b13ce11856ddc799495aa1056c10",
+      "bytes": 106568,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -65,10 +66,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "a4beeb2f99a9c1c0182a1089bb5e722413240d766fbfeb95479d3352f80ffe09",
+      "geometrySha256": "84ef7605ad33b471170b21b2edf53850ebf9d95c1b1a2eec3f5dcb767eed3974",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "ant_ultimate",
@@ -151,8 +153,8 @@
       "file": "aphidUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "585958de6bdbcb1a62e876057332e6f468d3104bb7774f15ae91f82083fb2db9",
-      "bytes": 118440,
+      "sha256": "68e9328d7ca9de0a8249ec4cd857e8a083fb4c54c3bcbaf90b448087e8c09fec",
+      "bytes": 128644,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -170,10 +172,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "4d38195e93286f46ffb0b2eeaf6c572985e82ed61f2f6d738ee516cc38f26432",
+      "geometrySha256": "c5a305c4fababd36d34ebddb0f23c0b8c1accf5f113d6dbb4a8e67dd76225df5",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "weevil_elite",
@@ -220,12 +223,12 @@
       "file": "weevilUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "a195fb9f1eeea4d7ca69c4553e0dad28dce2f8d0a269632bfaf9380a436ebe66",
-      "bytes": 84096,
+      "sha256": "442d409553045db4d2860ae09b0e05d8f8f822b32fc3b7d5c7af4d19991896f2",
+      "bytes": 108428,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -238,10 +241,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "e029cd85b9def9482baacc5aa17f5599bfee5da439736b6fa1c7779ca14ca92a",
+      "geometrySha256": "8848db1b930c2afe61059eb05869d0c83e86be54fe4d0cca48f31749350a9e9d",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "earwig_elite",
@@ -288,8 +292,8 @@
       "file": "earwigUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "30ae13f35ad9816a2042b0114d4cd3aa9215243c376aa8fefb67c11d52097d44",
-      "bytes": 103240,
+      "sha256": "1ea5b19725955a5a695edb9816b05cabd89fead1073ab4bc2e690c2fa9f64d44",
+      "bytes": 126856,
       "meshes": 1,
       "skins": 1,
       "materials": 5,
@@ -307,10 +311,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "abaa708e7fa41e6f5b7971ddf6c8bdaa5b9d0f9829b90f919f6674ffb24d2591",
+      "geometrySha256": "60a4efd9834225589c9939522f3958f63ee4010029116ebb1b2c61ccaec0d768",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "grasshopper_elite",
@@ -357,12 +362,12 @@
       "file": "grasshopperUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "1a7f20039f4cf13b616fcaed8dfcf2e877be01b3cb3a24dd8b137ff701db5719",
-      "bytes": 78088,
+      "sha256": "8e5e6ff152a55e20f2896c8d16b016d23d4c8665d55b1736ae49d777a820f28d",
+      "bytes": 86544,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -376,10 +381,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "e9ef82883acdd44d06b5e624568365b3c9b0c5eca4d7b8bed241933dbcdcc7d7",
+      "geometrySha256": "ce25f24a4083baa85671e9018e5465caf83e2556e41ee828a407863c61ff39f1",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "lacewing_elite",
@@ -427,8 +433,8 @@
       "file": "lacewingUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "f4afce8f1e7dcf249b1057dac7841c02051e4cdfe566cf2abd4cf1b9e217e5fe",
-      "bytes": 126760,
+      "sha256": "308d731e8a91e94978fda9eb34c6c1d46d77dff9e2986d0d5610c9e1f7cbc002",
+      "bytes": 141444,
       "meshes": 1,
       "skins": 1,
       "materials": 5,
@@ -446,10 +452,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "a61e26413e2465234d48c06ef0d9531448d50bc91858b88075fcb6a1b9a435f2",
+      "geometrySha256": "3e7c855470983ea339ae162bbc2a8dd5bf82444b25a09150bb3f64c0889f9091",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "dungbeetle_elite",
@@ -462,8 +469,8 @@
       "file": "dungbeetleEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "16a27e62b4ccddcc608a2d985855812b8cfce12c0a77cd9987560391b4e79519",
-      "bytes": 85080,
+      "sha256": "997ed256ccd6ad31d7a40760e8083e4501e30e2fb33d102bb8cd62ead221b4b9",
+      "bytes": 88496,
       "meshes": 1,
       "skins": 1,
       "materials": 4,
@@ -480,10 +487,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "05adae4bbd23c00015e0ea8f725bf93b43a98a0764140e8480b0bd686229e2a3",
+      "geometrySha256": "c965109534a7d6dd69751fc62a63bd7ef21d484ce597a47a698efae7b8b3ce1f",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "dungbeetle_ultimate",
@@ -496,12 +504,12 @@
       "file": "dungbeetleUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "af451fa909c8a1943c0c967d5a1c37d0d226ab6af70bd9c2b52b6a4276551863",
-      "bytes": 88616,
+      "sha256": "a9a3d8e4d0e0006d87ba8ddc70f18e4093908ae5ca8a6d2f9ab2ad8ba65294b9",
+      "bytes": 113580,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -514,10 +522,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "287dca174e74396b399b1301cfbc261b533fa1084a4570a99f7231f33196a788",
+      "geometrySha256": "048ea5366ed3dd0b813d15728b2c2dd27daa100f2dd86cc5259e60e05f25bbbb",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "mantis_ultimate",
@@ -530,12 +539,12 @@
       "file": "mantisUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "27b3035935e0daf6107f6e1f029b290897b2734c073b92309e6d9daf2cf8c226",
-      "bytes": 95968,
+      "sha256": "9eaed2d182293f921f685ff6ece60231865448c6dd968101b5cc5ae15167e856",
+      "bytes": 144740,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -545,14 +554,15 @@
         "fly"
       ],
       "authoredFeatures": [
-        "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
+        "upright prothorax with vertex crest, folded spined raptorial forelegs, four walking legs and raised eyespot display wings"
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "c24306ff7db40a34effe5fdd1fd9a2d0a39661a045c2e9f2064f84dbd33c6fe1",
+      "geometrySha256": "e374c9757ec609d0cd878047824c461bb380950b33846b44b49aecf19e3ebe19",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "butterfly_ultimate",
@@ -634,12 +644,12 @@
       "file": "divingbeetleUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "ff83fd1c5c6a0bbc3eef7bfd5d8bc73c1aabd70b54653ee6060e27e32e956ba4",
-      "bytes": 95824,
+      "sha256": "4f2024852197e5d4c6896dd4c7928f3bc41e286f426b2c52cc352dbeac9b66f6",
+      "bytes": 175232,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 8,
+      "drawCalls": 8,
       "animations": [
         "idle",
         "walk",
@@ -652,10 +662,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "b037ece9c55ca1635eda910f797c6650c24a2e0309c075d9053ba0af8ff5ab94",
+      "geometrySha256": "215df17a2c7c220d04f8e5d5f59a17a2dd5a4a7e6d8071b9e8633cfe31ca314b",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "waterstrider_elite",
@@ -702,28 +713,30 @@
       "file": "waterstriderUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "084a3f12db829bd27d22e52004ff424a19a51b6f27e95d6f55cec88736779964",
-      "bytes": 106636,
+      "sha256": "01583fbecedf834943152ce2337d34f093c24173c62716dba4c3d6feffdafb24",
+      "bytes": 143240,
       "meshes": 1,
       "skins": 1,
-      "materials": 3,
-      "drawCalls": 3,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
         "attack",
         "hit",
-        "dead"
+        "dead",
+        "fly"
       ],
       "authoredFeatures": [
         "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "4dfe0e04e8b0158347b662ff940baa4b2777e47dd98d0dafcc87d9c1974aa26f",
+      "geometrySha256": "817aac3dfb598515baf68caee7e08d61696e8b6752e29f5c9fa24ccfd8101c40",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "hoverfly_elite",
@@ -771,12 +784,12 @@
       "file": "hoverflyUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "ee19821d3e3306c777b371b8c637e4817da419879da754059dde0dd2b4477485",
-      "bytes": 107324,
+      "sha256": "e9bbe5bdf6fb8d956ac1ad6ba9b0c156ab9abdcc280a9a892f0dccf3e0f6e9d4",
+      "bytes": 141256,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -790,10 +803,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "26ea73eb9fe394d899d99daa53557b37573a0cd4faf33a1757993aa2af941cef",
+      "geometrySha256": "2cf1398eb9550dcacdaa5bcedb21206ea9389b668d5c4b0e228b3f3711fa66f4",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "leafhopper_elite",
@@ -841,12 +855,12 @@
       "file": "leafhopperUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "fd12950f70eb2855904e7b262b368fe4a06522019329c64dde7f3e23d293414a",
-      "bytes": 89576,
+      "sha256": "fdfeeda4b415e28d7d8404afe0f118dd1786ec8e4cb0a0c0ac2039043b3e8d6f",
+      "bytes": 116308,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -860,10 +874,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "9fd80793127933c3070907bf59284a4ee386abcf804ffec9d566a24f955e5f6f",
+      "geometrySha256": "753e11ed4fe4db18c58048f14c60491a9cd9fe8c4b236f8702945997bc166726",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "cricket_elite",
@@ -910,8 +925,8 @@
       "file": "cricketUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "23a6edc1b560af542c69b1e27578fc0d530dd1fcb3108b049743cc6c71c44d67",
-      "bytes": 92564,
+      "sha256": "6c8c13e1bcd7acdb4e15bbeb417c0c2aa9202fe070232a4d05b003e4dc20c66a",
+      "bytes": 104688,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -929,10 +944,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "4d841e4a63d1e18372a0381dbd0bdf6c6d6266e99ceb049348280306f8bee23f",
+      "geometrySha256": "f2327de109fd0001408bffbd8103779b6f6c60905c226d74c640979102cd0e75",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "stick_elite",
@@ -979,28 +995,30 @@
       "file": "stickUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "4b88ca35045d0e05be82cfc7a3a4ffe667b5f187a398246615d97ecd99e84332",
-      "bytes": 76820,
+      "sha256": "7506ef3de6a1ed0a59dc7ea52552780c9ae98d16105f561b846f368d96ac83ad",
+      "bytes": 107336,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 5,
+      "drawCalls": 5,
       "animations": [
         "idle",
         "walk",
         "attack",
         "hit",
-        "dead"
+        "dead",
+        "fly"
       ],
       "authoredFeatures": [
         "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "3d54ff2cfcb4a24d9cddf3d50f881ffef8185276722811ef5036e15f46e93fa7",
+      "geometrySha256": "76c6e2478a119ed1c1e55b5eb48769be7365fd64cc3955c9512b9c08b6301ab7",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "leaf_elite",
@@ -1047,12 +1065,12 @@
       "file": "leafUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "f09fdeaf90c6637e7097d94817260ffc4df0591105e4edc2f7e0f2d01e03ad5e",
-      "bytes": 76644,
+      "sha256": "fbc72cb0876fb2fa6571565da9838a82c48441da60f827cdcc1d12981988803f",
+      "bytes": 87552,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -1065,10 +1083,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "53294b4102b9f3eb49a4b6e10e40787d62d534059660873695d4d750853374d6",
+      "geometrySha256": "66782cdbc142d5da682f7dbac11980d430d779cc356eb69eb534e5e6659743c1",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "silverfish_elite",
@@ -1115,12 +1134,12 @@
       "file": "silverfishUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "006fc01f4e19c70f89c68224b7c6333e5a5a6a8da61a0df0f5fb6f68f355d1e5",
-      "bytes": 116952,
+      "sha256": "4f4d6d897a190dda2780de2e1b18ffdec751cb154a331c42d63e270611eae026",
+      "bytes": 148756,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 5,
+      "drawCalls": 5,
       "animations": [
         "idle",
         "walk",
@@ -1133,10 +1152,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "6ed72d5d5f4f255385de5876fd77e79719d15793d487621b3f7daa373fe17ea1",
+      "geometrySha256": "e2b92bed8e7fda4884d29bfa1d0a087e858da04522093fbe3e5cb8b660c5a848",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "moth_elite",
@@ -1215,8 +1235,8 @@
       "file": "antlionUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "c375566b91afb1af86282d1a1ec36008536911d58a3386b46aaeaa6fe214c681",
-      "bytes": 126760,
+      "sha256": "9db93f913802c53fd3b4f6774ba4844422e07e4b2f89e4a7ec5b0616c65c5e08",
+      "bytes": 178124,
       "meshes": 1,
       "skins": 1,
       "materials": 5,
@@ -1234,10 +1254,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "774cbcb73701a182449ca34e63d48bee8a1fa995f5837cde2fdf8b4be3dfa747",
+      "geometrySha256": "f8534b6de5e1ad370a1e9023a2a3cb69e34bdec9d646829a21fafe318dd4636f",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "cockroach_elite",
@@ -1284,12 +1305,12 @@
       "file": "cockroachUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "241f94a181f5facfe84e93695cd6e1487f0a0c1bce9a2687b92ab5ad98b2f47a",
-      "bytes": 103548,
+      "sha256": "f40668d2421b5afcff155f96d285db08ea7e418db5d96ab18c19a35a8900dac4",
+      "bytes": 138084,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -1303,10 +1324,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "0281abdc8c6f268d6be00996e72ba34fa5b2a1aed0d909c9f1b130f5b9272fec",
+      "geometrySha256": "018e903cee3950fc3b9bbb54fb47fd5133b62c0c12fd2b4c9c3a70adeb826602",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "cranefly_elite",
@@ -1354,8 +1376,8 @@
       "file": "craneflyUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "4daca94e88741e8a64413515310e78ae8c8278e6bd43b6d75b0e28698fe3cef1",
-      "bytes": 118644,
+      "sha256": "f482c571a35c3a875d7180a5175e1fc9ff6f8baa1a2d1bae13952376b3235e05",
+      "bytes": 149536,
       "meshes": 1,
       "skins": 1,
       "materials": 5,
@@ -1373,10 +1395,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "5418d38bdd24b5b87511cbdd917ce53e914b49ccc6b2c1786dc9019be0e91221",
+      "geometrySha256": "2125ecbf1c35468c19515c34101d0a23d5b9f2c2e81157edd36d3e234ea0adf0",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "flea_elite",
@@ -1423,12 +1446,12 @@
       "file": "fleaUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "b94558dc73e59396f4e1eb60893b3a7819ca965537a35fe374e8410f52596df4",
-      "bytes": 73976,
+      "sha256": "97a2448c875cf87b0ebbe6b2a83111fc243e6c6aa26bd6738e3c67e199d4663a",
+      "bytes": 92836,
       "meshes": 1,
       "skins": 1,
-      "materials": 3,
-      "drawCalls": 3,
+      "materials": 5,
+      "drawCalls": 5,
       "animations": [
         "idle",
         "walk",
@@ -1441,10 +1464,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "cb8010998d0f10c0a3005ffd2a504f108fdf5fdd5193828f1c5f38565b398cd7",
+      "geometrySha256": "3e6f2e856e65a312f424802bc700cb707745cb09d1e07298465040661d13628f",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "giantwaterbug_elite",
@@ -1491,12 +1515,12 @@
       "file": "giantwaterbugUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "029ec0d021f82c50162f981bf836a238b6ce753f0633b5367c4879ed64690858",
-      "bytes": 123704,
+      "sha256": "baa7bba7931b00074b0a895c373fd0a50599b7c9c9d9b71daf2a327d6c38e1bf",
+      "bytes": 199676,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -1509,10 +1533,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "c4f85c9df7b0b102279d16e11440b6b7f26cff4a1b2a0847bee0455d9087f907",
+      "geometrySha256": "f11092ca0591269927e4108d2c2070f9032f4de27501f32bc71f1a95d9942f7c",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "mayfly_elite",
@@ -1560,12 +1585,12 @@
       "file": "mayflyUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "075c7c550639f948b9ac9be5b26af87124772129058ff8f70d93acd3c1f4e61f",
-      "bytes": 130484,
+      "sha256": "e89966450fcbebc9969dbc3daf89de745fa904893008463fdba8db9d92d40036",
+      "bytes": 153056,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -1579,10 +1604,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "94beb96630973ad7c23b5cf3deb03a3751cf6e6969045585e491a5be98c72b92",
+      "geometrySha256": "85cf55816fbd4fa791dec21b34025aedda5402b1441beafa2ccceb5fed720fe2",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "termite_elite",
@@ -1698,12 +1724,12 @@
       "file": "tigerbeetleUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "de3f5f3251651bd7f915d231f6579e284fc3a6a460fcbad07c1bd145668dd7e9",
-      "bytes": 118500,
+      "sha256": "fbd482c84aae23a5b1915569a14e91e31c17d1a081b9ca76c4bbd04f652d5db4",
+      "bytes": 139996,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 5,
+      "drawCalls": 5,
       "animations": [
         "idle",
         "walk",
@@ -1716,10 +1742,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "984d9c4dba0af1244273800fb187f6a3494375fc8833c1af9664d0e6e20357f2",
+      "geometrySha256": "2243a1ec3ab70c5cbbdd35093446e06cfe9c54f914e979e02804936827865828",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "tortoisebeetle_elite",
@@ -1766,12 +1793,12 @@
       "file": "tortoisebeetleUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "848369305e46bd3f933a8eabd45314897c96bc52252f5c88cd7703f2cc49de27",
-      "bytes": 124476,
+      "sha256": "2520a0acf038efb2842b1444e558e51dd2dc2ba6852ccd252a65cc85c0ef1be0",
+      "bytes": 155160,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -1784,10 +1811,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "4ab44f3aabf61fad27affa33a9c796acb97af34010f93f4fb166104fdb79202a",
+      "geometrySha256": "6ba3014c5d452185c07627172ca001d603e044e5748a6a496139e2d372af6d61",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "hercules_elite",
@@ -1869,12 +1897,12 @@
       "file": "beeUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "25efaf187d61aeb41fe668419efa7fedc5124915002ae49d5134a940c4b9b034",
-      "bytes": 116648,
+      "sha256": "51ae55b6e815c24134e1d8addd930e8b0e5b7ffb65c0249211e1bc262d2d46b0",
+      "bytes": 172636,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -1888,10 +1916,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "0ac16229ef4e01fdb36156f2031546299a5c53da388e7a8c2c2625134f25ca60",
+      "geometrySha256": "04969f76604f6b07f1ead2c651e389700bcd9cf3ff67a84ca1917fb1bc00d2a1",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "spider_1",
@@ -2222,12 +2251,12 @@
       "file": "ScorpionStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "f10b555105a96c0f82498166b292e56e67622e6af50a972bcfda6e90409033ba",
-      "bytes": 106776,
+      "sha256": "92620fdfc9da8d3cb83e5500aba8372ea18e2ad4221b4c6d7138756af62052eb",
+      "bytes": 143328,
       "meshes": 1,
       "skins": 1,
-      "materials": 3,
-      "drawCalls": 3,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -2240,10 +2269,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "b261e729896374498132d325544254b2bd96ae32852045d173e404d4825bb0f3",
+      "geometrySha256": "377afc53bb28e26e7b7fbfc89e8806df82a14dc1f1f46ee9ff212657007584ea",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "centipede_1",
@@ -2557,12 +2587,12 @@
       "file": "DragonflyStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "48f33cd8bc943151630c73301ad9f33fbb1d0a0a0bb564d35a94fc4627276668",
-      "bytes": 126648,
+      "sha256": "89fa3fc183fd8b8bad00e1315ca4a224331a848030383299c4227bfdcc603029",
+      "bytes": 147544,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -2576,10 +2606,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "4c994037f22d50d17c735fa2b3673abc1e15526b9c8c9bfe15d7cf9c2a67191c",
+      "geometrySha256": "af39f2ef45d1b1b7ed3c2d3c1d3bd041cd5247a8d1569bc90ac9f570fe757693",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "firefly_1",
@@ -2626,8 +2657,8 @@
       "file": "FireflyStage2.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "7b32cf2e51e6726067aca5e96383e061e15d027729a43778ee34b2846269c593",
-      "bytes": 120788,
+      "sha256": "1ff578d9d4d7cd1033c7cb787737b54dbab5a00cd936228044df6c324404c816",
+      "bytes": 120840,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -2648,7 +2679,8 @@
       "geometrySha256": "6008b1267bf0b3317ffdf089629c6da89b2cb73e5ef2db6b4956fb2bd2e1f0b1",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "firefly_3",
@@ -2661,12 +2693,12 @@
       "file": "FireflyStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "ffb9fcdf8f413ed9d5e329af0a3d1c845923247f7861ba1549908d793a1704a4",
-      "bytes": 135016,
+      "sha256": "d738ac5c4b46d70432d7dcb161dba075c382eb88ab4239320f567b17ed3a68d4",
+      "bytes": 153840,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 8,
+      "drawCalls": 8,
       "animations": [
         "idle",
         "walk",
@@ -2680,10 +2712,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "94f2fe3957f610e96c718872c2f62597f21642bf061797e0171380d80c7d4333",
+      "geometrySha256": "d2d02fde11e8c3489708062fc5218cc98a66dddee01a88b635da758ebb7ca0a7",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "cicada_1",
@@ -2696,8 +2729,8 @@
       "file": "CicadaStage1.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "0ee6329d8a202d098809777616e0b4859645c775d083221620d5688ef6418d38",
-      "bytes": 70872,
+      "sha256": "25ee05c61c0dace04b9418841d2ae1e3d81592ff0b49642a6affff2621d2faa1",
+      "bytes": 86820,
       "meshes": 1,
       "skins": 1,
       "materials": 4,
@@ -2714,10 +2747,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "a3ccde983e41165afba72710c96bb88d90a89b5e2e7351012a9455f871d90cb6",
+      "geometrySha256": "d23079dfb47721019d1c27be33b9836481731fa5d56ae136efa9881640eafa64",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "cicada_2",
@@ -2730,12 +2764,12 @@
       "file": "CicadaStage2.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "541771d5e7d5984635c9755c6f117ea85efd1ad1bdaf22d3f953ec48a60a6d0e",
-      "bytes": 91452,
+      "sha256": "5b0e3e3b8a38c833ea7fb6692db7e16553bf97364c7068b6cf54d45932046d9e",
+      "bytes": 90596,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 5,
+      "drawCalls": 5,
       "animations": [
         "idle",
         "walk",
@@ -2749,10 +2783,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "f86c7722401e6cbad7f41e00349bb8fd77e52052944371eb54fa224f3aaea27d",
+      "geometrySha256": "0403c388553b71263f87459e63405ede5454458d5b766ee29b8a59258282e96a",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "cicada_3",
@@ -2765,8 +2800,8 @@
       "file": "CicadaStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "d4f8e3db212f607f14167ce58615605d1c2a3816171304bd93cfcb2c68c9c6f2",
-      "bytes": 109968,
+      "sha256": "12c058ef5e8c1e88481668e04330921d3c64846cce5b445771fac7da4d8fc6b1",
+      "bytes": 115336,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -2784,10 +2819,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "0b85c0de10485453f778ae4db5ec6ee829ea4a62cb1fb8666b7214a10d5826d1",
+      "geometrySha256": "9a99be2b77b9ddadc24e3415d83d30842022c6931d973dd7a02e7e2d0c5bb27a",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "mosquito_1",
@@ -2869,12 +2905,12 @@
       "file": "MosquitoStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "861ab08da2f9f0bd0f90ec1b67d84bc06fa4218b5223c92cecff34744e527409",
-      "bytes": 131248,
+      "sha256": "805c806e87bd00c42636876bb98575d824eac71f4dbd236880a31770e74d9a59",
+      "bytes": 207272,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -2888,10 +2924,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "e6686f7ba84c3019cbaab5d0976f2ba8b253a84d9ebdcbb73d58ab4809986c21",
+      "geometrySha256": "94d0c76908b80b2b30ccb1d3d7e9ddcfc2661b717bbcbbe61a630353eb541bb2",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "snail_1",
@@ -2938,12 +2975,12 @@
       "file": "SnailStage2.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "bb57d50265c081433a2c8a4ed51c02b93aabe59a1b43022faebbfc103ca61065",
-      "bytes": 79892,
+      "sha256": "574fba770fe85ee52ff119cb76ecfeb43ede2cbb8e56b60ebc7df7cd6d5e076e",
+      "bytes": 79228,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 3,
+      "drawCalls": 3,
       "animations": [
         "idle",
         "walk",
@@ -2956,10 +2993,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "dff96ced05c57a009ea48b6676bd1a9faa5c888412e2d9eb32d826c04de9d2a9",
+      "geometrySha256": "a7cee521bda27235e6e6b16c4e7635ef975320fc77cf346a33965c7718fb064e",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
     },
     {
       "target_id": "snail_3",
@@ -2997,13 +3035,14 @@
     }
   ],
   "count": 85,
-  "runtimeBytes": 18932788,
+  "runtimeBytes": 19900848,
   "pipeline": "One skinned mesh per animal; source rig preserved; animation aliasing; quantized positions and normals; embedded resources.",
   "notes": [
     "Original anatomy-specific geometry is distinct from the supplied 85 draft shapes.",
     "Third stages are game evolutions, not claims about biological life cycles.",
     "First 92 published IDs, stats and owned values are preserved; 58 entries append to the dex.",
-    "Shiny body palettes use the same runtime shader as the 2D render pipeline."
+    "Shiny body palettes use the same runtime shader as the 2D render pipeline.",
+    "2026-10-29 evolution-stage upgrade: stage-3 (and selected stage-1/2) authored models get stage palettes, polished plates, horns/armour/glow/wing patterns so each evolution is visibly distinct; regenerate with authoring/produce_candidates.py + skin-and-optimize.mjs."
   ],
   "uniqueGeometryHashes": 85,
   "textures": [

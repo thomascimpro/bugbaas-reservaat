@@ -11,7 +11,7 @@ export type GoCocoon={id:string;km:2|5;obtainedAt:number;hatchSeed?:string};
 export type GoCocoonActive={id:string;startMeters:number;startedAt:number};
 export type GoCocoonIncubator={id:string;uses:number};
 export type GoCocoonsProgress={version:1;items:GoCocoon[];active:GoCocoonActive|null;parallel?:(GoCocoonActive&{incubatorId:string})[];incubators?:GoCocoonIncubator[];nextIncubatorId?:number;nextId:number;hatched:number;lastCatchId?:string;lastPostDrop?:string;lastHatch?:{id:string;species:string;shiny:boolean;at:number;held?:Held;dust?:number;candy?:number}};
-export const COCOON_CAP=3,COCOON_CATCH_CHANCE=.1;
+export const COCOON_CAP=9,COCOON_CATCH_CHANCE=.1;
 export const COCOON_POST_CHANCE=.2,COCOON_REWARDS={2:{dust:500,candy:10},5:{dust:1500,candy:20}};
 // All thirty existing walking species are represented. Chances follow Pokémon GO-style rarity tiers (see cocoonTier).
 export const COCOON_POOLS:Record<2|5,readonly string[]>={

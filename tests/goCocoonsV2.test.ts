@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {COCOON_POOLS,addCocoonIncubator,awardCocoon,cocoonActive,cocoonWalked,ensureCocoons,hatchCocoon,startCocoon} from '../game/goCocoonsV2';
+import {COCOON_CAP as CAP_9} from '../game/goCocoonsV2';
 import {rng} from '../game/catalogV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo,rollGoBug} from '../game/goV2';
@@ -31,7 +32,7 @@ test('only actual new server catches can receive a finite 10 percent drop; full 
  s.source='walking';assert.equal(awardCocoon(p,seed,NOW+1),false);assert.equal(awardCocoon(p,seed,NOW),true);
  assert.equal(p.go!.cocoons!.items[1].km,5);assert.equal(awardCocoon(p,'different-secret',NOW),false);
  realCatch(p,'catch-2');assert.equal(awardCocoon(p,dropSeed(2),NOW),true);assert.equal(p.go!.cocoons!.items.length,3);
- realCatch(p,'catch-full');assert.equal(awardCocoon(p,seed,NOW),false);p.go!.cocoons!.items.pop();assert.equal(awardCocoon(p,seed,NOW),false);
+ while(p.go!.cocoons!.items.length<CAP_9)p.go!.cocoons!.items.push({id:'filler-'+p.go!.cocoons!.items.length,km:2,obtainedAt:NOW});realCatch(p,'catch-full');assert.equal(awardCocoon(p,seed,NOW),false);p.go!.cocoons!.items.pop();assert.equal(awardCocoon(p,seed,NOW),false);
  realCatch(p,'failed-roll');let noDrop='';for(let i=0;i<100;i++)if(rng('no-'+i+':cocoon-drop')()>=.1){noDrop='no-'+i;break;}
  assert.equal(awardCocoon(p,noDrop,NOW),false);assert.equal(awardCocoon(p,seed,NOW),false);
 });

@@ -10,6 +10,7 @@ import {GoServiceV2,parseGo} from '../server/goServiceV2';
 import {SqliteStore} from '../server/sqlite';
 import {unknownHabitat} from '../game/habitatsV2';
 import {distance} from '../game/walkingV2';
+import {routeReward} from '../game/routesV2';
 const NOW=Date.UTC(2026,9,20,14),FIX={lat:52.09,lng:5.13,accuracy:8,timestamp:NOW};
 const elements=[{type:'way',id:1,tags:{highway:'footway',access:'yes',name:'Bospaadje'},geometry:Array.from({length:15},(_,i)=>({lat:FIX.lat,lon:FIX.lng+i*.0003}))},{type:'node',id:2,tags:{tourism:'information',name:'Natuurbord'},lat:FIX.lat,lon:FIX.lng+.0001},{type:'node',id:3,tags:{tourism:'artwork',access:'private'},lat:FIX.lat,lon:FIX.lng+.0002},{type:'node',id:4,tags:{tourism:'viewpoint'},lat:FIX.lat+.004,lon:FIX.lng+.004}];
 const sites=buildWorldSites(elements,FIX,()=>true);
@@ -52,7 +53,7 @@ test('route rewards require ordered route points AND verified distance; pause ex
  const p=player(),r=sites.routes[0];startRoute(p,r.id,NOW);const run=p.go!.sites!.run!;assert.throws(()=>finishRoute(p,NOW),/Volg eerst/);
  for(const point of r.points){p.walking!.fix={...FIX,...point};advanceRoute(p,NOW);}assert.equal(run.status,'active');assert.equal(run.next,1);
  p.field!.walk={meters:50,dayMeters:50,anchor:FIX,at:NOW};pauseRoute(p);p.field!.walk.meters=500;advanceRoute(p,NOW);assert.equal(run.meters,0);resumeRoute(p,NOW);
- for(const point of r.points.slice(1)){p.walking!.fix={...FIX,...point};p.field!.walk.meters+=40;advanceRoute(p,NOW);}assert.equal(run.status,'ready');const dust=p.go!.dust,nets=p.field!.inventory.basic;finishRoute(p,NOW);assert.equal(p.go!.dust,dust+150);assert.equal(p.field!.inventory.basic,nets+5);assert.throws(()=>finishRoute(p,NOW));assert.throws(()=>startRoute(p,r.id,NOW),/vandaag/);
+ for(const point of r.points.slice(1)){p.walking!.fix={...FIX,...point};p.field!.walk.meters+=40;advanceRoute(p,NOW);}assert.equal(run.status,'ready');const dust=p.go!.dust,nets=p.field!.inventory.basic;finishRoute(p,NOW);assert.equal(p.go!.dust,dust+routeReward(r.meters).dust);assert.equal(p.field!.inventory.basic,nets+routeReward(r.meters).nets);assert.throws(()=>finishRoute(p,NOW));assert.throws(()=>startRoute(p,r.id,NOW),/vandaag/);
 });
 test('post command receipts prevent duplicate supplies under retries and reject caller-defined loot or positions',async()=>{
  const store=new SqliteStore(':memory:');try{const api=new GoServiceV2(store,'local',()=>NOW,async()=>({...unknownHabitat(NOW),sites}));let view=await api.state('site-api');view=await api.command('site-api',{type:'worldLocate',fix:FIX,commandId:randomUUID(),expectedRevision:view.player.revision});const command={type:'poiSpin',poi:sites.posts[0].id,commandId:randomUUID(),expectedRevision:view.player.revision};view=await api.command('site-api',command);const inventory=structuredClone(view.player.field!.inventory);view=await api.command('site-api',command);assert.deepEqual(view.player.field!.inventory,inventory);for(const extra of [{loot:{basic:9999}},{lat:FIX.lat},{reward:10000}])assert.throws(()=>parseGo({...command,...extra}));}finally{store.close();}

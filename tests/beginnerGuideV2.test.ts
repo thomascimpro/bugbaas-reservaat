@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {freshV2} from '../game/safariV2';
 import {ensureGo} from '../game/goV2';
-import {beginnerSteps,unlockLevel} from '../game/beginnerGuideV2';
+import {beginnerSteps,unlockLevel,guidePeeks} from '../game/beginnerGuideV2';
 import type {PlayerV2} from '../game/typesV2';
 
 const NOW=Date.UTC(2026,9,28,12);
@@ -33,4 +33,8 @@ test('menu unlock levels follow the beginner path',()=>{
  assert.equal(unlockLevel('Bugdex'),1);assert.equal(unlockLevel('Bugs'),1);assert.equal(unlockLevel('Veldtas'),1);
  assert.equal(unlockLevel('Shop'),3);assert.equal(unlockLevel('Cocons'),3);
  assert.equal(unlockLevel('Strijd'),5);assert.equal(unlockLevel('Gyms'),5);assert.equal(unlockLevel('Vrienden'),5);
+});
+
+test('a folded quest card only pops open when a new step starts',()=>{
+ assert.equal(guidePeeks(true,'first-catch','three-kinds'),true);assert.equal(guidePeeks(true,'three-kinds','three-kinds'),false);assert.equal(guidePeeks(false,'first-catch','three-kinds'),false);
 });

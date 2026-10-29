@@ -27,6 +27,6 @@ export function collectionSearch(query:string,context:{buddy:string;team:readonl
 }
 
 export function powerUpLeagueWarning(currentCP:number,nextCP:number){
- const crossed=[{cap:1500,name:'Great League'},{cap:2500,name:'Ultra League'}].filter(l=>currentCP<=l.cap&&nextCP>l.cap);
- return crossed.length?'Let op: deze power-up overschrijdt '+crossed.map(l=>l.name+' ('+l.cap+' CP)').join(' en ')+'. Deze bug kan daarna niet meer in '+(crossed.length===1?'die league':'deze leagues')+' meedoen. Een power-up kun je niet terugdraaien.':'';
+ const crossed=[{cap:1500,name:'Kleine Arena'},{cap:2500,name:'Grote Arena'}].filter(l=>currentCP<=l.cap&&nextCP>l.cap);
+ return crossed.length?'Let op: deze power-up overschrijdt '+crossed.map(l=>l.name+' ('+l.cap+' CP)').join(' en ')+'. Deze bug kan daarna niet meer in '+(crossed.length===1?'die arena':"deze arena's")+' meedoen. Een power-up kun je niet terugdraaien.':'';
 }

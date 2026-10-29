@@ -1,5 +1,6 @@
 import type {PlayerV2} from './typesV2';
 import {ensureField} from './fieldV2';
+import {weatherBoosted} from './weatherBoostV2';
 import {gpsWalkMeters} from './adventureSyncV2';
 import {rng} from './catalogV2';
 import {walkingSpecies} from './walkingV2';
@@ -20,7 +21,7 @@ export function advanceFieldActivities(p:PlayerV2,now:number,habitat?:HabitatCon
   const random=rng(l.seed+':'+l.spawned),angle=random()*Math.PI*2,radius=12,point={lat:w.fix.lat+Math.cos(angle)*radius/111320,lng:w.fix.lng+Math.sin(angle)*radius/(111320*Math.cos(w.fix.lat*Math.PI/180))};
   if(habitat&&!habitat.canSpawnAt(point))return;const biome=habitat?.biomeAt(point);
   w.spawns=w.spawns.filter(s=>s.expiresAt>now);
-  w.spawns.push({id:'lure-'+l.id+'-'+l.spawned,species:walkingSpecies(random,biome,habitat?.environment.weather),...point,...(biome?{biome}:{}),expiresAt:Math.min(l.expiresAt,now+90000),source:'lure'});
+  {const kind=walkingSpecies(random,biome,habitat?.environment.weather);w.spawns.push({id:'lure-'+l.id+'-'+l.spawned,species:kind,...point,...(biome?{biome}:{}),...(weatherBoosted(kind,habitat?.environment.weather)?{weather:true}:{}),expiresAt:Math.min(l.expiresAt,now+90000),source:'lure'});}
   l.lastAt=now;l.lastMeters=meters;l.spawned++;
  }
  if((f.walk?.dayMeters??0)>=1000&&!f.daily.buddyWalk&&p.buddyToday<3){

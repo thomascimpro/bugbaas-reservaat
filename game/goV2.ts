@@ -34,7 +34,8 @@ export const TYPE_CHART:Record<Element,{strong:Element[];weak:Element[]}>={
 };
 export const ELEMENTS=Object.keys(TYPE_CHART) as Element[];
 export type League='great'|'ultra'|'master';
-export const LEAGUES={great:{name:'Great League',cap:1500},ultra:{name:'Ultra League',cap:2500},master:{name:'Master League',cap:Infinity}};
+// Internal ids stay great/ultra/master (saved teams); names are what kids see.
+export const LEAGUES={great:{name:'Kleine Arena',cap:1500,emoji:'🟢'},ultra:{name:'Grote Arena',cap:2500,emoji:'🔵'},master:{name:'Meester-Arena',cap:Infinity,emoji:'🟣'}};
 export const HELD={
  leaf:{name:'Dauwblad',icon:'itemLeaf',attack:1,defense:1,hp:1.05,hint:'+5% HP'},
  thorn:{name:'Doorn',icon:'itemThorn',attack:1.03,defense:1,hp:1,hint:'+3% aanval'},
@@ -106,7 +107,8 @@ export type GoProfile={
  dailyChallenge?:DailyChallengeProgress;
  gyms?:GymProgress;
  journal?:GoJournalEntry[];trades?:GoTradeProgress;
- echo?:EchoProgress;cocoons?:GoCocoonsProgress;bosses?:BossProgress;raids?:import('./raidsV2').RaidProgress;
+ pvp?:import('./pvpV2').PvpProgress;
+ echo?:EchoProgress;cocoons?:GoCocoonsProgress;bosses?:BossProgress;raids?:import('./raidsV2').RaidProgress;plaagbende?:import('./plaagbendeV2').PlaagbendeProgress;
  sites?:SiteProgress;trainer?:TrainerProgress;
  entries?:Record<string,{seenAt:number|null;caughtAt:number|null;shinyAt:number|null}>;dexVersion?:1;
  ratedDay?:string;ratedCount?:number;dex?:string[];version:1;dust:number;candy:Record<string,number>;xl:Record<string,number>;items:Record<Held,number>;fastTMs:number;chargedTMs:number;
@@ -209,9 +211,9 @@ export function secondAttack(p:PlayerV2,id:unknown,seed:string){availableGo(p,id
 export function teachMove(p:PlayerV2,id:unknown,slot:unknown,seed:string){availableGo(p,id);const s=ownedGo(p,id),g=p.go!,pool=movePool(s.species);if(slot==='fast'){check(g.fastTMs>0,'Je hebt een snelle TM nodig.');const options=pool.fast.filter(m=>m!==s.go!.fast);s.go!.fast=options[Math.floor(rng(seed)()*options.length)];g.fastTMs--;}else{check((slot===0||slot===1)&&slot<s.go!.charged.length&&g.chargedTMs>0,'Kies een bestaande aanval en gebruik een opgeladen TM.');const options=pool.charged.filter(m=>!s.go!.charged.includes(m));check(options.length,'Geen andere aanval beschikbaar.');s.go!.charged[slot as number]=options[Math.floor(rng(seed)()*options.length)];g.chargedTMs--;}}
 export function equipGo(p:PlayerV2,id:unknown,item:unknown){availableGo(p,id);const s=ownedGo(p,id);check(item===null||typeof item==='string'&&Object.hasOwn(HELD,item),'Kies een held item.');if(item)check((p.go!.items[item as Held]??0)>p.specimens.filter(o=>o.id!==s.id&&o.go?.item===item).length,'Dit item is al uitgerust of nog niet gevonden.');s.go!.item=item as Held|null;}
 export function teamIssue(p:PlayerV2,raw:unknown,league:unknown,npc=false):string|null{
- if(typeof league!=='string'||!Object.hasOwn(LEAGUES,league)||!Array.isArray(raw)||raw.length!==3||new Set(raw).size!==3)return 'Kies drie verschillende eigen exemplaren en een league.';
- if(!npc&&league==='ultra'&&p.specimens.filter(s=>s.go&&stats(s).cp>1500).length<3)return 'Ultra League vraagt drie bugs boven 1500 CP.';
- if(!npc&&league==='master'&&p.specimens.filter(s=>s.go&&stats(s).cp>2500).length<3)return 'Master League vraagt drie bugs boven 2500 CP.';
+ if(typeof league!=='string'||!Object.hasOwn(LEAGUES,league)||!Array.isArray(raw)||raw.length!==3||new Set(raw).size!==3)return 'Kies drie verschillende eigen bugs en een arena.';
+ if(!npc&&league==='ultra'&&p.specimens.filter(s=>s.go&&stats(s).cp>1500).length<3)return 'De Grote Arena vraagt drie bugs boven 1500 CP.';
+ if(!npc&&league==='master'&&p.specimens.filter(s=>s.go&&stats(s).cp>2500).length<3)return 'De Meester-Arena vraagt drie bugs boven 2500 CP.';
  const team=raw.map(id=>p.specimens.find(s=>s.id===id&&s.go));if(team.some(s=>!s))return 'Kies een zelfgevangen bug.';
  if(team.some(s=>p.go?.gyms?.deployed.some(d=>d.specimen===s!.id)))return 'Een bug verdedigt een gym. Kies een andere bug.';
  if(new Set(team.map(s=>s!.species)).size!==3)return 'Kies drie verschillende soorten.';
@@ -234,4 +236,5 @@ export function evolveGo(p:PlayerV2,id:unknown,seed:string,now=Date.now()){
 export function awardGoCatch(p:PlayerV2,s:Specimen,seed:string,bait:string|null=null,grade?:string,curved=false,bonus?:{level:number}){const g=p.go!,key=family(s.species),newKind=!g.dex!.includes(s.species);if(s.source==='cocoon')grantXP(p,100+(newKind?500:0));else catchXP(p,newKind,s.obtainedAt,grade,curved);s.go=rollGoBug(s.species,seed,bonus);const reward=s.source==='cocoon'?{dust:100,candy:3}:goCatchRewards(s.species,bait);g.dust+=reward.dust;g.candy[key]=(g.candy[key]??0)+reward.candy;const random=rng(seed+':extra');let held:Held|null=null;if(s.go.level>=15&&random()<.1)g.xl[key]=(g.xl[key]??0)+1;if(random()<.04){const items=Object.keys(HELD) as Held[];held=items[Math.floor(random()*items.length)];g.items[held]++;}if(!g.dex!.includes(s.species))g.dex!.push(s.species);markGoSeen(p,s.species,s.obtainedAt);g.entries![s.species].caughtAt??=s.obtainedAt;if(s.shiny)g.entries![s.species].shinyAt??=s.obtainedAt;if(!p.buddy)p.buddy=s.id;return held;}
 
 export function goCatchRewards(kind:string,bait:string|null=null){const stage=evolutionStage(kind),candy=[3,5,10][stage-1];return {dust:[100,300,500][stage-1],candy:bait==='fruit'?candy*2:bait==='silver'?Math.floor(candy*7/3):candy};}
-export function buddyDistance(kind:string){const tier=species(evolutionLine(kind)[0]).tier;return tier<=2?1000:tier<=5?3000:5000;}
+/** Every buddy earns its nectar per walked kilometre (game/buddyV2.ts adds hearts, stof and level perks). */
+export function buddyDistance(_kind:string){return 1000;}

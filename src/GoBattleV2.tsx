@@ -1,6 +1,6 @@
 import React,{useContext,useEffect,useRef,useState} from 'react';
 
-import {Image,Pressable,ScrollView,Text,TextInput,useWindowDimensions,View} from 'react-native';
+import {Pressable,ScrollView,Text,TextInput,useWindowDimensions,View} from 'react-native';
 
 import {CHARGED,FAST,HELD,LEAGUES,movePool,stats,teamIssue} from '../game/goV2';
 
@@ -15,9 +15,9 @@ import type {RunV2} from './ShopViewV2';
 
 import {Scene,SpriteView} from './artV2';
 
-import {legacyArt} from './legacyArtV2';
-
-function RankEmblem({rating,size=130}:{rating:number;size?:number}){return <Image source={legacyArt[rating<1100?'bronze':rating<1300?'silver':'gold']} resizeMode="contain" style={{width:size,height:size}}/>;}
+import {cupTheme,pvpView,suggestTeam} from '../game/pvpV2';
+import {PvpGainV2,RankCardV2,RankMedalV2,RewardTrackV2,SeasonNewsV2} from './PvpRankV2';
+import {CupPanelV2} from './CupV2';
 
 import {Button,Counter,font,Glyph,Help,IconButton,Label,MotionPrefs,Panel,Title,v,Wash,useInfo} from './uiV2';
 
@@ -70,7 +70,7 @@ function HP({value,max}:{value:number;max:number}){return <View style={{width:'1
 export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;open?:(name:string)=>void}){
 
  const reduced=useContext(MotionPrefs);
- const p=view.player,g=p.go!,b=view.goBattle,[picking,setPicking]=useState(false),[code,setCode]=useState(''),[invite,setInvite]=useState(false),[inviteMade,setInviteMade]=useState(0),[mode,setMode]=useState<'duel'|'daily'|'boss'|'live'>('duel'),[ranks,setRanks]=useState(false),[searchExpired,setSearchExpired]=useState(false),queued=useRef(g.queue?.until),info=useInfo(),{height}=useWindowDimensions(),fighterSize=Math.max(72,Math.min(160,(height-340)*.36)),live=mode==='live';
+ const p=view.player,g=p.go!,b=view.goBattle,[picking,setPicking]=useState(false),[code,setCode]=useState(''),[invite,setInvite]=useState(false),[inviteMade,setInviteMade]=useState(0),[mode,setMode]=useState<'duel'|'cup'|'daily'|'boss'|'live'>('duel'),[ranks,setRanks]=useState(false),[searchExpired,setSearchExpired]=useState(false),queued=useRef(g.queue?.until),info=useInfo(),{height}=useWindowDimensions(),fighterSize=Math.max(72,Math.min(160,(height-340)*.36)),live=mode==='live';
 
  useEffect(()=>{if(queued.current&&!g.queue&&!b&&now>=queued.current)setSearchExpired(true);if(g.queue)setSearchExpired(false);queued.current=g.queue?.until;},[g.queue?.until,b?.id]);
 
@@ -78,7 +78,7 @@ export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;b
 
  if(b){const side=b.side,other=1-side,a=b.teams[side][b.active[side]],enemy=b.teams[other][b.active[other]],charge=b.charge,canTap=b.phase==='fight'&&a.hp>0&&enemy.hp>0&&!b.replaceAt.some(Boolean),fast=FAST[a.go.fast],cooldown=Math.max(0,a.readyAt-now),readyEnergy=battleReadyEnergy(b),queuedAction=input.queued??b.queued?.[side]?.kind,hitTargets=charge?[...new Set([...charge.hits,...input.targets])]:[],chargeArtSize=Math.min(150,Math.max(64,(height-330)/3));
 
-  if(b.phase==='finished'){const reward=b.rewards?.[side],delta=side===0?b.delta:-b.delta;return <View style={{flex:1,justifyContent:'center',padding:22,gap:20}}><Scene index={4}/><Panel style={{alignItems:'center',gap:15}}><RankEmblem rating={g.rating} size={120}/><Title>{b.winner===null?'Gelijkspel':b.winner===side?'Gewonnen':'Verloren'}</Title><Label bold>{b.raid?(b.winner===side?'Zwerm verslagen · haal je beloning bij Gyms':'Zwerm · nog niet verslagen; vecht mee zolang de tijd loopt'):b.gym?'Gym · geen Elo':b.dailyChallenge?(b.dailyChallenge.practice?'Dagstrijd · oefenen · geen score':'Dagstrijd · score '+(b.dailyChallenge.score??0)):b.boss?'Dagbaas · '+(b.boss.rewarded?'beloning verdiend':'geen nieuwe beloning'):b.echo?(b.echo.npc?'NPC · geen rating':'Echo · '+((b.echo.delta??0)>0?'+':'')+(b.echo.delta??0)+' rating'):b.training?'Training · geen Elo':b.ranked?(delta>0?'+':'')+delta+' Elo':'Vriendenduel · geen Elo'}</Label>{b.echo?.rewarded===false&&<Label small>Oefenduel · geen beloning</Label>}{reward&&(b.ranked||b.echo||b.boss||b.dailyChallenge)&&<View accessibilityLabel="Gevechtsbeloning" style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:16}}><Counter icon="nectar" value={'+'+reward.dust} label="✨ Stof verdiend"/>{reward.xp>0&&<Counter icon="star" value={'+'+reward.xp} label="XP verdiend"/>}{reward.fastTMs>0&&<Counter icon="attack" value={'+'+reward.fastTMs} label="Snelle TM verdiend"/>}{reward.chargedTMs>0&&<Counter icon="burst" value={'+'+reward.chargedTMs} label="Opgeladen TM verdiend"/>}{reward.item&&<Counter icon={HELD[reward.item].icon} value="+1" label={HELD[reward.item].name}/>}</View>}{b.gym&&<Label small>{view.goGyms?.find(g=>g.id===b.gym!.id)?.team===null?'Gym vrij · laat een bug achter':'Verdediging verzwakt na iedere verslagen bug'}</Label>}{b.boss?.post&&b.boss.rewarded&&b.winner===side&&<Button icon="leaf" disabled={busy} onPress={()=>void run('goClose').then(ok=>{if(ok)open?.('map');})}>Vang kaartbaas</Button>}<Button onPress={()=>void run('goClose').then(ok=>{if(ok&&b.gym)open?.('gyms');})} disabled={busy}>{b.gym?'Naar gyms':'Verder'}</Button></Panel></View>;}
+  if(b.phase==='finished'){const reward=b.rewards?.[side],delta=side===0?b.delta:-b.delta;return <View style={{flex:1,justifyContent:'center',padding:22,gap:20}}><Scene index={4}/><Panel style={{alignItems:'center',gap:15}}><RankMedalV2 rank={pvpView(p,now).rank} size={96}/><Title>{b.winner===null?'Gelijkspel':b.winner===side?'Gewonnen':'Verloren'}</Title><Label bold>{b.plaagbende?(b.plaagbende.rewarded?'🦝 Plaagbende verslagen · '+(b.plaagbende.rescued?species(b.plaagbende.rescued).name+' gered!':'bug gered!'):'🦝 Plaagbende · probeer opnieuw'):b.raid?(b.winner===side?'Zwerm verslagen · haal je beloning bij Gyms':'Zwerm · nog niet verslagen; vecht mee zolang de tijd loopt'):b.gym?'Gym · geen Elo':b.dailyChallenge?(b.dailyChallenge.practice?'Dagstrijd · oefenen · geen score':'Dagstrijd · score '+(b.dailyChallenge.score??0)):b.boss?'Dagbaas · '+(b.boss.rewarded?'beloning verdiend':'geen nieuwe beloning'):b.echo?(b.echo.npc?'NPC · geen rating':'Echo · '+((b.echo.delta??0)>0?'+':'')+(b.echo.delta??0)+' rating'):g.pvp?.cupBattle===b.id||g.pvp?.last?.battle===b.id&&g.pvp.last.cup?cupTheme(now).emoji+' Weekbeker':b.training?'Oefenduel':b.ranked?(delta>0?'+':'')+delta+' Elo':'Vriendenduel · geen Elo'}</Label>{b.echo?.rewarded===false&&<Label small>Oefenduel · geen beloning</Label>}{reward&&(b.ranked||b.echo||b.boss||b.dailyChallenge||b.plaagbende?.rewarded)&&<View accessibilityLabel="Gevechtsbeloning" style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:16}}><Counter icon="nectar" value={'+'+reward.dust} label="✨ Stof verdiend"/>{reward.xp>0&&<Counter icon="star" value={'+'+reward.xp} label="XP verdiend"/>}{reward.fastTMs>0&&<Counter icon="attack" value={'+'+reward.fastTMs} label="Snelle TM verdiend"/>}{reward.chargedTMs>0&&<Counter icon="burst" value={'+'+reward.chargedTMs} label="Opgeladen TM verdiend"/>}{reward.item&&<Counter icon={HELD[reward.item].icon} value="+1" label={HELD[reward.item].name}/>}</View>}{g.pvp?.last?.battle===b.id&&<PvpGainV2 gain={g.pvp.last}/>}{b.gym&&<Label small>{view.goGyms?.find(g=>g.id===b.gym!.id)?.team===null?'Gym vrij · laat een bug achter':'Verdediging verzwakt na iedere verslagen bug'}</Label>}{b.boss?.post&&b.boss.rewarded&&b.winner===side&&<Button icon="leaf" disabled={busy} onPress={()=>void run('goClose').then(ok=>{if(ok)open?.('map');})}>Vang kaartbaas</Button>}<Button onPress={()=>void run('goClose').then(ok=>{if(ok&&b.gym)open?.('gyms');})} disabled={busy}>{b.gym?'Naar gyms':'Verder'}</Button></Panel></View>;}
 
   return <View style={{flex:1,padding:12,gap:6,backgroundColor:'#143F38'}}><Scene index={4} dim={.16}/><Wash from="#153B311A" to="#0C322DBB"/>
 
@@ -100,25 +100,30 @@ export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;b
 
  if(g.queue)return <View style={{flex:1,justifyContent:'center',padding:22,gap:20}}><Scene index={4}/><Panel style={{alignItems:'center',gap:20}}><Glyph name="swords" size={80}/><Title>Tegenstander zoeken</Title><Label>{LEAGUES[g.queue.league].name} · {Math.max(0,Math.ceil((g.queue.until-now)/1000))} s</Label><Button secondary disabled={busy} onPress={()=>void run('goCancel')}>Stop zoeken</Button></Panel></View>;
 
- const pool=p.specimens.filter(s=>s.go).sort((a,b)=>stats(b).cp-stats(a).cp),issue=teamIssue(p,g.team,g.league),valid=!issue;
+ const pool=p.specimens.filter(s=>s.go).sort((a,b)=>stats(b).cp-stats(a).cp),issue=teamIssue(p,g.team,g.league),valid=!issue,strong=suggestTeam(p,LEAGUES[g.league].cap);
 
- return <ScrollView contentContainerStyle={{padding:16,paddingTop:87,gap:14,paddingBottom:100}}><View style={[v.row,{justifyContent:'space-between'}]}><Title>Strijd</Title><GoTypeHelp/><Help title="Strijd" body="Duel: speel direct, ook als niemand online is. Dagstrijd: verbeter je dagscore. Dagbaas: versla een sterke bug. Samen online spelen: beide spelers moeten aanwezig zijn."/></View>
+ return <ScrollView contentContainerStyle={{padding:16,paddingTop:87,gap:14,paddingBottom:100}}><View style={[v.row,{justifyContent:'space-between'}]}><Title>Strijd</Title><GoTypeHelp/><Help title="Strijd" body={'⚔️ Duel: meteen spelen, ook als niemand online is.\n🗓️ Weekbeker: elke week andere types.\n🏆 Arena: tegen echte spelers.\n\nElke winst vult je 🎁 pad en geeft 🏅 punten voor je rang.'}/></View>
 
-  <View accessibilityRole="tablist" style={{flexDirection:'row',gap:5}}>{([{id:'duel',name:'Duel'},{id:'daily',name:'Dagstrijd'},{id:'boss',name:'Dagbaas'}] as const).map(tab=><Pressable key={tab.id} accessibilityRole="tab" accessibilityLabel={tab.name} accessibilityState={{selected:mode===tab.id}} onPress={()=>setMode(tab.id)} style={{flex:1,minHeight:46,alignItems:'center',justifyContent:'center',borderRadius:14,backgroundColor:mode===tab.id?'#426B4A':'#1A4035',borderWidth:1,borderColor:mode===tab.id?'#A2C58D':'#66836C55'}}><Label bold>{tab.name}</Label></Pressable>)}</View>
+  <RankCardV2 player={p} now={now}/><SeasonNewsV2 player={p} now={now}/><RewardTrackV2 player={p} now={now}/>
+
+  <View accessibilityRole="tablist" style={{flexDirection:'row',gap:8}}>{([{id:'duel',emoji:'⚔️',name:'Duel'},{id:'cup',emoji:cupTheme(now).emoji,name:'Weekbeker'},{id:'live',emoji:'🏆',name:'Arena'}] as const).map(tab=><Pressable key={tab.id} testID={'mode-'+tab.id} accessibilityRole="tab" accessibilityLabel={tab.name} accessibilityState={{selected:mode===tab.id}} onPress={()=>setMode(tab.id)} style={{flex:1,minHeight:92,alignItems:'center',justifyContent:'center',gap:2,borderRadius:20,backgroundColor:mode===tab.id?'#426B4A':'#1A4035',borderWidth:mode===tab.id?3:1,borderColor:mode===tab.id?'#F2D16E':'#66836C55'}}><Text style={{fontSize:38}}>{tab.emoji}</Text><Label bold>{tab.name}</Label></Pressable>)}</View><View style={{flexDirection:'row',gap:8}}>{([{id:'daily',emoji:'🎯',name:'Dagstrijd'},{id:'boss',emoji:'👹',name:'Dagbaas'}] as const).map(tab=><Pressable key={tab.id} testID={'mode-'+tab.id} accessibilityRole="tab" accessibilityLabel={tab.name} accessibilityState={{selected:mode===tab.id}} onPress={()=>setMode(tab.id)} style={{flex:1,minHeight:46,flexDirection:'row',gap:6,alignItems:'center',justifyContent:'center',borderRadius:14,backgroundColor:mode===tab.id?'#426B4A':'#1A4035',borderWidth:mode===tab.id?2:1,borderColor:mode===tab.id?'#F2D16E':'#66836C55'}}><Text style={{fontSize:20}}>{tab.emoji}</Text><Label bold>{tab.name}</Label></Pressable>)}</View>
+
+  {(mode==='duel'||live)&&strong.length===3&&strong.join()!==g.team.join()&&<Button small icon="star" disabled={busy} onPress={()=>void run('goTeam',{ids:strong,league:g.league})}>👍 Kies sterk team</Button>}
 
   {mode==='duel'&&<GoEchoArenaV2 {...{view,run,busy,now}} onChooseTeam={()=>setPicking(true)}/>}
+
+  {mode==='cup'&&<CupPanelV2 {...{view,run,busy,now,open}}/>}
 
   {mode==='daily'&&<GoDailyChallengeV2 {...{view,run,busy,now}}/>}
 
   {mode==='boss'&&<GoBossV2 {...{view,run,busy,now}}/>}
 
-  <Button small secondary icon="friends" onPress={()=>setMode(live?'duel':'live')}>{live?'Terug naar duels':'Samen online spelen'}</Button>
 
-  {live&&<><Panel style={{flexDirection:'row',alignItems:'center',gap:16}}><RankEmblem rating={g.rating} size={65}/><View style={{flex:1,gap:5}}><Title>{g.rating}</Title><Label small>Live Elo · {Math.max(0,25-(g.ratedCount??0))} duels over</Label></View></Panel>
-
+  {live&&<><Panel style={{flexDirection:'row',alignItems:'center',gap:16}}><Text style={{fontSize:44}}>🏆</Text><View style={{flex:1,gap:5}}><Title>Arena</Title><Label small>👥 Echte spelers · 🎟️ {Math.max(0,25-(g.ratedCount??0))} over</Label></View></Panel>
 
 
-  <Panel><View style={[v.row,{justifyContent:'space-between'}]}><Label bold>{LEAGUES[g.league].name}</Label><IconButton name="settings" label="PvP-team kiezen" onPress={()=>setPicking(true)}/></View><View style={{flexDirection:'row',gap:8}}>{[0,1,2].map(i=>{const s=pool.find(s=>s.id===g.team[i]);return <Pressable key={i} accessibilityRole="button" accessibilityLabel={'Teamslot '+(i+1)} onPress={()=>setPicking(true)} style={{flex:1,minHeight:105,alignItems:'center',justifyContent:'center',borderRadius:19,backgroundColor:'#294F43'}}>{s?<><SpriteView id={s.species} shiny={s.shiny} size={70}/><Label small bold>{stats(s).cp} CP</Label><GoTypes species={s.species} compact/>{s.go!.item&&<Glyph name={HELD[s.go!.item].icon} size={22}/>}</>:<Glyph name="team" size={50}/>}</Pressable>;})}</View><Button icon="swords" disabled={busy||!valid||(g.ratedCount??0)>=25||!view.linked} onPress={()=>void run('goQueue')}>Speel Ranked</Button><View style={{flexDirection:'row',gap:8}}><View style={{flex:1}}><Button secondary small disabled={busy||!valid} onPress={()=>void run('goTrain')}>Training</Button></View><View style={{flex:1}}><Button secondary small disabled={busy||!valid} onPress={()=>setInvite(!invite)}>Vriendenduel</Button></View></View>{!view.linked&&valid&&open&&<Button small secondary icon="profile" onPress={()=>open('account')}>Koppel account voor Ranked</Button>}{!valid&&<><Label small>{issue}</Label>{new Set(pool.map(s=>s.species)).size<3&&open&&<Button small secondary icon="compass" onPress={()=>open('map')}>Ga vangen</Button>}</>}</Panel>
+
+  <Panel><View style={[v.row,{justifyContent:'space-between'}]}><Label bold>{LEAGUES[g.league].emoji} {LEAGUES[g.league].name}</Label><IconButton name="settings" label="Team en arena kiezen" onPress={()=>setPicking(true)}/></View><View style={{flexDirection:'row',gap:8}}>{[0,1,2].map(i=>{const s=pool.find(s=>s.id===g.team[i]);return <Pressable key={i} accessibilityRole="button" accessibilityLabel={'Teamslot '+(i+1)} onPress={()=>setPicking(true)} style={{flex:1,minHeight:105,alignItems:'center',justifyContent:'center',borderRadius:19,backgroundColor:'#294F43'}}>{s?<><SpriteView id={s.species} shiny={s.shiny} size={70}/><Label small bold>{stats(s).cp} CP</Label><GoTypes species={s.species} compact/>{s.go!.item&&<Glyph name={HELD[s.go!.item].icon} size={22}/>}</>:<Glyph name="team" size={50}/>}</Pressable>;})}</View><Button icon="swords" disabled={busy||!valid||(g.ratedCount??0)>=25||!view.linked} onPress={()=>void run('goQueue')}>🏆 Zoek tegenstander</Button><View style={{flexDirection:'row',gap:8}}><View style={{flex:1}}><Button secondary small disabled={busy||!valid} onPress={()=>void run('goTrain')}>Training</Button></View><View style={{flex:1}}><Button secondary small disabled={busy||!valid} onPress={()=>setInvite(!invite)}>Vriendenduel</Button></View></View>{!view.linked&&valid&&open&&<Button small secondary icon="profile" onPress={()=>open('account')}>Koppel account voor Ranked</Button>}{!valid&&<><Label small>{issue}</Label>{new Set(pool.map(s=>s.species)).size<3&&open&&<Button small secondary icon="compass" onPress={()=>open('map')}>Ga vangen</Button>}</>}</Panel>
 
   {invite&&<Panel><Button small secondary disabled={busy||!valid} onPress={()=>void run('goInvite').then(ok=>{if(ok)setInviteMade(now+300000);})}>Maak uitnodiging</Button><Label bold center>{p.friendCode}</Label>{inviteMade>0&&<Label small>{inviteMade>now?'Duelcode actief · '+Math.ceil((inviteMade-now)/60000)+' min':'Duelcode verlopen'}</Label>}<TextInput accessibilityLabel="Duelcode" placeholder="Code van vriend" placeholderTextColor="#B7CAB6" selectionColor="#A5CE87" maxLength={8} autoCapitalize="characters" value={code} onChangeText={v=>setCode(v.toUpperCase())} style={v.input}/><Button small disabled={busy||code.length!==8||!valid} onPress={()=>void run('goJoin',{code})}>Doe mee</Button></Panel>}
 
@@ -126,7 +131,7 @@ export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;b
 
   </>}
 
-  {!live&&mode!=='duel'&&<Button small secondary icon="team" onPress={()=>setPicking(true)}>Mijn strijdteam</Button>}
+  {(mode==='daily'||mode==='boss')&&<Button small secondary icon="team" onPress={()=>setPicking(true)}>Mijn strijdteam</Button>}
 
   {picking&&<GoTeamPickerV2 player={p} {...{run,busy}} onClose={()=>setPicking(false)}/>}
 

@@ -4,7 +4,7 @@ import {virtualPosts} from '../game/virtualPostsV2';
 import {contains,edgeDistance} from '../game/habitatsV2';
 import type {AreaFeature} from '../game/habitatsV2';
 import {distance} from '../game/walkingV2';
-import {awardPostCocoon,COCOON_POST_CHANCE} from '../game/goCocoonsV2';
+import {awardPostCocoon,COCOON_CAP,COCOON_POST_CHANCE} from '../game/goCocoonsV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo} from '../game/goV2';
 import {freshV2} from '../game/safariV2';
@@ -30,7 +30,7 @@ test('post cocoon drops require a real spin, cap the bag and cannot reroll a con
  const p=freshV2('virtual-post-qa','VIRT1234',NOW);ensureField(p,NOW);ensureGo(p,NOW);const post=virtualPosts(FIX,[path])[0];p.walking={fix:{...FIX,...post},at:NOW,day:'2026-10-22',spawns:[],caught:[],count:0,posts:[post]};
  let seed='';for(let i=0;i<10000;i++)if(rng('post-'+i+':post-cocoon')()<COCOON_POST_CHANCE){seed='post-'+i;break;}
  assert.equal(awardPostCocoon(p,post.id,seed,NOW),null);spinPost(p,post.id,seed,NOW);assert.equal(p.go!.cocoons!.items.length,2);assert.ok(p.go!.sites!.lastLoot!.cocoon);assert.equal(awardPostCocoon(p,post.id,seed,NOW),null);
- const items=p.go!.cocoons!.items;items.push({...items[0],id:'full'});p.go!.sites!.visits[post.id]=NOW+1;assert.equal(awardPostCocoon(p,post.id,seed,NOW+1),null);items.pop();assert.equal(awardPostCocoon(p,post.id,seed,NOW+1),null);
+ const items=p.go!.cocoons!.items;while(items.length<COCOON_CAP)items.push({...items[0],id:'full-'+items.length});p.go!.sites!.visits[post.id]=NOW+1;assert.equal(awardPostCocoon(p,post.id,seed,NOW+1),null);items.pop();assert.equal(awardPostCocoon(p,post.id,seed,NOW+1),null);
  assert.throws(()=>spinPost(p,post.id,seed,NOW+1),/laadt/);
 });
 

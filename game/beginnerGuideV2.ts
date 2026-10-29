@@ -19,3 +19,6 @@ export function beginnerSteps(p:PlayerV2,level:number,localDone:readonly string[
   {id:'first-battle',title:level>=5?'Speel je eerste gevecht':'Haal level 5 voor gevechten',hint:level>=5?'Tik op Strijd en start een duel.':'Je bent nu level '+level+'. Vang bugs om te groeien.',icon:'swords',action:level>=5?'battle':'nearby',done:localDone.includes('first-battle'),markOnAction:level>=5},
  ];
 }
+/** A collapsed guide pops open for a few seconds only when a step the player has not seen yet starts. */
+export const GUIDE_PEEK_MS=6000;
+export function guidePeeks(collapsed:boolean,lastStep:string|null,step:string){return collapsed&&lastStep!==step;}

@@ -64,7 +64,7 @@ test('ranked results report actual persisted rewards including capped XP and sur
   const lost=await service.command('b',command),again=await service.command('b',command);av=await service.state('a');
   const win=av.goBattle!.rewards![av.goBattle!.side],loss=lost.goBattle!.rewards![lost.goBattle!.side];
   assert.equal(win.dust,500);assert.equal(win.xp,80);assert.equal(win.fastTMs+win.chargedTMs,1);assert.equal(loss.dust,100);assert.equal(loss.xp,0);assert.equal(loss.fastTMs+loss.chargedTMs,1);
-  assert.equal(av.player.go!.dust-a.go!.dust,win.dust);assert.equal(av.player.go!.trainer!.xp,levelXP(40));assert.deepEqual(again.goBattle!.rewards,lost.goBattle!.rewards);assert.deepEqual(again.player.go,lost.player.go);
+  assert.equal(av.player.go!.dust-a.go!.dust,win.dust+300);assert.deepEqual(av.player.go!.pvp!.rewards,[{kind:'dust',dust:300}]);assert.equal(av.player.go!.trainer!.xp,levelXP(40));assert.deepEqual(again.goBattle!.rewards,lost.goBattle!.rewards);assert.deepEqual(again.player.go,lost.player.go);
   await service.command('a',{type:'goClose',commandId:randomUUID(),expectedRevision:av.player.revision});av=await service.state('a');
   av=await service.command('a',{type:'goTrain',commandId:randomUUID(),expectedRevision:av.player.revision});
   av=await service.command('a',{type:'goAct',action:'forfeit',value:null,commandId:randomUUID(),expectedRevision:av.player.revision});
