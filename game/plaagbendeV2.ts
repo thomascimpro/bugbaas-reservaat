@@ -14,7 +14,7 @@ import {POST_RADIUS} from './worldSitesV2';
 import {checkV2 as check} from './shopV2';
 
 /** Plaagbende (kid-friendly Team GO Rocket): some posts are taken over for a few hours, plus a balloon every ~6 h near the player. */
-export const PLAAG_WINDOW_MS=3*3600000,PLAAG_CHANCE=.2,BALLOON_EVERY_MS=6*3600000,BALLOON_STAYS_MS=3*3600000,BALLOON_FOLLOW_M=120;
+export const PLAAG_WINDOW_MS=3*3600000,PLAAG_CHANCE=.08,PLAAG_RADIUS=100,BALLOON_EVERY_MS=6*3600000,BALLOON_STAYS_MS=3*3600000,BALLOON_FOLLOW_M=120;
 export const PLAAG_REWARD={dust:500,xp:300,rescueLevel:15} as const;
 export const PLAAG_EMOJI:Record<Element,string>={bug:'🐛',flying:'🪶',poison:'🧪',grass:'🌿',ground:'⛏️',rock:'🪨',steel:'⚙️',dark:'🌙',normal:'⭐',fire:'🔥',water:'💧'};
 const NAMES:Record<Element,string>={bug:'Plaagbende-kriebel',flying:'Plaagbende-fladder',poison:'Plaagbende-stinker',grass:'Plaagbende-grasdief',ground:'Plaagbende-graver',rock:'Plaagbende-keitje',steel:'Plaagbende-blikkie',dark:'Plaagbende-sluiper',normal:'Plaagbende-rover',fire:'Plaagbende-vonk',water:'Plaagbende-spetter'};
@@ -61,7 +61,7 @@ function target(p:PlayerV2,raw:unknown,now:number,token:PlaagToken):{id:string;k
  check(typeof raw==='string'&&raw.length>0&&raw.length<240,'Kies de Plaagbende.');const g=ensurePlaag(p);
  if(raw==='balloon'){const b=g.balloon;check(b&&b.until>now,'De ballon is weggevlogen.');check(!g.cleared.includes(b.id),'Deze ballon is al verslagen.');return {id:b.id,kind:'balloon',type:b.type};}
  const w=requireFieldLocation(p.walking,now) as Walking,post=w.posts?.find(s=>s.id===raw);check(post,'Deze post is niet in de buurt.');check(!gymSites(w.posts??[]).some(s=>s.postId===post.id),'Deze post is een gym.');
- check(distance(w.fix,post)<=POST_RADIUS,'Loop binnen '+POST_RADIUS+' meter van de post.');const v=invasionAt(post.id,now,token);check(v,'De Plaagbende is hier al weg.');check(!g.cleared.includes(v.id),'Deze Plaagbende heb je al verslagen.');
+ check(distance(w.fix,post)<=PLAAG_RADIUS,'Loop binnen '+PLAAG_RADIUS+' meter van de post.');const v=invasionAt(post.id,now,token);check(v,'De Plaagbende is hier al weg.');check(!g.cleared.includes(v.id),'Deze Plaagbende heb je al verslagen.');
  return {id:v.id,kind:'post',type:v.type,postId:post.id};
 }
 /** A fair fight for kids: the grunt's bugs sit just below the player's own team CP; no CP limit, one shield. */

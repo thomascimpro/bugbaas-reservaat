@@ -36,9 +36,9 @@ async function setup(uid:string,posts:unknown[]){
  return {store,service,clock,send,finish,get view(){return view;},set view(v:GameViewV2){view=v;}};
 }
 
-test('schedule is deterministic, keyed, about one in five posts, per 3-hour window',()=>{
+test('schedule is deterministic, keyed, about one in twelve posts, per 3-hour window',()=>{
  const ids=Array.from({length:2000},(_,i)=>'post-'+i),hits=ids.filter(id=>invasionAt(id,T0,TOKEN));
- assert.ok(hits.length>2000*.15&&hits.length<2000*.25,'about 20%: '+hits.length);
+ assert.ok(hits.length>2000*.05&&hits.length<2000*.11,'about 8%: '+hits.length);
  assert.deepEqual(ids.map(id=>invasionAt(id,T0,TOKEN)?.id??null),ids.map(id=>invasionAt(id,T0+60000,TOKEN)?.id??null),'stable inside a window');
  const other=(input:string)=>createHmac('sha256','another-key').update(input).digest('base64url').slice(0,22);
  assert.notDeepEqual(ids.map(id=>!!invasionAt(id,T0,TOKEN)),ids.map(id=>!!invasionAt(id,T0,other)),'the secret decides the schedule');
@@ -55,7 +55,7 @@ test('post invasion: distance enforced, fair CP, win rewards once with a rescued
  assert.ok(inv&&!inv.far,'the invaded post is on the map');const ids=['bug-0','bug-1','bug-2'];
  // Too far away: the server refuses.
  await t.store.run(['v2Players:'+uid],d=>{const p=d.get('v2Players:'+uid) as PlayerV2;p.walking!.posts=[gym,{...post,lat:FIX.lat+.002}];d.set('v2Players:'+uid,p);});t.view=await t.service.state(uid);
- await assert.rejects(t.send('plaagFight',{target:post.id,ids}),/65 meter/);
+ await assert.rejects(t.send('plaagFight',{target:post.id,ids}),/100 meter/);
  await t.store.run(['v2Players:'+uid],d=>{const p=d.get('v2Players:'+uid) as PlayerV2;p.walking!.posts=[gym,post];d.set('v2Players:'+uid,p);});t.view=await t.service.state(uid);
  // A loss costs nothing and the post stays.
  await t.send('plaagFight',{target:post.id,ids});const b=t.view.goBattle!;assert.ok(b.plaagbende&&b.plaagbende.type===inv.type);
