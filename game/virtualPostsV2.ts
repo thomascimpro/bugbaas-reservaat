@@ -4,7 +4,7 @@ import type {Fix} from './walkingV2';
 import {distance} from './walkingV2';
 import type {FieldPost} from './worldSitesV2';
 
-const CELL=170,RANGE=310;
+const CELL=170,RANGE=450;
 const denied=(p:Record<string,unknown>)=>['private','no','customers','permit'].includes(String(p.access??''))||['private','no'].includes(String(p.foot??''));
 const pedestrian=(f:AreaFeature)=>f.layer==='transportation'&&!denied(f.properties)&&/^(footway|path|pedestrian|cycleway|steps)$/.test(String(f.properties.subclass??f.properties.class??''));
 function lines(f:AreaFeature){return f.geometry.type==='LineString'?[f.geometry.coordinates]:f.geometry.type==='MultiLineString'?f.geometry.coordinates:[];}
@@ -26,7 +26,7 @@ export function virtualPosts(fix:Pick<Fix,'lat'|'lng'>,features:AreaFeature[],ex
    const point=closest(lat,(x+.5)*dx,paths);if(!point||distance(fix,point)>RANGE||!canSpawnAt(point,features))continue;
    // Do not put resources on motor roads, railways, water, buildings or access-restricted mapped land.
    if(features.some(f=>denied(f.properties)&&(contains(point,f.geometry)||edgeDistance(point,f.geometry)<8)||f.layer==='waterway'&&edgeDistance(point,f.geometry)<4||f.layer==='transportation'&&!pedestrian(f)&&edgeDistance(point,f.geometry)<8))continue;
-   if(existing.some(p=>distance(p,point)<85))continue;
+   if(existing.some(p=>distance(p,point)<60))continue;
    candidates.push({id:'vpost-'+y+'-'+x,name:'Veldpost',...point,source:'virtual'});
   }
  }

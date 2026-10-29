@@ -24,7 +24,7 @@ function routePoints(points:Point[],walkable:(p:Point)=>boolean){
  return total>=160&&samples.length>=5?samples:null;
 }
 const KINDS:Record<string,string>={artwork:'Kunstwerk',information:'Informatiebord',viewpoint:'Uitzichtpunt',picnic_site:'Picknickplek',memorial:'Gedenkplek',monument:'Monument',drinking_water:'Waterpunt'};
-const POST_RANGE=600,SPACING=80,ROUTE_LIMIT=6;
+const POST_RANGE=600,SPACING=55,ROUTE_LIMIT=6,POST_LIMIT=20;
 /** Grid of allowed footways (100 m cells, bbox grown by the 40 m rule) so a 1.2 km horizon stays cheap; distances still use edgeDistance. */
 function pathIndex(ways:Element[],origin:Point){
  const sx=111320*Math.cos(origin.lat*Math.PI/180),sy=111320,size=100,grid=new Map<string,number[]>(),wide:number[]=[],lines=ways.map(w=>({type:'LineString' as const,coordinates:w.geometry!.map(n=>[n.lon,n.lat])}));
@@ -33,7 +33,7 @@ function pathIndex(ways:Element[],origin:Point){
   for(let x=a;x<=b;x++)for(let y=c;y<=d;y++){const key=x+','+y,list=grid.get(key);if(list)list.push(i);else grid.set(key,[i]);}});
  return (p:Point)=>[...(grid.get(Math.floor((p.lng-origin.lng)*sx/size)+','+Math.floor((p.lat-origin.lat)*sy/size))??[]),...wide].some(i=>edgeDistance(p,lines[i])<40);
 }
-/** posts: playable (<=600 m, walkable, max 12). map: display-only horizon markers (<=MAP_SITE_RADIUS) without known-blocked spots. */
+/** posts: playable (<=600 m, walkable, max 20). map: display-only horizon markers (<=MAP_SITE_RADIUS) without known-blocked spots. */
 export function buildWorldSites(elements:Element[],fix:Fix,walkable:(p:{lat:number;lng:number})=>boolean,unwalkable:(p:{lat:number;lng:number})=>boolean=()=>false):WorldSites{
  const ways=elements.filter(e=>e.type==='way'&&allowed(e)&&['footway','path','pedestrian','steps'].includes(e.tags?.highway??'')&&e.geometry&&e.geometry.length>1),posts:FieldPost[]=[],routes:FieldRoute[]=[],map:MapSite[]=[];
  const nearPath=pathIndex(ways,fix),spaced:{lat:number;lng:number;meters:number;id:string;osmId:string;name:string}[]=[];
@@ -44,7 +44,7 @@ export function buildWorldSites(elements:Element[],fix:Fix,walkable:(p:{lat:numb
   const osmId='node/'+e.id;spaced.push({...point,meters,id:id('post-',osmId),osmId,name:(e.tags?.name??KINDS[kind]).slice(0,70)});
  }
  spaced.sort((a,b)=>a.meters-b.meters||a.id.localeCompare(b.id));
- for(const s of spaced){if(s.meters>POST_RANGE)break;if(!walkable(s))continue;posts.push({id:s.id,name:s.name,lat:s.lat,lng:s.lng,source:'osm',osmId:s.osmId});if(posts.length===12)break;}
+ for(const s of spaced){if(s.meters>POST_RANGE)break;if(!walkable(s))continue;posts.push({id:s.id,name:s.name,lat:s.lat,lng:s.lng,source:'osm',osmId:s.osmId});if(posts.length===POST_LIMIT)break;}
  for(const s of spaced){if(s.meters>MAP_SITE_RADIUS||map.length>=MAP_SITE_LIMIT+12)break;if(!posts.some(p=>p.id===s.id)&&unwalkable(s))continue;map.push({id:s.id,name:s.name,lat:s.lat,lng:s.lng,...(gymCandidate(s.id)?{gym:true as const}:{})});}
  // Routes up to the visible horizon (start <=1.2 km), nearest first: stop after ROUTE_LIMIT so a big area stays cheap.
  const candidates=ways.map(way=>({way,near:Math.min(distance(fix,{lat:way.geometry![0].lat,lng:way.geometry![0].lon}),distance(fix,{lat:way.geometry!.at(-1)!.lat,lng:way.geometry!.at(-1)!.lon}))})).filter(c=>c.near<=MAP_SITE_RADIUS).sort((a,b)=>a.near-b.near||a.way.id-b.way.id);

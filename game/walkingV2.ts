@@ -29,10 +29,12 @@ export function walkingSpecies(random:()=>number,biome?:Biome,weather?:FieldWeat
 export function distance(a:Pick<Fix,'lat'|'lng'>,b:Pick<Fix,'lat'|'lng'>){const r=Math.PI/180,dlat=(b.lat-a.lat)*r,dlng=(b.lng-a.lng)*r,h=Math.sin(dlat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dlng/2)**2;return 6371000*2*Math.atan2(Math.sqrt(h),Math.sqrt(Math.max(0,1-h)));}
 export function validFix(raw:unknown,now?:number):Fix{check(raw&&typeof raw==='object'&&!Array.isArray(raw),'Geen geldige locatie.');const f=raw as Fix;check(Object.keys(f).every(k=>['lat','lng','accuracy','timestamp'].includes(k))&&[f.lat,f.lng,f.accuracy].every(Number.isFinite)&&Math.abs(f.lat)<=85&&Math.abs(f.lng)<=180&&f.accuracy>0&&f.accuracy<=80,'Wacht op een nauwkeurige GPS-locatie (max. 80 m).');if(now!==undefined)check(Number.isFinite(f.timestamp)&&now-f.timestamp!<=15000&&f.timestamp!-now<=5000,'Je GPS-meting is verouderd. Vernieuw je locatie.');else if(f.timestamp!==undefined)check(Number.isFinite(f.timestamp),'Geen geldige GPS-meettijd.');return {lat:f.lat,lng:f.lng,accuracy:f.accuracy,...(f.timestamp===undefined?{}:{timestamp:f.timestamp})};}
 export function requireFieldLocation(w:Walking|undefined,now:number){check(w&&now-Math.min(w.at,w.fix.timestamp??w.at)<GPS_MAX_AGE,'Vernieuw je GPS-locatie.');check(w.fix.accuracy<=GPS_CATCH_ACCURACY,'Wacht op nauwkeurige GPS (max. 35 m).');check(!w.blockedUntil||w.blockedUntil<=now,'Je beweegt te snel. Wacht tot je weer stilstaat of rustig beweegt.');return w;}
+/** 12 wild bugs per refresh: 4 close by (22-58 m), 8 a little further (80-170 m). */
+export const SPAWN_COUNT=12;
 export function wildSpawns(f:Fix,seed:string,now:number,habitat?:HabitatContext):WildBug[]{
  const random=rng(seed),spawns:WildBug[]=[];
- for(let i=0;i<7;i++)for(let attempt=0;attempt<24;attempt++){
-  const angle=i/7*Math.PI*2+random()*.4+attempt*2.39996,radius=i<3?22+i*12:85+random()*65,point={lat:f.lat+Math.cos(angle)*radius/111320,lng:f.lng+Math.sin(angle)*radius/(111320*Math.cos(f.lat*Math.PI/180))};
+ for(let i=0;i<SPAWN_COUNT;i++)for(let attempt=0;attempt<24;attempt++){
+  const angle=i/SPAWN_COUNT*Math.PI*2+random()*.4+attempt*2.39996,radius=i<4?22+i*12:80+random()*90,point={lat:f.lat+Math.cos(angle)*radius/111320,lng:f.lng+Math.sin(angle)*radius/(111320*Math.cos(f.lat*Math.PI/180))};
   if(habitat&&!habitat.canSpawnAt(point))continue;const biome=habitat?.biomeAt(point);
   const species=walkingSpecies(random,biome,habitat?.environment.weather);spawns.push({id:seed.slice(0,16)+'-'+i,species,...point,expiresAt:now+SPAWN_LIFETIME,...(biome?{biome}:{}),...(weatherBoosted(species,habitat?.environment.weather)?{weather:true}:{})});break;
  }return spawns;

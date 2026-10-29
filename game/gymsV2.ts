@@ -23,7 +23,7 @@ const hash=(text:string)=>{let value=2166136261;for(const c of text)value=Math.i
 // Reuse only the server's validated public-path posts; never accept client coordinates.
 export function gymSites(posts:FieldPost[]):GymSite[]{
  const sorted=[...posts].sort((a,b)=>hash(a.id)-hash(b.id)||a.id.localeCompare(b.id));
- const chosen=sorted.filter(p=>hash(p.id)%3===0);return (chosen.length?chosen:sorted.slice(0,1)).slice(0,6).map(p=>({id:'gym-'+p.id,postId:p.id,name:p.name==='Veldpost'?'Wachtershonk':p.name+' · Gym',lat:p.lat,lng:p.lng}));
+ const chosen=sorted.filter(p=>hash(p.id)%3===0);return (chosen.length?chosen:sorted.slice(0,1)).slice(0,10).map(p=>({id:'gym-'+p.id,postId:p.id,name:p.name==='Veldpost'?'Wachtershonk':p.name+' · Gym',lat:p.lat,lng:p.lng}));
 }
 export function ensureGyms(p:PlayerV2,now:number):GymProgress{
  const g=p.go!.gyms??={team:null,coins:0,day:day(now),earned:0,deployed:[],returns:[]};

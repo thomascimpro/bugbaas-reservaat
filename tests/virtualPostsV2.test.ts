@@ -15,7 +15,7 @@ const FIX={lat:51.4416,lng:5.4697,accuracy:5},NOW=Date.UTC(2026,9,22,10);
 const path:AreaFeature={layer:'transportation',properties:{class:'path',subclass:'footway'},geometry:{type:'LineString',coordinates:[[FIX.lng-.008,FIX.lat],[FIX.lng+.008,FIX.lat]]}};
 const square=(layer:string,properties:Record<string,unknown>={}):AreaFeature=>({layer,properties,geometry:{type:'Polygon',coordinates:[[[FIX.lng-.01,FIX.lat-.01],[FIX.lng+.01,FIX.lat-.01],[FIX.lng+.01,FIX.lat+.01],[FIX.lng-.01,FIX.lat+.01],[FIX.lng-.01,FIX.lat-.01]]]}});
 test('virtual posts use stable global IDs, mapped walking geometry and bounded density across nearby GPS fixes',()=>{
- const a=virtualPosts(FIX,[path]),b=virtualPosts({...FIX,lng:FIX.lng+.00008},[path]);assert.ok(a.length>=2&&a.length<=8);assert.ok(a.every(p=>p.source==='virtual'&&!p.osmId&&distance(FIX,p)<=310&&edgeDistance(p,path.geometry)<.01));
+ const a=virtualPosts(FIX,[path]),b=virtualPosts({...FIX,lng:FIX.lng+.00008},[path]);assert.ok(a.length>=2&&a.length<=12);assert.ok(a.every(p=>p.source==='virtual'&&!p.osmId&&distance(FIX,p)<=450&&edgeDistance(p,path.geometry)<.01));
  for(const post of a){const same=b.find(p=>p.id===post.id);if(same)assert.deepEqual(same,post);assert.ok(a.every(p=>p===post||distance(p,post)>=85));}
  assert.ok(a.some(p=>b.some(q=>q.id===p.id)));assert.deepEqual(virtualPosts(FIX,[path,path]),a);
  assert.equal(virtualPosts(FIX,[path],a).length,0);

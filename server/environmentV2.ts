@@ -22,6 +22,6 @@ export async function getFieldEnvironment(f:Fix,now:number,sitesProvider:typeof 
  const loaded=(p:{lat:number;lng:number})=>{const t=tileXY(p);return requestedTiles.has(t.x+','+t.y);};
  // Horizon markers outside the loaded tiles stay display-only; inside them, mapped water/buildings/rail are excluded like posts.
  const sites=known?await sitesProvider(f,p=>loaded(p)&&canSpawnAt(p,features),false,p=>loaded(p)&&!canSpawnAt(p,features)):{posts:[],routes:[]};
- if(known){sites.posts=[...sites.posts,...virtualPosts(f,features,sites.posts)].slice(0,8);if(sites.posts.length)sites.available=true;const playable=new Set(sites.posts.map(p=>p.id));sites.map=(sites.map??[]).filter(s=>!playable.has(s.id)).slice(0,MAP_SITE_LIMIT);}
+ if(known){sites.posts=[...sites.posts,...virtualPosts(f,features,sites.posts)].slice(0,20);if(sites.posts.length)sites.available=true;const playable=new Set(sites.posts.map(p=>p.id));sites.map=(sites.map??[]).filter(s=>!playable.has(s.id)).slice(0,MAP_SITE_LIMIT);}
  return {sites,environment:{biome:biomeAt(f,features,known),mapSource:known?'osm':'unavailable',weather:w,at:now},biomeAt:p=>biomeAt(p,features,known),canSpawnAt:p=>canSpawnAt(p,features)};
 }
