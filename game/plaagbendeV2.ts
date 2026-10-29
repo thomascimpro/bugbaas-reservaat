@@ -65,13 +65,15 @@ function target(p:PlayerV2,raw:unknown,now:number,token:PlaagToken):{id:string;k
  return {id:v.id,kind:'post',type:v.type,postId:post.id};
 }
 /** A fair fight for kids: the grunt's bugs sit just below the player's own team CP; no CP limit, one shield. */
+/** Kid-friendly villains: their bugs sit at 70% of your team's average CP and they have no shields, so a fair team usually wins. */
+export const PLAAG_CP_SHARE=.7;
 export function makePlaagBattle(p:PlayerV2,raw:unknown,ids:unknown,id:string,now:number,token:PlaagToken):GoBattle{
  const issue=teamIssue(p,ids,'master',true);check(!issue,issue??'Kies drie bugs.');const t=target(p,raw,now,token),team=plaagTeam(t.id,t.type);
- const mine=(ids as string[]).map(x=>p.specimens.find(s=>s.id===x)!),goal=Math.max(10,Math.round(mine.reduce((n,s)=>n+stats(s).cp,0)/3*.9));
+ const mine=(ids as string[]).map(x=>p.specimens.find(s=>s.id===x)!),goal=Math.max(10,Math.round(mine.reduce((n,s)=>n+stats(s).cp,0)/3*PLAAG_CP_SHARE));
  const attacker=structuredClone(p);attacker.go!.league='master';attacker.go!.team=[...ids as string[]];
  const q=freshV2('plaagbende-'+t.id,'PLAAGBND',now);ensureGo(q,now);q.name=plaagName(t.type);q.go!.league='master';
  q.specimens=team.map((kind,i)=>{const s:Specimen={id:'plaag-'+i,species:kind,level:1,shiny:false,favorite:false,obtainedAt:now,source:'plaagbende',hearts:0,item:null,go:{...rollGoBug(kind,'plaag:'+t.id+':'+i),iv:[10,10,10]}};let best=1;for(let l=1;l<=50;l+=.5){s.go!.level=l;if(stats(s).cp<=goal)best=l;else break;}s.go!.level=best;return s;});
- q.go!.team=q.specimens.map(s=>s.id);const b=makeGoBattle(attacker,q,id,now,false,true,true);b.shields[1]=1;
+ q.go!.team=q.specimens.map(s=>s.id);const b=makeGoBattle(attacker,q,id,now,false,true,true);b.shields[1]=0;
  b.plaagbende={id:t.id,kind:t.kind,type:t.type,team,...(t.postId?{postId:t.postId}:{})};return b;
 }
 /** Win once per invasion/balloon: stof, XP and a rescued bug of the grunt's type with good IVs. Losing costs nothing; retry any time. */
