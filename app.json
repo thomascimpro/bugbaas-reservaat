@@ -2,7 +2,7 @@
   "expo": {
     "name": "BugBaas Reservaat - Preview",
     "slug": "bugbaas-reservaat",
-    "version": "0.1.22",
+    "version": "0.1.23",
     "orientation": "portrait",
     "scheme": "bugbaas-reservaat",
     "plugins": [
@@ -31,7 +31,7 @@
     "userInterfaceStyle": "light",
     "android": {
       "package": "nl.cimpro.bugbaas.reservaat.preview",
-      "versionCode": 23,
+      "versionCode": 24,
       "adaptiveIcon": {
         "foregroundImage": "./assets/v2/ui/app-icon-foreground-v2.png",
         "backgroundColor": "#12382e"
