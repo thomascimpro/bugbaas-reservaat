@@ -1,6 +1,8 @@
 import {getWorldSites} from './worldSitesDataV2';
 import {virtualPosts} from '../game/virtualPostsV2';
-import {MAP_SITE_LIMIT} from '../game/worldSitesV2';
+import {MAP_SITE_LIMIT,gymCandidate} from '../game/worldSitesV2';
+import {distance} from '../game/walkingV2';
+const FAR_FIELD_RANGE=900,farCache=new Map<string,{until:number;value:ReturnType<typeof virtualPosts>}>();
 import {biomeAt,canSpawnAt,UNKNOWN_WEATHER} from '../game/habitatsV2';
 import type {AreaFeature,FieldWeather,HabitatContext,WeatherKind} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
@@ -22,6 +24,7 @@ export async function getFieldEnvironment(f:Fix,now:number,sitesProvider:typeof 
  const loaded=(p:{lat:number;lng:number})=>{const t=tileXY(p);return requestedTiles.has(t.x+','+t.y);};
  // Horizon markers outside the loaded tiles stay display-only; inside them, mapped water/buildings/rail are excluded like posts.
  const sites=known?await sitesProvider(f,p=>loaded(p)&&canSpawnAt(p,features),false,p=>loaded(p)&&!canSpawnAt(p,features)):{posts:[],routes:[]};
- if(known){sites.posts=[...sites.posts,...virtualPosts(f,features,sites.posts)].slice(0,20);if(sites.posts.length)sites.available=true;const playable=new Set(sites.posts.map(p=>p.id));sites.map=(sites.map??[]).filter(s=>!playable.has(s.id)).slice(0,MAP_SITE_LIMIT);}
+ if(known){sites.posts=[...sites.posts,...virtualPosts(f,features,sites.posts)].slice(0,20);if(sites.posts.length)sites.available=true;const playable=new Set(sites.posts.map(p=>p.id));// Far field posts along mapped paths (display-only, like PoGO's horizon): shown so kids see where to walk; actions still need 65 m.
+ const farKey=Math.round(f.lat*1000)+','+Math.round(f.lng*1000),farHit=farCache.get(farKey),farAll=farHit&&farHit.until>now?farHit.value:virtualPosts(f,features,[],FAR_FIELD_RANGE,MAP_SITE_LIMIT);if(!farHit||farHit.until<=now){if(farCache.size>500)farCache.clear();farCache.set(farKey,{until:now+600000,value:farAll});}const farField=farAll.filter(v=>!playable.has(v.id)).map(v=>({id:v.id,name:v.name,lat:v.lat,lng:v.lng,...(gymCandidate(v.id)?{gym:true as const}:{})}));sites.map=[...(sites.map??[]).filter(s=>!playable.has(s.id)),...farField.filter(v=>!(sites.map??[]).some(s=>s.id===v.id))].sort((a,b)=>distance(f,a)-distance(f,b)).slice(0,MAP_SITE_LIMIT);}
  return {sites,environment:{biome:biomeAt(f,features,known),mapSource:known?'osm':'unavailable',weather:w,at:now},biomeAt:p=>biomeAt(p,features,known),canSpawnAt:p=>canSpawnAt(p,features)};
 }
