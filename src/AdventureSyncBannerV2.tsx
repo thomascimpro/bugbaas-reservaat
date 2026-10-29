@@ -18,13 +18,13 @@ export function AdventureSyncBannerV2({report,onClose}:{report:SyncReport|null;o
  useEffect(()=>{if(!report)return;const t=setTimeout(onClose,8000);return()=>clearTimeout(t);},[report]);
  if(!report)return null;
  const chip=(text:string,key:string)=><View key={key} style={{paddingHorizontal:8,paddingVertical:3,borderRadius:10,backgroundColor:'#0B2A23CC'}}><Text style={{color:'#FFF3D5',fontWeight:'800',fontSize:13}}>{text}</Text></View>;
- return <Pressable testID="adventure-sync-banner" accessibilityRole="button" accessibilityLabel="Sluit Adventure Sync-melding" onPress={onClose} style={{position:'absolute',left:12,right:12,top:12,zIndex:60,padding:11,borderRadius:20,backgroundColor:'#2F6B3AF2',borderWidth:2,borderColor:'#F2D16E',gap:7,boxShadow:'0px 6px 18px #061F1ACC'}}>
-  <Text style={{color:'#FFFDF2',fontWeight:'900',fontSize:16}}>{'👟 +'+(report.meters/1000).toLocaleString('nl-NL',{maximumFractionDigits:1})+' km gelopen!'}</Text>
-  <View style={{flexDirection:'row',flexWrap:'wrap',gap:6,alignItems:'center'}}>
+ return <Pressable testID="adventure-sync-banner" accessibilityRole="button" accessibilityLabel="Sluit Adventure Sync-melding" onPress={onClose} style={{position:'absolute',left:12,right:12,top:12,zIndex:60,paddingHorizontal:10,paddingVertical:7,borderRadius:16,backgroundColor:'#2F6B3AF2',borderWidth:1,borderColor:'#F2D16E',flexDirection:'row',flexWrap:'wrap',alignItems:'center',gap:6,boxShadow:'0px 4px 12px #061F1ACC'}}>
+  <Text style={{color:'#FFFDF2',fontWeight:'900',fontSize:14}}>{'👟 +'+(report.meters/1000).toLocaleString('nl-NL',{maximumFractionDigits:1})+' km'}</Text>
+  <View style={{flexDirection:'row',flexWrap:'wrap',gap:5,alignItems:'center'}}>
    {report.catches>0&&chip('🐞 +'+report.catches+' gevangen','c')}
    {report.chests>0&&chip('🎁 +'+report.chests+' weekkist','w')}
    {report.candy>0&&report.buddy&&<View key="n" style={{flexDirection:'row',alignItems:'center',gap:4,paddingHorizontal:8,paddingVertical:2,borderRadius:10,backgroundColor:'#0B2A23CC'}}><CandyIconV2 family={family(report.buddy)} size="small"/><Text style={{color:'#FFF3D5',fontWeight:'800',fontSize:13}}>{'+'+report.candy}</Text></View>}
-   {chip('📅 week '+(report.weekMeters/1000).toLocaleString('nl-NL',{maximumFractionDigits:1})+(report.nextKm?' / '+report.nextKm+' km':' km'),'k')}
+   
   </View>
  </Pressable>;
 }

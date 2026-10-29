@@ -53,12 +53,12 @@ test('surface styling uses real source geometry and preserves transport widths a
 
 test('day/night updates are idempotent after custom layer creation and dispose releases owned decoration',()=>{
  const f=fixture(),surface=applyWorldSurface(f.map,{isDay:true,reducedMotion:false}),daySky=f.sky,dayWater=f.images.get('bb-world-water')!.data.slice(),writes=f.writes;
- const building=f.find('building')!.paint as Record<string,unknown>;assert.equal(building['fill-color'],'#CBBB99');assert.equal(building['fill-outline-color'],'#899579');
+ const building=f.find('building')!.paint as Record<string,unknown>;assert.equal(building['fill-color'],'#ECE6D4');assert.equal(building['fill-outline-color'],'#B8AE92');
  f.blockSerialization();surface.update({isDay:true});surface.update({reducedMotion:true});assert.equal(f.writes,writes);
  surface.update({isDay:false});assert.notDeepEqual(f.sky,daySky);assert.notDeepEqual(f.images.get('bb-world-water')!.data,dayWater);assert.deepEqual(validateStyleMin(f.style),[]);
  assert.equal(building['fill-color'],'#8E9381');assert.equal(building['fill-outline-color'],'#6D7C6C');
  surface.update({isDay:null});assert.deepEqual(f.sky,daySky);assert.deepEqual(f.images.get('bb-world-water')!.data,dayWater);
- assert.equal(building['fill-color'],'#CBBB99');surface.update({isDay:false});
+ assert.equal(building['fill-color'],'#ECE6D4');surface.update({isDay:false});
  surface.dispose();assert.equal(f.find('bb-world-shore-water'),undefined);assert.equal(f.images.has('bb-world-water'),false);assert.equal(f.images.has('bb-world-grass'),false);assert.equal(f.images.has('bb-grass'),true);assert.equal((f.find('water')!.paint as Record<string,unknown>)['fill-pattern'],undefined);assert.deepEqual(f.sky,{'sky-color':'#FFFFFF'});
  assert.equal(building['fill-color'],'#D4CAAA');assert.equal(building['fill-outline-color'],'#BABD97');
  const disposedWrites=f.writes;surface.update({isDay:false});surface.dispose();assert.equal(f.writes,disposedWrites);

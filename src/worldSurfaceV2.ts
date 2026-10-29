@@ -3,8 +3,8 @@ import {applyNatureStyle} from './natureMapV2';
 
 export type WorldSurfaceOptions={isDay?:boolean|null;reducedMotion?:boolean};
 // Deeper foliage and cool water frame warm paths; contrast comes from the same source layers.
-const DAY={ground:'#86B566',grass:'#7AB357',forest:'#3A7453',wetland:'#66A18A',sand:'#E4CF98',city:'#96BE72',built:'#A9B992',building:'#CBBB99',buildingEdge:'#899579',park:'#76AD59',water:'#399BA7',shore:'#74B49A',road:'#EDDFBC',path:'#EADFB8',edge:'#5E8256',rail:'#718A83',sky:'#8FCADB',horizon:'#D3E6C2'};
-const NIGHT={ground:'#536E62',grass:'#5B7D62',forest:'#375D54',wetland:'#527A73',sand:'#9C9A82',city:'#61796A',built:'#6D7F76',building:'#8E9381',buildingEdge:'#6D7C6C',park:'#5B8060',water:'#36757F',shore:'#608F86',road:'#AEA98E',path:'#D0C5A2',edge:'#536B60',rail:'#637D78',sky:'#152C48',horizon:'#708988'};
+const DAY={ground:'#86B566',grass:'#86C25C',forest:'#2F6E48',wetland:'#4DB3A0',sand:'#E8D59E',farm:'#CFD27A',city:'#A9C98C',built:'#BFC7AE',building:'#ECE6D4',buildingEdge:'#B8AE92',park:'#6CC24A',water:'#3A9FE0',shore:'#8FD3F0',road:'#F1E7C8',path:'#EADFB8',edge:'#5E8256',rail:'#718A83',sky:'#8FCADB',horizon:'#D3E6C2'};
+const NIGHT={ground:'#536E62',grass:'#5B7D62',forest:'#2C4F47',wetland:'#4A7F78',sand:'#9C9A82',farm:'#87866A',city:'#61796A',built:'#6D7F76',building:'#8E9381',buildingEdge:'#6D7C6C',park:'#5B8060',water:'#36757F',shore:'#608F86',road:'#AEA98E',path:'#D0C5A2',edge:'#536B60',rail:'#637D78',sky:'#152C48',horizon:'#708988'};
 const IMAGES={grass:'bb-world-grass',forest:'bb-world-forest',water:'bb-world-water'} as const;
 type PaintName=Parameters<GameMap['setPaintProperty']>[1];
 type PaintValue=Parameters<GameMap['setPaintProperty']>[2];
@@ -51,8 +51,8 @@ export function applyWorldSurface(map:GameMap,initial:WorldSurfaceOptions={}){
      set(l.id,'fill-pattern',/wood/.test(l.id)?IMAGES.forest:/grass/.test(l.id)?IMAGES.grass:undefined);
      set(l.id,'fill-color',['match',['get','class'],'wood',p.forest,'grass',p.grass,'wetland',p.wetland,'sand',p.sand,'ice',isNight?'#9DBCBF':'#DCEDE4',p.grass] satisfies ExpressionSpecification);set(l.id,'fill-opacity',.92);
     }else if(source==='park'){set(l.id,'fill-color',p.park);set(l.id,'fill-pattern',IMAGES.grass);set(l.id,'fill-opacity',.95);}
-    else if(source==='landuse'){set(l.id,'fill-color',['match',['get','class'],'residential',p.city,'industrial',p.built,'commercial',p.built,'farmland',p.grass,'cemetery',p.park,'pitch',p.park,p.city] satisfies ExpressionSpecification);set(l.id,'fill-opacity',.82);}
-    else if(source==='transportation'){set(l.id,'fill-color',p.road);}
+    else if(source==='landuse'){set(l.id,'fill-color',['match',['get','class'],'residential',p.city,'industrial',p.built,'commercial',p.built,'farmland',p.farm,'cemetery',p.park,'pitch',p.park,p.city] satisfies ExpressionSpecification);set(l.id,'fill-opacity',.82);}
+    else if(source==='transportation'){set(l.id,'fill-color',p.road);set(l.id,'fill-opacity',.55);}
     else if(source==='building'){set(l.id,'fill-color',p.building);set(l.id,'fill-outline-color',p.buildingEdge);}
    }else if(l.type==='line'){
     if(source==='waterway'){set(l.id,'line-color',p.water);}
