@@ -41,13 +41,14 @@ function InviteFriends({view,raid,run,busy,onDone}:{view:GameViewV2;raid:string;
 /** Raid card on a gym: egg countdown, join locally, or invite friends. */
 export function RaidAtGymV2({view,raid,run,busy,now,ensureGPS}:{view:GameViewV2;raid:RaidView;run:RunV2;busy:boolean;now:number;ensureGPS?:()=>Promise<boolean>}){
  const [inviting,setInviting]=useState(false),config=RAID_TIERS[raid.tier],egg=now<raid.hatchAt,g=view.player.go!.raids,claimed=!!g?.claimed.includes(raid.id),inLobby=!!view.raidLobby&&view.raidLobby.raidId===raid.id;
- const low=trainerLevel(view.player.go!.trainer!.xp)<config.trainer,closing=now>=raid.joinableUntil,capped=(g?.rewards??0)>=RAID_RULES.rewardsPerDay;
+ const low=trainerLevel(view.player.go!.trainer!.xp)<config.trainer,closing=now>=raid.joinableUntil,capped=(g?.rewards??0)>=RAID_RULES.rewardsPerDay,remoteOk=(g?.remote??0)<RAID_RULES.remotePerDay&&(freeRemoteLeft(g,now)||(g?.passes??0)>0);
  async function join(){if(ensureGPS&&!await ensureGPS())return;await run('raidJoin',{raid:raid.id,remote:false});}
  return <Panel style={{borderColor:'#D7A74F'}}><View style={{flexDirection:'row',alignItems:'center',gap:7}}><Glyph name="swords" size={24}/><View style={{flex:1}}><Label bold>{config.name} · samen</Label><Stars tier={raid.tier}/></View><Help title="Zwermen" body={RAID_HELP}/></View>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}>{egg?<View style={{width:82,height:82,alignItems:'center',justifyContent:'center'}}><Glyph name="lock" size={48}/></View>:<SpriteView id={raid.species} size={82}/>}<View style={{flex:1,gap:5}}><Label bold>{egg?'Zwermei':species(raid.species).name}</Label><Label small>{egg?'Komt uit over '+mmss(raid.hatchAt-now):'Nog '+mmss(raid.endsAt-now)+' · Lv. '+config.level}</Label>{!egg&&<GoTypes species={raid.species} compact/>}</View></View>
   {!egg&&<Counters kind={raid.species} view={view}/>}
   {!egg&&<View style={{flexDirection:'row',justifyContent:'space-around'}}><Counter icon="nectar" value={'+'+config.dust} label="✨ Stof"/><Counter icon="star" value={'+'+config.xp} label="XP"/></View>}
-  {!egg&&!inLobby&&<Button small icon="swords" disabled={busy||claimed||closing||low||capped||!raid.local||!!view.raidLobby} onPress={()=>void join()}>{claimed?'Vandaag verslagen':capped?'5 / 5 vandaag':low?'Trainerlevel '+config.trainer:closing?'Vertrekt bijna':view.raidLobby?'Je zit al in een zwerm':!raid.local?'Loop binnen 65 m':'Doe mee'}</Button>}
+  {!egg&&!inLobby&&raid.local&&<Button small icon="swords" disabled={busy||claimed||closing||low||capped||!!view.raidLobby} onPress={()=>void join()}>{claimed?'Vandaag verslagen':capped?'5 / 5 vandaag':low?'Trainerlevel '+config.trainer:closing?'Vertrekt bijna':view.raidLobby?'Je zit al in een zwerm':'Doe mee'}</Button>}
+  {!egg&&!inLobby&&!raid.local&&<><Pass {...{view,run,busy,now}}/><Button small icon="swords" accessibilityLabel="Doe mee op afstand" disabled={busy||claimed||closing||low||capped||!!view.raidLobby||!remoteOk} onPress={()=>void run('raidJoin',{raid:raid.id,remote:true})}>{claimed?'Vandaag verslagen':capped?'5 / 5 vandaag':low?'Trainerlevel '+config.trainer:closing?'Vertrekt bijna':view.raidLobby?'Je zit al in een zwerm':!remoteOk?'Geen ticket of Zwermfluit':'🎟️ Doe mee op afstand'}</Button></>}
   {!closing&&<Button small secondary icon="friends" disabled={busy||!raid.local&&!inLobby} onPress={()=>setInviting(v=>!v)}>{inviting?'Sluit uitnodigen':'Nodig vrienden uit'}</Button>}
   {inviting&&<InviteFriends {...{view,run,busy}} raid={raid.id} onDone={()=>setInviting(false)}/>}
  </Panel>;
@@ -79,4 +80,17 @@ export function RaidInvitesV2({view,run,busy,now}:{view:GameViewV2;run:RunV2;bus
   {invites.map(i=>{const config=RAID_TIERS[i.tier],low=trainerLevel(view.player.go!.trainer!.xp)<config.trainer,hatched=now>=i.endsAt-45*60000;return <View key={i.raidId+i.from.uid} testID="raid-invite" style={{gap:6,padding:9,borderRadius:16,backgroundColor:'#204B40'}}><View style={{flexDirection:'row',alignItems:'center',gap:9}}>{hatched?<SpriteView id={i.species} size={48}/>:<Glyph name="lock" size={36}/>}<View style={{flex:1}}><Label small bold>{i.from.name} nodigt je uit</Label><Label small>{config.name} · {hatched?species(i.species).name:'Zwermei'} · {i.postName}</Label><Label small>Nog {mmss(i.endsAt-now)}</Label>{hatched&&<GoTypes species={i.species} compact/>}</View><Stars tier={i.tier}/></View>
    <Button small icon="swords" disabled={busy||!hatched||!!view.raidLobby||passes<1&&!ticket||remoteLeft<1||low} onPress={()=>void run('raidJoin',{raid:i.raidId,remote:true})}>{view.raidLobby?'Je zit al in een zwerm':!hatched?'Nog een ei':low?'Trainerlevel '+config.trainer:remoteLeft<1?'3 / 3 vandaag':ticket?'🎟️ Doe mee op afstand':passes<1?'Zwermfluit nodig':'Doe mee op afstand'}</Button></View>;})}
  </Panel>;
+}
+
+/** PoGO-style nearby raid list: every raid at a gym you can see, eggs and bosses, near ones first; tap to open its card (join here or remotely, invite friends). */
+export function RaidListV2({view,run,busy,now,ensureGPS}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;ensureGPS?:()=>Promise<boolean>}){
+ const [open,setOpen]=useState(''),raids=[...(view.raids??[])].filter(r=>r.endsAt>now).sort((a,b)=>Number(b.local)-Number(a.local)||Number(a.hatchAt>now)-Number(b.hatchAt>now)||a.endsAt-b.endsAt);
+ if(!raids.length)return null;
+ return <View testID="raid-list"><Panel><View style={{flexDirection:'row',alignItems:'center',gap:7}}><Glyph name="swords" size={24}/><Label bold>{'Raids · '+raids.length}</Label><View style={{flex:1}}/><Pass {...{view,run,busy,now}}/></View>
+  {raids.map(r=>{const egg=now<r.hatchAt,selected=open===r.id;return <View key={r.id} style={{gap:6}}><Pressable accessibilityRole="button" accessibilityLabel={(egg?'Zwermei':species(r.species).name)+', '+r.tier+' sterren, '+(r.local?'dichtbij':'op afstand')} testID={'raid-row-'+r.id} onPress={()=>setOpen(selected?'':r.id)} style={{flexDirection:'row',alignItems:'center',gap:9,padding:7,borderRadius:16,backgroundColor:selected?'#2F5B3A':'#1B4A3F',borderWidth:1,borderColor:selected?'#F2D16E':'#FFFFFF22'}}>
+   {egg?<View style={{width:46,height:46,alignItems:'center',justifyContent:'center'}}><Label bold>🥚</Label></View>:<SpriteView id={r.species} size={46}/>}
+   <View style={{flex:1,gap:2}}><Stars tier={r.tier}/><Label small>{r.site.name}</Label></View>
+   {!egg&&<GoTypes species={r.species} compact/>}<View style={{alignItems:'flex-end'}}><Label small bold>{egg?'🥚 '+mmss(r.hatchAt-now):'⏱ '+mmss(r.endsAt-now)}</Label><Label small>{r.local?'📍 hier':'🌍 afstand'}</Label></View></Pressable>
+   {selected&&<RaidAtGymV2 raid={r} {...{view,run,busy,now,ensureGPS}}/>}</View>;})}
+ </Panel></View>;
 }

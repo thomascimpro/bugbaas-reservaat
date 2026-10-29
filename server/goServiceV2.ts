@@ -1,7 +1,7 @@
 import {gymSites,ensureGyms,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym,ensureNpcGym,settleExpiredGym,GYM_RULES} from '../game/gymsV2';
 import {ensureDailyChallenge,dailyChallengeView,makeDailyChallengeBattle,settleDailyChallenge,dailyWeekKey,weeklyDailyScore} from '../game/dailyChallengeV2';
 /** Autovanger: one attempt per walked step, gaps up to 15 min, and at most a few Adventure Sync catches per day. */
-import type {WildBug} from '../game/walkingV2';
+import type {WildBug,Walking} from '../game/walkingV2';
 export const AUTO_STEP=40,AUTO_MAX_GAP=900,AWAY_PER_DAY=5;
 import type {Gym,GymSite} from '../game/gymsV2';
 import {buyCoinOffer} from '../game/coinShopV2';
@@ -158,6 +158,8 @@ export class GoServiceV2{
   // Once the group has won, every member's own fight ends as a win too.
   if(l?.status==='won'&&b.phase!=='finished')syncRaidBattle(b,Infinity);
  }
+ /** Gyms you can see: the nearby gym posts plus far gyms on the map (up to 1.2 km), nearest first. Their raids are visible and joinable remotely. */
+ private visibleRaidSites(w:Walking){const near=gymSites(w.posts??[]),far=(w.mapSites??[]).filter(m=>m.gym&&!near.some(n=>n.postId===m.id)).map(m=>({id:'gym-'+m.id,postId:m.id,name:m.name==='Veldpost'?'Wachtershonk':m.name+' · Gym',lat:m.lat,lng:m.lng}));return [...near,...far.sort((a,b)=>distance(w.fix,a)-distance(w.fix,b)).slice(0,12)];}
  private localRaidSite(p:PlayerV2,raid:string,now:number,token:RaidToken){
   const w=requireFieldLocation(p.walking,now),site=gymSites(w.posts??[]).find(s=>raidAt(s,now,token)?.id===raid);check(site,'Deze zwerm is niet in de buurt.');check(distance(w.fix,site)<=65,'Loop binnen 65 meter van de gympost.');return site;
  }
@@ -168,7 +170,7 @@ export class GoServiceV2{
  }
  private async raidView(uid:string,p:PlayerV2){
   const now=this.clock(),w=p.walking,fresh=!!w&&now-w.at<45000,token=await this.raidToken();
-  const raids=w?gymSites(w.posts??[]).flatMap(site=>{const r=raidAt(site,now,token);return r?[{...publicRaid(r),joinableUntil:raidJoinableUntil(r),local:fresh&&distance(w.fix,site)<=65}]:[];}):[];
+  const raids=w?this.visibleRaidSites(w).flatMap(site=>{const r=raidAt(site,now,token);return r?[{...publicRaid(r),joinableUntil:raidJoinableUntil(r),local:fresh&&distance(w.fix,site)<=65}]:[];}):[];
   let raidLobby:RaidLobbyView|null=null;const lobbyId=p.go?.raids?.lobby;
   if(lobbyId){const {lobby,damage}=await this.raidDamage(lobbyId),doc=lobby?await this.raidDoc(lobby.raidId):undefined;
    if(lobby&&doc){const shown=structuredClone(lobby);resolveLobby(shown,damage,now);raidLobby=lobbyView(shown,doc.raid,uid,damage,p.go!.raids!);}}
@@ -342,7 +344,7 @@ export class GoServiceV2{
     case 'raidJoin':{idle();check(typeof c.remote==='boolean','Kies lokaal of op afstand.');const rg=ensureRaids(g,now),raidId=c.raid as string;
      if(rg.lobby){const old=document<RaidLobby>(d,lk(rg.lobby));if(!old||old.status==='won'||old.status==='failed'||!old.members.some(m=>m.uid===uid))rg.lobby=null;}
      let doc=document<RaidDoc>(d,rk(raidId));
-     if(c.remote){check(doc,'Deze zwerm is niet gevonden.');check((document<{items:RaidInvite[]}>(d,ik(uid))?.items??[]).some(i=>i.raidId===raidId&&i.endsAt>now),'Op afstand meedoen kan alleen met een uitnodiging van een vriend.');}
+     if(c.remote){const invited=(document<{items:RaidInvite[]}>(d,ik(uid))?.items??[]).some(i=>i.raidId===raidId&&i.endsAt>now),seen=x.walking?this.visibleRaidSites(x.walking).find(s=>raidAt(s,now,raidToken!)?.id===raidId):undefined;check(invited||seen,'Deze zwerm is niet in de buurt. Vraag een vriend om een uitnodiging.');if(!doc&&seen){doc={raid:raidAt(seen,now,raidToken!)!,open:0,invited:{}};d.set(rk(raidId),doc);}check(doc,'Deze zwerm is niet gevonden.');}
      else{const site=this.localRaidSite(x,raidId,now,raidToken!);doc??={raid:raidAt(site,now,raidToken!)!,open:0,invited:{}};d.set(rk(raidId),doc);}
      const need=RAID_TIERS[doc.raid.tier].trainer;check(trainerLevel(g.trainer!.xp)>=need,'Trainerlevel '+need+' nodig.');
      let l=document<RaidLobby>(d,lk(raidId+'#'+doc.open));

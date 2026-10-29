@@ -92,3 +92,21 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
   if(after.specimens.length>count){const bug=after.specimens.at(-1)!;assert.equal(bug.species,raid.species);assert.equal(bug.catchLocation,undefined);assert.ok(bug.go!.iv.every(v=>v>=10));}
  }finally{store.close();}
 });
+
+test('a raid at a far gym on the map is visible, can be joined remotely without an invite, and the joiner can invite friends',async()=>{
+ const store=new SqliteStore(':memory:'),{post,site,now:start}=raidPost();const now=start;await store.run(['v2RaidSecret:global'],d=>d.set('v2RaidSecret:global',{key:KEY}));const service=new GoServiceV2(store,'local',()=>now);
+ try{
+  const D='viewer-far-gym',E='helper-friend',far={lat:FIX.lat+.007,lng:FIX.lng};
+  for(const uid of [D,E])await service.state(uid);
+  await store.run(['v2Players:'+D,'v2Players:'+E,'v2FriendPairs:'+[D,E].sort().join('_')],d=>{
+   const p=player(D,now,far,[]);p.walking!.mapSites=[{id:post.id,name:post.name,lat:post.lat,lng:post.lng,gym:true}];d.set('v2Players:'+D,p);d.set('v2Players:'+E,player(E,now,{lat:FIX.lat+.5,lng:FIX.lng},[]));
+   d.set('v2FriendPairs:'+[D,E].sort().join('_'),{id:[D,E].sort().join('_'),users:[D,E].sort(),names:[D,E],accepted:true,requestedBy:D,points:0,lastDay:'',gifts:[null,null]});
+  });
+  const views:Record<string,GameViewV2>={};for(const uid of [D,E])views[uid]=await service.state(uid);
+  const send=async(uid:string,type:string,params:Record<string,unknown>={})=>views[uid]=await service.command(uid,{type,...params,commandId:randomUUID(),expectedRevision:views[uid].player.revision});
+  const raid=views[D].raids!.find(r=>r.site.id===site.id)!;assert.ok(raid&&!raid.local,'the far gym raid is listed, not as local');
+  await assert.rejects(send(D,'raidJoin',{raid:raid.id,remote:false}),/65 meter|niet in de buurt/,'joining in person still needs to be near');
+  await send(D,'raidJoin',{raid:raid.id,remote:true});assert.equal(views[D].raidLobby!.members[0].remote,true);assert.equal(views[D].player.go!.raids!.passes,0,'the free daily ticket was used, no Zwermfluit');
+  await send(D,'raidInvite',{raid:raid.id,friends:[E]});views[E]=await service.state(E);assert.equal(views[E].raidInvites![0].raidId,raid.id,'the friend got an invite to help remotely');
+ }finally{store.close();}
+});
