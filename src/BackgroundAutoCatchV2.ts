@@ -1,16 +1,20 @@
 import {useEffect,useRef} from 'react';
-import {Alert,AppState,PermissionsAndroid,Platform} from 'react-native';
+import {Alert,AppState,NativeModules,PermissionsAndroid,Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import {withBackgroundSessionV2} from './client';
-import {autoLocationOwnerV2,backgroundAutoTickV2,commandSerialV2} from './backgroundAutoSessionV2';
+import {autoLocationOwnerV2,autoNotificationTextV2,backgroundAutoTickV2,commandSerialV2} from './backgroundAutoSessionV2';
 import type {AutoLocationV2,AutoSessionV2} from './backgroundAutoSessionV2';
 import type {GameViewV2} from '../game/typesV2';
 
 const TASK='bugbaas-autocatch-location-v1',KEY='bugbaas-background-autocatch-v1';
 const controls=commandSerialV2();let generation=0,lastTickAt=0,foregroundFieldActive=true,running:Promise<void>|null=null,lastView:GameViewV2|null=null;
 const newId=()=>globalThis.crypto?.randomUUID?.()??`auto-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+async function updateNotification(view:GameViewV2){
+ const update=NativeModules.BugBaasAdventureSync?.updateAutoCatchNotification as ((text:string)=>Promise<boolean>)|undefined;
+ if(Platform.OS==='android'&&view.player.go?.auto.enabled&&update)await update(autoNotificationTextV2(view.player)).catch(()=>{});
+}
 async function readSession():Promise<AutoSessionV2|null>{try{const raw=await AsyncStorage.getItem(KEY);if(!raw)return null;const session=JSON.parse(raw);return typeof session?.uid==='string'&&session.uid?session:null;}catch{return null;}}
 async function stopService(uid?:string){const session=await readSession();if(uid&&session&&session.uid!==uid)return;generation++;await AsyncStorage.removeItem(KEY);await running?.catch(()=>{});await AsyncStorage.removeItem(KEY);lastView=null;if(await Location.hasStartedLocationUpdatesAsync(TASK))await Location.stopLocationUpdatesAsync(TASK);}
 export async function stopBackgroundAutoCatchV2(uid?:string){if(Platform.OS==='android')await controls(()=>stopService(uid));}
@@ -32,7 +36,7 @@ async function receiveLocations(locations:AutoLocationV2[]){
   const current=()=>mine===generation&&autoLocationOwnerV2(AppState.currentState==='active',foregroundFieldActive);
   try{
    const view=await withBackgroundSessionV2(session.uid,api=>backgroundAutoTickV2(session,locations,{...api,current,now:Date.now,newId,save:async next=>{if(current())await AsyncStorage.setItem(KEY,JSON.stringify(next));}}));
-   if(view&&mine===generation){lastView=view;if(!view.player.go?.auto.enabled)void stopBackgroundAutoCatchV2(session.uid);}
+   if(view&&mine===generation){lastView=view;if(!view.player.go?.auto.enabled)void stopBackgroundAutoCatchV2(session.uid);else await updateNotification(view);}
   }catch(error){if((error as {status?:number})?.status===401)void stopBackgroundAutoCatchV2(session.uid);/* Network failures retain the same pending receipt for the next GPS event. */}
  })();running=work;try{await work;}finally{if(running===work)running=null;}
 }
@@ -52,7 +56,7 @@ export async function prepareBackgroundAutoCatchV2():Promise<string>{
   return '';
  }catch{return 'Autovangst kon niet starten. Controleer locatie en meldingen.';}
 }
-async function startService(uid:string){
+async function startService(uid:string,view:GameViewV2){
  if(AppState.currentState!=='active')return;
  const permission=await Location.getForegroundPermissionsAsync();if(!permission.granted)throw new Error('Geef toegang tot je locatie om autovangst te hervatten.');if(permission.android?.accuracy==='coarse')throw new Error('Zet Precieze locatie aan voor autovangst en afstand.');
  if(!(await Location.getBackgroundPermissionsAsync()).granted)throw new Error('Autovangst heeft Altijd toestaan voor locatie nodig. Zet autovangst opnieuw aan om dit te regelen.');
@@ -62,12 +66,13 @@ async function startService(uid:string){
  await AsyncStorage.setItem(KEY,JSON.stringify(prior?.uid===uid?prior:{uid}));
  // Re-register on foreground entry, so a previously removed Android service can resume.
  // This runs on lifecycle/toggle changes, never on ordinary game-state renders.
- if(AppState.currentState==='active')await Location.startLocationUpdatesAsync(TASK,{accuracy:Location.Accuracy.High,timeInterval:15000,distanceInterval:12,deferredUpdatesInterval:0,foregroundService:{notificationTitle:'BugBaas · autovangst aan',notificationBody:'Telt afstand, vangt bugs en bezoekt posten terwijl je beweegt.',notificationColor:'#165540',killServiceOnDestroy:false}});
+ if(AppState.currentState==='active')await Location.startLocationUpdatesAsync(TASK,{accuracy:Location.Accuracy.High,timeInterval:15000,distanceInterval:12,deferredUpdatesInterval:0,foregroundService:{notificationTitle:autoNotificationTextV2(view.player),notificationBody:'',notificationColor:'#165540',killServiceOnDestroy:false}});
 }
 export function useBackgroundAutoCatchV2(view:GameViewV2|null,onError:(message:string)=>void,suspended=false,fieldActive=true){
  // Switching tabs changes the GPS owner without stopping/restarting the service.
  // Closing the game UI leaves the opted-in service alive; disable and account changes stop it explicitly.
  foregroundFieldActive=fieldActive;
- const report=useRef(onError);report.current=onError;const uid=view?.player.uid,enabled=!!view?.player.go?.auto.enabled,cloud=view?.mode==='cloud';
- useEffect(()=>{if(Platform.OS!=='android'||!uid)return;if(suspended){void stopBackgroundAutoCatchV2(uid).catch(()=>{});return;}let alive=true;const sync=()=>{if(!enabled||!cloud){void stopBackgroundAutoCatchV2().catch(()=>{});return;}if(AppState.currentState==='active')void controls(()=>startService(uid)).catch(error=>{if(alive)report.current(error instanceof Error?error.message:'Autovangst kon niet hervatten.');});};sync();const listener=AppState.addEventListener('change',state=>{if(state==='active')sync();});return()=>{alive=false;listener.remove();};},[uid,enabled,cloud,suspended]);
+ const report=useRef(onError),latest=useRef(view);report.current=onError;latest.current=view;const uid=view?.player.uid,enabled=!!view?.player.go?.auto.enabled,cloud=view?.mode==='cloud';
+ useEffect(()=>{if(Platform.OS!=='android'||!uid)return;if(suspended){void stopBackgroundAutoCatchV2(uid).catch(()=>{});return;}let alive=true;const sync=()=>{if(!enabled||!cloud){void stopBackgroundAutoCatchV2().catch(()=>{});return;}if(AppState.currentState==='active'&&latest.current?.player.uid===uid)void controls(()=>{const current=latest.current;return current?.player.uid===uid&&current.player.go?.auto.enabled?startService(uid,current):Promise.resolve();}).catch(error=>{if(alive)report.current(error instanceof Error?error.message:'Autovangst kon niet hervatten.');});};sync();const listener=AppState.addEventListener('change',state=>{if(state==='active')sync();});return()=>{alive=false;listener.remove();};},[uid,enabled,cloud,suspended]);
+ useEffect(()=>{if(view&&enabled&&cloud&&!suspended)void updateNotification(view);},[uid,enabled,cloud,suspended,view?.player.field?.walk?.dayMeters,view?.player.field?.daily.catches]);
 }

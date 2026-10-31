@@ -1,4 +1,4 @@
-import type {CommandV2,GameViewV2} from '../game/typesV2';
+import type {CommandV2,GameViewV2,PlayerV2} from '../game/typesV2';
 import type {Fix} from '../game/walkingV2';
 
 export type AutoLocationV2={timestamp:number;coords:{latitude:number;longitude:number;accuracy:number|null}};
@@ -10,6 +10,8 @@ export type AutoSessionIOV2={
 };
 /** The native map owns foreground GPS; the service owns background and paused-map GPS. */
 export const autoLocationOwnerV2=(appActive:boolean,fieldActive:boolean)=>!appActive||!fieldActive;
+/** Confirmed totals for today; display only, never estimates catches from distance. */
+export const autoNotificationTextV2=(p:PlayerV2)=>'👟 '+((p.field?.walk?.dayMeters??0)/1000).toLocaleString('nl-NL',{minimumFractionDigits:1,maximumFractionDigits:1})+' km · 🐞 '+(p.field?.daily.catches??0);
 
 /** Both normal commands and background location commits use the same native JS queue. */
 export function commandSerialV2(){let tail:Promise<unknown>=Promise.resolve();return <T>(work:()=>Promise<T>):Promise<T>=>{const result=tail.then(work,work);tail=result.then(()=>undefined,()=>undefined);return result;};}

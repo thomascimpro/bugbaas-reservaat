@@ -4,7 +4,7 @@ import {freshV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField} from '../game/fieldV2';
 import {awardGoCatch,ensureGo} from '../game/goV2';
-import {actGoBattle,advanceGoBattle,makeGoBattle} from '../game/goBattleV2';
+import {actGoBattle,advanceGoBattle,makeGoBattle,prepareGoBattle,FLOW_CHARGE_MS,FLOW_SWITCH_MS,FLOW_TURN_MS} from '../game/goBattleV2';
 import type {GoBattleView} from '../game/goBattleV2';
 import {battleReadyEnergy,BattleInputBuffer} from '../src/goBattleInputV2';
 
@@ -168,4 +168,86 @@ test('simultaneous queued charged attacks use combat attack rather than player s
   for(const side of [1,0] as const)actGoBattle(b,side,'charged','cut',NOW+100);advanceGoBattle(b,NOW+500);
   assert.equal(b.charge!.side,stronger);assert.equal(b.charge!.startedAt,NOW+500);assert.equal(b.teams[stronger][0].energy,0);assert.equal(b.teams[1-stronger][0].energy,35);assert.deepEqual(b.queued,[null,null]);
  }
+});
+
+
+test('new flow: equal builds gain equal energy without tap requests, regardless of polling frequency',()=>{
+ const b=battle();b.training=true;
+ for(const side of [0,1] as const){const a=b.teams[side][0];a.go.fast='wing';a.go.charged=[];a.hp=a.maxHP=10000;a.attack=a.defense=100;}
+ prepareGoBattle(b);const sparse=structuredClone(b),spam=structuredClone(b);
+ for(let t=100;t<=9600;t+=100){advanceGoBattle(b,NOW+t);actGoBattle(spam,0,'fast',null,NOW+t);}
+ advanceGoBattle(sparse,NOW+9600);
+ for(const x of [b,sparse,spam]){assert.deepEqual(x.teams.map(t=>t[0].energy),[96,96]);assert.equal(x.teams[0][0].hp,x.teams[1][0].hp);assert.equal(x.fast[0]!.due,x.fast[1]!.due);}
+ assert.deepEqual(spam.teams,sparse.teams);assert.equal(FLOW_TURN_MS,400);
+});
+
+test('new flow: NPC must earn the full move cost and announces it before choosing a charged attack',()=>{
+ const b=battle();b.training=true;b.shields=[0,0];
+ for(const side of [0,1] as const){const a=b.teams[side][0];a.go.fast='poison';a.go.charged=['cut'];a.hp=a.maxHP=10000;a.attack=a.defense=100;}
+ prepareGoBattle(b);advanceGoBattle(b,NOW+3200);assert.equal(b.phase,'fight');assert.equal(b.teams[1][0].energy,36);assert.equal(b.npcChargeAt,NOW+4400);
+ advanceGoBattle(b,NOW+4000);assert.equal(b.phase,'fight');assert.equal(b.teams[1][0].energy,45);
+ advanceGoBattle(b,NOW+4800);assert.equal(b.phase,'charge');assert.equal(b.charge!.side,1);assert.equal(b.teams[1][0].energy,54-35);assert.equal(b.charge!.deadline-b.charge!.startedAt,FLOW_CHARGE_MS);
+});
+
+test('new flow: four light taps batch safely, keep full damage possible under latency, and finish in two seconds',()=>{
+ const b=battle();b.training=true;b.shields[1]=0;b.teams[0][0].energy=100;
+ prepareGoBattle(b);actGoBattle(b,0,'charged','cut',NOW);advanceGoBattle(b,NOW+400);const start=b.charge!.startedAt,q=new BattleInputBuffer();
+ for(let i=0;i<4;i++)q.push(b,'chargeTap',[i*2,i*2+1],start+50+i*50);
+ assert.equal(q.pendingTargets.length,8);assert.equal(q.take(b,start+100,true),null);assert.equal(q.take(b,start+120,false),null,'a light is never split into two network requests');
+ const packet=q.take(b,start+1200,false)!;assert.deepEqual(packet,{action:'chargeTap',value:[0,1,2,3,4,5,6,7],chargeAt:start});
+ assert.throws(()=>actGoBattle(b,1,'chargeTap',packet.value,start+1200));
+ actGoBattle(b,0,packet.action,packet.value,start+1200);assert.equal(b.charge!.hits.length,8);assert.equal(b.teams[0][0].energy,65);
+ assert.throws(()=>actGoBattle(b,0,'chargeTap',[0,1],start+1600));
+ advanceGoBattle(b,start+2000);assert.equal(b.phase,'fight');assert.equal(b.charge,null);assert.ok(b.fast[0]&&b.fast[1]);assert.deepEqual(q.pendingTargets.length,8);
+ assert.equal(q.take(b,start+2100,false),null);assert.deepEqual(q.pendingTargets,[]);
+});
+
+test('new flow: a batched light packet cannot claim instant, duplicate, out-of-range or late hits',()=>{
+ const b=battle();b.teams[0][0].energy=100;prepareGoBattle(b);actGoBattle(b,0,'charged','cut',NOW);advanceGoBattle(b,NOW+400);const start=b.charge!.startedAt;
+ for(const [value,at] of [[[0,1,2,3],start+200],[[0,0],start+400],[[8],start+400],[Array.from({length:9},(_,i)=>i),start+1200]] as const)assert.throws(()=>actGoBattle(b,0,'chargeTap',value,at));
+ assert.equal(b.charge!.hits.length,0);actGoBattle(b,0,'chargeTap',[0,1],start+500);assert.deepEqual(b.charge!.hits,[0,1]);
+ assert.throws(()=>actGoBattle(b,0,'chargeTap',[2,3],start+550));assert.throws(()=>actGoBattle(b,0,'chargeTap',[2,3],start+FLOW_CHARGE_MS));
+});
+
+test('new flow: switch decisions beat automatic attacks, preserve energy and use the shorter shared cooldown',()=>{
+ const b=battle();b.teams[0][0].energy=50;prepareGoBattle(b);actGoBattle(b,0,'switch',1,NOW+100);advanceGoBattle(b,NOW+400);
+ assert.equal(b.active[0],1);assert.equal(b.teams[0][0].energy,53);assert.equal(b.swapAt[0],NOW+400+FLOW_SWITCH_MS);
+ actGoBattle(b,0,'switch',2,NOW+FLOW_SWITCH_MS+800);advanceGoBattle(b,NOW+FLOW_SWITCH_MS+2000);assert.equal(b.active[0],2);
+});
+
+test('new flow: a simultaneous charged choice survives the other charge and does not spend energy twice',()=>{
+ const b=battle();b.shields=[0,0];
+ for(const side of [0,1] as const){const a=b.teams[side][0];a.go.fast='bite';a.go.charged=['cut'];a.energy=32;a.attack=side?100:101;a.hp=a.maxHP=10000;}
+ prepareGoBattle(b);for(const side of [1,0] as const)actGoBattle(b,side,'charged','cut',NOW+100);advanceGoBattle(b,NOW+400);
+ assert.equal(b.charge!.side,0);assert.equal(b.teams[0][0].energy,0);assert.equal(b.teams[1][0].energy,35);assert.equal(b.queued![1]!.kind,'charged');
+ actGoBattle(b,0,'chargeTap',[0,1,2,3,4,5,6,7],NOW+1400);actGoBattle(b,1,'shield',false,NOW+1500);advanceGoBattle(b,NOW+2400);
+ assert.equal(b.charge!.side,1);assert.equal(b.teams[1][0].energy,0);
+ actGoBattle(b,1,'chargeTap',[0,1,2,3,4,5,6,7],NOW+3400);actGoBattle(b,0,'shield',false,NOW+3500);advanceGoBattle(b,NOW+4400);
+ assert.equal(b.phase,'fight');assert.deepEqual(b.teams.map(t=>t[0].energy),[0,0]);
+});
+
+
+test('new flow: a full charged choice arriving just after an NPC starts is retained until after the shield decision',()=>{
+ const b=battle();b.training=true;b.shields=[0,0];
+ for(const side of [0,1] as const){const a=b.teams[side][0];a.go.fast='poison';a.go.charged=['cut'];a.hp=a.maxHP=10000;a.attack=a.defense=100;}
+ prepareGoBattle(b);advanceGoBattle(b,NOW+4800);assert.equal(b.charge!.side,1);
+ actGoBattle(b,0,'charged','cut',NOW+5000);assert.equal(b.queued![0]!.kind,'charged');const before=b.teams[0][0].energy;
+ actGoBattle(b,0,'shield',false,NOW+5100);advanceGoBattle(b,NOW+6800);
+ assert.equal(b.charge!.side,0);assert.equal(b.teams[0][0].energy,before-35);
+});
+
+
+test('new flow: a delayed shield is bound to its original charge and cannot spend a shield on a later attack',()=>{
+ const b=battle();for(const side of [0,1] as const){const a=b.teams[side][0];a.go.fast='bite';a.go.charged=['cut'];a.hp=a.maxHP=10000;a.attack=a.defense=100;}b.teams[1][0].energy=100;
+ prepareGoBattle(b);actGoBattle(b,1,'charged','cut',NOW);advanceGoBattle(b,NOW+400);const old=b.charge!.startedAt;
+ actGoBattle(b,0,'shield',false,old+300,old);advanceGoBattle(b,old+FLOW_CHARGE_MS);
+ actGoBattle(b,1,'charged','cut',old+FLOW_CHARGE_MS+10);advanceGoBattle(b,old+FLOW_CHARGE_MS+400);assert.equal(b.charge!.side,1);const fresh=b.charge!.startedAt;assert.notEqual(fresh,old);
+ actGoBattle(b,0,'shield',true,fresh+200,old);assert.equal(b.charge!.shield,null);assert.equal(b.shields[0],2);
+ actGoBattle(b,0,'shield',true,fresh+300,fresh);advanceGoBattle(b,fresh+FLOW_CHARGE_MS);assert.equal(b.shields[0],1);
+});
+
+test('new flow: a late valid tap after victory is harmless, without changing result, energy or shields',()=>{
+ const b=prepareGoBattle(battle());b.phase='finished';b.winner=0;const before=structuredClone(b);
+ for(const [action,value] of [['fast',null],['charged','cut'],['switch',1],['chargeTap',[0,1]],['shield',true]] as const)assert.doesNotThrow(()=>actGoBattle(b,0,action,value,NOW+1000));
+ assert.deepEqual(b,before);assert.throws(()=>actGoBattle(b,0,'forged-reward',999,NOW+1000));
 });

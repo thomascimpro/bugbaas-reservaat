@@ -1,0 +1,5 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {commandFeedbackV2,pollFeedbackV2} from '../src/errorFeedbackV2';
+test('brief connection failures stay quiet; a sustained outage shows a calm reconnect notice',()=>{for(const status of [0,408,429,500,502,503]){assert.equal(pollFeedbackV2({status},1,0),null);assert.equal(pollFeedbackV2({status},2,15000),null);assert.equal(pollFeedbackV2({status},3,1000),null);assert.deepEqual(pollFeedbackV2({status},3,8000),{tone:'notice',message:'Verbinding herstellen…'});assert.equal(commandFeedbackV2({status}),'notice');}});
+test('authentication and real rejected actions remain errors; revision conflicts are notices',()=>{for(const status of [400,401,403,404,422]){const error=Object.assign(new Error('Echte reden'),{status});assert.deepEqual(pollFeedbackV2(error,1,0),{tone:'error',message:'Echte reden'});assert.equal(commandFeedbackV2(error),'error');}assert.equal(commandFeedbackV2({status:409}),'notice');assert.equal(commandFeedbackV2(new Error('Unknown')),'error');});

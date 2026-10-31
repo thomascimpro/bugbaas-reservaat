@@ -1,6 +1,8 @@
 package __PACKAGE__
 
 import android.app.Activity
+import android.app.Notification
+import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -60,6 +62,29 @@ class BugBaasAdventureSyncModule(private val context: ReactApplicationContext) :
   }
   private fun available() = HealthConnectClient.getSdkStatus(context) == HealthConnectClient.SDK_AVAILABLE
   private fun unavailable(reason: String): WritableMap = Arguments.createMap().apply { putBoolean("available", false); putString("reason", reason) }
+
+  /** Update only our existing location notification; never start or restart GPS. */
+  @ReactMethod
+  fun updateAutoCatchNotification(text: String, promise: Promise) {
+    context.runOnUiQueueThread {
+      try {
+        val manager = context.getSystemService(NotificationManager::class.java)
+        if (manager == null) { promise.resolve(false); return@runOnUiQueueThread }
+        val active = manager.activeNotifications.filter {
+          it.packageName == context.packageName &&
+            it.notification.channelId?.endsWith(":bugbaas-autocatch-location-v1") == true &&
+            (it.notification.flags and Notification.FLAG_FOREGROUND_SERVICE) != 0
+        }
+        for (entry in active) {
+          val updated = Notification.Builder.recoverBuilder(context, entry.notification)
+            .setContentTitle(text.take(80)).setContentText(null).setStyle(null)
+            .setShowWhen(false).setOnlyAlertOnce(true).build()
+          manager.notify(entry.tag, entry.id, updated)
+        }
+        promise.resolve(active.isNotEmpty())
+      } catch (_: Exception) { promise.resolve(false) }
+    }
+  }
 
   @ReactMethod
   fun requestPermissions(promise: Promise) {

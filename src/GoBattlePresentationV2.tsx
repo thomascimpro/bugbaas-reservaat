@@ -1,7 +1,8 @@
 import React,{useContext,useEffect,useRef} from 'react';
 import {Animated,Pressable,Text,View} from 'react-native';
 import type {GoBattleView,GoFighter} from '../game/goBattleV2';
-import {FAST} from '../game/goV2';
+import {battleTurnMs} from '../game/goBattleV2';
+import {CHARGED,FAST} from '../game/goV2';
 import {species} from '../game/catalogV2';
 import {font,Glyph,MotionPrefs} from './uiV2';
 import {GoTypes,GO_TYPES} from './GoTypeV2';
@@ -19,14 +20,14 @@ function FighterHUD({unit,enemy=false}:{unit:GoFighter;enemy?:boolean}){
 export function GoBattleStageV2({battle:b,size,canTap,cooldown,queued,onFast,onInfo}:{battle:GoBattleView;size:number;canTap:boolean;cooldown:number;queued?:string|null;onFast:()=>void;onInfo:()=>void}){
  const side=b.side,other=(1-side) as 0|1,a=b.teams[side][b.active[side]],enemy=b.teams[other][b.active[other]],fast=FAST[a.go.fast],type=GO_TYPES[fast.type];
  return <View style={{flex:1,minHeight:150,borderRadius:22,overflow:'hidden',borderWidth:1,borderColor:'#C3D6AD66',backgroundColor:'#153E3524'}}>
-  <Pressable testID="battle-fast" accessibilityRole="button" accessibilityLabel={'Snelle aanval '+fast.name+' · tik op het gevechtsveld'} accessibilityHint="Houd vast voor aanvalsinformatie" disabled={!canTap} onPress={onFast} onLongPress={onInfo} style={{position:'absolute',inset:0}}>
+  <Pressable testID="battle-fast" accessibilityRole={b.flow===2?'image':'button'} accessibilityLabel={b.flow===2?'Je bug valt automatisch aan. Kies een volle aanval.':'Snelle aanval '+fast.name+' · tik op het gevechtsveld'} accessibilityHint={b.flow===2?"Basisaanvallen gaan vanzelf. Kies een volle aanvalmeter.":"Houd vast voor aanvalsinformatie"} disabled={b.flow===2||!canTap} onPress={onFast} onLongPress={onInfo} style={{position:'absolute',inset:0}}>
    <View pointerEvents="none" style={{position:'absolute',width:'132%',height:'55%',left:'-16%',top:'39%',borderRadius:999,borderWidth:2,borderColor:'#D5D8A42B',backgroundColor:'#AFC19A0D',transform:[{rotate:'-9deg'}]}}/>
    <View pointerEvents="none" style={{position:'absolute',width:'65%',height:'25%',left:'17%',top:'54%',borderRadius:999,borderWidth:1,borderColor:'#D5D8A42B'}}/>
    <View pointerEvents="none" style={{position:'absolute',right:'12%',top:'18%'}}><GoCombatFighterV2 unit={enemy} side={other} battle={b} size={size}/></View>
    <View pointerEvents="none" style={{position:'absolute',left:'5%',bottom:101}}><GoCombatFighterV2 unit={a} side={side} battle={b} size={size*1.2} flip/></View>
    <View pointerEvents="none" style={{position:'absolute',right:12,top:84,flexDirection:'row',gap:4}}>{b.teams[other].map((u,i)=><View key={u.id} style={{width:9,height:9,borderRadius:5,borderWidth:1,borderColor:'#F5E3AA',backgroundColor:u.hp>0?i===b.active[other]?'#F5D88D':'#A9D7AE':'#183B35',opacity:u.hp>0?1:.4}}/>)}</View>
   </Pressable>
-  <View pointerEvents="box-none" style={{position:'absolute',inset:8,justifyContent:'space-between'}}><FighterHUD unit={enemy} enemy/><View pointerEvents="box-none" style={{gap:6}}><FighterHUD unit={a}/><View pointerEvents="none" style={{alignSelf:'center',flexDirection:'row',alignItems:'center',gap:5,paddingHorizontal:9,paddingVertical:3,borderRadius:12,backgroundColor:'#0B2B25E8'}}><Glyph name={type.icon} size={16}/><Text style={{fontFamily:font,fontSize:10,fontWeight:'800',color:'#F7EDCF'}}>{a.hp<=0?'Kies een reserve':b.replaceAt[other]?'Tegenstander wisselt':queued?'Volgende tik klaar':cooldown>0?fast.name:'Tik om aan te vallen'}</Text></View></View></View>
-  <View pointerEvents="none" style={{position:'absolute',left:0,bottom:0,height:3,width:(Math.max(0,1-cooldown/(fast.turns*500))*100+'%') as '100%',backgroundColor:queued?'#EFCC7B':type.color,opacity:cooldown>0||queued?1:.35}}/>
+  <View pointerEvents="none" style={{position:'absolute',inset:8,justifyContent:'space-between'}}><View pointerEvents="none" style={{alignItems:'flex-end',gap:4}}><FighterHUD unit={enemy} enemy/>{b.flow===2&&b.training&&b.npcChargeAt&&b.phase==='fight'?<Text style={{fontFamily:font,fontSize:11,fontWeight:'800',color:'#FFE0A0',backgroundColor:'#613D25',paddingHorizontal:9,paddingVertical:4,borderRadius:10}}>⚡ Aanval komt!</Text>:null}</View><View pointerEvents="box-none" style={{gap:6}}><FighterHUD unit={a}/><View pointerEvents="none" style={{alignSelf:'center',flexDirection:'row',alignItems:'center',gap:5,paddingHorizontal:9,paddingVertical:3,borderRadius:12,backgroundColor:'#0B2B25E8'}}><Glyph name={type.icon} size={16}/><Text style={{fontFamily:font,fontSize:10,fontWeight:'800',color:'#F7EDCF'}}>{a.hp<=0?'Kies een reserve':b.replaceAt[other]?'Tegenstander wisselt':queued?b.flow===2?'Aanval wordt klaargezet…':'Volgende tik klaar':b.flow===2?a.go.charged.some(m=>a.energy>=CHARGED[m].energy)?'Volle aanval! Kies hieronder ↓':'Je bug valt zelf aan':cooldown>0?fast.name:'Tik om aan te vallen'}</Text></View></View></View>
+  <View pointerEvents="none" style={{position:'absolute',left:0,bottom:0,height:3,width:(Math.max(0,1-cooldown/(fast.turns*battleTurnMs(b)))*100+'%') as '100%',backgroundColor:queued?'#EFCC7B':type.color,opacity:cooldown>0||queued?1:.35}}/>
  </View>;
 }

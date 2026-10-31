@@ -57,14 +57,14 @@ test('coin shop validates server catalog/balance, rejects forged prices and pres
  const p=player('shop');p.go!.gyms!.coins=80;const count=p.field!.inventory.basic;buyCoinOffer(p,'field-nets',NOW);assert.equal(p.go!.gyms!.coins,0);assert.equal(p.field!.inventory.basic,count+20);assert.throws(()=>buyCoinOffer(p,'field-nets',NOW),/coins/);assert.throws(()=>buyCoinOffer(p,'unknown',NOW),/shopartikel/);
  for(const forged of [{type:'coinBuy',offer:'field-nets',coins:0},{type:'gymDefend',gym:site.id,id:'bug',cp:99999},{type:'gymAttack',gym:site.id,ids:[],damage:99999}])assert.throws(()=>parseGo({...forged,commandId:randomUUID(),expectedRevision:0}));
 });
-test('shared service persists an absent owner defense, resolves real taps, returns coins atomically and keeps PvP rating unchanged',async()=>{
+test('shared service persists an absent owner defense, resolves automatic attacks, returns coins atomically and keeps PvP rating unchanged',async()=>{
  const store=new SqliteStore(':memory:');let now=NOW;try{
   const service=new GoServiceV2(store,'local',()=>now),a=player('owner','fern','ant',1),b=player('attacker','amber','hercules',50);for(const p of [a,b])await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));
   await store.run(['v2GoGyms:'+site.id],d=>d.set('v2GoGyms:'+site.id,{...gym(),npcSeeded:true}));
   let owner=await service.state(a.uid),attack=await service.state(b.uid);const send=(uid:string,v:GameViewV2,type:string,data:Record<string,unknown>={})=>service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});owner=await send(a.uid,owner,'gymDefend',{gym:site.id,id:a.specimens[0].id});assert.equal((await service.state(b.uid)).goGyms![0].defenders[0].name,a.name);
   now+=9*3600000;await store.run(['v2Players:'+b.uid],d=>{const x=d.get('v2Players:'+b.uid) as PlayerV2;x.walking!.at=now;x.walking!.fix.timestamp=now;});attack=await service.state(b.uid);attack=await send(b.uid,attack,'gymAttack',{gym:site.id,ids:b.go!.team});assert.ok(attack.goBattle!.gym);assert.deepEqual(attack.goBattle!.gym!.defenders,[]);
   let accepted:Record<string,unknown>|undefined;for(let i=0;i<100&&attack.goBattle!.phase!=='finished';i++){
-   if(attack.goBattle!.phase==='fight'&&!attack.goBattle!.fast[0]){accepted={type:'goAct',action:'fast',value:null,commandId:randomUUID(),expectedRevision:attack.player.revision};attack=await service.command(b.uid,accepted);}
+   if(attack.goBattle!.phase==='fight'&&!accepted){accepted={type:'goAct',action:'fast',value:null,commandId:randomUUID(),expectedRevision:attack.player.revision};attack=await service.command(b.uid,accepted);}
    now+=500;attack=await service.state(b.uid);
   }
   assert.equal(attack.goBattle!.winner,0);assert.equal(attack.goGyms![0].team,null);owner=await service.state(a.uid);assert.equal(owner.player.go!.gyms!.coins,50);assert.equal(owner.player.go!.gyms!.deployed.length,0);assert.ok(owner.player.specimens.some(s=>s.id===a.specimens[0].id));assert.equal(owner.player.go!.rating,1000);assert.equal(attack.player.go!.rating,1000);

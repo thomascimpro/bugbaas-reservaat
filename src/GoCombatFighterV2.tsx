@@ -20,8 +20,8 @@ export function GoCombatFighterV2({unit,side,battle,size,flip=false}:{unit:GoFig
   if(!damage&&!attack&&!switched)return;
   const opponent=battle.teams[1-side][battle.active[1-side]],incoming=prior.charge?.side===1-side?CHARGED[prior.charge.move]:FAST[opponent.go.fast],outgoing=battle.charge?.side===side?CHARGED[battle.charge.move]:FAST[unit.go.fast],type=GO_TYPES[(damage?incoming:outgoing).type];
   running.current.animation?.stop();clearTimeout(running.current.timer);setFeedback({damage,shield,attack,charged,switched,color:type.color,matchup:damage?effectiveness(incoming.type,movePool(unit.species).types):1});progress.setValue(0);
-  const animation=Animated.timing(progress,{toValue:1,duration:reduced?850:780,useNativeDriver:Platform.OS!=='web'});animation.start();
-  running.current={animation,timer:setTimeout(()=>setFeedback(null),reduced?900:830)};
+  const animation=Animated.timing(progress,{toValue:1,duration:reduced?850:battle.flow===2?320:780,useNativeDriver:Platform.OS!=='web'});animation.start();
+  running.current={animation,timer:setTimeout(()=>setFeedback(null),reduced?900:battle.flow===2?370:830)};
  },[battle.id,battle.serial,unit.id,reduced,side,progress]);
  const opacity=progress.interpolate({inputRange:[0,.12,.75,1],outputRange:[0,1,1,0]}),direction=flip?1:-1;
  const dx=progress.interpolate({inputRange:[0,.16,.36,.58,1],outputRange:!reduced&&feedback?.attack?[0,-size*.05*direction,size*.21*direction,0,0]:!reduced&&feedback?.damage?[0,-7,7,-3,0]:[0,0,0,0,0]}),dy=progress.interpolate({inputRange:[0,.16,.36,.58,1],outputRange:!reduced&&feedback?.attack?[0,size*.03*direction,-size*.15*direction,0,0]:[0,0,0,0,0]}),scale=progress.interpolate({inputRange:[0,.18,.45,1],outputRange:!reduced&&feedback?.switched?[.6,1.06,1,1]:!reduced&&feedback?.charged?[1,1.12,.96,1]:[1,1,1,1]});

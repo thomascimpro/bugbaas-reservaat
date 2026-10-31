@@ -67,7 +67,9 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
   store.run=run;
   // A hits until some damage lands; B then sees the same lower shared HP.
   for(let i=0;i<40&&views[A].goBattle!.teams[1][0].hp>=100;i++){now+=600;views[A]=await service.state(A);const b=views[A].goBattle!,a=b.teams[0][b.active[0]];if(b.phase==='fight'&&a.readyAt<=now&&!b.fast[0]&&a.hp>0)await send(A,'goAct',{action:'fast',value:null});}
-  now+=600;views[A]=await service.state(A);views[B]=await service.state(B);
+  // Automatic attacks can land during the load probes already; wait for the
+  // existing 1.5 s pooled read cache before comparing both public lobby views.
+  now+=1600;views[A]=await service.state(A);views[B]=await service.state(B);
   const shared=views[B].raidLobby!.hp,max=views[B].raidLobby!.maxHP;assert.ok(shared<max,'A\'s damage is pooled');assert.equal(views[A].raidLobby!.hp,shared);
   assert.ok(views[B].goBattle!.teams[1][0].hp<100,'B\'s own fight shows the lowered boss');
   // The group is close to winning: one more of B's hits finishes it for both players.

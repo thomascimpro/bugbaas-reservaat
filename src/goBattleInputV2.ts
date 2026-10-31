@@ -1,8 +1,8 @@
 import {CHARGED,FAST} from '../game/goV2';
 import type {GoBattleView} from '../game/goBattleV2';
 
-export type BufferedBattleAction={action:'fast'|'charged'|'switch'|'chargeTap'|'shield';value:string|number|boolean|null};
-export function battleReadyEnergy(b:GoBattleView){const a=b.teams[b.side][b.active[b.side]],f=b.fast[b.side];return Math.min(100,a.energy+(f?.index===b.active[b.side]?FAST[a.go.fast].energy:0));}
+export type BufferedBattleAction={chargeAt?:number;action:'fast'|'charged'|'switch'|'chargeTap'|'shield';value:string|number|number[]|boolean|null};
+export function battleReadyEnergy(b:GoBattleView){const a=b.teams[b.side][b.active[b.side]],f=b.fast[b.side];return b.flow===2?a.energy:Math.min(100,a.energy+(f?.index===b.active[b.side]?FAST[a.go.fast].energy:0));}
 /** One deliberate tap may wait through a request/cooldown. It never repeats itself. */
 export class BattleInputBuffer {
  private input:(BufferedBattleAction&{battle:string;unit:string;expires:number})|null=null;
@@ -14,7 +14,7 @@ export class BattleInputBuffer {
  push(b:GoBattleView,action:BufferedBattleAction['action'],value:BufferedBattleAction['value'],now:number){
   if(b.phase==='charge'&&b.charge&&now<b.charge.deadline){
    const c=b.charge;if(!this.charge||this.charge.battle!==b.id||this.charge.startedAt!==c.startedAt)this.charge={battle:b.id,startedAt:c.startedAt,targets:[],sent:[],lastSent:0,shield:undefined,shieldSent:false};
-   if(action==='chargeTap'&&c.side===b.side&&Number.isInteger(value)&&Number(value)>=0&&Number(value)<8&&!c.hits.includes(Number(value))&&!this.pendingTargets.includes(Number(value)))this.charge.targets.push(Number(value));
+   if(action==='chargeTap'&&c.side===b.side){for(const i of Array.isArray(value)?value:[value])if(Number.isInteger(i)&&Number(i)>=0&&Number(i)<8&&!c.hits.includes(Number(i))&&!this.pendingTargets.includes(Number(i)))this.charge.targets.push(Number(i));}
    else if(action==='shield'&&c.side!==b.side&&c.shield===null&&typeof value==='boolean'&&(!value||b.shields[b.side]>0)&&this.charge.shield===undefined)this.charge.shield=value;
    return;
   }
@@ -35,8 +35,8 @@ export class BattleInputBuffer {
    else{
     this.input=null;q.sent=q.sent.filter(i=>!c.hits.includes(i));q.targets=q.targets.filter(i=>!c.hits.includes(i));
     if(busy)return null;
-    if(c.side===b.side&&q.targets.length&&now-Math.max(c.lastTap,q.lastSent)>=120){const value=q.targets.shift()!;q.sent.push(value);q.lastSent=now;return {action:'chargeTap',value};}
-    if(c.side!==b.side&&c.shield===null&&q.shield!==undefined&&!q.shieldSent){q.shieldSent=true;return {action:'shield',value:q.shield};}
+    if(c.side===b.side&&q.targets.length){let count=Math.min(q.targets.length,b.flow===2?Math.floor((now-Math.max(c.lastTap,q.lastSent,c.startedAt))/120):now-Math.max(c.lastTap,q.lastSent)>=120?1:0);if(b.flow===2&&q.targets.length>=2)count-=count%2;if(count>0){const targets=q.targets.splice(0,count);q.sent.push(...targets);q.lastSent=now;return {action:'chargeTap',value:targets.length===1?targets[0]:targets,...(b.flow===2?{chargeAt:q.startedAt}:{})};}}
+    if(c.side!==b.side&&c.shield===null&&q.shield!==undefined&&!q.shieldSent){q.shieldSent=true;return {action:'shield',value:q.shield,...(b.flow===2?{chargeAt:q.startedAt}:{})};}
     return null;
    }
   }
