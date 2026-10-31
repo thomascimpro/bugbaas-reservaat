@@ -47,7 +47,7 @@ test('routes reject long geometry gaps and cap the full out-and-back distance at
  assert.equal(buildWorldSites([gap],FIX,()=>true).routes.length,0);
 });
 test('post supplies are bounded, require fresh nearby GPS and honor a persistent five-minute cooldown',()=>{
- const p=player(),before=p.field!.inventory.basic;const loot=spinPost(p,sites.posts[0].id,'seed',NOW);assert.ok(loot.basic!>=2&&loot.basic!<=4);assert.equal(p.field!.inventory.basic,before+loot.basic!);assert.throws(()=>spinPost(p,sites.posts[0].id,'new-seed',NOW+1),/laadt/);p.walking!.fix={...FIX,lng:FIX.lng+.01};assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW),/65 meter/);p.walking!.fix=FIX;assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW+31000),/GPS/);assert.throws(()=>spinPost(p,'fabricated','new',NOW),/niet beschikbaar/);
+ const p=player(),before=p.field!.inventory.basic;const loot=spinPost(p,sites.posts[0].id,'seed',NOW);assert.ok(loot.basic!>=2&&loot.basic!<=4);assert.equal(p.field!.inventory.basic,before+loot.basic!);assert.throws(()=>spinPost(p,sites.posts[0].id,'new-seed',NOW+1),/laadt/);p.walking!.fix={...FIX,lng:FIX.lng+.01};assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW),/80 meter/);p.walking!.fix=FIX;assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW+31000),/GPS/);assert.throws(()=>spinPost(p,'fabricated','new',NOW),/niet beschikbaar/);
 });
 test('route rewards require ordered route points AND verified distance; pause excludes distance and claim pays once',()=>{
  const p=player(),r=sites.routes[0];startRoute(p,r.id,NOW);const run=p.go!.sites!.run!;assert.throws(()=>finishRoute(p,NOW),/Volg eerst/);

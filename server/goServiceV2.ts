@@ -1,4 +1,4 @@
-import {gymSites,ensureGyms,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym,ensureNpcGym,settleExpiredGym,GYM_RULES} from '../game/gymsV2';
+import {gymSites,ensureGyms,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym,ensureNpcGym,settleExpiredGym,markGymWin,gymWinRight,GYM_RULES} from '../game/gymsV2';
 import {ensureDailyChallenge,dailyChallengeView,makeDailyChallengeBattle,settleDailyChallenge,dailyWeekKey,weeklyDailyScore} from '../game/dailyChallengeV2';
 /** Autovanger: one attempt per walked step, gaps up to 15 min, and at most a few Adventure Sync catches per day. */
 import type {WildBug,Walking} from '../game/walkingV2';
@@ -57,7 +57,7 @@ const dailyScoreKey=(uid:string,league:League,now:number)=>'v2DailyScores:'+dail
 type DailyScoreRow={uid:string;name:string;week:string;league:League;score:number};
 const AUTO_DEFENSE_COMMANDS=new Set(['teamPreset','goTeam','goPower','goSecond','goTM','goEquip','goEvolve','goRename','profile','echoQueue','dailyChallenge']);
 const hash=(value:string)=>createHash('sha256').update(value).digest('hex');
-const FIELDS:Record<string,string[]>={postResearch:['id','discard'],teamPreset:['action','league','slot','ids'],gymTeam:['team'],gymDefend:['gym','id'],gymAttack:['gym','ids','remote'],coinBuy:['offer'],adventureSync:['snapshot'],profile:['name','avatar','outfit','starter'],buddyPlay:['kind'],settings:['sound','reducedMotion','largeText','music','volume','sfxVolume','graphics'],favorite:['id'],buddy:['id'],worldLocate:['fix'],worldEncounter:['spawn'],worldFocus:['encounter'],worldCast:['encounter','net','bait','trace','rhythm'],fieldLure:[],fieldSupply:[],fieldTask:['task'],poiSpin:['poi'],routeStart:['route'],routePause:[],routeResume:[],routeFinish:[],routeCancel:[],routeRecord:['action'],routeSave:['name','emoji'],routeDelete:['route'],goPower:['id','steps'],goSecond:['id'],goTM:['id','slot'],goEquip:['id','item'],goTransfer:['id'],goTransferMany:['ids'],trainerClaim:[],goEvolve:['id'],goTeam:['ids','league'],goAuto:['enabled'],goQueue:[],goCancel:[],goTrain:[],goInvite:[],goJoin:['code'],goAct:['action','value','chargeAt'],goClose:[],friendRequest:['code'],friendAccept:['pair'],friendRemove:['pair'],giftSend:['pair','card'],giftOpen:['pair'],echoSave:[],echoQueue:[],cupFight:['ids'],cocoonStart:['id','incubator'],cocoonClaim:['id'],goBoss:['difficulty','post','ids'],dailyChallenge:['practice'],goRename:['id','name'],tradeStart:['pair'],tradeOffer:['pair','id','tradeRevision'],tradeConfirm:['pair','tradeRevision','special'],tradeCancel:['pair','tradeRevision'],raidPass:[],raidJoin:['raid','remote'],raidLeave:[],raidInvite:['raid','friends'],raidFight:['ids'],raidClaim:['lobby'],plaagFight:['target','ids']};
+const FIELDS:Record<string,string[]>={postResearch:['id','discard'],teamPreset:['action','league','slot','ids'],gymTeam:['team'],gymDefend:['gym','id','remote'],gymAttack:['gym','ids','remote'],coinBuy:['offer'],adventureSync:['snapshot'],profile:['name','avatar','outfit','starter'],buddyPlay:['kind'],settings:['sound','reducedMotion','largeText','music','volume','sfxVolume','graphics'],favorite:['id'],buddy:['id'],worldLocate:['fix'],worldEncounter:['spawn'],worldFocus:['encounter'],worldCast:['encounter','net','bait','trace','rhythm'],fieldLure:[],fieldSupply:[],fieldTask:['task'],poiSpin:['poi'],routeStart:['route'],routePause:[],routeResume:[],routeFinish:[],routeCancel:[],routeRecord:['action'],routeSave:['name','emoji'],routeDelete:['route'],goPower:['id','steps'],goSecond:['id'],goTM:['id','slot'],goEquip:['id','item'],goTransfer:['id'],goTransferMany:['ids'],trainerClaim:[],goEvolve:['id'],goTeam:['ids','league'],goAuto:['enabled'],goQueue:[],goCancel:[],goTrain:[],goInvite:[],goJoin:['code'],goAct:['action','value','chargeAt'],goClose:[],friendRequest:['code'],friendAccept:['pair'],friendRemove:['pair'],giftSend:['pair','card'],giftOpen:['pair'],echoSave:[],echoQueue:[],cupFight:['ids'],cocoonStart:['id','incubator'],cocoonClaim:['id'],goBoss:['difficulty','post','ids'],dailyChallenge:['practice'],goRename:['id','name'],tradeStart:['pair'],tradeOffer:['pair','id','tradeRevision'],tradeConfirm:['pair','tradeRevision','special'],tradeCancel:['pair','tradeRevision'],raidPass:[],raidJoin:['raid','remote'],raidLeave:[],raidInvite:['raid','friends'],raidFight:['ids'],raidClaim:['lobby'],plaagFight:['target','ids']};
 const SOCIAL_COMMANDS=new Set(['profile','friendRequest','friendAccept','friendRemove','giftSend','giftOpen','tradeStart','tradeOffer','tradeConfirm','tradeCancel','echoSave','raidInvite']);
 type Ticket={uid:string;league:League;rating:number;at:number;until:number;status:'waiting'|'matched'|'cancelled'|'expired'};
 export function parseGo(raw:unknown):CommandV2{check(raw&&typeof raw==='object'&&!Array.isArray(raw),'Een actie is vereist.');const c=raw as CommandV2;check(typeof c.type==='string'&&Object.hasOwn(FIELDS,c.type),'Deze oude spelmodus is verwijderd. Vernieuw de game.');check(typeof c.commandId==='string'&&/^[\w-]{16,80}$/.test(c.commandId)&&Number.isSafeInteger(c.expectedRevision)&&c.expectedRevision>=0,'Ongeldige spelactie.');check(Object.keys(c).every(k=>['type','commandId','expectedRevision',...FIELDS[c.type]].includes(k)),'De server bepaalt stats, schade en beloningen.');return c;}
@@ -104,7 +104,7 @@ export class GoServiceV2{
   if(b.gym){
    const g=document<Gym>(d,gyk(b.gym.id));check(g,'Deze gym is niet beschikbaar.',409);
    const owners=new Map(b.gym.defenders.filter(ref=>!ref.npc).flatMap(ref=>{const owner=document<PlayerV2>(d,pk(ref.uid));return owner?[[ref.uid,owner] as [string,PlayerV2]]:[];}));
-   if(settleGymBattle(g,b,owners,now)){const p=this.get(d,b.players[0],now);p.revision++;b.rewards=[{dust:0,xp:0,fastTMs:0,chargedTMs:0}];}return;
+   if(settleGymBattle(g,b,owners,now)){const p=this.get(d,b.players[0],now);markGymWin(p,b,now);p.revision++;b.rewards=[{dust:0,xp:0,fastTMs:0,chargedTMs:0}];}return;
   }
   if(b.echo){
    const p=this.get(d,b.players[0],now),reward=settleEcho(p,b,now);if(!reward)return;
@@ -167,7 +167,7 @@ export class GoServiceV2{
  /** Gyms you can see: the nearby gym posts plus far gyms on the map (up to 1.2 km), nearest first. Their raids are visible and joinable remotely. */
  private visibleRaidSites(w:Walking){const near=gymSites(w.posts??[]),far=(w.mapSites??[]).filter(m=>m.gym&&!near.some(n=>n.postId===m.id)).map(m=>({id:'gym-'+m.id,postId:m.id,name:m.name==='Veldpost'?'Wachtershonk':m.name+' · Gym',lat:m.lat,lng:m.lng}));return [...near,...far.sort((a,b)=>distance(w.fix,a)-distance(w.fix,b)).slice(0,12)];}
  private localRaidSite(p:PlayerV2,raid:string,now:number,token:RaidToken){
-  const w=requireFieldLocation(p.walking,now),site=gymSites(w.posts??[]).find(s=>raidAt(s,now,token)?.id===raid);check(site,'Deze zwerm is niet in de buurt.');check(distance(w.fix,site)<=65,'Loop binnen 65 meter van de gympost.');return site;
+  const w=requireFieldLocation(p.walking,now),site=gymSites(w.posts??[]).find(s=>raidAt(s,now,token)?.id===raid);check(site,'Deze zwerm is niet in de buurt.');check(distance(w.fix,site)<=80,'Loop binnen 80 meter van de gympost.');return site;
  }
  private inbox(uid:string){
   const cached=this.inboxCache.get(uid);if(cached&&cached.until>this.clock())return cached.value;
@@ -176,7 +176,7 @@ export class GoServiceV2{
  }
  private async raidView(uid:string,p:PlayerV2){
   const now=this.clock(),w=p.walking,fresh=!!w&&now-w.at<45000,token=await this.raidToken();
-  const raids=w?this.visibleRaidSites(w).flatMap(site=>{const r=raidAt(site,now,token);return r?[{...publicRaid(r),joinableUntil:raidJoinableUntil(r),local:fresh&&distance(w.fix,site)<=65}]:[];}):[];
+  const raids=w?this.visibleRaidSites(w).flatMap(site=>{const r=raidAt(site,now,token);return r?[{...publicRaid(r),joinableUntil:raidJoinableUntil(r),local:fresh&&distance(w.fix,site)<=80}]:[];}):[];
   let raidLobby:RaidLobbyView|null=null;const lobbyId=p.go?.raids?.lobby;
   if(lobbyId){const {lobby,damage}=await this.raidDamage(lobbyId),doc=lobby?await this.raidDoc(lobby.raidId):undefined;
    if(lobby&&doc){const shown=structuredClone(lobby);resolveLobby(shown,damage,now);raidLobby=lobbyView(shown,doc.raid,uid,damage,p.go!.raids!);}}
@@ -184,7 +184,7 @@ export class GoServiceV2{
   return {raids,raidLobby,raidInvites:invited?(await this.inbox(uid)).filter(i=>i.endsAt>now):[]};
  }
  private async gyms(p:PlayerV2){
-  const now=this.clock(),sites=new Map<string,GymSite>([...gymSites(p.walking?.posts??[]),...(p.go!.gyms?.deployed??[])].map(site=>[site.id,site]));
+  const now=this.clock(),won=p.go!.gyms?.won,sites=new Map<string,GymSite>([...gymSites(p.walking?.posts??[]),...(p.go!.gyms?.deployed??[]),...(won&&won.until>now?[won]:[])].map(site=>[site.id,{id:site.id,postId:site.postId,name:site.name,lat:site.lat,lng:site.lng}]));
   if(!sites.size)return {items:[] as Gym[],changed:false};
   const keys=[...sites.keys()].map(gyk),read=()=>this.store.run(keys,d=>[...sites.values()].map(site=>{let g=document<Gym>(d,gyk(site.id));if(!g){g={...site,team:null,revision:0,defenders:[]};d.set(gyk(site.id),g);}ensureNpcGym(g,now);return g;}));
   let gyms=await read(),changed=false;const expiredBattles=gyms.filter(g=>g.battle&&g.battle.until<=now);
@@ -300,8 +300,10 @@ export class GoServiceV2{
    switch(c.type){
     case 'gymTeam':idle();check(linked||this.mode==='local','Koppel je account voor gyms.',403);chooseGymTeam(x,c.team,now);break;
     case 'gymDefend':case 'gymAttack':{
-     idle();check(linked||this.mode==='local','Koppel je account voor gyms.',403);const key=gyk(c.gym as string),remote=c.type==='gymAttack'&&c.remote===true,site=(remote&&x.walking?this.visibleRaidSites(x.walking):gymSites(x.walking?.posts??[])).find(s=>s.id===c.gym);if(remote)check(site,'Deze gym zie je niet op je kaart.');let gym=document<Gym>(d,key);if(!gym){check(site,'Deze gym is niet beschikbaar.');gym={...site,team:null,revision:0,defenders:[]};d.set(key,gym);}
-     ensureNpcGym(gym,now);if(c.type==='gymDefend')placeGymDefender(x,gym,c.id,id,now);else{const b=makeGymBattle(x,gym,c.ids,id,now,remote);d.set(bk(id),prepareGoBattle(b));g.battle=id;}break;
+     // After a won gym battle the kid goes straight to placing a bug: close the finished battle instead of failing.
+     if(c.type==='gymDefend'&&g.battle&&document<GoBattle>(d,bk(g.battle))?.phase==='finished')g.battle=null;
+     idle();check(linked||this.mode==='local','Koppel je account voor gyms.',403);const key=gyk(c.gym as string),remote=c.remote===true,won=c.type==='gymDefend'&&gymWinRight(x,c.gym as string,now),site=(remote&&x.walking?this.visibleRaidSites(x.walking):gymSites(x.walking?.posts??[])).find(s=>s.id===c.gym);if(remote&&!won)check(site,'Deze gym zie je niet op je kaart.');let gym=document<Gym>(d,key);if(!gym){check(site,'Deze gym is niet beschikbaar.');gym={...site,team:null,revision:0,defenders:[]};d.set(key,gym);}
+     ensureNpcGym(gym,now);if(c.type==='gymDefend')placeGymDefender(x,gym,c.id,id,now,remote);else{const b=makeGymBattle(x,gym,c.ids,id,now,remote);d.set(bk(id),prepareGoBattle(b));g.battle=id;}break;
     }
     case 'coinBuy':idle();buyCoinOffer(x,c.offer,now);break;
     case 'profile':check(typeof c.name==='string'&&/^[\p{L}\p{N} _-]{2,18}$/u.test(c.name),'Gebruik 2 tot 18 letters of cijfers.');if(c.avatar!==undefined){check(['fern','amber','tidal'].includes(c.avatar as string),'Kies een ranger.');x.avatar=c.avatar as 'fern'|'amber'|'tidal';}if(c.outfit!==undefined){check(isOutfit(c.outfit),'Kies een kleur.');x.outfit=c.outfit;}if(c.starter!==undefined){check((STARTER_PARTNERS as readonly unknown[]).includes(c.starter),'Kies een eerste maatje.');if(!x.onboarded&&!x.specimens.some(s=>s.source==='partner'))this.givePartner(x,c.starter as string,now);}x.name=c.name;x.onboarded=true;break;

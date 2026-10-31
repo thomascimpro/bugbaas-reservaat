@@ -25,7 +25,7 @@ export const MAP_SITE_RADIUS=1200,MAP_SITE_LIMIT=60,MAP_GYM_TEAM_LIMIT=12;
 // Same FNV-1a rule as gymSites in gymsV2 (kept in sync by a test): a post is a gym candidate when hash%3===0.
 export function gymCandidate(id:string){let value=2166136261;for(const c of id)value=Math.imul(value^c.charCodeAt(0),16777619);return (value>>>0)%3===0;}
 export type SiteProgress={visits:Record<string,number>;firstDay:string;routeClaims:string[];run:RouteRun|null;own?:FieldRoute[];badges?:Record<string,number>;recording?:RouteRecording|null;lastRoute?:RouteResult;lastLoot?:{post:string;items:Partial<Record<FieldItem,number>>;at:number;cocoon?:2|5;tm?:'fast'|'charged';held?:Held}};
-export const POST_RADIUS=65,POST_COOLDOWN=300000;
+export const POST_RADIUS=80,POST_COOLDOWN=300000;
 export const HORIZON_LIMITS={low:16,normal:36,high:60} as const;
 export type HorizonSite=MapSite&{meters:number;icon:string};
 /** Display-only horizon markers: never the playable posts (those keep their 3D model), nearest first, capped per graphics level. */
@@ -35,7 +35,7 @@ export function horizonSites(sites:MapSite[]|undefined,posts:FieldPost[]|undefin
 }
 export function ensureSites(p:PlayerV2){return p.go!.sites??={visits:{},firstDay:'',routeClaims:[],run:null};}
 export function spinPost(p:PlayerV2,id:unknown,seed:string,now:number){
- requireFieldLocation(p.walking,now);const post=p.walking!.posts?.find(x=>x.id===id);check(post,'Deze insectenpost is niet beschikbaar.');check(distance(p.walking!.fix,post)<=POST_RADIUS,'Loop binnen 65 meter van de post.');const s=ensureSites(p);check(now-(s.visits[post.id]??0)>=POST_COOLDOWN,'Deze post laadt nog op.');
+ requireFieldLocation(p.walking,now);const post=p.walking!.posts?.find(x=>x.id===id);check(post,'Deze insectenpost is niet beschikbaar.');check(distance(p.walking!.fix,post)<=POST_RADIUS,'Loop binnen 80 meter van de post.');const s=ensureSites(p);check(now-(s.visits[post.id]??0)>=POST_COOLDOWN,'Deze post laadt nog op.');
  const random=rng(seed),items:Partial<Record<FieldItem,number>>={basic:2+Math.floor(random()*3)};if(random()<.35)items.blue=1;if(random()<.05)items.silk=1;if(random()<.25)items[(['pollen','fruit','dew'] as const)[Math.floor(random()*3)]]=1;if(random()<.02)items.gold=1;if(random()<.02)items.silver=1;
  for(const [kind,count] of Object.entries(items))p.field!.inventory[kind as FieldItem]=Math.min(99999,(p.field!.inventory[kind as FieldItem]??0)+count!);s.visits[post.id]=now;
  const cocoon=awardPostCocoon(p,post.id,seed,now),tmRoll=random(),tm=tmRoll<.01?'fast':tmRoll<.02?'charged':undefined;

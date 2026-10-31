@@ -107,7 +107,7 @@ test('a raid at a far gym on the map is visible, can be joined remotely without 
   const views:Record<string,GameViewV2>={};for(const uid of [D,E])views[uid]=await service.state(uid);
   const send=async(uid:string,type:string,params:Record<string,unknown>={})=>views[uid]=await service.command(uid,{type,...params,commandId:randomUUID(),expectedRevision:views[uid].player.revision});
   const raid=views[D].raids!.find(r=>r.site.id===site.id)!;assert.ok(raid&&!raid.local,'the far gym raid is listed, not as local');
-  await assert.rejects(send(D,'raidJoin',{raid:raid.id,remote:false}),/65 meter|niet in de buurt/,'joining in person still needs to be near');
+  await assert.rejects(send(D,'raidJoin',{raid:raid.id,remote:false}),/80 meter|niet in de buurt/,'joining in person still needs to be near');
   await send(D,'raidJoin',{raid:raid.id,remote:true});assert.equal(views[D].raidLobby!.members[0].remote,true);assert.equal(views[D].player.go!.raids!.passes,0,'the free daily ticket was used, no Zwermfluit');
   await send(D,'raidInvite',{raid:raid.id,friends:[E]});views[E]=await service.state(E);assert.equal(views[E].raidInvites![0].raidId,raid.id,'the friend got an invite to help remotely');
  }finally{store.close();}

@@ -23,7 +23,7 @@ test('posts stay within 600 m while display-only map sites reach the 1.2 km hori
  assert.equal(sites.map!.length,5);assert.ok(sites.map!.some(s=>Math.abs(distance(FIX,s)-1150)<5)&&sites.map!.some(s=>Math.abs(distance(FIX,s)-1190)<5));
  assert.ok(sites.map!.every(s=>distance(FIX,s)<=MAP_SITE_RADIUS));
  assert.ok(sites.map!.every(s=>!!s.gym===gymCandidate(s.id)));
- assert.equal(POST_RADIUS,65);assert.equal(GYM_RULES.range,65);
+ assert.equal(POST_RADIUS,80);assert.equal(GYM_RULES.range,80);
 });
 
 test('known blocked spots never become horizon markers; unknown tiles stay display-only',()=>{

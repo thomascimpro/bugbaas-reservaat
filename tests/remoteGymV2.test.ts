@@ -24,7 +24,7 @@ test('one gym battle per day from afar at a gym you can see; walking is still ne
   await service.state(uid);await store.run(['v2Players:'+uid],d=>d.set('v2Players:'+uid,player(uid)));let v:GameViewV2=await service.state(uid);
   const send=async(type:string,params:Record<string,unknown>)=>v=await service.command(uid,{type,...params,commandId:randomUUID(),expectedRevision:v.player.revision});
   const ids=['bug-0','bug-1','bug-2'];
-  await assert.rejects(send('gymAttack',{gym:'gym-far-post-0',ids}),/65 meter|niet beschikbaar/,'without the remote ticket a far gym needs walking');
+  await assert.rejects(send('gymAttack',{gym:'gym-far-post-0',ids}),/80 meter|niet beschikbaar/,'without the remote ticket a far gym needs walking');
   await assert.rejects(send('gymAttack',{gym:'gym-nowhere',ids,remote:true}),/zie je niet/,'only gyms you can see on the map');
   await send('gymAttack',{gym:'gym-far-post-0',ids,remote:true});
   assert.ok(v.goBattle,'the remote gym battle started');assert.equal((v.player.go!.gyms as {remoteDay?:string}).remoteDay,'2026-10-30');

@@ -31,7 +31,7 @@ test('gyms use deterministic server post sites and allow six distinct players/sp
 test('gym placement rejects wrong team, duplicate species/player, remote/stale GPS and an already deployed bug',()=>{
  const g=gym(),a=player('a'),b=player('b'),enemy=player('enemy','amber');placeGymDefender(a,g,a.specimens[0].id,'a-deploy',NOW);
  assert.throws(()=>placeGymDefender(a,g,a.specimens[1].id,'again',NOW),/verdedigt deze gym/);assert.throws(()=>placeGymDefender(b,g,b.specimens[0].id,'duplicate',NOW),/soort/);assert.throws(()=>placeGymDefender(enemy,g,enemy.specimens[0].id,'enemy',NOW),/andere ploeg/);
- b.specimens[0].species='mantis';b.walking!.fix.lat+=.01;assert.throws(()=>placeGymDefender(b,g,b.specimens[0].id,'far',NOW),/65 meter/);b.walking!.fix={...fix};assert.throws(()=>placeGymDefender(b,g,b.specimens[0].id,'stale',NOW+31000),/GPS/);
+ b.specimens[0].species='mantis';b.walking!.fix.lat+=.01;assert.throws(()=>placeGymDefender(b,g,b.specimens[0].id,'far',NOW),/80 meter/);b.walking!.fix={...fix};assert.throws(()=>placeGymDefender(b,g,b.specimens[0].id,'stale',NOW+31000),/GPS/);
  const other={...gym(),id:'gym-other'};assert.throws(()=>placeGymDefender(a,other,a.specimens[0].id,'twice',NOW),/al een gym/);
  const unchosen=player('unchosen');unchosen.go!.gyms!.team=null;chooseGymTeam(unchosen,'tidal',NOW);assert.throws(()=>chooseGymTeam(unchosen,'amber',NOW),/al gekozen/);
 });
@@ -41,11 +41,11 @@ test('defending bugs cannot be changed, traded, transferred or used on a battle 
  assert.match(teamIssue(p,p.specimens.map(s=>s.id),'great')!,/gym/);assert.match(tradeBugIssue(p,p.specimens[0])!,/gym/);assert.deepEqual(p,before);
 });
 test('coins use whole server minutes, pay only on return, cap all returns at fifty on return UTC day, and settle once',()=>{
- assert.equal(gymCoins(NOW,NOW+599999),0);assert.equal(gymCoins(NOW,NOW+600000),1);assert.equal(gymCoins(NOW,NOW+86400000),50);
+ assert.equal(gymCoins(NOW,NOW+599999),0);assert.equal(gymCoins(NOW,NOW+600000),1);assert.equal(gymCoins(NOW,NOW+86400000),48);
  const owner=player('owner'),attacker=player('attacker','amber','ant',50),g=gym();placeGymDefender(owner,g,owner.specimens[0].id,'return-1',NOW);assert.equal(owner.go!.gyms!.coins,0);
  const later=NOW+9*3600000;attacker.walking!.at=later;attacker.walking!.fix.timestamp=later;const b=makeGymBattle(attacker,g,attacker.go!.team,'battle-1',later);b.teams[1][0].hp=0;b.phase='finished';b.winner=0;
- const owners=new Map([[owner.uid,owner]]);assert.equal(settleGymBattle(g,b,owners,later),true);assert.equal(owner.go!.gyms!.coins,50);assert.equal(owner.go!.gyms!.deployed.length,0);assert.equal(g.team,null);assert.equal(settleGymBattle(g,b,owners,later),false);assert.equal(owner.go!.gyms!.coins,50);
- owner.walking!.at=later;owner.walking!.fix.timestamp=later;placeGymDefender(owner,g,owner.specimens[0].id,'return-2',later);g.defenders[0].hearts=1;const again=makeGymBattle(attacker,g,attacker.go!.team,'battle-2',later);again.teams[1][0].hp=0;again.phase='finished';again.winner=0;settleGymBattle(g,again,owners,later+600000);assert.equal(owner.go!.gyms!.coins,50);assert.equal(owner.go!.gyms!.returns[0].coins,0);
+ const owners=new Map([[owner.uid,owner]]);assert.equal(settleGymBattle(g,b,owners,later),true);assert.equal(owner.go!.gyms!.coins,48);assert.equal(owner.go!.gyms!.deployed.length,0);assert.equal(g.team,null);assert.equal(settleGymBattle(g,b,owners,later),false);assert.equal(owner.go!.gyms!.coins,48);
+ owner.walking!.at=later;owner.walking!.fix.timestamp=later;placeGymDefender(owner,g,owner.specimens[0].id,'return-2',later);g.defenders[0].hearts=1;const again=makeGymBattle(attacker,g,attacker.go!.team,'battle-2',later);again.teams[1][0].hp=0;again.phase='finished';again.winner=0;settleGymBattle(g,again,owners,later+3600000);assert.equal(owner.go!.gyms!.coins,50);assert.equal(owner.go!.gyms!.returns[0].coins,2);
  const tomorrow=NOW+86400000;owner.walking!.at=tomorrow;owner.walking!.fix.timestamp=tomorrow;attacker.walking!.at=tomorrow;attacker.walking!.fix.timestamp=tomorrow;placeGymDefender(owner,g,owner.specimens[0].id,'return-3',tomorrow);g.defenders[0].hearts=1;const next=makeGymBattle(attacker,g,attacker.go!.team,'battle-3',tomorrow);next.teams[1][0].hp=0;next.phase='finished';next.winner=0;settleGymBattle(g,next,owners,tomorrow+1200000);assert.equal(owner.go!.gyms!.coins,52);assert.equal(owner.go!.gyms!.earned,2);
 });
 test('gym combat uses actual uncapped builds, six offline defenders and no shields; timeout/forfeit cannot remove living defenders',()=>{
@@ -62,13 +62,13 @@ test('shared service persists an absent owner defense, resolves automatic attack
   const service=new GoServiceV2(store,'local',()=>now),a=player('owner','fern','ant',1),b=player('attacker','amber','hercules',50);for(const p of [a,b])await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));
   await store.run(['v2GoGyms:'+site.id],d=>d.set('v2GoGyms:'+site.id,{...gym(),npcSeeded:true}));
   let owner=await service.state(a.uid),attack=await service.state(b.uid);const send=(uid:string,v:GameViewV2,type:string,data:Record<string,unknown>={})=>service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});owner=await send(a.uid,owner,'gymDefend',{gym:site.id,id:a.specimens[0].id});assert.equal((await service.state(b.uid)).goGyms![0].defenders[0].name,a.name);
-  now+=9*3600000;await store.run(['v2Players:'+b.uid],d=>{const x=d.get('v2Players:'+b.uid) as PlayerV2;x.walking!.at=now;x.walking!.fix.timestamp=now;});attack=await service.state(b.uid);attack=await send(b.uid,attack,'gymAttack',{gym:site.id,ids:b.go!.team});assert.ok(attack.goBattle!.gym);assert.deepEqual(attack.goBattle!.gym!.defenders,[]);
+  now+=7.5*3600000;await store.run(['v2GoGyms:'+site.id],d=>{(d.get('v2GoGyms:'+site.id) as Gym).defenders[0].hearts=1;});await store.run(['v2Players:'+b.uid],d=>{const x=d.get('v2Players:'+b.uid) as PlayerV2;x.walking!.at=now;x.walking!.fix.timestamp=now;});attack=await service.state(b.uid);attack=await send(b.uid,attack,'gymAttack',{gym:site.id,ids:b.go!.team});assert.ok(attack.goBattle!.gym);assert.deepEqual(attack.goBattle!.gym!.defenders,[]);
   let accepted:Record<string,unknown>|undefined;for(let i=0;i<100&&attack.goBattle!.phase!=='finished';i++){
    if(attack.goBattle!.phase==='fight'&&!accepted){accepted={type:'goAct',action:'fast',value:null,commandId:randomUUID(),expectedRevision:attack.player.revision};attack=await service.command(b.uid,accepted);}
    now+=500;attack=await service.state(b.uid);
   }
-  assert.equal(attack.goBattle!.winner,0);assert.equal(attack.goGyms![0].team,null);owner=await service.state(a.uid);assert.equal(owner.player.go!.gyms!.coins,50);assert.equal(owner.player.go!.gyms!.deployed.length,0);assert.ok(owner.player.specimens.some(s=>s.id===a.specimens[0].id));assert.equal(owner.player.go!.rating,1000);assert.equal(attack.player.go!.rating,1000);
-  await Promise.all(Array.from({length:4},()=>service.command(b.uid,accepted!)));assert.equal((await service.state(a.uid)).player.go!.gyms!.coins,50);
+  assert.equal(attack.goBattle!.winner,0);assert.equal(attack.goGyms![0].team,null);owner=await service.state(a.uid);assert.equal(owner.player.go!.gyms!.coins,45);assert.equal(owner.player.go!.gyms!.deployed.length,0);assert.ok(owner.player.specimens.some(s=>s.id===a.specimens[0].id));assert.equal(owner.player.go!.rating,1000);assert.equal(attack.player.go!.rating,1000);
+  await Promise.all(Array.from({length:4},()=>service.command(b.uid,accepted!)));assert.equal((await service.state(a.uid)).player.go!.gyms!.coins,45);
  }finally{store.close();}
 });
 test('shop command retries spend and grant once; concurrent deposits never exceed capacity',async()=>{
@@ -99,16 +99,16 @@ test('existing human gym takes precedence over NPC seeding and never refills aft
  assert.equal(settleExpiredGym(g,new Map([[p.uid,p]]),NOW+GYM_RULES.maxStayMs),true);assert.equal(g.defenders.length,0);assert.equal(ensureNpcGym(g,NOW+GYM_RULES.maxStayMs),false);
 });
 
-test('12-hour returns are bound to placement and owned specimen, idempotent and share the fifty-coin owner cap across gyms',()=>{
+test('8-hour returns are bound to placement and owned specimen, idempotent and share the fifty-coin owner cap across gyms',()=>{
  const p=player('solo-return'),original=structuredClone(p.specimens),g=gym(),other={...gym(),id:'gym-second'};placeGymDefender(p,g,p.specimens[0].id,'expiry-a',NOW);placeGymDefender(p,other,p.specimens[1].id,'expiry-b',NOW);const owners=new Map([[p.uid,p]]);
  assert.equal(settleExpiredGym(g,owners,NOW+GYM_RULES.maxStayMs-1),false);assert.equal(p.go!.gyms!.coins,0);
- assert.equal(settleExpiredGym(g,owners,NOW+GYM_RULES.maxStayMs),true);assert.equal(settleExpiredGym(other,owners,NOW+GYM_RULES.maxStayMs),true);assert.equal(p.go!.gyms!.coins,50);assert.equal(p.go!.gyms!.earned,50);assert.equal(p.go!.gyms!.deployed.length,0);assert.deepEqual(p.specimens,original);assert.equal(p.go!.gyms!.returns.length,2);assert.equal(p.go!.gyms!.returns[0].coins,0);
+ assert.equal(settleExpiredGym(g,owners,NOW+GYM_RULES.maxStayMs),true);assert.equal(settleExpiredGym(other,owners,NOW+GYM_RULES.maxStayMs),true);assert.equal(p.go!.gyms!.coins,50);assert.equal(p.go!.gyms!.earned,50);assert.equal(p.go!.gyms!.deployed.length,0);assert.deepEqual(p.specimens,original);assert.equal(p.go!.gyms!.returns.length,2);assert.equal(p.go!.gyms!.returns[0].coins,2);
  const settled=structuredClone(p);assert.equal(settleExpiredGym(g,owners,NOW+GYM_RULES.maxStayMs+1),false);assert.deepEqual(p,settled);
 });
 
 test('expiry waits for active battle deadline and stale battle cannot damage a replacement deployment',()=>{
  const p=player('expiry-owner'),enemy=player('expiry-enemy','amber'),g=gym();placeGymDefender(p,g,p.specimens[0].id,'original-deploy',NOW);const t=NOW+GYM_RULES.maxStayMs-1000;enemy.walking!.at=t;enemy.walking!.fix.timestamp=t;const b=makeGymBattle(enemy,g,enemy.go!.team,'last-battle',t),owners=new Map([[p.uid,p]]);
- assert.equal(settleExpiredGym(g,owners,t+1001),false);assert.equal(settleExpiredGym(g,owners,b.endsAt),true);assert.equal(p.go!.gyms!.coins,50);p.walking!.at=b.endsAt;p.walking!.fix.timestamp=b.endsAt;placeGymDefender(p,g,p.specimens[0].id,'replacement',b.endsAt);
+ assert.equal(settleExpiredGym(g,owners,t+1001),false);assert.equal(settleExpiredGym(g,owners,b.endsAt),true);assert.equal(p.go!.gyms!.coins,48);p.walking!.at=b.endsAt;p.walking!.fix.timestamp=b.endsAt;placeGymDefender(p,g,p.specimens[0].id,'replacement',b.endsAt);
  b.phase='finished';b.teams[1][0].hp=0;assert.equal(settleGymBattle(g,b,owners,b.endsAt),false);assert.equal(g.defenders[0].deployment,'replacement');assert.equal(p.go!.gyms!.returns.length,1);
 });
 
