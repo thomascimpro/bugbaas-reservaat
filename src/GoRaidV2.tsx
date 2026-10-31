@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Pressable,View} from 'react-native';
+import {Pressable,Text,View} from 'react-native';
 import {species} from '../game/catalogV2';
 import {effectiveness} from '../game/goBattleV2';
 import {movePool} from '../game/goV2';
@@ -8,6 +8,7 @@ import {RAID_RULES,RAID_TIERS,freeRemoteLeft} from '../game/raidsV2';
 import {matchup} from '../game/recommendV2';
 import type {RaidInvite,RaidTier,RaidView} from '../game/raidsV2';
 import {trainerLevel} from '../game/trainerV2';
+import {RARITY_TIERS} from '../game/rarityDisplayV2';
 import type {GameViewV2} from '../game/typesV2';
 import {SpriteView} from './artV2';
 import {GoTeamPickerV2} from './GoTeamPickerV2';
@@ -15,7 +16,7 @@ import {GO_TYPES,GoTypeBadge,GoTypes} from './GoTypeV2';
 import type {RunV2} from './ShopViewV2';
 import {Button,Counter,Glyph,Help,Label,Panel} from './uiV2';
 
-const RAID_HELP='Elke gympost krijgt om de 2 à 3 uur een zwermei (★1, ★3 of zeldzaam ★4), steeds met een ander type baas. Het ei komt na een uur uit; daarna blijft de zwerm 45 minuten. Max. 6 spelers per groep, waarvan max. 4 op afstand. De lobby start na 90 seconden of zodra hij vol is; daarna hebben jullie samen 3 minuten. Iedereen vecht met drie eigen bugs, zonder CP-limiet. Alle schade telt voor dezelfde baas. Wie schade deed, krijgt na winst één keer een beloning en een vangpoging met extra netten. Op afstand meedoen kan alleen met een uitnodiging van een vriend: 1 keer per dag gratis 🎟️, daarna kost het een Zwermfluit (1 gratis op te halen per dag, max. 3 in bezit, max. 3 keer per dag). 👍 = type dat sterk is tegen de baas. Max. 5 zwermbeloningen per dag.';
+const RAID_HELP=['🥚 Om de 2–3 uur een ei bij een gym. Na 1 uur komt de baas eruit, die blijft 45 min.','👥 Max. 6 spelers, samen 3 minuten vechten. Iedereen met 3 eigen bugs.','🏆 Gewonnen? Beloning + vangpoging met extra netten. Max. 5 per dag.','🎟️ Op afstand: 1× per dag gratis, daarna een Zwermfluit. Alleen bij een raid op je kaart of met een uitnodiging.','👍 = type dat sterk is tegen de baas.'].join('\n');
 const mmss=(ms:number)=>{const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
 function Stars({tier}:{tier:RaidTier}){return <View accessibilityLabel={tier+' sterren'} style={{flexDirection:'row',gap:2}}>{Array.from({length:tier},(_,i)=><Glyph key={i} name="star" size={15}/>)}</View>;}
 /** 👍 types that hit this boss hard, and how many own bugs the team picker marks with 👍. Types are read at runtime. */
@@ -38,38 +39,51 @@ function InviteFriends({view,raid,run,busy,onDone}:{view:GameViewV2;raid:string;
   <Button small icon="friends" disabled={busy||!chosen.length} onPress={()=>void run('raidInvite',{raid,friends:chosen}).then(ok=>{if(ok){setChosen([]);onDone();}})}>{'Verstuur '+chosen.length+' uitnodiging'+(chosen.length===1?'':'en')}</Button></View>;
 }
 
-/** Raid card on a gym: egg countdown, join locally, or invite friends. */
+/** Tier colour, the same as the egg/boss bubble on the map. */
+const tierColor=(tier:RaidTier)=>RARITY_TIERS[tier>=4?4:tier>=3?3:2].color;
+function Pill({text,color}:{text:string;color:string}){return <View style={{alignSelf:'center',paddingHorizontal:12,paddingVertical:4,borderRadius:16,backgroundColor:color}}><Text style={{color:'#fff',fontWeight:'900',fontSize:16,textShadowColor:'#0008',textShadowRadius:2}}>{text}</Text></View>;}
+/** PoGO-style boss hero: stars on top, big boss (or egg) on a glow in the tier colour, a timer pill, name and types. */
+function BossHeroV2({kind,tier,egg,timer,size=104}:{kind:string;tier:RaidTier;egg:boolean;timer:string;size?:number}){
+ const color=tierColor(tier);
+ return <View testID="raid-hero" style={{alignItems:'center',gap:5}}><Stars tier={tier}/><View style={{width:size+22,height:size+22,borderRadius:(size+22)/2,alignItems:'center',justifyContent:'center',backgroundColor:color+'33',borderWidth:3,borderColor:color}}>{egg?<Text style={{fontSize:size*.62}}>🥚</Text>:<SpriteView id={kind} size={size}/>}</View>
+  <Pill text={timer} color={color}/><Label bold center>{egg?'Zwermei':species(kind).name}</Label>{!egg&&<GoTypes species={kind} compact/>}</View>;
+}
+/** Raid card on a gym: big boss and timer, one big button, small round buttons for friends and help. */
 export function RaidAtGymV2({view,raid,run,busy,now,ensureGPS}:{view:GameViewV2;raid:RaidView;run:RunV2;busy:boolean;now:number;ensureGPS?:()=>Promise<boolean>}){
  const [inviting,setInviting]=useState(false),config=RAID_TIERS[raid.tier],egg=now<raid.hatchAt,g=view.player.go!.raids,claimed=!!g?.claimed.includes(raid.id),inLobby=!!view.raidLobby&&view.raidLobby.raidId===raid.id;
  const low=trainerLevel(view.player.go!.trainer!.xp)<config.trainer,closing=now>=raid.joinableUntil,capped=(g?.rewards??0)>=RAID_RULES.rewardsPerDay,remoteOk=(g?.remote??0)<RAID_RULES.remotePerDay&&(freeRemoteLeft(g,now)||(g?.passes??0)>0);
  async function join(){if(ensureGPS&&!await ensureGPS())return;await run('raidJoin',{raid:raid.id,remote:false});}
- return <Panel style={{borderColor:'#D7A74F'}}><View style={{flexDirection:'row',alignItems:'center',gap:7}}><Glyph name="swords" size={24}/><View style={{flex:1}}><Label bold>{config.name} · samen</Label><Stars tier={raid.tier}/></View><Help title="Zwermen" body={RAID_HELP}/></View>
-  <View style={{flexDirection:'row',alignItems:'center',gap:12}}>{egg?<View style={{width:82,height:82,alignItems:'center',justifyContent:'center'}}><Glyph name="lock" size={48}/></View>:<SpriteView id={raid.species} size={82}/>}<View style={{flex:1,gap:5}}><Label bold>{egg?'Zwermei':species(raid.species).name}</Label><Label small>{egg?'Komt uit over '+mmss(raid.hatchAt-now):'Nog '+mmss(raid.endsAt-now)+' · Lv. '+config.level}</Label>{!egg&&<GoTypes species={raid.species} compact/>}</View></View>
-  {!egg&&<Counters kind={raid.species} view={view}/>}
-  {!egg&&<View style={{flexDirection:'row',justifyContent:'space-around'}}><Counter icon="nectar" value={'+'+config.dust} label="✨ Stof"/><Counter icon="star" value={'+'+config.xp} label="XP"/></View>}
-  {!egg&&!inLobby&&raid.local&&<Button small icon="swords" disabled={busy||claimed||closing||low||capped||!!view.raidLobby} onPress={()=>void join()}>{claimed?'Vandaag verslagen':capped?'5 / 5 vandaag':low?'Trainerlevel '+config.trainer:closing?'Vertrekt bijna':view.raidLobby?'Je zit al in een zwerm':'Doe mee'}</Button>}
-  {!egg&&!inLobby&&!raid.local&&<><Pass {...{view,run,busy,now}}/><Button small icon="swords" accessibilityLabel="Doe mee op afstand" disabled={busy||claimed||closing||low||capped||!!view.raidLobby||!remoteOk} onPress={()=>void run('raidJoin',{raid:raid.id,remote:true})}>{claimed?'Vandaag verslagen':capped?'5 / 5 vandaag':low?'Trainerlevel '+config.trainer:closing?'Vertrekt bijna':view.raidLobby?'Je zit al in een zwerm':!remoteOk?'Geen ticket of Zwermfluit':'🎟️ Doe mee op afstand'}</Button></>}
-  {!closing&&<Button small secondary icon="friends" disabled={busy||!raid.local&&!inLobby} onPress={()=>setInviting(v=>!v)}>{inviting?'Sluit uitnodigen':'Nodig vrienden uit'}</Button>}
+ if(inLobby)return null;const blocked=claimed?'✅ Vandaag verslagen':capped?'5 / 5 vandaag':low?'🔒 Level '+config.trainer:closing?'⏳ Vertrekt bijna':view.raidLobby?'Je zit al in een raid':'';
+ return <Panel style={{borderColor:tierColor(raid.tier),gap:10}}>
+  <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}><Label bold>{config.name}</Label><Help title="Raid" body={RAID_HELP}/></View>
+  <BossHeroV2 kind={raid.species} tier={raid.tier} egg={egg} timer={egg?'🥚 '+mmss(raid.hatchAt-now):'⏱ '+mmss(raid.endsAt-now)}/>
+  {!egg&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:6}}><Counters kind={raid.species} view={view}/><Label small>✨ +{config.dust} · 🕸️ {config.nets}</Label></View>}
+  {!egg&&!inLobby&&<View style={{flexDirection:'row',alignItems:'center',gap:8}}><View style={{flex:1}}>{raid.local?<Button icon="swords" disabled={busy||!!blocked} onPress={()=>void join()}>{blocked||'⚔️ Doe mee'}</Button>
+    :<Button icon="swords" accessibilityLabel="Doe mee op afstand" disabled={busy||!!blocked||!remoteOk} onPress={()=>void run('raidJoin',{raid:raid.id,remote:true})}>{blocked||(!remoteOk?'🎟️ Geen ticket':'🎟️ Op afstand')}</Button>}</View>
+   {!closing&&<Pressable accessibilityRole="button" accessibilityLabel="Nodig vrienden uit" disabled={busy||!raid.local} onPress={()=>setInviting(v=>!v)} style={{width:52,height:52,borderRadius:26,alignItems:'center',justifyContent:'center',backgroundColor:inviting?'#3D6446':'#1B4A3F',borderWidth:1,borderColor:'#9AB38A',opacity:raid.local?1:.4}}><Text style={{fontSize:24}}>👥</Text></Pressable>}</View>}
+  {egg&&<Label small center>⏳ Komt zo uit. Kom terug als de baas er is!</Label>}
+  {!egg&&!inLobby&&!raid.local&&<Pass {...{view,run,busy,now}}/>}
   {inviting&&<InviteFriends {...{view,run,busy}} raid={raid.id} onDone={()=>setInviting(false)}/>}
  </Panel>;
 }
 
-/** The player's current raid group: lobby timer, shared HP, members, fight and reward. */
+/** PoGO-style lobby: boss, big timer, shared HP, six player slots, one big button. */
 export function RaidLobbyV2({view,run,busy,now,onBattle}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;onBattle:()=>void}){
  const l=view.raidLobby,[choosing,setChoosing]=useState(false),[inviting,setInviting]=useState(false);if(!l)return null;
- const config=RAID_TIERS[l.tier],fighting=l.status==='lobby'&&now>=l.lobbyUntil||l.status==='fighting',ended=l.status==='won'||l.status==='failed',me=l.members.find(m=>m.me),battle=view.goBattle?.raid?.lobbyId===l.id&&view.goBattle.phase!=='finished';
+ const config=RAID_TIERS[l.tier],fighting=l.status==='lobby'&&now>=l.lobbyUntil||l.status==='fighting',ended=l.status==='won'||l.status==='failed',me=l.members.find(m=>m.me),battle=view.goBattle?.raid?.lobbyId===l.id&&view.goBattle.phase!=='finished',color=tierColor(l.tier),share=Math.max(0,l.hp)/Math.max(1,l.maxHP);
  async function fight(ids:string[]){const ok=await run('raidFight',{ids});if(ok)onBattle();return ok;}
- return <><Panel style={{borderColor:'#ECD289'}}><View testID="raid-lobby" style={{flexDirection:'row',alignItems:'center',gap:9}}><SpriteView id={l.species} size={58}/><View style={{flex:1,gap:3}}><Label bold>{config.name} · {species(l.species).name}</Label><Label small>{l.postName}{l.remote?' · op afstand':''}</Label><Stars tier={l.tier}/><GoTypes species={l.species} compact/></View><Help title="Zwermen" body={RAID_HELP}/></View>
-  <Counters kind={l.species} view={view}/>
-  <View accessibilityLabel={'Zwerm-HP '+l.hp+' van '+l.maxHP} style={{height:12,borderRadius:7,overflow:'hidden',backgroundColor:'#0E2B25'}}><View style={{height:12,width:(Math.max(0,l.hp)/Math.max(1,l.maxHP)*100)+'%' as `${number}%`,backgroundColor:l.hp/l.maxHP>.5?'#8FD47A':l.hp/l.maxHP>.2?'#F2D16E':'#F0846A'}}/></View>
-  <Label small bold>{l.status==='won'?'Verslagen!':l.status==='failed'?'De zwerm is ontsnapt.':fighting?'Samen vechten · nog '+mmss((l.fightUntil??l.lobbyUntil+180000)-now):'Start over '+mmss(l.lobbyUntil-now)+' · '+l.members.length+' / '+RAID_RULES.maxMembers}</Label>
-  {l.members.map((m,i)=><View key={i} style={{flexDirection:'row',alignItems:'center',gap:8}}><Glyph name={m.remote?'compass':'profile'} size={18}/><View style={{flex:1}}><Label small bold={m.me}>{m.name}{m.me?' (jij)':''}{m.remote?' · op afstand':''}</Label></View><Label small>{m.damage} schade</Label></View>)}
-  {ended?<Button small icon={l.status==='won'&&!l.claimed&&(me?.damage??0)>0?'gift':'check'} disabled={busy} onPress={()=>void run('raidClaim',{lobby:l.id})}>{l.status==='won'&&!l.claimed&&(me?.damage??0)>0?'Beloning en vangpoging':'Sluiten'}</Button>
-   :battle?<Button small icon="swords" onPress={onBattle}>Naar het gevecht</Button>
-   :fighting?<Button small icon="swords" disabled={busy||!!view.goBattle} onPress={()=>setChoosing(true)}>{view.goBattle?'Sluit eerst je vorige gevecht':'Vecht mee'}</Button>
-   :<><Button small secondary icon="friends" disabled={busy} onPress={()=>setInviting(v=>!v)}>{inviting?'Sluit uitnodigen':'Nodig vrienden uit'}</Button><Button small secondary icon="back" disabled={busy} onPress={()=>void run('raidLeave')}>Verlaat lobby</Button></>}
+ const timer=l.status==='won'?'🏆 Verslagen!':l.status==='failed'?'💨 Ontsnapt':fighting?'⚔️ '+mmss((l.fightUntil??l.lobbyUntil+180000)-now):'⏳ Start '+mmss(l.lobbyUntil-now);
+ return <><Panel style={{borderColor:color,gap:10}}><View testID="raid-lobby" style={{flexDirection:'row',alignItems:'center',gap:10}}><View style={{width:70,height:70,borderRadius:35,alignItems:'center',justifyContent:'center',backgroundColor:color+'33',borderWidth:2,borderColor:color}}><SpriteView id={l.species} size={60}/></View><View style={{flex:1,gap:2}}><Label bold>{species(l.species).name}</Label><Stars tier={l.tier}/><Label small>{l.remote?'🌍 ':'📍 '}{l.postName}</Label></View><Help title="Raid" body={RAID_HELP}/></View>
+  <Pill text={timer} color={color}/>
+  <View accessibilityLabel={'Baas-HP '+l.hp+' van '+l.maxHP} style={{height:16,borderRadius:8,overflow:'hidden',backgroundColor:'#0E2B25',borderWidth:1,borderColor:'#FFFFFF33'}}><View style={{height:16,width:(share*100)+'%' as `${number}%`,backgroundColor:share>.5?'#8FD47A':share>.2?'#F2D16E':'#F0846A'}}/></View>
+  <View testID="raid-players" style={{flexDirection:'row',flexWrap:'wrap',gap:6}}>{Array.from({length:RAID_RULES.maxMembers},(_,i)=>{const m=l.members[i];return <View key={i} accessibilityLabel={m?m.name+(m.me?' (jij)':'')+', '+m.damage+' schade':'Vrije plek'} style={{width:'31.5%',minHeight:70,alignItems:'center',justifyContent:'center',gap:1,borderRadius:16,backgroundColor:m?.me?'#3D6446':m?'#1B4A3F':'transparent',borderWidth:m?1:2,borderStyle:m?'solid':'dashed',borderColor:m?.me?'#ECD289':'#FFFFFF33'}}>{m?<><Text style={{fontSize:22}}>{m.me?'⭐':m.remote?'🌍':'🧑'}</Text><Label small bold>{m.me?'Jij':m.name}</Label>{fighting||ended?<Label small>💥 {m.damage}</Label>:null}</>:<Text style={{fontSize:22,opacity:.4}}>+</Text>}</View>;})}</View>
+  {!ended&&<Counters kind={l.species} view={view}/>}
+  {ended?<Button icon={l.status==='won'&&!l.claimed&&(me?.damage??0)>0?'gift':'check'} disabled={busy} onPress={()=>void run('raidClaim',{lobby:l.id})}>{l.status==='won'&&!l.claimed&&(me?.damage??0)>0?'🎁 Beloning + vangen':'Sluiten'}</Button>
+   :battle?<Button icon="swords" onPress={onBattle}>⚔️ Naar het gevecht</Button>
+   :fighting?<Button icon="swords" disabled={busy||!!view.goBattle} onPress={()=>setChoosing(true)}>{view.goBattle?'Sluit eerst je vorige gevecht':'⚔️ Vecht mee'}</Button>
+   :<View style={{flexDirection:'row',gap:8}}><View style={{flex:1}}><Button secondary icon="friends" disabled={busy} onPress={()=>setInviting(v=>!v)}>Vrienden</Button></View><View style={{flex:1}}><Button secondary icon="back" disabled={busy} onPress={()=>void run('raidLeave')}>Verlaat</Button></View></View>}
   {inviting&&!fighting&&!ended&&<InviteFriends {...{view,run,busy}} raid={l.raidId} onDone={()=>setInviting(false)}/>}
- </Panel>{choosing&&<GoTeamPickerV2 raid against={l.species} title="Team voor de zwerm" player={view.player} {...{run,busy}} onClose={()=>setChoosing(false)} onConfirm={fight}/>}</>;
+ </Panel>{choosing&&<GoTeamPickerV2 raid against={l.species} title="Team voor de raid" player={view.player} {...{run,busy}} onClose={()=>setChoosing(false)} onConfirm={fight}/>}</>;
 }
 
 /** Invitations from friends: join remotely, once a day free, otherwise with a Zwermfluit. Shows the post name only. */
