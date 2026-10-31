@@ -59,6 +59,11 @@ test('path simplification keeps bends and densifies to walkable route points',()
 });
 
 function recorder(){const p=player();let now=NOW;const step=(meters:number,seconds:number,accuracy=8)=>{now+=seconds*1000;const last=p.walking!.fix;p.walking!.fix={lat:last.lat+meters/M,lng:FIX.lng,accuracy,timestamp:now};p.walking!.at=now;recordRouteFix(p,now);};return {p,step,now:()=>now};}
+test('recorded collinear U-turns preserve walked length and can be saved after the UI reaches 500 metres',()=>{
+ const r=recorder();startRecording(r.p,NOW);for(const [sign,count] of [[1,15],[-1,10],[1,15]])for(let i=0;i<count;i++)r.step(sign*20,20);
+ const recorded=r.p.go!.sites!.recording!.meters;assert.ok(recorded>795);stopRecording(r.p);const rec=r.p.go!.sites!.recording!;assert.equal(rec.status,'ready');assert.ok(Math.abs(rec.meters-recorded)<3);assert.ok(Math.abs(pathMeters(rec.path!)-recorded)<3);
+ const own=saveOwnRoute(r.p,'u-turn-route','Heen en terug','🌳',r.now());assert.ok(own.meters>795);assert.ok(own.points.some((p,i,a)=>i>0&&i<a.length-1&&(p.lat-a[i-1].lat)*(a[i+1].lat-p.lat)<0),'actual reversals remain in the route');
+});
 test('own routes: too short and too fast are rejected, a walked loop is saved, cap of five and delete',()=>{
  const short=recorder();startRecording(short.p,NOW);for(let i=0;i<15;i++)short.step(20,15);assert.throws(()=>stopRecording(short.p),/500 m/);assert.equal(short.p.go!.sites!.recording!.status,'recording');
  for(let i=0;i<15;i++)short.step(20,15);stopRecording(short.p);assert.equal(short.p.go!.sites!.recording!.status,'ready');assert.ok(short.p.go!.sites!.recording!.meters>=500);

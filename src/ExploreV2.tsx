@@ -6,7 +6,7 @@ import type {GameViewV2} from '../game/typesV2';
 import type {RunV2} from './ShopViewV2';
 import type {MapCameraV2} from './mapCameraV2';
 import {gameServerURL} from './client';
-import {NATIVE_GPS_SHIM,nativeFieldURL,parseNativeFieldRequest} from './nativeFieldProtocolV2';
+import {NATIVE_GPS_SHIM,nativeFieldURL,parseNativeFieldRequest,rejectedNativeFieldCommand} from './nativeFieldProtocolV2';
 import {createNativeGPSWatches} from './nativeGPSWatchesV2';
 import {useGoBack} from './GoBackV2';
 import {Button,Label,V} from './uiV2';
@@ -40,10 +40,10 @@ export function ExploreV2(props:Props){
   useEffect(()=>{if(props.paused)stop();send({kind:'active',active:active.current&&!props.paused});},[props.paused]);
  useEffect(()=>{if(ready.current)state();},[props.view.player.revision,props.view.goGyms,props.busy,props.paused,props.view.player.settings.reducedMotion,props.view.player.settings.largeText]);
   useGoBack(!props.paused,()=>{if(!ready.current)return false;backPending.current=true;send({kind:'back'});return true;},50);
- async function message(raw:string){const m=parseNativeFieldRequest(raw);if(!m)return;
+  async function message(raw:string){const m=parseNativeFieldRequest(raw);if(!m){const rejected=rejectedNativeFieldCommand(raw);if(rejected)send(rejected);return;}
    if(m.kind==='ready'){stop();ready.current=true;setLoading(false);setProblem('');state();send({kind:'active',active:active.current&&!latest.current.paused});if(!latest.current.paused)await permission();}
   else if(m.kind==='geo')await gps(m.action,m.id);
-   else if(m.kind==='command'){if(!active.current||latest.current.paused){send({kind:'result',id:m.id,ok:false});return;}const ok=await latest.current.run(m.command,m.params);state();send({kind:'result',id:m.id,ok});}
+    else if(m.kind==='command'){if(!active.current||latest.current.paused){send({kind:'result',id:m.id,ok:false,error:'Open de kaart om deze actie uit te voeren.'});return;}let error='';try{const ok=await latest.current.run(m.command,m.params,message=>{error=message;});state();send({kind:'result',id:m.id,ok,...(!ok?{error:error||'Actie niet verwerkt. Probeer opnieuw.'}:{})});}catch{send({kind:'result',id:m.id,ok:false,error:'Verbinding met de app onderbroken. Probeer opnieuw.'});}}
    else if(m.kind==='navigate'&&!latest.current.paused){if(m.camera&&latest.current.camera)latest.current.camera.current=m.camera;latest.current.open(m.name,m.specimenId);}
   else if(m.kind==='backResult'&&backPending.current){backPending.current=false;if(!m.handled){if(Date.now()-exitPrompt.current<2000)BackHandler.exitApp();else{exitPrompt.current=Date.now();ToastAndroid.show('Druk nog een keer op terug om BugBaas te sluiten',ToastAndroid.SHORT);}}}
  }

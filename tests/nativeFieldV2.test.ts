@@ -1,7 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {runInNewContext} from 'node:vm';
-import {NATIVE_GPS_SHIM,nativeFieldURL,parseNativeFieldRequest} from '../src/nativeFieldProtocolV2';
+import {NATIVE_GPS_SHIM,nativeFieldURL,parseNativeFieldRequest,rejectedNativeFieldCommand} from '../src/nativeFieldProtocolV2';
+import {MAP_ZOOM,stepMapZoom} from '../src/mapCameraV2';
 import {createNativeGPSWatches} from '../src/nativeGPSWatchesV2';
 import {displayGPSFixV2} from '../src/gpsFixV2';
 import {validFix} from '../game/walkingV2';
@@ -48,6 +49,21 @@ test('native frame URL requires HTTPS outside development and allows only emulat
  assert.equal(nativeFieldURL('https://game.example'),'https://game.example/?nativeField=1');
  assert.equal(nativeFieldURL('http://10.0.2.2:8088',true),'http://10.0.2.2:8088/?nativeField=1');
  for(const [url,development] of [['http://10.0.2.2:8088',false],['http://other.example',true],['javascript:alert(1)',false]] as const)assert.throws(()=>nativeFieldURL(url,development));
+});
+test('map Plaagbende, raid and own-route actions cross the native boundary without permitting account commands',()=>{
+ for(const command of ['plaagFight','raidPass','raidJoin','raidInvite','raidFight','raidClaim','raidLeave','routeRecord','routeSave','routeDelete']){
+  const m={kind:'command',id:'native-regression',command,params:{}};assert.deepEqual(parseNativeFieldRequest(JSON.stringify(m)),m,command);
+ }
+ for(const command of ['profile','settings','goTransfer','goTransferMany','friendRemove','unknown'])assert.equal(parseNativeFieldRequest(JSON.stringify({kind:'command',id:'native-regression',command,params:{}})),null,command);
+});
+test('a rejected command receives an immediate bounded failure reply and cannot execute',()=>{
+ const raw=JSON.stringify({kind:'command',id:'unsupported-1',command:'goTransfer',params:{id:'private'}});assert.equal(parseNativeFieldRequest(raw),null);assert.deepEqual(rejectedNativeFieldCommand(raw),{kind:'result',id:'unsupported-1',ok:false,error:'Deze kaartactie wordt niet ondersteund. Werk de app bij.'});
+ for(const raw of ['{','x'.repeat(16385),JSON.stringify({kind:'command',id:'<script>'}),JSON.stringify({kind:'navigate',name:'team'})])assert.equal(rejectedNativeFieldCommand(raw),null);
+});
+test('all supported map zooms retain ordinary navigation and minus never zooms in',()=>{
+ for(const zoom of [15,15.5,16,16.49,16.5,17.6,20])for(const name of ['team','ranked','profile','settings','gyms'])assert.ok(parseNativeFieldRequest(JSON.stringify({kind:'navigate',name,camera:{center:[5.13,52.09],zoom,pitch:56,bearing:-20}})),name+' at '+zoom);
+ for(let zoom=MAP_ZOOM.min;zoom<=MAP_ZOOM.max;zoom+=.1){assert.ok(stepMapZoom(zoom,-1)<=zoom);assert.ok(stepMapZoom(zoom,1)>=zoom);assert.ok(stepMapZoom(zoom,-1)>=MAP_ZOOM.min);assert.ok(stepMapZoom(zoom,1)<=MAP_ZOOM.max);}
+ assert.equal(stepMapZoom(15.5,-1),15);assert.equal(stepMapZoom(20,1),20);
 });
 test('native map camera accepts finite viewport values without allowing remote actions or invalid ranges',()=>{
  const m={kind:'navigate',name:'team',camera:{center:[5.13,52.09],zoom:18,pitch:48,bearing:-24}};

@@ -1,0 +1,8 @@
+{
+  "asset": "crew-v1.webp",
+  "characters": ["Marcel", "Colette", "Gaston"],
+  "created": "2026-10-31",
+  "tool": "built-in image_gen",
+  "prompt": "Production mobile game character artwork for BugBaas: a closely grouped trio of adult French-inspired mischievous bug poachers, two men and one woman, mid-thigh up. All wear tilted berets and each visibly holds a long golden baguette. Expressive friendly-rival faces, one small moustache, practical forest-explorer clothes with purple gang accents, insect-collecting pouches, professional stylized 3D game render. Compact triangular composition, full berets and baguettes in frame, transparent background. No words, logos, flag, guns, scenery or UI.",
+  "processing": "Resize to 1200px wide, WebP quality 92, original alpha retained. Original generated PNG retained outside runtime assets."
+}

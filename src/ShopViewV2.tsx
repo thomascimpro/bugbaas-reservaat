@@ -5,7 +5,7 @@ import type {GameViewV2} from '../game/typesV2';
 import {BugPortrait,Ground,ItemArt,Scene,SpriteView} from './artV2';
 import {TeamField} from './TeamFieldV2';
 import {Button,Eyebrow,Glyph,Label,Panel,Stat,Title,V,v,Wash,font} from './uiV2';
-export type RunV2=(type:string,params?:Record<string,unknown>)=>Promise<boolean>;
+export type RunV2=(type:string,params?:Record<string,unknown>,onError?:(message:string)=>void)=>Promise<boolean>;
 export function ShopViewV2({view,run,busy,now,arena=false}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;arena?:boolean}){
  const r=view.player.arenaRun,m=arena?{round:r!.round,side:0,shops:[r!.shop,r!.shop],names:[view.player.name,'Arena'],lives:[r!.lives,0],deadline:0}:view.match!,side=m.side,shop=m.shops[side],[selected,setSelected]=useState(''),[freezing,setFreezing]=useState(false),[dragging,setDragging]=useState(false),chosen=shop.team.find(u=>u.id===selected),{width,height}=useWindowDimensions(),[offerWidth,setOfferWidth]=useState(Math.min(width,560)-64),bugs=shop.offers.filter(o=>o.species),offerSlots=m.round>=5?5:m.round>=3?4:3,offerSize=Math.min(105,(offerWidth-(offerSlots-1)*7)/offerSlots-8);
  const storeScroll=useRef<ScrollView>(null),landscape=height<700,narrow=width<480;

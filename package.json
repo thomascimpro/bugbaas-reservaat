@@ -1,11 +1,11 @@
 {
   "name": "bugbaas-reservaat",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "web:build": "node scripts/build-bug-viewer.mjs && expo export --platform web",
+    "web:build": "node scripts/build-bug-viewer.mjs && expo export --platform web --clear",
     "android:prepare": "expo prebuild --platform android --no-install",
     "api": "tsx server/local.ts",
     "typecheck": "tsc --noEmit",

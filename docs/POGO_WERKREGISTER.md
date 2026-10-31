@@ -1,8 +1,14 @@
 # BugBaas — actuele voortgang
 
-Bijgewerkt: 28 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
+Bijgewerkt: 31 oktober 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
 
 ## ACTUELE CHECKPOINT
+
+**Release 0.1.25/code26 — herstel audit 31 oktober.** Preview https://bugbaas-reservaat-preview-gbrx2470n-thomas-cim-pro.vercel.app, minimumclient 0.1.25. B01–B07 uit [de buganalyse](BUGANALYSE_20261031.md) afgewerkt: tien native kaartcommando's + directe foutreply, gedeelde zoom 15–20, monotone min, echte keerpunten in routes, herstelknop blijft zichtbaar, oorspronkelijke foutreden en vertrek apart van winst. Tijdens echte emulatorbediening extra gevonden: kaartpost-tikvlakken onderschepten min; opgelost met een aparte stapelcontext voor de kaartlaag. Nieuwe Franse crew (baret/baguette, eigen imagegen-artwork) en Plaagactie vast onder de scrollinhoud. `web:build --clear` voorkomt een verouderde configversie in Metro-cache.
+
+**Bewijs 0.1.25:** 535/535 tests, TypeScript/webexport groen; browser min 15,5→15, foutreden en 320/390/430px-artwork. Definitieve ondertekende APK bijgewerkt in eigen Android 15-emulator met behoud van QA-profiel: kaart op synthetische GPS, herhaald uitzoomen gevolgd door native Instellingen, knijpen in/uit; Plaagbende start in 1,92s, snelle/opgeladen aanvallen, twee energiedoelrasters, schilden, wisselen en winst. Firestore bevestigt exact één winst en één geredde bug (9→10 exemplaren). Bewijs lokaal onder `.local/release0125/`, openbaar samengevat in het release-testbestand. Voorafgaande langzame/GPU-instabiele emulatorproeven zijn geen succesvolle gevechtsproef; de geslaagde eindproef gebruikt host-GPU. Bestaande spelers, oude emulator en ruwe assetpacks behouden. Geen fysieke wandeling, echte Health Connect, persoonlijke Google-login of telefoonaccuproef. Volgende concrete stap buiten deze fix: fysieke wandel-/achtergrondproef door gebruiker; geen reeds afgeronde onderdelen opnieuw bouwen.
+
+**Laatste Android-controle:** winst, geredde bug en stof na herstart behouden; route-opname via kaart gestart en geannuleerd; app naar achtergrond en terug, daarna veldmenu en Bugs-knop weer bereikbaar. Bewijs `.local/release0125/android/last-checks.json`. Geen aanvullende releaseblokkade gevonden in deze gecontroleerde paden. Kaart-/gevechtsbediening gebruikt echte invoer; niets door een directe serverwinst vervangen.
 
 **Release 0.1.24/code25** (preview https://bugbaas-reservaat-preview-quidep7nc-thomas-cim-pro.vercel.app): Plaagbende (`PLAAG_CHANCE` .08, `PLAAG_RADIUS` 100, `PLAAG_CP_SHARE` .7 zonder schild, foutmelding in sheet, geen verre paarse pinnen), gym op afstand 1×/dag (`remoteGymLeft`, `gymAttack` met `remote`, alleen gyms uit `visibleRaidSites`; `RemoteGymsV2` in Gyms), ❓-kaartuitleg, gyms zonder offset/lijntje, bugbubbels bij afstand/uitzoomen, postlichtstraal, kaartkleuren, compacte InfoProvider/AwaySummary/AS-melding, markers alleen bij beweging naar DOM. 531/531 tests.
 
