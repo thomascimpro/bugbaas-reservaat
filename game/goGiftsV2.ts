@@ -1,5 +1,6 @@
 import {HABITATS,rng,species} from './catalogV2';
 import {grantField} from './fieldV2';
+import {awardGiftCocoon} from './goCocoonsV2';
 import {dayV2} from './safariV2';
 import {checkV2 as check} from './shopV2';
 import type {FriendPair,PlayerV2,Side,Specimen} from './typesV2';
@@ -42,6 +43,6 @@ export function openGoGift(p:PlayerV2,pair:FriendPair|undefined,now:number){
  check(gift&&!gift.opened&&gift.from===pair!.users[1-side]&&gift.from!==p.uid,'Geen ongeopend cadeau.');
  check(p.go,'Open eerst de kaart.');check(Number.isInteger(gift.habitat)&&gift.habitat>=0&&gift.habitat<HABITATS.length,'Deze kaart is niet beschikbaar.');
  gift.opened=true;if(!p.album.includes(gift.habitat))p.album.push(gift.habitat);
- const reward=giftContents(gift.id,friendshipProgress(pair!.points).level);grantField(p,reward.items,now);p.go.dust+=reward.dust;
+ const reward=giftContents(gift.id,friendshipProgress(pair!.points).level);grantField(p,reward.items,now);p.go.dust+=reward.dust;awardGiftCocoon(p,gift.id,now);
  if(pair!.lastDay!==dayV2(now)){pair!.points++;pair!.lastDay=dayV2(now);}
 }

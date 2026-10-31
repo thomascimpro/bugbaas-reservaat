@@ -23,7 +23,7 @@ export function rewardChanges(before:PlayerV2|null,after:PlayerV2):RewardRow[]{
  for(const [id,count] of Object.entries(a.xl))add('xl:'+id,familyName(id)+' XL-nectar',count-(b.xl[id]??0),'xl',id);
  for(const [id,item] of Object.entries(HELD))add('held:'+id,item.name,a.items[id as keyof typeof HELD]-(b.items[id as keyof typeof HELD]??0),'glyph',item.icon);
  add('fastTM','Snelle TM',a.fastTMs-b.fastTMs,'glyph','attack');add('chargedTM','Opgeladen TM',a.chargedTMs-b.chargedTMs,'glyph','attack');
- for(const km of [2,5])add('cocoon:'+km,km+' km cocon',a.cocoons?.items.filter(c=>c.km===km&&!b.cocoons?.items.some(old=>old.id===c.id)).length??0,'cocoon','cocoon');
+ for(const km of [2,5,7,10])add('cocoon:'+km,km+' km cocon',a.cocoons?.items.filter(c=>c.km===km&&!b.cocoons?.items.some(old=>old.id===c.id)).length??0,'cocoon','cocoon');
  add('incubator','Broedmachine',a.cocoons?.incubators?.filter(i=>!b.cocoons?.incubators?.some(old=>old.id===i.id)).length??0,'cocoon','cocoon');
  add('cards','Cadeaukaart',after.cards.filter(c=>!before.cards.some(old=>old.id===c.id)).length,'glyph','gift');
  return rows;

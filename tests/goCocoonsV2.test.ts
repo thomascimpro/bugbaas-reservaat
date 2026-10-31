@@ -1,7 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {COCOON_POOLS,addCocoonIncubator,awardCocoon,cocoonActive,cocoonWalked,ensureCocoons,hatchCocoon,startCocoon} from '../game/goCocoonsV2';
-import {COCOON_CAP as CAP_9} from '../game/goCocoonsV2';
+import {COCOON_CAP as CAP_9,COCOON_REWARDS,awardGiftCocoon,cocoonSpecies} from '../game/goCocoonsV2';
+import {WALK_WEIGHTS} from '../game/walkingV2';
 import {rng} from '../game/catalogV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo,rollGoBug} from '../game/goV2';
@@ -103,4 +104,13 @@ test('limited incubators cannot be double-booked, forged, or reused after their 
  assert.deepEqual(g.active,active);assert.equal(cocoonActive(p,other.id)?.id,other.id);assert.equal(g.incubators?.length,0);assert.equal(machine.uses,0);
  assert.throws(()=>startCocoon(p,other.id,NOW+2,machine.id));assert.throws(()=>hatchCocoon(p,NOW+2,{}));
  assert.throws(()=>addCocoonIncubator(p,0));assert.throws(()=>addCocoonIncubator(p,Infinity));
+});
+
+test('7 km cocoons come only from friend gifts (about one in four, not into a full bag); 10 km hold the rarest bugs and pay most',()=>{
+ const p=player(),got=Array.from({length:400},(_,i)=>awardGiftCocoon(p,'gift-'+i,NOW)).filter(Boolean);
+ assert.ok(got.length>=CAP_9-1&&p.go!.cocoons!.items.length===CAP_9,'a full bag takes no more cocoons');assert.ok(got.every(c=>c!.km===7));
+ const hits=Array.from({length:400},(_,i)=>rng('gift-'+i+':gift-cocoon')()<.25).filter(Boolean).length;assert.ok(hits>60&&hits<140,'roughly one in four gifts');
+ for(const km of [7,10] as const){assert.ok(COCOON_POOLS[km].length>=6);for(const id of COCOON_POOLS[km])assert.ok(id in WALK_WEIGHTS,id);}
+ assert.ok(COCOON_POOLS[10].every(id=>WALK_WEIGHTS[id]<=5),'10 km = rare bugs only');assert.ok(COCOON_REWARDS[10].dust>COCOON_REWARDS[5].dust);
+ assert.ok(COCOON_POOLS[7].includes(cocoonSpecies(7,.5))&&COCOON_POOLS[10].includes(cocoonSpecies(10,.99)));
 });

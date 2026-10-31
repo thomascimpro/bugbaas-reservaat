@@ -6,6 +6,7 @@ import {distance,requireFieldLocation} from './walkingV2';
 import {rng} from './catalogV2';
 import {checkV2 as check} from './shopV2';
 import {awardPostCocoon} from './goCocoonsV2';
+import type {CocoonKm} from './goCocoonsV2';
 import {HELD} from './goV2';
 import {awardPostResearch} from './postResearchV2';
 import type {Held} from './goV2';
@@ -18,13 +19,13 @@ export type FieldPost={id:string;name:string;lat:number;lng:number;source:'osm'|
 export type FieldRoute={id:string;name:string;points:{lat:number;lng:number}[];meters:number;source:'osm'|'own';osmId?:string;emoji?:string;createdAt?:number};
 export type RouteRun={route:FieldRoute;status:'active'|'paused'|'ready'|'claimed';next:number;meters:number;anchor:number;startedAt:number;claimedAt?:number;seed?:string;bonus?:number;spawns?:WildBug[];done?:string[]};
 /** Display-only map marker beyond the playable post list (PoGO-style horizon). Never used for rewards, gyms or raids. */
-export type MapSite={id:string;name:string;lat:number;lng:number;gym?:true;team?:'fern'|'amber'|'tidal'|null};
+export type MapSite={id:string;name:string;lat:number;lng:number;gym?:true;team?:'fern'|'amber'|'tidal'|null;defenders?:number;npc?:boolean};
 export type WorldSites={available?:boolean;dataAt?:number;posts:FieldPost[];routes:FieldRoute[];map?:MapSite[]};
 /** Horizon at the default camera (zoom 17.6, pitch 56) is ~0.75 km ahead; 1.2 km also covers zooming out. */
 export const MAP_SITE_RADIUS=1200,MAP_SITE_LIMIT=60,MAP_GYM_TEAM_LIMIT=12;
 // Same FNV-1a rule as gymSites in gymsV2 (kept in sync by a test): a post is a gym candidate when hash%3===0.
 export function gymCandidate(id:string){let value=2166136261;for(const c of id)value=Math.imul(value^c.charCodeAt(0),16777619);return (value>>>0)%3===0;}
-export type SiteProgress={visits:Record<string,number>;firstDay:string;routeClaims:string[];run:RouteRun|null;own?:FieldRoute[];badges?:Record<string,number>;recording?:RouteRecording|null;lastRoute?:RouteResult;lastLoot?:{post:string;items:Partial<Record<FieldItem,number>>;at:number;cocoon?:2|5;tm?:'fast'|'charged';held?:Held}};
+export type SiteProgress={visits:Record<string,number>;firstDay:string;routeClaims:string[];run:RouteRun|null;own?:FieldRoute[];badges?:Record<string,number>;recording?:RouteRecording|null;lastRoute?:RouteResult;lastLoot?:{post:string;items:Partial<Record<FieldItem,number>>;at:number;cocoon?:CocoonKm;tm?:'fast'|'charged';held?:Held}};
 export const POST_RADIUS=80,POST_COOLDOWN=300000;
 export const HORIZON_LIMITS={low:16,normal:36,high:60} as const;
 export type HorizonSite=MapSite&{meters:number;icon:string};
@@ -55,6 +56,6 @@ export function resumeRoute(p:PlayerV2,now:number){requireFieldLocation(p.walkin
 export function finishRoute(p:PlayerV2,now:number,seed?:string){requireFieldLocation(p.walking,now);const s=ensureSites(p),r=s.run;check(r&&r.status==='ready','Volg eerst de route en loop de afstand.');check(distance(p.walking!.fix,r.route.points.at(-1)!)<=POST_RADIUS,'Loop naar het einde van je route.');if(s.firstDay!==day(now)){s.firstDay=day(now);s.routeClaims=[];}check(!s.routeClaims.includes(r.route.id)&&s.routeClaims.length<3,'Deze dagbeloning is al opgehaald.');r.status='claimed';r.claimedAt=now;s.routeClaims.push(r.route.id);
  const reward=routeReward(r.route.meters);p.go!.dust+=reward.dust;p.field!.inventory.basic=Math.min(99999,p.field!.inventory.basic+reward.nets);grantXP(p,reward.xp);s.badges??={};const count=s.badges[r.route.id]=(s.badges[r.route.id]??0)+1;
  // Reuses the post cocoon roll (20%) with a one-off key that is removed again, so it never counts as a post spin.
- let cocoon:2|5|undefined;if(seed){const key='route:'+r.route.id+':'+now;s.visits[key]=now;cocoon=awardPostCocoon(p,key,seed,now)?.km;delete s.visits[key];}
+ let cocoon:CocoonKm|undefined;if(seed){const key='route:'+r.route.id+':'+now;s.visits[key]=now;cocoon=awardPostCocoon(p,key,seed,now)?.km;delete s.visits[key];}
  s.lastRoute={route:r.route.id,dust:reward.dust,xp:reward.xp,nets:reward.nets,...(cocoon?{cocoon}:{}),count,at:now};return {...s.lastRoute,badge:routeBadge(count)};}
 export function cancelRoute(p:PlayerV2){const s=ensureSites(p);check(s.run&&s.run.status!=='claimed','Er is geen route om te stoppen.');s.run=null;}

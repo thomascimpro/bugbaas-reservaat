@@ -32,3 +32,15 @@ test('one gym battle per day from afar at a gym you can see; walking is still ne
   await assert.rejects(send('gymAttack',{gym:'gym-far-post-1',ids,remote:true}),/al gebruikt/,'once per day');
  }finally{store.close();}
 });
+
+test('far gyms on the map show how full they are and wild guards, nearest twelve first, without who defends',async()=>{
+ const store=new SqliteStore(':memory:'),uid='far-gym-info';
+ try{
+  const service=new GoServiceV2(store,'local',()=>NOW);await service.state(uid);await store.run(['v2Players:'+uid],d=>d.set('v2Players:'+uid,player(uid)));let v:GameViewV2=await service.state(uid);
+  const near=v.player.walking!.mapSites!.find(s=>s.id==='far-post-0')!,last=v.player.walking!.mapSites!.find(s=>s.id==='far-post-29')!;
+  assert.equal(near.npc,true,'an unseen gym will get wild guards');assert.equal(near.defenders,0);assert.equal(last.team,undefined,'only the nearest twelve are read');
+  v=await service.command(uid,{type:'gymAttack',gym:'gym-far-post-0',ids:['bug-0','bug-1','bug-2'],remote:true,commandId:randomUUID(),expectedRevision:v.player.revision});
+  const fresh=await new GoServiceV2(store,'local',()=>NOW).state(uid),site=fresh.player.walking!.mapSites!.find(s=>s.id==='far-post-0')!;
+  assert.equal(site.npc,true);assert.equal(site.defenders,3);assert.ok(!JSON.stringify(site).includes('Wilde wachter'),'no defender names on the map');
+ }finally{store.close();}
+});

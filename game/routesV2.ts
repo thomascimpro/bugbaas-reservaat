@@ -1,3 +1,4 @@
+import type {CocoonKm} from './goCocoonsV2';
 import type {PlayerV2} from './typesV2';
 import type {FieldRoute,SiteProgress} from './worldSitesV2';
 import type {WildBug} from './walkingV2';
@@ -16,7 +17,7 @@ export const ROUTE_BADGE_ICONS=['','🥉','🥈','🥇'] as const;
 /** Recording: max ~12.6 km/h per segment (kids may jog), max 9 km/h on average, at most 3 hours. */
 const SEGMENT_MAX_SPEED=3.5,AVERAGE_MAX_SPEED=2.5,RECORD_MAX_MS=3*3600000,RECORD_STEP=12,RECORD_GAP_S=180,RECORD_POINTS=600;
 export type RouteRecording={startedAt:number;status:'recording'|'ready';points:{lat:number;lng:number;at:number;acc:number}[];meters:number;fast:number;full?:true;path?:P[]};
-export type RouteResult={route:string;dust:number;xp:number;nets:number;cocoon?:2|5;count:number;at:number};
+export type RouteResult={route:string;dust:number;xp:number;nets:number;cocoon?:CocoonKm;count:number;at:number};
 export type MapRoute={id:string;name:string;emoji:string;meters:number;points:P[];start:P;own:boolean;away:number;today:boolean;count:number;badge:number;active:boolean};
 
 const r6=(v:number)=>Math.round(v*1e6)/1e6;

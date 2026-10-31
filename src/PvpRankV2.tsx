@@ -18,10 +18,9 @@ export function RankBadgeV2({player,now=Date.now(),size=34}:{player:PlayerV2;now
 /** Strijd header: big medal, rank name, bar to the next rank and days left in the season. */
 export function RankCardV2({player,now}:{player:PlayerV2;now:number}){
  const s=pvpView(player,now),r=RANKS[s.rank];
- return <Panel style={{flexDirection:'row',alignItems:'center',gap:14}}><RankMedalV2 rank={s.rank} size={70}/><View style={{flex:1,gap:5}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:6}}><Text style={{fontFamily:font,fontSize:24,fontWeight:'900',color:r.color}}>{r.name}</Text><View style={{flex:1}}/><Label small>🏅 {s.points}</Label></View>
+ return <Panel style={{flexDirection:'row',alignItems:'center',gap:12}}><RankMedalV2 rank={s.rank} size={56}/><View style={{flex:1,gap:4}}>
+  <View style={{flexDirection:'row',alignItems:'center',gap:6}}><Text style={{fontFamily:font,fontSize:22,fontWeight:'900',color:r.color}}>{r.name}</Text><View style={{flex:1}}/><Label small>🏅 {s.points} · 📅 {s.daysLeft}d</Label></View>
   <View accessibilityLabel={s.next?'Op weg naar '+s.next.name:'Hoogste rang'} style={{flexDirection:'row',alignItems:'center',gap:6}}><View style={{flex:1,height:12,borderRadius:6,backgroundColor:'#345A49',overflow:'hidden'}}><View style={{height:12,width:(s.progress*100+'%') as `${number}%`,backgroundColor:r.color}}/></View><Text style={{fontSize:18}}>{s.next?.emoji??'🏆'}</Text></View>
-  <Label small>📅 nog {s.daysLeft} {s.daysLeft===1?'dag':'dagen'}</Label>
  </View><Help title="Rang" body={'Win duels om punten 🏅 te halen: '+RANKS.map(x=>x.emoji+' '+x.name).join(' → ')+'.\n\nElke maand begint een nieuw seizoen. Dan krijg je een beloning voor je hoogste rang en zakken je punten half terug naar 1000.\n\n🥇 Goud en hoger: ook een 🥚 cocon. 💎 Platina en 👑 Kampioen: ook een zeldzame bug.'}/></Panel>;
 }
 
@@ -42,8 +41,8 @@ function SlotArt({kind,reward,size}:{kind:TrackSlot;reward?:TrackReward;size:num
 export function RewardTrackV2({player,now}:{player:PlayerV2;now:number}){
  const s=pvpView(player,now),won=s.track.length,rare=RARITY_TIERS[3].color;
  return <Panel style={{gap:8}}><View style={{flexDirection:'row',alignItems:'center',gap:6}}><Label bold>🎁 Winst vandaag</Label><View style={{flex:1}}/><Label bold>{won} / {TRACK.length}</Label><Help title="Beloningspad" body={'Elke gewonnen strijd (ook tegen de computer) vult het volgende vakje: '+TRACK.map(t=>t.emoji+' '+t.name).join(', ')+'.\n\nMorgen begint het pad opnieuw.'}/></View>
-  <View style={{flexDirection:'row',gap:5}}>{TRACK.map((t,i)=>{const done=i<won,next=i===won,reward=s.rewards[i];return <View key={t.kind} testID={'track-slot-'+i} accessibilityLabel={(done?'Gewonnen: ':'Winst '+(i+1)+': ')+(reward?.species?species(reward.species).name:t.name)} style={{flex:1,aspectRatio:.82,borderRadius:14,alignItems:'center',justifyContent:'center',gap:2,backgroundColor:done?'#4E6B3A':next?'#2C5546':'#1D3D33',borderWidth:2,borderColor:done?'#F2D16E':next?'#A2C58D':i===4?rare+'99':'#FFFFFF22',opacity:done||next?1:.6}}>
-   <SlotArt kind={t.kind} reward={reward} size={30}/>{i===4&&!done&&<Text style={{fontSize:9,color:rare,fontWeight:'900'}}>★★★</Text>}
+  <View style={{flexDirection:'row',gap:5}}>{TRACK.map((t,i)=>{const done=i<won,next=i===won,reward=s.rewards[i];return <View key={t.kind} testID={'track-slot-'+i} accessibilityLabel={(done?'Gewonnen: ':'Winst '+(i+1)+': ')+(reward?.species?species(reward.species).name:t.name)} style={{flex:1,height:58,borderRadius:14,alignItems:'center',justifyContent:'center',gap:2,backgroundColor:done?'#4E6B3A':next?'#2C5546':'#1D3D33',borderWidth:2,borderColor:done?'#F2D16E':next?'#A2C58D':i===4?rare+'99':'#FFFFFF22',opacity:done||next?1:.6}}>
+   <SlotArt kind={t.kind} reward={reward} size={28}/>{i===4&&!done&&<Text style={{fontSize:9,color:rare,fontWeight:'900'}}>★★★</Text>}
    <View style={{position:'absolute',top:-6,left:-4,width:20,height:20,borderRadius:10,alignItems:'center',justifyContent:'center',backgroundColor:done?'#F2D16E':'#1D3D33',borderWidth:1,borderColor:'#FFF6D688'}}>{done?<Text style={{fontSize:11}}>✓</Text>:<Text style={{fontSize:11,fontWeight:'900',color:'#F5EACB'}}>{i+1}</Text>}</View>
   </View>;})}</View>
  </Panel>;

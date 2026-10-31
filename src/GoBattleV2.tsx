@@ -16,6 +16,7 @@ import type {RunV2} from './ShopViewV2';
 import {Scene,SpriteView} from './artV2';
 
 import {cupTheme,pvpView,suggestTeam} from '../game/pvpV2';
+import {TabsV2} from './TabsV2';
 import {PvpGainV2,RankCardV2,RankMedalV2,RewardTrackV2,SeasonNewsV2} from './PvpRankV2';
 import {CupPanelV2} from './CupV2';
 
@@ -70,7 +71,7 @@ function HP({value,max}:{value:number;max:number}){return <View style={{width:'1
 export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;open?:(name:string)=>void}){
 
  const reduced=useContext(MotionPrefs);
- const p=view.player,g=p.go!,b=view.goBattle,[picking,setPicking]=useState(false),[code,setCode]=useState(''),[invite,setInvite]=useState(false),[inviteMade,setInviteMade]=useState(0),[mode,setMode]=useState<'duel'|'cup'|'daily'|'boss'|'live'>('duel'),[ranks,setRanks]=useState(false),[searchExpired,setSearchExpired]=useState(false),queued=useRef(g.queue?.until),info=useInfo(),{height}=useWindowDimensions(),fighterSize=Math.max(72,Math.min(160,(height-340)*.36)),live=mode==='live';
+ const p=view.player,g=p.go!,b=view.goBattle,[picking,setPicking]=useState(false),[code,setCode]=useState(''),[invite,setInvite]=useState(false),[inviteMade,setInviteMade]=useState(0),[mode,setMode]=useState<'duel'|'cup'|'daily'|'boss'|'live'|'rank'>('duel'),[ranks,setRanks]=useState(false),[searchExpired,setSearchExpired]=useState(false),queued=useRef(g.queue?.until),info=useInfo(),{height}=useWindowDimensions(),fighterSize=Math.max(72,Math.min(160,(height-340)*.36)),live=mode==='live';
 
  useEffect(()=>{if(queued.current&&!g.queue&&!b&&now>=queued.current)setSearchExpired(true);if(g.queue)setSearchExpired(false);queued.current=g.queue?.until;},[g.queue?.until,b?.id]);
 
@@ -102,11 +103,11 @@ export function GoBattleV2({view,run,busy,now,open}:{view:GameViewV2;run:RunV2;b
 
  const pool=p.specimens.filter(s=>s.go).sort((a,b)=>stats(b).cp-stats(a).cp),issue=teamIssue(p,g.team,g.league),valid=!issue,strong=suggestTeam(p,LEAGUES[g.league].cap);
 
- return <ScrollView contentContainerStyle={{padding:16,paddingTop:87,gap:14,paddingBottom:100}}><View style={[v.row,{justifyContent:'space-between'}]}><Title>Strijd</Title><GoTypeHelp/><Help title="Strijd" body={'⚔️ Duel: meteen spelen, ook als niemand online is.\n🗓️ Weekbeker: elke week andere types.\n🏆 Arena: tegen echte spelers.\n\nElke winst vult je 🎁 pad en geeft 🏅 punten voor je rang.'}/></View>
+ return <ScrollView contentContainerStyle={{padding:16,paddingTop:87,gap:14,paddingBottom:100}}><View style={[v.row,{justifyContent:'space-between'}]}><Title>Strijd</Title><GoTypeHelp/><Help title="Strijd" body={'⚔️ Duel: 🤖 Oefen (altijd) of 🏆 Arena (echte spelers).\n🏆 Beker: elke week andere types.\n🎯 Dag: Dagstrijd en Dagbaas.\n🏅 Rang: elke winst geeft punten en vult je 🎁 pad.'}/></View>
 
-  <RankCardV2 player={p} now={now}/><SeasonNewsV2 player={p} now={now}/><RewardTrackV2 player={p} now={now}/>
-
-  <View accessibilityRole="tablist" style={{flexDirection:'row',gap:8}}>{([{id:'duel',emoji:'⚔️',name:'Duel'},{id:'cup',emoji:cupTheme(now).emoji,name:'Weekbeker'},{id:'live',emoji:'🏆',name:'Arena'}] as const).map(tab=><Pressable key={tab.id} testID={'mode-'+tab.id} accessibilityRole="tab" accessibilityLabel={tab.name} accessibilityState={{selected:mode===tab.id}} onPress={()=>setMode(tab.id)} style={{flex:1,minHeight:92,alignItems:'center',justifyContent:'center',gap:2,borderRadius:20,backgroundColor:mode===tab.id?'#426B4A':'#1A4035',borderWidth:mode===tab.id?3:1,borderColor:mode===tab.id?'#F2D16E':'#66836C55'}}><Text style={{fontSize:38}}>{tab.emoji}</Text><Label bold>{tab.name}</Label></Pressable>)}</View><View style={{flexDirection:'row',gap:8}}>{([{id:'daily',emoji:'🎯',name:'Dagstrijd'},{id:'boss',emoji:'👹',name:'Dagbaas'}] as const).map(tab=><Pressable key={tab.id} testID={'mode-'+tab.id} accessibilityRole="tab" accessibilityLabel={tab.name} accessibilityState={{selected:mode===tab.id}} onPress={()=>setMode(tab.id)} style={{flex:1,minHeight:46,flexDirection:'row',gap:6,alignItems:'center',justifyContent:'center',borderRadius:14,backgroundColor:mode===tab.id?'#426B4A':'#1A4035',borderWidth:mode===tab.id?2:1,borderColor:mode===tab.id?'#F2D16E':'#66836C55'}}><Text style={{fontSize:20}}>{tab.emoji}</Text><Label bold>{tab.name}</Label></Pressable>)}</View>
+  <TabsV2 testID="battle-tab" tab={mode==='live'?'duel':mode==='boss'?'daily':mode} setTab={t=>setMode(t)} tabs={[{id:'duel',emoji:'⚔️',name:'Duel',line:'Duel = vecht met je 3 bugs'},{id:'cup',emoji:cupTheme(now).emoji,name:'Beker',line:'Beker = elke week andere types'},{id:'daily',emoji:'🎯',name:'Dag',line:'Dag = elke dag een nieuwe uitdaging'},{id:'rank',emoji:'🏅',name:'Rang',line:'Rang = jouw punten en 🎁 beloningen'}]}/>
+  {(mode==='duel'||mode==='live'||mode==='daily'||mode==='boss')&&<View accessibilityRole="tablist" style={{flexDirection:'row',gap:8}}>{(mode==='duel'||mode==='live'?[{id:'duel',emoji:'🤖',name:'Oefen'},{id:'live',emoji:'🏆',name:'Arena'}] as const:[{id:'daily',emoji:'🎯',name:'Dagstrijd'},{id:'boss',emoji:'👹',name:'Dagbaas'}] as const).map(tab=><Pressable key={tab.id} testID={'mode-'+tab.id} accessibilityRole="tab" accessibilityLabel={tab.name} accessibilityState={{selected:mode===tab.id}} onPress={()=>setMode(tab.id)} style={{flex:1,minHeight:44,flexDirection:'row',gap:6,alignItems:'center',justifyContent:'center',borderRadius:14,backgroundColor:mode===tab.id?'#426B4A':'#1A4035',borderWidth:mode===tab.id?2:1,borderColor:mode===tab.id?'#F2D16E':'#66836C55'}}><Text style={{fontSize:20}}>{tab.emoji}</Text><Label bold>{tab.name}</Label></Pressable>)}</View>}
+  {mode==='rank'&&<><RankCardV2 player={p} now={now}/><SeasonNewsV2 player={p} now={now}/><RewardTrackV2 player={p} now={now}/></>}
 
   {(mode==='duel'||live)&&strong.length===3&&strong.join()!==g.team.join()&&<Button small icon="star" disabled={busy} onPress={()=>void run('goTeam',{ids:strong,league:g.league})}>👍 Kies sterk team</Button>}
 
