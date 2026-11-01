@@ -1,8 +1,9 @@
 import {EXPANDED_BY_ID} from '../game/dexExpansionV2';
+import {LEGENDARY_BY_ID} from '../game/legendaryV2';
 import {EVOLUTION_ASSETS} from '../game/evolutionAssetsV2';
 export type WorldPoint={x:number;z:number};
 const flying=new Set(['butterfly','moth','lacewing','hoverfly','cranefly','mayfly']);
-const flies=(id:string)=>EXPANDED_BY_ID[id]?.flying??EVOLUTION_ASSETS[id]?.flying??flying.has(id.replace(/_elite$/,''));
+const flies=(id:string)=>EXPANDED_BY_ID[id]?.flying??LEGENDARY_BY_ID[id]?.flying??EVOLUTION_ASSETS[id]?.flying??flying.has(id.replace(/_elite$/,''));
 export function advanceWorldPosition(current:WorldPoint,target:WorldPoint,delta:number,reduced=false){
  const gap=Math.hypot(target.x-current.x,target.z-current.z);
  if(reduced||gap>120||gap<.04)return {...target,moving:false};

@@ -3,6 +3,7 @@ import {fighterGo,makeGoBattle} from './goBattleV2';
 import type {GoBattle,GoFighter} from './goBattleV2';
 import {movePool,rollGoBug,teamIssue} from './goV2';
 import {DEX_SPECIES,evolutionStage} from './dexV2';
+import {LEGENDARY_SPECIES,isLegendary} from './legendaryV2';
 import {dayV2} from './safariV2';
 import {checkV2 as check} from './shopV2';
 import type {PlayerV2,Specimen} from './typesV2';
@@ -31,8 +32,12 @@ export const RAID_TIERS={
  4:{name:'Reuzenzwerm',level:35,hp:15,trainer:15,dust:800,xp:1100,nets:6,catchLevel:20},
  5:{name:'Oerzwerm',level:40,hp:30,trainer:20,dust:1000,xp:1500,nets:7,catchLevel:20},
 } as const satisfies Record<RaidTier,unknown>;
-/** Oerbugs stay empty until their models are approved; five-star raids are not scheduled until then. */
-export const LEGENDARY_RAID_SPECIES:readonly string[]=[];
+/** Oerbugs (game/legendaryV2.ts): only ★5 bosses, never in the ★1-★4 pools, the wild or cocoons. */
+export const LEGENDARY_RAID_SPECIES:readonly string[]=LEGENDARY_SPECIES.map(s=>s.id);
+/** Share of raid windows that hatch an Oerzwerm (★5). Kept rare: about one in 33 eggs. */
+export const LEGENDARY_RAID_SHARE=.03;
+/** One Oerbug per week for everybody (weeks start Monday 00:00 UTC), rotating through all Oerbugs. */
+export function legendaryOfWeek(day:string){const week=Math.floor((Date.parse(day+'T00:00:00Z')/DAY_MS+3)/7);return LEGENDARY_RAID_SPECIES[((week%LEGENDARY_RAID_SPECIES.length)+LEGENDARY_RAID_SPECIES.length)%LEGENDARY_RAID_SPECIES.length];}
 /** Main type used to spread bosses: the first type that is not 'bug' (almost every bug also has 'bug'). Read at runtime, so retyped species follow. */
 export const raidTypeKey=(kind:string)=>{const t=movePool(kind).types;return t.find(x=>x!=='bug')??t[0];};
 type BossPools=Record<1|3|4,Record<string,string[]>>;
@@ -40,15 +45,16 @@ let bossPools:{pools:BossPools;keys:string[]}|undefined;
 /** Boss candidates per tier, grouped by main type: ★1 first stages, ★3 second stages, ★4 final stages. Built once per process from the dex. */
 export function raidPools(){
  if(bossPools)return bossPools;const pools:BossPools={1:{},3:{},4:{}};
- for(const {id} of DEX_SPECIES){const stage=evolutionStage(id);(pools[stage>=3?4:stage===2?3:1][raidTypeKey(id)]??=[]).push(id);}
+ for(const {id} of DEX_SPECIES){if(isLegendary(id))continue;const stage=evolutionStage(id);(pools[stage>=3?4:stage===2?3:1][raidTypeKey(id)]??=[]).push(id);}
  return bossPools={pools,keys:[...new Set(Object.values(pools).flatMap(p=>Object.keys(p)))].sort()};
 }
-export type RaidWindow={n:number;tier:Exclude<RaidTier,5>;species:string;visibleAt:number;hatchAt:number;endsAt:number};
+export type RaidWindow={n:number;tier:RaidTier;species:string;visibleAt:number;hatchAt:number;endsAt:number};
 /** Public part of a raid id. The server passes a keyed hash: post ids of virtual posts encode a 170 m grid cell, OSM ids a public node. */
 export type RaidToken=(input:string)=>string;
 /**
  * One post's raids for a UTC day, the same for everyone. Seeded through the keyed token, so clients cannot plan ahead.
  * A new egg every two to three hours (the first egg of the day can be shorter than an hour), 45 minutes to fight, all inside the day; one in five windows rests.
+ * About 3% of the windows hatch an Oerzwerm (★5) with the Oerbug of the week.
  * Each post walks through the main types in its own shuffled order, so a day brings many different bosses.
  */
 export function raidSchedule(site:Pick<RaidSite,'id'>,day:string,token:RaidToken):RaidWindow[]{
@@ -56,6 +62,7 @@ export function raidSchedule(site:Pick<RaidSite,'id'>,day:string,token:RaidToken
  for(let i=order.length-1;i>0;i--){const j=Math.floor(shuffle()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
  for(let n=0,hatchAt=start+Math.floor(timing()*RAID_GAP_MS/60000)*60000;hatchAt+ACTIVE_MS<=start+DAY_MS;n++,hatchAt+=RAID_GAP_MS+Math.floor(timing()*RAID_JITTER_MS/60000)*60000){
   const random=rng(seed+':'+n),roll=random();if(roll<.2)continue;
+  if(roll>=1-LEGENDARY_RAID_SHARE&&LEGENDARY_RAID_SPECIES.length){out.push({n,tier:5,species:legendaryOfWeek(day),visibleAt:Math.max(start,hatchAt-EGG_MS),hatchAt,endsAt:hatchAt+ACTIVE_MS});continue;}
   const tier=roll<.65?1:roll<.9?3:4,pool=pools[tier],key=order.map((_,k)=>order[(n+k)%order.length]).find(k=>pool[k]?.length);if(!key)continue;
   const list=pool[key];out.push({n,tier,species:list[Math.floor(random()*list.length)],visibleAt:Math.max(start,hatchAt-EGG_MS),hatchAt,endsAt:hatchAt+ACTIVE_MS});
  }

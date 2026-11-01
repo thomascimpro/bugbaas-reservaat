@@ -150,4 +150,7 @@ export const bugPortraits:Record<string,readonly [ImageSourcePropType,ImageSourc
  'snail_1':[require('../assets/v2/portraits/v1/snail_1.webp'),require('../assets/v2/portraits/v1/snail_1-shiny.webp')],
  'snail_2':[require('../assets/v2/portraits/v1/snail_2.webp'),require('../assets/v2/portraits/v1/snail_2-shiny.webp')],
  'snail_3':[require('../assets/v2/portraits/v1/snail_3.webp'),require('../assets/v2/portraits/v1/snail_3-shiny.webp')],
+ 'kristalkoning':[require('../assets/v2/portraits/v1/kristalkoning.webp'),require('../assets/v2/portraits/v1/kristalkoning-shiny.webp')],
+ 'donderwiek':[require('../assets/v2/portraits/v1/donderwiek.webp'),require('../assets/v2/portraits/v1/donderwiek-shiny.webp')],
+ 'lavaklauw':[require('../assets/v2/portraits/v1/lavaklauw.webp'),require('../assets/v2/portraits/v1/lavaklauw-shiny.webp')],
 };

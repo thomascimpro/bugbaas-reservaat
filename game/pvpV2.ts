@@ -1,5 +1,6 @@
 import {rng} from './catalogV2';
 import {DEX_SPECIES,evolutionStage} from './dexV2';
+import {isLegendary} from './legendaryV2';
 import {dailyWeekKey} from './dailyChallengeV2';
 import {grantField} from './fieldV2';
 import {COCOON_CAP} from './goCocoonsV2';
@@ -63,7 +64,7 @@ export type PvpProgress={version:1;season:string;points:number;best:number;seaso
 
 let stageOne:string[]|undefined;
 /** Catchable first stages: NPC cup teams come from here. */
-export function stageOnePool(){return stageOne??=DEX_SPECIES.map(s=>s.id).filter(id=>{try{return evolutionStage(id)===1&&speciesTypes(id).length>0;}catch{return false;}});}
+export function stageOnePool(){return stageOne??=DEX_SPECIES.map(s=>s.id).filter(id=>{try{return !isLegendary(id)&&evolutionStage(id)===1&&speciesTypes(id).length>0;}catch{return false;}});}
 let rare:string[]|undefined;
 /** Wild ★★★ species (no elite/ultimate forms): the reward bug pool. */
 export function rewardBugPool(){return rare??=DEX_SPECIES.map(s=>s.id).filter(id=>WALK_WEIGHTS[id]!==undefined&&bugRarity(id)===3);}

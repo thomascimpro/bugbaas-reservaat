@@ -3,6 +3,7 @@ import {FIELD_FAMILY_SPECIES} from '../game/fieldFamiliesV2';
 import {usesSharedEvolutionModel} from '../game/dexV2';
 import {EXPANDED_SPECIES} from '../game/dexExpansionV2';
 import {EVOLUTION_ASSETS} from '../game/evolutionAssetsV2';
+import {LEGENDARY_SPECIES} from '../game/legendaryV2';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {clone} from 'three/examples/jsm/utils/SkeletonUtils.js';
 
@@ -46,6 +47,7 @@ export type BugModel={root:THREE.Group;clips:THREE.AnimationClip[]};
 for(const s of FIELD_FAMILY_SPECIES)SHINY_PALETTES[s.id]=s.palette;
 for(const s of EXPANDED_SPECIES)SHINY_PALETTES[s.id]=s.palette;
 for(const [id,s] of Object.entries(EVOLUTION_ASSETS))SHINY_PALETTES[id]=s.palette;
+for(const s of LEGENDARY_SPECIES)SHINY_PALETTES[s.id]=s.palette;
 export async function loadBugModel(name:string):Promise<BugModel>{const g=await new GLTFLoader().loadAsync('/models/'+name+'.glb');return {root:g.scene,clips:g.animations};}
 // A map and its encounter use the same decoded source. Only instances own their skeletons/variants.
 const liveModels=new Map<string,{promise:Promise<BugModel>;model?:BugModel;users:number;at:number}>();

@@ -2,6 +2,7 @@ import type {PlayerV2} from './typesV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
 import {EXPANDED_SPECIES,EXPANDED_BY_ID,ULTIMATE_BASES} from './dexExpansionV2';
 import {EVOLUTION_ASSETS} from './evolutionAssetsV2';
+import {LEGENDARY_SPECIES} from './legendaryV2';
 
 // Published numbers are explicit and append-only; model-map ordering cannot renumber a dex.
 export const DEX_VERSION=1;
@@ -49,7 +50,7 @@ export const EVOLUTION_APPEARANCES:Readonly<Record<string,{model:string;name:str
 };
 export const usesSharedEvolutionModel=(id:string)=>!!ELITE_FORMS[id]&&!EVOLUTION_APPEARANCES[id];
 export const baseSpeciesId=(id:string)=>ELITE_FORMS[id]??ULTIMATE_BASES[id]??id;
-export const DEX_SPECIES=[...BASE_DEX_SPECIES,...Object.keys(ELITE_FORMS).map((id,i)=>({number:33+i,id})),...FIELD_FAMILY_SPECIES.map((s,i)=>({number:63+i,id:s.id})),...EXPANDED_SPECIES.map(({number,id})=>({number,id}))];
+export const DEX_SPECIES=[...BASE_DEX_SPECIES,...Object.keys(ELITE_FORMS).map((id,i)=>({number:33+i,id})),...FIELD_FAMILY_SPECIES.map((s,i)=>({number:63+i,id:s.id})),...EXPANDED_SPECIES.map(({number,id})=>({number,id})),...LEGENDARY_SPECIES.map(({number,id})=>({number,id}))];
 export const dexNumber=(id:string)=>DEX_SPECIES.find(s=>s.id===id)?.number;
 export function dexStatus(p:PlayerV2,id:string){const caught=!!p.go?.dex?.includes(id);return {seen:caught||!!p.go?.entries&&Object.hasOwn(p.go.entries,id),caught,shiny:caught&&p.shinies.includes(id)};}
 export const EVOLUTIONS:Record<string,{to:string;candy:number}>={caterpillar:{to:'moth',candy:12},beetlegrub:{to:'hercules',candy:25},...Object.fromEntries(Object.entries(ELITE_FORMS).map(([to,from])=>[from,{to,candy:from==='moth'?50:from==='hercules'?100:25}])),...Object.fromEntries(FIELD_FAMILY_SPECIES.filter(s=>s.to).map(s=>[s.id,{to:s.to!,candy:s.candy}])),...Object.fromEntries(EXPANDED_SPECIES.filter(s=>s.evolveFrom).map(s=>[s.evolveFrom!,{to:s.id,candy:s.evolveCost!}]))};

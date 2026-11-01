@@ -12,13 +12,15 @@ import {SqliteStore} from '../server/sqlite';
 import type {PlayerV2} from '../game/typesV2';
 import {requireFieldLocation,locate} from '../game/walkingV2';
 import {rng} from '../game/catalogV2';
+import {isLegendary} from '../game/legendaryV2';
 import {catchChance} from '../game/fieldV2';
 import {DEX_SPECIES,evolutionLine,EVOLUTIONS,candyFamily} from '../game/dexV2';
 import {goCatchRewards,buddyDistance,secondCost} from '../game/goV2';
 
 test('all 150 forms share stage-scaled catch rewards and family walking/build costs; first evolutions are accessible',()=>{
- assert.equal(DEX_SPECIES.length,150);
- for(const {id} of DEX_SPECIES){const line=evolutionLine(id),stage=line.indexOf(id);assert.equal(line.length,3);assert.equal(buddyDistance(id),buddyDistance(line[0]));assert.deepEqual(secondCost(id),secondCost(line[0]));assert.equal(candyFamily(id),candyFamily(line[0]));assert.deepEqual(goCatchRewards(id),{dust:[100,300,500][stage],candy:[3,5,10][stage]});assert.equal(goCatchRewards(id,'fruit').candy,[6,10,20][stage]);assert.equal(goCatchRewards(id,'silver').candy,[7,11,23][stage]);if(stage<2)assert.equal(EVOLUTIONS[id].candy,candyFamily(id)==='caterpillar'?[12,50][stage]:[25,100][stage]);}
+ assert.equal(DEX_SPECIES.length,153);
+ for(const {id} of DEX_SPECIES.filter(s=>isLegendary(s.id))){assert.deepEqual(evolutionLine(id),[id]);assert.equal(EVOLUTIONS[id],undefined);assert.deepEqual(goCatchRewards(id),{dust:500,candy:10});assert.equal(candyFamily(id),id);}
+ for(const {id} of DEX_SPECIES.filter(s=>!isLegendary(s.id))){const line=evolutionLine(id),stage=line.indexOf(id);assert.equal(line.length,3);assert.equal(buddyDistance(id),buddyDistance(line[0]));assert.deepEqual(secondCost(id),secondCost(line[0]));assert.equal(candyFamily(id),candyFamily(line[0]));assert.deepEqual(goCatchRewards(id),{dust:[100,300,500][stage],candy:[3,5,10][stage]});assert.equal(goCatchRewards(id,'fruit').candy,[6,10,20][stage]);assert.equal(goCatchRewards(id,'silver').candy,[7,11,23][stage]);if(stage<2)assert.equal(EVOLUTIONS[id].candy,candyFamily(id)==='caterpillar'?[12,50][stage]:[25,100][stage]);}
 });
 
 test('evolved manual catches report the actual family nectar and dust, berry bonuses and receipt replays once',async()=>{

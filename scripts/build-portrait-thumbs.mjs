@@ -7,7 +7,7 @@ import sharp from 'sharp';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const source=resolve(root,'assets/v2/portraits/v1'),output=resolve(root,'assets/v2/portraits/thumbs');
 const manifest=JSON.parse(await readFile(join(source,'manifest.json'),'utf8'));
-const ids=Object.keys(manifest.species??{}).sort();if(ids.length!==150)throw new Error('The completed 150-species HD portrait manifest is required.');
+const ids=Object.keys(manifest.species??{}).sort();if(ids.length!==153)throw new Error('The completed 153-species HD portrait manifest is required.');
 const images=[];let hdBytes=0;
 for(const id of ids){
  if(!/^[a-z0-9_]+$/.test(id))throw new Error('Unexpected portrait ID.');

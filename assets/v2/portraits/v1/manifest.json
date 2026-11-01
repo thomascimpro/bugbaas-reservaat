@@ -1652,6 +1652,39 @@
       "size": 1024,
       "normal": "snail_3.png",
       "shiny": "snail_3-shiny.png"
+    },
+    "kristalkoning": {
+      "model": "Kristalkoning",
+      "palette": [
+        "#3A1830",
+        "#D4568E",
+        "#FFE3B0"
+      ],
+      "size": 1024,
+      "normal": "kristalkoning.png",
+      "shiny": "kristalkoning-shiny.png"
+    },
+    "donderwiek": {
+      "model": "Donderwiek",
+      "palette": [
+        "#2A1A0E",
+        "#E09A2E",
+        "#FFF2C0"
+      ],
+      "size": 1024,
+      "normal": "donderwiek.png",
+      "shiny": "donderwiek-shiny.png"
+    },
+    "lavaklauw": {
+      "model": "Lavaklauw",
+      "palette": [
+        "#0F1B33",
+        "#2F6FE0",
+        "#BFF4FF"
+      ],
+      "size": 1024,
+      "normal": "lavaklauw.png",
+      "shiny": "lavaklauw-shiny.png"
     }
   }
 }

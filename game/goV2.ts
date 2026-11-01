@@ -4,6 +4,7 @@ import {bugRarity} from './rarityDisplayV2';
 import {ensureTrainer,catchXP,grantXP} from './trainerV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
 import {EXPANDED_BY_ID,ULTIMATE_BASES} from './dexExpansionV2';
+import {LEGENDARY_BY_ID,LEGENDARY_SPECIES,isLegendary} from './legendaryV2';
 import {EVOLUTIONS,candyFamily,baseSpeciesId,ELITE_FORMS,evolutionLine,evolutionStage} from './dexV2';
 import type {EchoProgress} from './echoArenaV2';
 import type {GoCocoonsProgress} from './goCocoonsV2';
@@ -170,6 +171,8 @@ export const FAMILY_TYPES:Record<string,Element[]>={
  grasshopper:['normal','grass'],flea:['normal'],tigerbeetle:['normal'],cicada:['normal','flying'],acornweevil:['normal','grass'],
  firefly:['fire'],cardinalbeetle:['fire'],silverfish:['fire'],asianladybeetle:['fire'],
  divingbeetle:['water'],waterstrider:['water'],giantwaterbug:['water'],mayfly:['water','flying'],
+ // Oerbugs: each is its own family.
+ ...Object.fromEntries(LEGENDARY_SPECIES.map(s=>[s.id,[...s.types] as Element[]])),
 };
 // Larvae keep only the main type; the second type arrives with evolution.
 const LARVAE=new Set(['caterpillar','beetlegrub','cicada_1','wasp_1','mosquito_1']);
@@ -179,6 +182,7 @@ const POOLS=new Map<string,{types:Element[];fast:Fast[];charged:Charged[]}>();
 /** Own-type (STAB) attacks plus one cover attack against a type that beats this bug's counters. */
 export function movePool(id:string):{types:Element[];fast:Fast[];charged:Charged[]}{
  const cached=POOLS.get(id);if(cached)return cached;
+ const legend=LEGENDARY_BY_ID[id];if(legend){const pool={types:[...legend.types] as Element[],fast:[...legend.fast] as Fast[],charged:[...legend.charged] as Charged[]};POOLS.set(id,pool);return pool;}
  const types=speciesTypes(id),[main,second]=types,pick=rng('type-moves:'+candyFamily(id)),threats=ELEMENTS.filter(t=>types.some(own=>TYPE_CHART[t].strong.includes(own))),covers=ELEMENTS.filter(t=>!types.includes(t)&&TYPE_CHART[t].strong.some(x=>threats.includes(x))),cover=covers[Math.floor(pick()*covers.length)];
  const mainFast=ofType(FAST,main),extra=mainFast.slice(2),secondCharged=second?ofType(CHARGED,second):[];
  const fast=[...mainFast.slice(0,2),...(extra.length?[extra[Math.floor(pick()*extra.length)]]:[]),...ofType(FAST,second??cover).slice(0,1)];
@@ -235,6 +239,7 @@ export function evolveGo(p:PlayerV2,id:unknown,seed:string,now=Date.now()){
 }
 export function awardGoCatch(p:PlayerV2,s:Specimen,seed:string,bait:string|null=null,grade?:string,curved=false,bonus?:{level:number}){const g=p.go!,key=family(s.species),newKind=!g.dex!.includes(s.species);if(s.source==='cocoon')grantXP(p,100+(newKind?500:0));else catchXP(p,newKind,s.obtainedAt,grade,curved);s.go=rollGoBug(s.species,seed,bonus);const reward=s.source==='cocoon'?{dust:100,candy:3}:goCatchRewards(s.species,bait);g.dust+=reward.dust;g.candy[key]=(g.candy[key]??0)+reward.candy;const random=rng(seed+':extra');let held:Held|null=null;if(s.go.level>=15&&random()<.1)g.xl[key]=(g.xl[key]??0)+1;if(random()<.04){const items=Object.keys(HELD) as Held[];held=items[Math.floor(random()*items.length)];g.items[held]++;}if(!g.dex!.includes(s.species))g.dex!.push(s.species);markGoSeen(p,s.species,s.obtainedAt);g.entries![s.species].caughtAt??=s.obtainedAt;if(s.shiny)g.entries![s.species].shinyAt??=s.obtainedAt;if(!p.buddy)p.buddy=s.id;return held;}
 
-export function goCatchRewards(kind:string,bait:string|null=null){const stage=evolutionStage(kind),candy=[3,5,10][stage-1];return {dust:[100,300,500][stage-1],candy:bait==='fruit'?candy*2:bait==='silver'?Math.floor(candy*7/3):candy};}
+/** Oerbugs reward like a final stage: 500 stof and 10 nectar. */
+export function goCatchRewards(kind:string,bait:string|null=null){const stage=isLegendary(kind)?3:evolutionStage(kind),candy=[3,5,10][stage-1];return {dust:[100,300,500][stage-1],candy:bait==='fruit'?candy*2:bait==='silver'?Math.floor(candy*7/3):candy};}
 /** Every buddy earns its nectar per walked kilometre (game/buddyV2.ts adds hearts, stof and level perks). */
 export function buddyDistance(_kind:string){return 1000;}

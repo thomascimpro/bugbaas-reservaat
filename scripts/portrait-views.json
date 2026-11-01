@@ -16,5 +16,6 @@
  "moth_elite":{"outline":7},
  "mantis_ultimate":{"outline":7},
  "earwig_elite":{"outline":7},
- "earwig_ultimate":{"outline":7}
+ "earwig_ultimate":{"outline":7},
+ "donderwiek":{"dir":[2.5,6,5]}
 }

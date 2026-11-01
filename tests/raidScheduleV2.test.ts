@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 import {species} from '../game/catalogV2';
 import {evolutionStage} from '../game/dexV2';
 import {movePool} from '../game/goV2';
-import {ACTIVE_MS,EGG_MS,RAID_GAP_MS,RAID_JITTER_MS,RAID_TIERS,raidAt,raidBossFighter,raidPools,raidSchedule,raidTypeKey} from '../game/raidsV2';
+import {ACTIVE_MS,EGG_MS,LEGENDARY_RAID_SPECIES,RAID_GAP_MS,RAID_JITTER_MS,RAID_TIERS,legendaryOfWeek,raidAt,raidBossFighter,raidPools,raidSchedule,raidTypeKey} from '../game/raidsV2';
+import {isLegendary} from '../game/legendaryV2';
 
 const DAY=Date.UTC(2026,9,28),DATE='2026-10-28';
 const TOKEN=(input:string)=>createHash('sha256').update('test-key:'+input).digest('base64url').slice(0,22);
@@ -28,12 +29,15 @@ test('several egg windows per gym per day, an hour of egg, 45 minutes to fight, 
  assert.ok(total/200>=6,'on average at least six raids per post and day, got '+total/200);
 });
 
-test('tiers: mostly one star, three stars regularly, four stars rarer, no five stars; bosses fit the tier',()=>{
+test('tiers: mostly one star, three stars regularly, four stars rarer, five stars rarest; bosses fit the tier',()=>{
  const count:Record<number,number>={};
  for(let i=0;i<300;i++)for(const w of raidSchedule(site(i),DATE,TOKEN)){count[w.tier]=(count[w.tier]??0)+1;
   assert.ok(species(w.species).name&&movePool(w.species).fast.length,'playable species');
+  if(w.tier===5)assert.equal(w.species,legendaryOfWeek(DATE),'★5 bosses are the Oerbug of the week');else assert.ok(!isLegendary(w.species),'Oerbugs only in ★5');
   if(w.tier===4)assert.equal(evolutionStage(w.species),3,'★4 bosses are final stages');if(w.tier===3)assert.equal(evolutionStage(w.species),2,'★3 bosses are second stages');}
- assert.ok(count[1]>count[3]&&count[3]>count[4]&&count[4]>0,'★1 > ★3 > ★4 > 0: '+JSON.stringify(count));assert.equal(count[5],undefined,'no Oerbugs before their models');
+ assert.ok(count[1]>count[3]&&count[3]>count[4]&&count[4]>count[5]&&count[5]>0,'★1 > ★3 > ★4 > ★5 > 0: '+JSON.stringify(count));
+ const total=Object.values(count).reduce((a,b)=>a+b,0);assert.ok(count[5]/total<.06,'★5 stays rare: '+count[5]+'/'+total);
+ assert.ok(raidBossFighter({id:'x',tier:5,species:LEGENDARY_RAID_SPECIES[0]}).maxHP>raidBossFighter({id:'x',tier:4,species:LEGENDARY_RAID_SPECIES[0]}).maxHP,'★5 boss is tougher than ★4');assert.ok(RAID_TIERS[5].trainer>RAID_TIERS[4].trainer);
  const strong=Object.values(raidPools().pools[4])[0][0];assert.ok(raidBossFighter({id:'x',tier:4,species:strong}).maxHP>raidBossFighter({id:'x',tier:3,species:strong}).maxHP,'★4 boss is tougher than ★3');
  assert.ok(RAID_TIERS[4].trainer>RAID_TIERS[3].trainer);
 });

@@ -40,7 +40,7 @@ function InviteFriends({view,raid,run,busy,onDone}:{view:GameViewV2;raid:string;
 }
 
 /** Tier colour, the same as the egg/boss bubble on the map. */
-const tierColor=(tier:RaidTier)=>RARITY_TIERS[tier>=4?4:tier>=3?3:2].color;
+const tierColor=(tier:RaidTier)=>RARITY_TIERS[tier>=5?5:tier>=4?4:tier>=3?3:2].color;
 function Pill({text,color}:{text:string;color:string}){return <View style={{alignSelf:'center',paddingHorizontal:12,paddingVertical:4,borderRadius:16,backgroundColor:color}}><Text style={{color:'#fff',fontWeight:'900',fontSize:16,textShadowColor:'#0008',textShadowRadius:2}}>{text}</Text></View>;}
 /** PoGO-style boss hero: stars on top, big boss (or egg) on a glow in the tier colour, a timer pill, name and types. */
 function BossHeroV2({kind,tier,egg,timer,size=104}:{kind:string;tier:RaidTier;egg:boolean;timer:string;size?:number}){

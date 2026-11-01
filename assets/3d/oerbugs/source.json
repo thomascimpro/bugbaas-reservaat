@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "created": "2026-10-31",
+  "purpose": "Legendary raid bosses (Oerbugs, dex 151-153); raid-only, never wild or in cocoons",
+  "tools": "Python 3 + three.js + gltf-transform (free, no Blender import/export of runtime GLBs)",
+  "models": [
+    {
+      "id": "kristalkoning",
+      "file": "Kristalkoning.glb",
+      "sha256": "7ab2005c24876ba08398c8a38765c5aa67ab597119f3ee7dfde349bc2bc8162a",
+      "geometrySha256": "7a012dcc0ca455e5ebb7de952dc22875ebbfced6c8a92f9807c07a0091f8aa17",
+      "bytes": 376260,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "partNodes": 149,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "purple stone wing covers with gold rims, gold seam and glowing crystal veins",
+        "faceted crystal horn, crown and ten-crystal back cluster that pulse in idle",
+        "golden mandibles, clubbed antennae and crystal-spiked legs"
+      ],
+      "source": "BugBaas original authored anatomy (assets/3d/oerbugs/authoring/produce_oerbugs.py)",
+      "sourceGeometryReused": false,
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset"
+    },
+    {
+      "id": "donderwiek",
+      "file": "Donderwiek.glb",
+      "sha256": "563d6f46c0e5a22a98df50d290188b1e3a4c1f68dbcb94d7f8cd17cebdfa9566",
+      "geometrySha256": "3139440ab18cf398143a5a0fa344134b9faa57c87df5d0e02613d36a47b59136",
+      "bytes": 436572,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 9,
+      "drawCalls": 9,
+      "partNodes": 144,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "four storm wings with glowing lightning bolts, cloud edges and storm eyes",
+        "silver fur collar and thorax tufts on a fuzzy body",
+        "feathered golden antennae with sparks, glowing eyes and thunder bands"
+      ],
+      "source": "BugBaas original authored anatomy (assets/3d/oerbugs/authoring/produce_oerbugs.py)",
+      "sourceGeometryReused": false,
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset"
+    },
+    {
+      "id": "lavaklauw",
+      "file": "Lavaklauw.glb",
+      "sha256": "c0bcfb260cf45370f58a40fedcc1ebc92c947a33e2f77235ca0dcdec608e1492",
+      "geometrySha256": "8891f6df2b88e2e678bbfa0befead686b41184b9eb76de748178223ba93d1353",
+      "bytes": 236072,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "partNodes": 120,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "basalt body with glowing lava veins, magma plates and basalt spikes",
+        "curved obsidian scythe forelegs with glowing edges and ember spines",
+        "flame crest and raised flame wings, glowing eyes and jaws"
+      ],
+      "source": "BugBaas original authored anatomy (assets/3d/oerbugs/authoring/produce_oerbugs.py)",
+      "sourceGeometryReused": false,
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import {ensureField} from '../game/fieldV2';
 import {ensureGo,evolveGo,rollGoBug,stats,movePool} from '../game/goV2';
 import {WALK_MODELS,WALK_WEIGHTS} from '../game/walkingV2';
 import {species} from '../game/catalogV2';
+import {isLegendary} from '../game/legendaryV2';
 import {GoServiceV2} from '../server/goServiceV2';
 import {SqliteStore} from '../server/sqlite';
 const NOW=Date.UTC(2026,9,20,12);
@@ -19,7 +20,7 @@ test('published dex numbers stay stable as species are appended and each has com
  assert.equal(dexNumber('beetle'),1);assert.equal(dexNumber('moth'),5);assert.equal(dexNumber('caterpillar'),21);
  assert.equal(new Set(DEX_SPECIES.map(s=>s.number)).size,DEX_SPECIES.length);
  assert.deepEqual([...DEX_SPECIES.map(s=>s.id)].sort(),Object.keys(WALK_MODELS).sort());
- for(const s of DEX_SPECIES){assert.equal(species(s.id).id,s.id);assert.equal((WALK_WEIGHTS[s.id]??0)>0,!ELITE_FORMS[s.id]);assert.ok(movePool(s.id).fast.length>=2);assert.ok(movePool(s.id).charged.length>=3);}
+ for(const s of DEX_SPECIES){assert.equal(species(s.id).id,s.id);assert.equal((WALK_WEIGHTS[s.id]??0)>0,!ELITE_FORMS[s.id]&&!isLegendary(s.id));assert.ok(movePool(s.id).fast.length>=2);assert.ok(movePool(s.id).charged.length>=3);}
  const at=(id:string)=>stats({id,source:'walking',species:id,level:1,shiny:false,favorite:false,obtainedAt:NOW,hearts:0,item:null,go:{...rollGoBug(id,'fixed'),level:50,iv:[15,15,15]}});
  for(const s of DEX_SPECIES.slice(21)){const actual=at(s.id),ceiling=at('hercules_elite');assert.ok(actual.cp<=ceiling.cp);}
 });

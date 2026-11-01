@@ -1,5 +1,6 @@
 import {rng} from './catalogV2';
 import {DEX_SPECIES,evolutionStage} from './dexV2';
+import {isLegendary} from './legendaryV2';
 import {makeGoBattle} from './goBattleV2';
 import type {GoBattle} from './goBattleV2';
 import {awardGoCatch,ensureGo,movePool,rollGoBug,stats,teamIssue} from './goV2';
@@ -28,7 +29,7 @@ export type PlaagToken=(input:string)=>string;
 
 let pools:Partial<Record<Element,string[]>>|undefined;
 /** Species per main type; every theme needs three different species. */
-export function plaagPools(){if(pools)return pools;const out:Partial<Record<Element,string[]>>={};for(const {id} of DEX_SPECIES){const t=movePool(id).types[0];(out[t]??=[]).push(id);}for(const k of Object.keys(out) as Element[])if(out[k]!.length<3)delete out[k];return pools=out;}
+export function plaagPools(){if(pools)return pools;const out:Partial<Record<Element,string[]>>={};for(const {id} of DEX_SPECIES){if(isLegendary(id))continue;const t=movePool(id).types[0];(out[t]??=[]).push(id);}for(const k of Object.keys(out) as Element[])if(out[k]!.length<3)delete out[k];return pools=out;}
 export const plaagThemes=()=>(Object.keys(plaagPools()) as Element[]).sort();
 /** Three different species of the theme; the lead (the bug you rescue) is a first stage when possible. */
 export function plaagTeam(id:string,type:Element):string[]{

@@ -3,7 +3,7 @@ import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {species} from '../game/catalogV2';
 import {movePool} from '../game/goV2';
-import {RAID_RULES,RAID_TIERS,FIGHT_MS,LOBBY_MS,addInvite,claimFreePass,freeRemoteLeft,claimRaid,ensureRaids,inviteIssue,joinLobby,leaveLobby,openLobby,publicRaid,raidAt,raidBossFighter,raidHP,raidInvite,raidJoinableUntil,resolveLobby,startLobby} from '../game/raidsV2';
+import {LEGENDARY_RAID_SPECIES,RAID_RULES,RAID_TIERS,FIGHT_MS,LOBBY_MS,addInvite,claimFreePass,freeRemoteLeft,claimRaid,ensureRaids,inviteIssue,joinLobby,leaveLobby,openLobby,publicRaid,raidAt,raidBossFighter,raidHP,raidInvite,raidJoinableUntil,resolveLobby,startLobby} from '../game/raidsV2';
 import type {Raid,RaidProgress} from '../game/raidsV2';
 
 const DAY=Date.UTC(2026,9,28);
@@ -25,7 +25,7 @@ test('raids are deterministic per post and window, use real species and hide coo
   assert.ok(!r.id.includes(site(i).id),'raid id hides the post id');
   const shown=publicRaid(r) as {site:Record<string,unknown>};assert.equal(shown.site.lat,undefined);assert.equal(shown.site.lng,undefined);}
  assert.ok(none>0&&seen.has(1)&&seen.has(3)&&seen.has(4),'some posts rest; one, three and four star raids occur');
- assert.ok(!seen.has(5),'no five-star raid while Oerbug models are not approved');
+ for(let i=0;i<300;i++){const r=raidAt(site(i),DAY+3*3600000,TOKEN);if(r)assert.equal(r.tier===5,LEGENDARY_RAID_SPECIES.includes(r.species),'Oerbugs are exactly the five-star bosses');}
 });
 
 test('lobby joins are idempotent, bounded, and remote play costs one pass after the daily free one',()=>{

@@ -3,12 +3,13 @@ import {BAITS,NETS} from '../game/fieldV2';
 import {HELD} from '../game/goV2';
 import {species} from '../game/catalogV2';
 import {candyFamily,DEX_SPECIES,evolutionLine} from '../game/dexV2';
+import {isLegendary,LEGENDARY_SPECIES} from '../game/legendaryV2';
 /** Nectar is keyed by family; some families (spider, scorpion, snail…) are not species ids themselves. */
 /** First stage of the family's line: the bug drawn on its nectar drop. */
 export function familyBase(family:string){const member=DEX_SPECIES.find(s=>candyFamily(s.id)===family)?.id;return member?evolutionLine(member)[0]:family;}
 export function familyName(family:string){try{return species(familyBase(family)).name;}catch{return family;}}
 /** Every nectar family once, sorted: the index spreads colours with the golden angle so neighbours never look alike. */
-export const NECTAR_FAMILIES=[...new Set(DEX_SPECIES.map(s=>candyFamily(s.id)))].sort();
+export const NECTAR_FAMILIES=[...[...new Set(DEX_SPECIES.filter(s=>!isLegendary(s.id)).map(s=>candyFamily(s.id)))].sort(),...LEGENDARY_SPECIES.map(s=>s.id)];
 const hsl=(h:number,s:number,l:number)=>{s/=100;l/=100;const k=(n:number)=>(n+h/30)%12,a=s*Math.min(l,1-l),f=(n:number)=>Math.round(255*(l-a*Math.max(-1,Math.min(k(n)-3,9-k(n),1)))).toString(16).padStart(2,'0');return '#'+f(0)+f(8)+f(4);};
 /** Deterministic two-tone nectar colours per family (bright, Fortnite-like); unknown ids hash to a stable hue. */
 export function familyColors(family:string):{main:string;stripe:string;dark:string}{const i=NECTAR_FAMILIES.indexOf(family),n=i>=0?i:Array.from(family).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7),h=(n*137.508)%360,h2=(h+120+(n*47)%100)%360;return {main:hsl(h,88,55),stripe:hsl(h2,92,68),dark:hsl(h,70,24)};}

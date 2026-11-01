@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {DEX_SPECIES} from '../game/dexV2';
+import {isLegendary} from '../game/legendaryV2';
 import {CHARGED,ELEMENTS,FAST,TYPE_CHART,family,knownMove,legacyMoves,movePool,rollGoBug,secondAttack,teachMove,ensureGo} from '../game/goV2';
 import type {Element} from '../game/goV2';
 import {effectiveness} from '../game/goBattleV2';
@@ -9,7 +10,7 @@ import {freshV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField} from '../game/fieldV2';
 
-const NOW=Date.UTC(2026,9,29,12),ids=(DEX_SPECIES as {id:string}[]).map(s=>s.id);
+const NOW=Date.UTC(2026,9,29,12),ids=(DEX_SPECIES as {id:string}[]).map(s=>s.id).filter(id=>!isLegendary(id));
 const OLD_FAST=['water','bite','fury','wing','poison','mud','leaf','claw','siphon','snap','metal','gust','spark'];
 const OLD_CHARGED=['stream','flare','cut','buzz','air','venom','rock','seed','earth','iron','dark','needle','web','crush','shell','dive','night','sap','burst'];
 function player(uid:string){const p=freshV2(uid,'QAABCDEF',NOW);ensureAdventure(p,NOW);ensureField(p,NOW);ensureGo(p,NOW);p.onboarded=true;p.name='QA '+uid;

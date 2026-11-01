@@ -2,6 +2,7 @@ import type { Ability, Item, Species } from './typesV2';
 import {baseSpeciesId,EVOLUTION_APPEARANCES} from './dexV2';
 import {FIELD_FAMILY_SPECIES} from './fieldFamiliesV2';
 import {EXPANDED_SPECIES} from './dexExpansionV2';
+import {LEGENDARY_SPECIES} from './legendaryV2';
 export const RULES = 'bugbaas-standard-2.0.0';
 type Row = [string, string, number, number, Ability, string];
 const rows: Row[] = [
@@ -74,6 +75,7 @@ export const SPECIES: Species[] = rows.map((r,i)=>({id:r[0],name:r[1],tier:Math.
 // New field species have explicit tiers; existing catalog ordering and stats remain stable.
 export const FIELD_SPECIES:Species[]=[
  ...EXPANDED_SPECIES.map((s):Species=>({id:s.id,name:s.name,tier:s.tier,attack:s.attack,health:s.health,habitat:s.biome==='forest'?1:s.biome==='wetland'?2:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Evolutiestadium '+s.stage+' van dezelfde spelfamilie.'})),
+ ...LEGENDARY_SPECIES.map((s):Species=>({id:s.id,name:s.name,tier:s.tier,attack:s.attack,health:s.health,habitat:3,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:s.text})),
  ...FIELD_FAMILY_SPECIES.map((s):Species=>({id:s.id,name:s.name,tier:s.tier,attack:s.attack,health:s.health,habitat:s.biome==='forest'?1:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Evolutiefamilie met drie spelstadia.'})),
  {id:'beetlegrub',name:'Herculeslarve',tier:1,attack:1,health:4,habitat:1,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een keverlarve uit de bosbodem.'},
  {id:'antlion',name:'Mierenleeuwlarve',tier:4,attack:7,health:3,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'cockroach',name:'Kakkerlak',tier:1,attack:2,health:6,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'cranefly',name:'Langpootmug',tier:1,attack:3,health:3,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'flea',name:'Vlo',tier:2,attack:5,health:2,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'giantwaterbug',name:'Reuzenwaterwants',tier:5,attack:7,health:7,habitat:2,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'mayfly',name:'Eendagsvlieg',tier:2,attack:3,health:2,habitat:2,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'termite',name:'Soldaattermiet',tier:3,attack:5,health:5,habitat:1,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}, {id:'tortoisebeetle',name:'Schildpadkever',tier:4,attack:3,health:7,habitat:0,art:0,ability:{trigger:'buy',effect:'buff',target:'self',amount:0},text:'Een bug uit het veld.'}];
