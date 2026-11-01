@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import {Pressable,Text,TextInput,View} from 'react-native';
-import {NAME_ENDINGS,NAME_IDEAS,OUTFITS,STARTER_INFO,STARTER_PARTNERS,trainerPalette,type OutfitId,type TrainerAvatar} from '../game/avatarV2';
+import {NAME_ENDINGS,NAME_IDEAS,OUTFITS,STARTER_INFO,STARTER_PARTNERS,trainerModel,trainerPalette,type OutfitId,type TrainerAvatar} from '../game/avatarV2';
 import {species} from '../game/catalogV2';
 import {SpriteView} from './artV2';
 import {AvatarChoices,OutfitChoices,TrainerPortrait} from './AvatarV2';
@@ -21,7 +21,7 @@ export function OnboardingV2({busy,run,cloud,onAccount}:{busy:boolean;run:RunV2;
   <View style={{alignItems:'center',gap:6}}><BrandMark width={step===0?200:150}/>{dots}</View>
   {step===0&&<>
    <View style={{alignItems:'center'}}><View style={{padding:5,borderRadius:56,borderWidth:4,borderColor:ring}}><TrainerPortrait avatar={avatar} outfit={outfit} size={180}/></View></View>
-   <Panel><Text style={{fontSize:20,fontWeight:'800',color:V.ink,textAlign:'center'}}>Wie ben jij?</Text><Label small center>Kies je ranger en de kleur van je outfit. Die zie je ook op de kaart.</Label><AvatarChoices value={avatar} outfit={outfit} onChange={setAvatar} disabled={busy}/><OutfitChoices value={outfit} onChange={setOutfit} disabled={busy}/><Button disabled={busy} onPress={()=>setStep(1)}>Volgende</Button>{cloud&&<Button small secondary disabled={busy} onPress={onAccount}>Ik heb al een account</Button>}</Panel>
+   <Panel><Text style={{fontSize:20,fontWeight:'800',color:V.ink,textAlign:'center'}}>Wie ben jij?</Text><Label small center>Kies wie je bent. Die zie je ook op de kaart.</Label><AvatarChoices value={avatar} outfit={outfit} onChange={setAvatar} disabled={busy}/>{trainerModel(avatar)==='Ranger'&&<OutfitChoices value={outfit} onChange={setOutfit} disabled={busy}/>}<Button disabled={busy} onPress={()=>setStep(1)}>Volgende</Button>{cloud&&<Button small secondary disabled={busy} onPress={onAccount}>Ik heb al een account</Button>}</Panel>
   </>}
   {step===1&&<Panel>
    <View style={{alignItems:'center'}}><TrainerPortrait avatar={avatar} outfit={outfit} size={110}/></View>

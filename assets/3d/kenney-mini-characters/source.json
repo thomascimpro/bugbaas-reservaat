@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "publisher": "Kenney",
+  "pack": "Mini Characters 1.0",
+  "source": "https://kenney.nl/assets/mini-characters",
+  "archive": "kenney_mini-characters.zip (local copy: CimPro BugBaas/assets/Kenney assets)",
+  "license": "CC0-1.0",
+  "licenseFile": "assets/3d/kenney-mini-characters/License.txt",
+  "licenseSha256": "ed4626ea32ac14c6dc4b5615619ceb05a5db79bd84886c5d24b992159a975367",
+  "importedOn": "2026-11-01",
+  "status": "Runtime trainer bodies (game/avatarV2.ts MINI_TRAINERS + trainerModel()); wheelchair/aid models not imported",
+  "build": "node scripts/build-mini-characters.mjs <extracted zip>: embeds Textures/colormap.png, keeps clips idle/walk/sprint, dedup+prune",
+  "texture": {
+    "file": "Models/GLB format/Textures/colormap.png",
+    "bytes": 8706,
+    "sha256": "0d4947d34ff32acf4a359c7f22ca784e057e7e72f622170a9a77b6fc88fdb70e"
+  },
+  "files": [
+    {
+      "id": "female-a",
+      "file": "public/models/trainers/character-female-a.glb",
+      "bytes": 180756,
+      "sha256": "87cd04e6e6ec6a570a91a35585d811f554de9f0d2d4e062f2ae260196a1adb69",
+      "sourceFile": "Models/GLB format/character-female-a.glb",
+      "sourceBytes": 273448,
+      "sourceSha256": "8cfcff43460da8b421f2a7fdfb43ec177321cad2746db9497cbf128d5806e2a8",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "female-b",
+      "file": "public/models/trainers/character-female-b.glb",
+      "bytes": 165720,
+      "sha256": "029dd40e659f0a53ab830678cdacb78a251f0cfbd00bc8645b931dbd1862fb71",
+      "sourceFile": "Models/GLB format/character-female-b.glb",
+      "sourceBytes": 252140,
+      "sourceSha256": "2288438e7baf9acc91a870c82dc00d66710bb486592cfc3474ef8ed93a03863a",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "female-c",
+      "file": "public/models/trainers/character-female-c.glb",
+      "bytes": 165640,
+      "sha256": "b697c7698832ca846402d084fc05a81b78db2a9b896a1f94afff415a04013625",
+      "sourceFile": "Models/GLB format/character-female-c.glb",
+      "sourceBytes": 252040,
+      "sourceSha256": "3cd9e1b5d6409fce0ba1af617d9e008c3069493185a4c100f49fb99a2626a055",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "female-d",
+      "file": "public/models/trainers/character-female-d.glb",
+      "bytes": 170476,
+      "sha256": "c18ead1cd9360d0c7865c52871cc5bbd7fabda5a464a9516e29676be356bb55a",
+      "sourceFile": "Models/GLB format/character-female-d.glb",
+      "sourceBytes": 258760,
+      "sourceSha256": "67f61708743bd34f91a4c2ba8160b61bf2e7d4ec2ca6647dfe99873422561410",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "female-e",
+      "file": "public/models/trainers/character-female-e.glb",
+      "bytes": 162892,
+      "sha256": "796de41e70032b6e284fe5c88af619d170d8b2ec6af98403071448b876d1781f",
+      "sourceFile": "Models/GLB format/character-female-e.glb",
+      "sourceBytes": 248012,
+      "sourceSha256": "3ee3939f80d718945fcb9199f909a92c39669e38aeec7f544536b5dce6e79f98",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "female-f",
+      "file": "public/models/trainers/character-female-f.glb",
+      "bytes": 170924,
+      "sha256": "9c4dcf5aa209432e0490c95ffc0ebf68b140b25d97789add9aaaccf266adc568",
+      "sourceFile": "Models/GLB format/character-female-f.glb",
+      "sourceBytes": 259488,
+      "sourceSha256": "2ff4311897bfaf99be80d2fa13918db30f506607da0291640b2609d82b70e0ca",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "male-a",
+      "file": "public/models/trainers/character-male-a.glb",
+      "bytes": 162072,
+      "sha256": "8172ae9dea77e38d84c82b5770961f0055c97651a6b31017792d7b6e509f71a2",
+      "sourceFile": "Models/GLB format/character-male-a.glb",
+      "sourceBytes": 246916,
+      "sourceSha256": "77572792bfe2773b715b8cd8e18644b52b3e1f155fe10450254b50f9c364382a",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "male-b",
+      "file": "public/models/trainers/character-male-b.glb",
+      "bytes": 162268,
+      "sha256": "08170481b21218ada106e474807f415b3aeee7b69952c76dde86dbbf27046aab",
+      "sourceFile": "Models/GLB format/character-male-b.glb",
+      "sourceBytes": 247332,
+      "sourceSha256": "791fc0c203924c175c0a3d5b60d030daf36797b039506689cf7cd01ef5253b3c",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "male-c",
+      "file": "public/models/trainers/character-male-c.glb",
+      "bytes": 173472,
+      "sha256": "f8ac8dcdbb3632e24d1557c0de779db6970d80f330e581abe943249a74d7e466",
+      "sourceFile": "Models/GLB format/character-male-c.glb",
+      "sourceBytes": 263104,
+      "sourceSha256": "672a6506f7475bbd655da1d7ff712c1729a430f134c62385a4e5d3c1378acb40",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "male-d",
+      "file": "public/models/trainers/character-male-d.glb",
+      "bytes": 160880,
+      "sha256": "dcf5c48551a3c90439f6c3e9a058fbf764af41419d4bf8c1b1dcae9903d323f5",
+      "sourceFile": "Models/GLB format/character-male-d.glb",
+      "sourceBytes": 245184,
+      "sourceSha256": "dd12b2e75ffb1cdb45aaec3916c3d6e732929ccb4a8b89b946f69baaabfa64da",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "male-e",
+      "file": "public/models/trainers/character-male-e.glb",
+      "bytes": 159136,
+      "sha256": "d729563731b1bc202eb9ae68701255fbf3b7ce3c5e389c921173db9beefd62d8",
+      "sourceFile": "Models/GLB format/character-male-e.glb",
+      "sourceBytes": 242704,
+      "sourceSha256": "cd76681090ce29861b055b0f8b2bdcf84bfccc4ca816f428df42a9bb76d6e1b6",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    },
+    {
+      "id": "male-f",
+      "file": "public/models/trainers/character-male-f.glb",
+      "bytes": 163740,
+      "sha256": "b12fc6efcc4d2302873bc8de5a0d8ed2ca4367421df11cbc9817f314e3c3672e",
+      "sourceFile": "Models/GLB format/character-male-f.glb",
+      "sourceBytes": 249388,
+      "sourceSha256": "ed151fc47c5cd6be9693c524e92f045170c965819f4f81b28ed66dcc3c1085bf",
+      "animations": [
+        "idle",
+        "walk",
+        "sprint"
+      ]
+    }
+  ],
+  "sourceLicenseSha256": "28358ae5accc85b572eb42507956afc8beae05acb4648bb9026a5714d421b785"
+}

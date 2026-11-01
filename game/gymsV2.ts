@@ -63,7 +63,7 @@ export type GymTab='raid'|'gym'|'fight';
 export function gymFightable(g:{team:GymTeam|null;defenders:{npc?:boolean}[]},myTeam:GymTeam|null){return g.defenders.length>0&&(g.defenders.some(d=>d.npc)||!!g.team&&g.team!==myTeam);}
 /** First tab a kid sees: your raid group → Raids; just won here → Gym (place a bug); a gym to beat → Vechten; a raid at this gym → Raids. */
 export function firstGymTab(o:{lobby:boolean;invites:number;myTeam:GymTeam|null;gym?:{team:GymTeam|null;defenders:{npc?:boolean}[]}|null;gymRaid?:boolean;won?:boolean}):GymTab{
- if(o.won)return 'gym';if(o.lobby)return 'raid';
+ if(o.won)return o.gym&&gymFightable(o.gym,o.myTeam)?'fight':'gym';if(o.lobby)return 'raid';
  if(o.gym)return gymFightable(o.gym,o.myTeam)?'fight':o.gymRaid?'raid':'gym';
  return o.invites>0?'raid':'gym';
 }
@@ -72,10 +72,10 @@ export function recommendedGymTeam(p:PlayerV2){const seen=new Set<string>();retu
 /** `remote`: one gym battle per UTC day from anywhere you can see the gym (like the free remote raid). */
 export function remoteGymLeft(p:PlayerV2,now:number){return ensureGyms(p,now).remoteDay!==new Date(now).toISOString().slice(0,10);}
 export function makeGymBattle(p:PlayerV2,g:Gym,ids:unknown,id:string,now:number,remote=false):GoBattle{
- if(remote)check(remoteGymLeft(p,now),'Je gym-op-afstand van vandaag is al gebruikt. Morgen weer!');else requireGymNear(p,g,now);const progress=ensureGyms(p,now);check(progress.team,'Kies eerst je gymploeg.');check(g.defenders.length&&(g.defenders.every(d=>d.npc)||g.team&&g.team!==progress.team),'Deze gym wordt niet door een andere ploeg verdedigd.');check(!g.battle||g.battle.until<=now,'Er wordt al gevochten in deze gym.');
+ const continuation=remote&&gymWinRight(p,g.id,now);if(remote)check(continuation||remoteGymLeft(p,now),'Je gym-op-afstand van vandaag is al gebruikt. Morgen weer!');else requireGymNear(p,g,now);const progress=ensureGyms(p,now);check(progress.team,'Kies eerst je gymploeg.');check(g.defenders.length&&(g.defenders.every(d=>d.npc)||g.team&&g.team!==progress.team),'Deze gym wordt niet door een andere ploeg verdedigd.');check(!g.battle||g.battle.until<=now,'Er wordt al gevochten in deze gym.');
  const issue=gymAttackIssue(p,ids);check(!issue,issue??'Kies drie bugs.');const a=structuredClone(p),opponent=structuredClone(p);a.go!.league='master';a.go!.team=[...(ids as string[])];opponent.uid='gym-defense';opponent.name=g.name;opponent.go!.league='master';opponent.go!.team=[...a.go!.team];
  const b=makeGoBattle(a,opponent,id,now,false,true,true);b.teams[1]=g.defenders.map(d=>{const f=fighterGo(d.bug),scale=Math.sqrt(.4+.2*gymHearts(d,now));f.attack*=scale;f.defense*=scale;f.cp=Math.floor(f.cp*scale*scale);f.maxHP=Math.floor(f.maxHP*scale*2);f.hp=f.maxHP;return f;});
- b.shields=[0,0];b.gym={id:g.id,name:g.name,site:{id:g.id,postId:g.postId,name:g.name,lat:g.lat,lng:g.lng},defenders:g.defenders.map(d=>({uid:d.uid,deployment:d.deployment,...(d.npc?{npc:true as const}:{})}))};g.battle={id,uid:p.uid,until:b.endsAt};g.revision++;if(remote)progress.remoteDay=new Date(now).toISOString().slice(0,10);return b;
+ b.shields=[0,0];b.gym={id:g.id,name:g.name,site:{id:g.id,postId:g.postId,name:g.name,lat:g.lat,lng:g.lng},defenders:g.defenders.map(d=>({uid:d.uid,deployment:d.deployment,...(d.npc?{npc:true as const}:{})}))};g.battle={id,uid:p.uid,until:b.endsAt};g.revision++;if(remote&&!continuation)progress.remoteDay=new Date(now).toISOString().slice(0,10);return b;
 }
 function returnDefenders(g:Gym,defenders:GymDefender[],players:Map<string,PlayerV2>,now:number){
  // Validate all owner bindings before changing any balance, slot or return receipt.
