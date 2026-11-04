@@ -1,0 +1,199 @@
+{
+ "set": "world-props",
+ "created": "2026-11-02",
+ "style": "HD natuur zoals docs/concepts/combat-20261102 (Codex-beeld leidend): bemost gesteente, schors, goud, warm boslicht",
+ "tools": "Blender 5.1.2 (Cycles, OptiX RTX 4050), eigen geometrie; scripts assets/3d/world-props/authoring/build_props.py + hd_lib.py",
+ "license": "Eigen werk CC0; materialen en HDRI CC0 van Poly Haven (forest_slope, mossy_rock, bark_willow_02, forest_ground_04), lokaal in .local/polyhaven (niet in Git)",
+ "rebuild": "blender --background --factory-startup --python assets/3d/world-props/authoring/build_props.py -- <repo> egg gym post   (toevoegen: preview = snelle 420px-proef)",
+ "renders": [
+  {
+   "file": "arena-platform.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 384002,
+   "sha256": "cd67e91d16a2f68343ef21f09f27f4126ca19e22619e2de39ac5dac7e643dcd6",
+   "use": "Gevechtsscherm: platform onder de bugs (Codex-actieduel), achtergrond = Codex",
+   "variant": "arena-platform"
+  },
+  {
+   "file": "gym-amber.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 462351,
+   "sha256": "cb38ac4e3c3572457b86a284ee185c811db6e38b8cdc8dda1ee2485aa35e2267",
+   "use": "Gymscherm/gymlijst/kaartpopup: gymtoren per ploegkleur (vervangt SVG GymArtV2)",
+   "variant": "amber"
+  },
+  {
+   "file": "gym-fern.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 467012,
+   "sha256": "3aca8bc1ee54d098e5717baa73d5153568785a26f1266cbc4438fc59f08a4de9",
+   "use": "Gymscherm/gymlijst/kaartpopup: gymtoren per ploegkleur (vervangt SVG GymArtV2)",
+   "variant": "fern"
+  },
+  {
+   "file": "gym-neutral.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 460405,
+   "sha256": "1714e72872c91e7b03ef788e142b9e2cd5ae2a3c88983f1fdd7e28502a822f9a",
+   "use": "Gymscherm/gymlijst/kaartpopup: gymtoren per ploegkleur (vervangt SVG GymArtV2)",
+   "variant": "neutral"
+  },
+  {
+   "file": "gym-tidal.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 463058,
+   "sha256": "ae79b57ba02ab86d25cdf4187c4fb2d694cee50e133b364fb7a7a575a2439f56",
+   "use": "Gymscherm/gymlijst/kaartpopup: gymtoren per ploegkleur (vervangt SVG GymArtV2)",
+   "variant": "tidal"
+  },
+  {
+   "file": "medal-brons.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 340881,
+   "sha256": "20da46483c9c4fe161409eaf609ae242ea99c17263a16d4f343f437aa10b0428",
+   "use": "Uitslag/rang: medaille brons/zilver/goud",
+   "variant": "brons"
+  },
+  {
+   "file": "medal-goud.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 352150,
+   "sha256": "35e01270ef40f3b1de0e0bdfb9a92dd5d5429ff8c8fb3bc0ca1c33678ef724c5",
+   "use": "Uitslag/rang: medaille brons/zilver/goud",
+   "variant": "goud"
+  },
+  {
+   "file": "medal-zilver.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 366962,
+   "sha256": "704af3941b56deeee774982a237e96f1ba5052056152c223682481a5bfa7f7ed",
+   "use": "Uitslag/rang: medaille brons/zilver/goud",
+   "variant": "zilver"
+  },
+  {
+   "file": "post-ready.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 417306,
+   "sha256": "6d6eb6affeb14bff570a00f69ad4d1d9bc290ad44baa09a6e3f0ed3cb578aad2",
+   "use": "Postpopup/onderzoek: post klaar (teal) of gebruikt (lila)",
+   "variant": "ready"
+  },
+  {
+   "file": "post-visited.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 414470,
+   "sha256": "5ab1f91ba7af477e0db6e077ae1e892c648e154d83c63a4151249d8e03f03476",
+   "use": "Postpopup/onderzoek: post klaar (teal) of gebruikt (lila)",
+   "variant": "visited"
+  },
+  {
+   "file": "raid-egg-1.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 537805,
+   "sha256": "fb26abe8887ab5743846da45db945a4151ac5d116a0c84a48511a7b9dc6c20e9",
+   "use": "Raidkaart/lobby/kaart: raidcocon per sterniveau (vervangt 🥚); bestandsnaam behouden",
+   "variant": "1"
+  },
+  {
+   "file": "raid-egg-3.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 537003,
+   "sha256": "3176b833395d33d316a21dbd82fd229fd499e7a76c2a0accc3db0c9201d5767f",
+   "use": "Raidkaart/lobby/kaart: raidcocon per sterniveau (vervangt 🥚); bestandsnaam behouden",
+   "variant": "3"
+  },
+  {
+   "file": "raid-egg-4.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 537406,
+   "sha256": "7f7c0f270abc67160e39da5a39eccb7963420e84cf55d839a50418401ba7a473",
+   "use": "Raidkaart/lobby/kaart: raidcocon per sterniveau (vervangt 🥚); bestandsnaam behouden",
+   "variant": "4"
+  },
+  {
+   "file": "raid-egg-5.png",
+   "size": [
+    768,
+    768
+   ],
+   "bytes": 537560,
+   "sha256": "8f37e6f3ee874dded1cf9635dc99d202ce9eed232a6e9b358ff54359c98ab61d",
+   "use": "Raidkaart/lobby/kaart: raidcocon per sterniveau (vervangt 🥚); bestandsnaam behouden",
+   "variant": "5"
+  }
+ ],
+ "models": [
+  {
+   "file": "public/models/props/Gym.glb",
+   "bytes": 629252,
+   "sha256": "c7588689034ad76d109a23ec1ca67746f264f73fa0df1ecabd4c441ea97e4003",
+   "recolorMaterial": "TeamColor (vaandels) + Crystal",
+   "use": "kaart-gym; zet ploegkleur op materiaal TeamColor/Crystal, verdediger-bug op platform (y≈3.0 in Blender-z, top van Arena)"
+  },
+  {
+   "file": "public/models/props/RaidEgg.glb",
+   "bytes": 326060,
+   "sha256": "c0341b5bac086b128aec5b6d515a4e4fe5e230e23b00efa172f281f5e78d3c5d",
+   "recolorMaterial": "EggShell",
+   "use": "kaart-raidcocon; tint EggShell met tierkleur (★1 #5CC23A, ★3 #3A9BEF, ★4 #B45BEB, ★5/Oerbug #F2A33A)"
+  },
+  {
+   "file": "public/models/props/Post.glb",
+   "bytes": 250992,
+   "sha256": "966076a548c36bf799e962dfa3b519957de136c952f1ee90dcdb0b54875c0399",
+   "recolorMaterial": "PostDisc",
+   "use": "kaart-post; PostDisc teal #43D7C0 klaar, lila #AAA1CA gebruikt"
+  },
+  {
+   "file": "public/models/props/ArenaPlatform.glb",
+   "bytes": 225956,
+   "sha256": "9adb1ccb128d2f18a6613176a7f704a63152808c9d4c09efc202d78b7630eb90",
+   "recolorMaterial": null,
+   "use": "3D-platform als het gevecht in 3D wordt getoond"
+  }
+ ],
+ "notes": [
+  "Renders 768x768 PNG met transparante achtergrond; omzetten naar webp bij inbouw.",
+  "Kaartmodellen hebben vlakke kleuren (geen textures) en zijn gedecimeerd; nog verkleinen met gltf-transform voor inbouw (doel <150 KB).",
+  "Nog niet ingebouwd in de app."
+ ]
+}

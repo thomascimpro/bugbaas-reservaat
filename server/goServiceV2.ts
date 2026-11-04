@@ -1,8 +1,7 @@
 import {gymSites,ensureGyms,chooseGymTeam,placeGymDefender,makeGymBattle,settleGymBattle,publicGym,ensureNpcGym,settleExpiredGym,markGymWin,gymWinRight,GYM_RULES} from '../game/gymsV2';
 import {ensureDailyChallenge,dailyChallengeView,makeDailyChallengeBattle,settleDailyChallenge,dailyWeekKey,weeklyDailyScore} from '../game/dailyChallengeV2';
-/** Autovanger: one attempt per walked step, gaps up to 15 min, and at most a few Adventure Sync catches per day. */
+/** Wandelvangst uses WALK_CATCH for foreground and closed-app distance; GPS gaps stay bounded. */
 import type {WildBug,Walking} from '../game/walkingV2';
-export const AUTO_STEP=40,AUTO_MAX_GAP=900,AWAY_PER_DAY=5;
 import type {Gym,GymSite} from '../game/gymsV2';
 import {buyCoinOffer} from '../game/coinShopV2';
 import {awardGoCatchCard,sendGoGift,openGoGift} from '../game/goGiftsV2';
@@ -10,13 +9,14 @@ import {appendGoJournal,publicGoJournal} from '../game/goJournalV2';
 import type {GoJournalEntry} from '../game/goJournalV2';
 import {startGoTrade,offerGoTrade,confirmGoTrade,cancelGoTrade,publicGoTrade} from '../game/goTradeV2';
 import type {GoTrade} from '../game/goTradeV2';
-import {ensureEcho,saveEchoDefense,chooseEchoMatch,makeEchoBattle,settleEcho,competitionTeamIssue} from '../game/echoArenaV2';
+import {ensureEcho,saveEchoDefense,chooseEchoMatch,makeEchoBattle,settleEcho,echoTeamIssue} from '../game/echoArenaV2';
 import type {EchoDefense} from '../game/echoArenaV2';
 import {ensurePvp,settlePvp,makeCupBattle} from '../game/pvpV2';
 import {ensureCocoons,awardCocoon,startCocoon,hatchCocoon} from '../game/goCocoonsV2';
 import {ensureBosses,makeBossBattle,settleBoss} from '../game/goBossV2';
 import type {BossDifficulty} from '../game/goBossV2';
 import {ensureBalloon,makePlaagBattle,plaagView,settlePlaag} from '../game/plaagbendeV2';
+import {prepareCrewViews,resolveCrew,crewBudget,settleCrew} from '../game/arcade/crew';
 import {claimGoDaily} from '../game/dailyResearchV2';
 import {ensurePostResearch,finishPostResearch} from '../game/postResearchV2';
 import {teamPreset} from '../game/teamPresetsV2';
@@ -29,6 +29,13 @@ import {unknownHabitat} from '../game/habitatsV2';
 import type {HabitatContext} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
 import {createHash,createHmac,randomBytes} from 'node:crypto';
+import {arcadeRunKey,arcadeScoreKey,arcadeTarget,issueArcade,issueCrewArcade,submitArcade,readArcadeTicket,arcadeProgress,arcadeProgressView,arcadeNext,arcadeScores,arcadeChallengeFor,nextArcadeGame} from './arcadeServiceV3';
+import {findRankedCandidate,rankedStartKeys,startRanked,rankedSubmitKeys,completeRanked,readRankedDuel,expireRankedDuels} from './arcadeRankedV3';
+import type {ArcadeRankedRank} from '../game/arcade/ranked';
+import {isOriginalRules} from '../game/arcade/original';
+import {ARCADE_GAMES} from '../game/arcade/games';
+import type {ArcadeGameId} from '../game/arcade/games';
+import type {ArcadeTicket,ArcadeScoreView} from '../game/arcade/tapDuel';
 import {freshV2,dayV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField,encounterWild,castNet,claimFieldTask,catchChance,streakBonus} from '../game/fieldV2';
@@ -45,6 +52,9 @@ import type {League} from '../game/goV2';
 import {makeGoBattle,advanceGoBattle,actGoBattle,prepareGoBattle} from '../game/goBattleV2';
 import type {GoBattle,GoBattleView} from '../game/goBattleV2';
 import {rng} from '../game/catalogV2';
+import {WALK_CATCH,creditWalk,isJackpot,pendingWalk,walkDay} from '../game/walkCatchV2';
+export const AUTO_STEP=40,AUTO_MAX_GAP=900,AWAY_STEP=WALK_CATCH.step,AWAY_PER_DAY=WALK_CATCH.dailyCap;
+import {bugRarity} from '../game/rarityDisplayV2';
 import {checkV2 as check} from '../game/shopV2';
 import type {CommandV2,PlayerV2,GameViewV2,FriendPair,Side,Specimen} from '../game/typesV2';
 import type {Documents,Store} from './store';
@@ -58,12 +68,18 @@ type DailyScoreRow={uid:string;name:string;week:string;league:League;score:numbe
 type MapGymInfo={team:Gym['team'];defenders:number;npc:boolean};
 const AUTO_DEFENSE_COMMANDS=new Set(['teamPreset','goTeam','goPower','goSecond','goTM','goEquip','goEvolve','goRename','profile','echoQueue','dailyChallenge']);
 const hash=(value:string)=>createHash('sha256').update(value).digest('hex');
-const FIELDS:Record<string,string[]>={postResearch:['id','discard'],teamPreset:['action','league','slot','ids'],gymTeam:['team'],gymDefend:['gym','id','remote'],gymAttack:['gym','ids','remote'],coinBuy:['offer'],adventureSync:['snapshot'],profile:['name','avatar','outfit','starter'],buddyPlay:['kind'],settings:['sound','reducedMotion','largeText','music','volume','sfxVolume','graphics'],favorite:['id'],buddy:['id'],worldLocate:['fix'],worldEncounter:['spawn'],worldFocus:['encounter'],worldCast:['encounter','net','bait','trace','rhythm'],fieldLure:[],fieldSupply:[],fieldTask:['task'],poiSpin:['poi'],routeStart:['route'],routePause:[],routeResume:[],routeFinish:[],routeCancel:[],routeRecord:['action'],routeSave:['name','emoji'],routeDelete:['route'],goPower:['id','steps'],goSecond:['id'],goTM:['id','slot'],goEquip:['id','item'],goTransfer:['id'],goTransferMany:['ids'],trainerClaim:[],goEvolve:['id'],goTeam:['ids','league'],goAuto:['enabled'],goQueue:[],goCancel:[],goTrain:[],goInvite:[],goJoin:['code'],goAct:['action','value','chargeAt'],goClose:['battle'],friendRequest:['code'],friendAccept:['pair'],friendRemove:['pair'],giftSend:['pair','card'],giftOpen:['pair'],echoSave:[],echoQueue:[],cupFight:['ids'],cocoonStart:['id','incubator'],cocoonClaim:['id'],goBoss:['difficulty','post','ids'],dailyChallenge:['practice'],goRename:['id','name'],tradeStart:['pair'],tradeOffer:['pair','id','tradeRevision'],tradeConfirm:['pair','tradeRevision','special'],tradeCancel:['pair','tradeRevision'],raidPass:[],raidJoin:['raid','remote'],raidLeave:[],raidInvite:['raid','friends'],raidFight:['ids'],raidClaim:['lobby'],plaagFight:['target','ids']};
+const FIELDS:Record<string,string[]>={arcadeScores:['ranked'],arcadePracticeStart:['ids','league','game'],arcadeRankedStart:['ids','league'],plaagArcadeStart:['target','ids','league'],arcadeStart:['ids','league'],arcadeSubmit:['run','inputs','format'],arcadeAbandon:['run'],postResearch:['id','discard'],teamPreset:['action','league','slot','ids'],gymTeam:['team'],gymDefend:['gym','id','remote'],gymAttack:['gym','ids','remote'],coinBuy:['offer'],adventureSync:['snapshot'],profile:['name','avatar','outfit','starter'],buddyPlay:['kind'],settings:['sound','reducedMotion','largeText','music','volume','sfxVolume','graphics'],favorite:['id'],buddy:['id'],worldLocate:['fix'],worldEncounter:['spawn'],worldFocus:['encounter'],worldCast:['encounter','net','bait','trace','rhythm'],fieldLure:[],fieldSupply:[],fieldTask:['task'],poiSpin:['poi'],routeStart:['route'],routePause:[],routeResume:[],routeFinish:[],routeCancel:[],routeRecord:['action'],routeSave:['name','emoji'],routeDelete:['route'],goPower:['id','steps'],goSecond:['id'],goTM:['id','slot'],goEquip:['id','item'],goTransfer:['id'],goTransferMany:['ids'],trainerClaim:[],goEvolve:['id'],goTeam:['ids','league'],goAuto:['enabled'],goQueue:[],goCancel:[],goTrain:[],goInvite:[],goJoin:['code'],goAct:['action','value','chargeAt'],goClose:['battle'],friendRequest:['code'],friendAccept:['pair'],friendRemove:['pair'],giftSend:['pair','card'],giftOpen:['pair'],echoSave:[],echoQueue:[],cupFight:['ids'],cocoonStart:['id','incubator'],cocoonClaim:['id'],goBoss:['difficulty','post','ids'],dailyChallenge:['practice'],goRename:['id','name'],tradeStart:['pair'],tradeOffer:['pair','id','tradeRevision'],tradeConfirm:['pair','tradeRevision','special'],tradeCancel:['pair','tradeRevision'],raidPass:[],raidJoin:['raid','remote'],raidLeave:[],raidInvite:['raid','friends'],raidFight:['ids'],raidClaim:['lobby'],plaagFight:['target','ids']};
 const SOCIAL_COMMANDS=new Set(['profile','friendRequest','friendAccept','friendRemove','giftSend','giftOpen','tradeStart','tradeOffer','tradeConfirm','tradeCancel','echoSave','raidInvite']);
 type Ticket={uid:string;league:League;rating:number;at:number;until:number;status:'waiting'|'matched'|'cancelled'|'expired'};
 export function parseGo(raw:unknown):CommandV2{check(raw&&typeof raw==='object'&&!Array.isArray(raw),'Een actie is vereist.');const c=raw as CommandV2;check(typeof c.type==='string'&&Object.hasOwn(FIELDS,c.type),'Deze oude spelmodus is verwijderd. Vernieuw de game.');check(typeof c.commandId==='string'&&/^[\w-]{16,80}$/.test(c.commandId)&&Number.isSafeInteger(c.expectedRevision)&&c.expectedRevision>=0,'Ongeldige spelactie.');check(Object.keys(c).every(k=>['type','commandId','expectedRevision',...FIELDS[c.type]].includes(k)),'De server bepaalt stats, schade en beloningen.');return c;}
 export class GoServiceV2{
  private claimedCodes=new Map<string,string>();
+ // Leaderboards are display metadata, fetched only when the player opens Arcade.
+ private rankedExpiryChecked=new Map<string,number>();
+ private async refreshRanked(p:PlayerV2,now:number){if(!p.arcade?.ranked||!p.arcade.active&&!p.arcade.ranked.waiting.length)return p;const last=this.rankedExpiryChecked.get(p.uid)??0;if(now-last<30000)return p;if(this.rankedExpiryChecked.size>=1000)this.rankedExpiryChecked.clear();this.rankedExpiryChecked.set(p.uid,now);try{if(await expireRankedDuels(this.store,p,now)){this.arcadeRankCache.clear();return this.ensure(p.uid);}}catch(error){this.rankedExpiryChecked.delete(p.uid);throw error;}return p;}
+ private arcadeRankCache=new Map<string,{name:string;rating:number;wins:number;me:boolean}[]>();
+ private arcadeScoreCache=new Map<string,ArcadeScoreView[]>();
+ private arcadeScoresKey(p:PlayerV2,now:number){return p.uid+':'+arcadeChallengeFor(nextArcadeGame(p,now),p.go!.league,now);}
  // Other raid members' pooled damage, read just before a battle transaction (keyed by battle document).
  private raidOthers=new Map<string,{sum:number;damage:Record<string,number>}>();
  private inboxCache=new Map<string,{until:number;value:Promise<RaidInvite[]>}>();
@@ -82,7 +98,7 @@ export class GoServiceV2{
  private async markMapGyms(p:PlayerV2){const w=p.walking,sites=(w?.mapSites??[]).filter(s=>s.gym).sort((a,b)=>distance(w!.fix,a)-distance(w!.fix,b)).slice(0,MAP_GYM_TEAM_LIMIT);if(!sites.length)return;const keys=sites.map(s=>gyk('gym-'+s.id)),cacheKey=[...keys].sort().join(','),now=this.clock();let entry=this.mapGymCache.get(cacheKey);if(!entry||entry.until<=now){if(this.mapGymCache.size>=1000)this.mapGymCache.clear();const value=this.store.run(keys,d=>Object.fromEntries(keys.map(k=>{const g=document<Gym>(d,k);return [k,{team:g?.team??null,defenders:g?.defenders.length??0,npc:!g||g.defenders.some(x=>x.npc)||!g.npcSeeded&&!g.team&&!g.defenders.length}];}))),fresh={until:now+30000,value};entry=fresh;this.mapGymCache.set(cacheKey,fresh);void value.catch(()=>{if(this.mapGymCache.get(cacheKey)===fresh)this.mapGymCache.delete(cacheKey);});}const teams=await entry.value.catch(()=>({} as Record<string,MapGymInfo>));for(const s of sites){const t=teams[gyk('gym-'+s.id)];s.team=t?.team??null;if(t){s.defenders=t.defenders;s.npc=t.npc;}}}
  private socialCache=new Map<string,{until:number;value:Promise<{friends:FriendPair[];ranks:{uid:string;name:string;rating:number;wins:number}[];trades:GoTrade[];echoRanks:{uid:string;name:string;rating:number;wins:number}[]}>}>();
  constructor(public store:Store,public mode:'local'|'cloud',public clock=Date.now,public environment:(fix:Fix,now:number)=>Promise<HabitatContext>=async(_fix,now)=>unknownHabitat(now)){}
- private get(d:Documents,uid:string,now:number){let p=document<PlayerV2>(d,pk(uid));if(!p){const code=BigInt('0x'+hash(uid).slice(0,12)).toString(32).toUpperCase().padStart(10,'0').slice(-8);p=freshV2(uid,code,now);d.set(pk(uid),p);}ensureAdventure(p,now);ensureField(p,now);ensureGo(p,now);ensurePvp(p,now);ensureGyms(p,now);ensureEcho(p,now);ensureBosses(p,now);ensureDailyChallenge(p,now);ensurePostResearch(p);ensureCocoons(p,randomBytes(24).toString('hex'),now);if(p.go!.ratedDay!==dayV2(now)){p.go!.ratedDay=dayV2(now);p.go!.ratedCount=0;}return p;}
+ private get(d:Documents,uid:string,now:number){let p=document<PlayerV2>(d,pk(uid));if(!p){const code=BigInt('0x'+hash(uid).slice(0,12)).toString(32).toUpperCase().padStart(10,'0').slice(-8);p=freshV2(uid,code,now);d.set(pk(uid),p);}ensureAdventure(p,now);ensureField(p,now);ensureGo(p,now);arcadeProgress(p,now);ensurePvp(p,now);ensureGyms(p,now);ensureEcho(p,now);ensureBosses(p,now);ensureDailyChallenge(p,now);ensurePostResearch(p);ensureCocoons(p,randomBytes(24).toString('hex'),now);if(p.go!.ratedDay!==dayV2(now)){p.go!.ratedDay=dayV2(now);p.go!.ratedCount=0;}return p;}
  async ensure(uid:string){const p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));if(this.claimedCodes.get(uid)!==p.friendCode){await this.store.run(['v2Codes:'+p.friendCode],d=>{const old=document<{uid:string}>(d,'v2Codes:'+p.friendCode);check(!old||old.uid===uid,'Spelercode conflicteert.',409);if(!old)d.set('v2Codes:'+p.friendCode,{uid});});if(this.claimedCodes.size>=1000)this.claimedCodes.clear();this.claimedCodes.set(uid,p.friendCode);}return p;}
  private query<T>(kind:string,filters:Parameters<NonNullable<Store['query']>>[1]=[],order?:{field:string;descending?:boolean},limit=100){check(this.store.query,'Opslag niet beschikbaar.',503);return this.store.query<T>(kind,filters,order,limit);}
  private social(uid:string){const cached=this.socialCache.get(uid);if(cached&&cached.until>this.clock())return cached.value;
@@ -118,7 +134,9 @@ export class GoServiceV2{
    const g=p.go!,beforeXP=g.trainer!.xp;g.dust+=reward.dust;grantXP(p,reward.xp);g.fastTMs+=reward.fastTMs;g.chargedTMs+=reward.chargedTMs;if(reward.item)g.items[reward.item]++;
    b.rewards=[{dust:reward.dust,xp:g.trainer!.xp-beforeXP,fastTMs:reward.fastTMs,chargedTMs:reward.chargedTMs,item:reward.item}];this.noteBattle(p,b,0,now);p.revision++;return;
   }
-  if(b.plaagbende){const p=this.get(d,b.players[0],now),reward=settlePlaag(p,b,now);if(!reward)return;b.rewards=[{dust:reward.dust,xp:reward.xp,fastTMs:0,chargedTMs:0}];this.noteBattle(p,b,0,now);if(reward.rescued)this.note(p,'catch','plaag:'+b.id,reward.rescued,now);p.revision++;return;}
+  if(b.plaagbende){const p=this.get(d,b.players[0],now);let reward:ReturnType<typeof settlePlaag>;
+   if(b.plaagbende.crew){if(b.phase!=='finished'||b.settled)return;b.settled=true;const result=settleCrew(p,b.plaagbende.crew,b.winner===0,b.id,now);b.plaagbende.rewarded=result.crew.rewarded;b.plaagbende.rescued=result.rescued?.species;reward=result;}else reward=settlePlaag(p,b,now);
+   if(!reward)return;b.rewards=[{dust:reward.dust,xp:reward.xp,fastTMs:0,chargedTMs:0}];this.noteBattle(p,b,0,now);if(reward.rescued)this.note(p,'catch','plaag:'+b.id,reward.rescued,now);p.revision++;return;}
   if(b.phase!=='finished'||b.settled)return;b.settled=true;const players=b.players.slice(0,b.training?1:2).map(id=>this.get(d,id,now));
   const expected=1/(1+10**((b.ratings[1]-b.ratings[0])/400));b.delta=b.ranked&&b.winner!==null?Math.round(24*((b.winner===0?1:0)-expected)):0;
   b.rewards=[];
@@ -201,9 +219,11 @@ export class GoServiceV2{
   }
   return {items:gyms,changed};
  }
- async state(uid:string,linked=false):Promise<GameViewV2>{let p=await this.ensure(uid),battle:GoBattle|null=null;if(p.go!.queue){await this.matchmake(uid);p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));}if(p.go!.battle){const snapshot=await this.advance(p.go!.battle,uid);if(snapshot){p=snapshot.player??p;battle=snapshot.battle;}}return this.view(uid,p,battle,linked);}
+ async state(uid:string,linked=false):Promise<GameViewV2>{let p=await this.refreshRanked(await this.ensure(uid),this.clock()),battle:GoBattle|null=null;if(p.go!.queue){await this.matchmake(uid);p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));}if(p.go!.battle){const snapshot=await this.advance(p.go!.battle,uid);if(snapshot){p=snapshot.player??p;battle=snapshot.battle;}}return this.view(uid,p,battle,linked);}
  private async view(uid:string,p:PlayerV2,battle:GoBattle|null,linked:boolean):Promise<GameViewV2>{
   const gymState=await this.gyms(p),gyms=gymState.items;if(gymState.changed){p=await this.store.run([pk(uid)],d=>this.get(d,uid,this.clock()));battle=p.go!.battle?await this.store.run([bk(p.go!.battle)],d=>document<GoBattle>(d,bk(p.go!.battle!))??null):null;}
+  const crewToken=await this.raidToken(),crewNow=this.clock(),crewViews=plaagView(p,crewNow,crewToken),balloon=p.go?.plaagbende?.balloon;
+  if(crewViews.some(v=>!p.go?.plaagbende?.encounters?.[v.id])||balloon&&balloon.until>crewNow&&!p.go?.plaagbende?.encounters?.[balloon.id])p=await this.store.run([pk(uid)],d=>{const live=this.get(d,uid,crewNow);prepareCrewViews(live,plaagView(live,crewNow,crewToken),crewNow,crewToken);return live;});
   const publicPlayer=structuredClone(p);await this.markMapGyms(publicPlayer);
   if(publicPlayer.go?.cocoons)for(const item of publicPlayer.go.cocoons.items)delete item.hatchSeed;
   if(publicPlayer.walking){delete publicPlayer.walking.seed;for(const s of publicPlayer.walking.spawns)if(s.boss)delete s.boss.seed;}if(publicPlayer.field?.lure)delete publicPlayer.field.lure.seed;if(publicPlayer.go?.sites?.run)delete publicPlayer.go.sites.run.seed;if(publicPlayer.field?.cocoon)delete publicPlayer.field.cocoon.seed;
@@ -215,7 +235,8 @@ export class GoServiceV2{
   const friendUids=new Set([uid,...friends.filter(pair=>pair.accepted&&!pair.removed).flatMap(pair=>pair.users)]),weeklyRows=publicPlayer.go!.dailyChallenge!.days.length||friendUids.size>1?await this.dailyRanks([...friendUids],publicPlayer.go!.league,this.clock()):[],dailyChallengeLeaderboard=weeklyRows.filter(row=>row.week===dailyWeekKey(this.clock())&&row.league===publicPlayer.go!.league&&friendUids.has(row.uid)&&Number.isSafeInteger(row.score)&&row.score>=0).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name)).map(row=>({name:row.name,score:row.score,me:row.uid===uid}));
   const visible=battle?structuredClone(battle) as GoBattleView:null;if(visible){check(visible.players.includes(uid),'Dit gevecht is niet van jou.',403);visible.side=visible.players.indexOf(uid) as Side;if(visible.boss)delete visible.boss.catchSeed;if(visible.gym)visible.gym.defenders=[];const other=(1-visible.side) as Side;if(visible.queued)visible.queued[other]=null;visible.teams[other].forEach((f,i)=>{f.energy=0;f.attack=0;f.defense=0;f.readyAt=0;f.go={level:0,iv:[0,0,0],fast:i===visible.active[other]?f.go.fast:'bite',charged:[],item:null};if(i!==visible.active[other]){f.id='opponent-'+i;f.species='unknown';f.cp=0;f.shiny=false;f.hp=f.hp>0?1:0;f.maxHP=1;}else{f.hp=Math.ceil(f.hp/f.maxHP*100);f.maxHP=100;}});}
   const raidState=await this.raidView(uid,p),plaagbende=plaagView(p,this.clock(),await this.raidToken());
-  return {...raidState,plaagbende,dailyChallenge:dailyChallengeView(publicPlayer,this.clock()),dailyChallengeLeaderboard,goGyms:gyms.map(g=>publicGym(g,uid,this.clock())),goTrades:trades.map(t=>publicGoTrade(t,this.clock())),echoLeaderboard:echoRanks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),player:publicPlayer,now:this.clock(),mode:this.mode,linked:linked||this.mode==='local',match:null,ticket:null,friends:friends.filter(f=>!f.removed),leaderboard:ranks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),goBattle:visible};
+  const arcadeTicket=await readArcadeTicket(this.store,p),scores=this.arcadeScoreCache.get(this.arcadeScoresKey(p,this.clock()))??[];
+  return {...raidState,arcadeRankedLeaderboard:this.arcadeRankCache.get(uid)??[],arcadeTicket,arcadeNext:arcadeNext(publicPlayer,this.clock()),arcadeScores:scores,arcadeProgress:arcadeProgressView(publicPlayer,this.clock()),plaagbende,dailyChallenge:dailyChallengeView(publicPlayer,this.clock()),dailyChallengeLeaderboard,goGyms:gyms.map(g=>publicGym(g,uid,this.clock())),goTrades:trades.map(t=>publicGoTrade(t,this.clock())),echoLeaderboard:echoRanks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),player:publicPlayer,now:this.clock(),mode:this.mode,linked:linked||this.mode==='local',match:null,ticket:null,friends:friends.filter(f=>!f.removed),leaderboard:ranks.map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})),goBattle:visible};
  }
  private auto(p:PlayerV2,now:number,secret:string){
   const g=p.go!,a=g.auto,w=p.walking;if(!w)return;const previous=g.motion;
@@ -229,38 +250,54 @@ export class GoServiceV2{
   if(seconds>AUTO_MAX_GAP){a.status='waiting';a.moving=0;a.credit=0;return;}
   if(speed>7){a.status='too-fast';a.moving=0;a.credit=0;return;}
   if(meters<Math.max(12,w.fix.accuracy,previous.fix.accuracy)){a.status='waiting';a.moving=0;return;}
-  a.status='moving';a.moving++;a.credit=Math.min(AUTO_STEP*4,(a.credit??0)+meters);if(a.credit<AUTO_STEP||now-a.lastAt<30000)return;a.credit-=AUTO_STEP;
-  const f=p.field!,before={dust:g.dust,xp:g.trainer!.xp},totals=a.totals??={caught:0,missed:0,dust:0,xp:0};
+  a.status='moving';a.moving++;a.credit=0;
+  const before={dust:g.dust,xp:g.trainer!.xp},totals=a.totals??={caught:0,missed:0,dust:0,xp:0};
   // A moving autovanger replenishes at the same server-validated posts and cooldown as manual spinning.
   const post=w.posts?.find(post=>distance(w.fix,post)<=CATCH_RADIUS&&now-(g.sites?.visits[post.id]??0)>=POST_COOLDOWN);
   if(post){spinPost(p,post.id,secret+':auto-post',now);totals.spins=(totals.spins??0)+1;}
-  const accountRewards=()=>{totals.dust+=g.dust-before.dust;totals.xp+=g.trainer!.xp-before.xp;};
-  if(f.inventory.basic<1){a.status='empty';accountRewards();return;}
-  a.attempted=a.attempted.filter(id=>w.spawns.some(s=>s.id===id&&s.expiresAt>now));
-  const s=w.spawns.find(s=>!s.boss&&s.expiresAt>now&&!w.caught.includes(s.id)&&!a.attempted.includes(s.id)&&f.encounter?.spawn!==s.id&&distance(w.fix,s)<=CATCH_RADIUS);
-  if(!s||!w.seed){accountRewards();return;}
-  this.autoCatch(p,s,now,secret,totals);accountRewards();
+  // Wandelvangst: walked distance (double for a real workout) becomes random wild bugs at this spot; see game/walkCatchV2.
+  this.walkCatch(p,creditWalk(walkDay(p,now),meters,speed),now,secret,totals);
+  totals.dust+=g.dust-before.dust;totals.xp+=g.trainer!.xp-before.xp;
+ }
+ /** Grant up to `count` walk bugs at the current fresh fix: wild odds, every 10th the rarest of the spot, always caught, no net. */
+ private walkCatch(p:PlayerV2,count:number,now:number,secret:string,totals:{caught:number;missed:number}){
+  const g=p.go!,w=p.walking,day=walkDay(p,now);if(!w?.seed||count<1)return;
+  if(now-w.at>=40000||w.fix.accuracy>GPS_CATCH_ACCURACY)return;
+  for(let i=0;i<count&&day.credit>=WALK_CATCH.step&&day.caught<WALK_CATCH.dailyCap;i++){
+   day.credit-=WALK_CATCH.step;day.caught++;
+   // Like really walking around: first the map bug you pass (within reach), otherwise a fresh wild bug at your spot.
+   const jackpot=isJackpot(day.caught),near=jackpot?undefined:w.spawns.find(s=>!s.boss&&s.source!=='raid'&&s.expiresAt>now&&!w.caught.includes(s.id)&&p.field?.encounter?.spawn!==s.id&&distance(w.fix,s)<=CATCH_RADIUS);
+   const batch=near?[]:wildSpawns(w.fix,secret+':walk:'+day.day+':'+day.caught,now),pick=near??(jackpot?batch.reduce((best,s)=>bugRarity(s.species)>bugRarity(best.species)?s:best,batch[0]):batch[0]);
+   if(!pick)continue;
+   const spawn=near??{...pick,lat:w.fix.lat,lng:w.fix.lng,id:'walk-'+day.day+'-'+day.caught+'-'+hash(secret).slice(0,8)};
+   // The 900 ms gap guards rapid manual throws; server-made walk bugs in one batch are not throws.
+   if(w.lastCatch)w.lastCatch.at=Math.min(w.lastCatch.at,now-900);
+   if(!near)w.spawns.push(spawn);this.grantAutoCatch(p,spawn,now,secret+':walk'+i,totals);
+  }
+  g.auto.status=g.auto.enabled?g.auto.status:'off';
  }
  /** One autovanger attempt on a spawn: consumes a basic net and records a catch or a miss. */
  private autoCatch(p:PlayerV2,s:WildBug,now:number,secret:string,totals:{caught:number;missed:number}){
   const g=p.go!,a=g.auto,f=p.field!,w=p.walking!;
   a.lastAt=now;a.attempted.push(s.id);f.inventory.basic--;const caught=rng(secret+':auto')()<.75*catchChance(s.species,'basic',null);
-  if(caught){catchWild(p,s.id,now);const bug=p.specimens.at(-1)!,priorDust=g.dust,priorXP=g.trainer!.xp;awardGoCatch(p,bug,w.seed+':go:'+s.id);weatherCatch(p,bug,s);f.total.catches++;f.daily.catches++;if(!f.daily.species.includes(s.species))f.daily.species.push(s.species);if(s.source==='lure'&&f.lure)f.lure.caught++;awardGoCatchCard(p,bug,s.id,now);awardCocoon(p,secret,now);w.lastCatch!.nectar=g.dust-priorDust;this.note(p,'catch','catch:'+s.id,bug,now,{method:'auto',dust:g.dust-priorDust,xp:g.trainer!.xp-priorXP});totals.caught++;}
+  if(caught){this.grantAutoCatch(p,s,now,secret,totals);return;}
   else{w.caught.push(s.id);appendGoJournal(p,{id:'autoMiss:'+s.id,kind:'autoMiss',at:now,species:s.species,method:'auto'});totals.missed++;}
   a.last={species:s.species,caught,at:now};
  }
- /** Kilometres from Adventure Sync while the app was closed: one auto attempt per full km, max per day, at the fresh current location. */
- private awayCatch(p:PlayerV2,meters:number,now:number,secret:string){
-  const g=p.go!,a=g.auto,w=p.walking,f=p.field!,day=dayV2(now);if(!a.enabled||!w?.seed||!(meters>=0))return;
-  if(a.awayDay!==day){a.awayDay=day;a.awayCount=0;}
-  a.awayCredit=Math.min(AWAY_PER_DAY*1000,(a.awayCredit??0)+meters);
-  if(a.awayCredit<1000||(a.awayCount??0)>=AWAY_PER_DAY||f.inventory.basic<1)return;
-  // catchWild needs a fresh fix and a short gap after the previous catch; otherwise keep the credit for the next sync.
-  if(now-w.at>=40000||w.fix.accuracy>GPS_CATCH_ACCURACY||(w.lastCatch&&now-w.lastCatch.at<900))return;
-  a.awayCount=(a.awayCount??0)+1;a.awayCredit-=1000;
-  const spawn={...wildSpawns(w.fix,secret+':away:'+day+':'+a.awayCount,now)[0],id:'away-'+day+'-'+a.awayCount+'-'+hash(secret).slice(0,8)};
-  w.spawns.push(spawn);const totals=a.totals??={caught:0,missed:0,dust:0,xp:0},before={dust:g.dust,xp:g.trainer!.xp};
-  this.autoCatch(p,spawn,now,secret+':away',totals);totals.dust+=g.dust-before.dust;totals.xp+=g.trainer!.xp-before.xp;
+ /** A confirmed automatic catch with all normal catch rewards (dust, candy, XP, card, cocoon, journal). */
+ private grantAutoCatch(p:PlayerV2,s:WildBug,now:number,secret:string,totals:{caught:number;missed:number}){
+  const g=p.go!,a=g.auto,f=p.field!,w=p.walking!;a.lastAt=now;
+  catchWild(p,s.id,now);const bug=p.specimens.at(-1)!,priorDust=g.dust,priorXP=g.trainer!.xp;awardGoCatch(p,bug,w.seed+':go:'+s.id);weatherCatch(p,bug,s);f.total.catches++;f.daily.catches++;if(!f.daily.species.includes(s.species))f.daily.species.push(s.species);if(s.source==='lure'&&f.lure)f.lure.caught++;awardGoCatchCard(p,bug,s.id,now);awardCocoon(p,secret,now);w.lastCatch!.nectar=g.dust-priorDust;this.note(p,'catch','catch:'+s.id,bug,now,{method:'auto',dust:g.dust-priorDust,xp:g.trainer!.xp-priorXP});totals.caught++;
+  a.last={species:s.species,caught:true,at:now};
+ }
+ /** Closed-app distance (Health Connect) feeds the same walk counter; bugs come at the next fresh GPS fix. */
+ private awayCatch(p:PlayerV2,meters:number,now:number,secret:string,seconds=0){
+  const g=p.go!,a=g.auto,w=p.walking;if(!a.enabled||!w?.seed||!(meters>=0))return;
+  const day=walkDay(p,now),count=meters>0?creditWalk(day,meters,seconds>0?meters/seconds:1.4):pendingWalk(day);
+  a.awayDay=day.day;a.awayCount=day.caught;a.awayCredit=day.credit;
+  const totals=a.totals??={caught:0,missed:0,dust:0,xp:0},before={dust:g.dust,xp:g.trainer!.xp};
+  this.walkCatch(p,count,now,secret+':away',totals);totals.dust+=g.dust-before.dust;totals.xp+=g.trainer!.xp-before.xp;
+  a.awayCount=day.caught;a.awayCredit=day.credit;
  }
  /** The chosen first partner: a real GO bug (level 12, good IV, favourite) that becomes the buddy; only once, at the start. */
  private givePartner(p:PlayerV2,kind:string,now:number){const g=ensureGo(p,now),id='partner-'+kind;p.specimens.push({id,species:kind,level:1,shiny:false,favorite:true,obtainedAt:now,source:'partner',hearts:0,item:null,go:rollGoBug(kind,p.uid+':partner',{level:12})});ensureGo(p,now);g.candy[family(kind)]=(g.candy[family(kind)]??0)+10;p.buddy=id;markGoSeen(p,kind,now);}
@@ -273,10 +310,24 @@ export class GoServiceV2{
   return {player,battle:id?document<GoBattle>(d,bk(id))??null:null};
  }
  async command(uid:string,raw:unknown,linked=false):Promise<GameViewV2>{
-  const c=parseGo(raw),now=this.clock(),secret=randomBytes(24).toString('hex'),id=randomBytes(16).toString('hex');let p=await this.ensure(uid);if(c.type==='gymDefend'||c.type==='gymAttack'){const gymState=await this.gyms(p);if(gymState.changed)p=await this.store.run([pk(uid)],d=>this.get(d,uid,now));}if(p.go!.battle&&c.type!=='goAct')await this.advance(p.go!.battle);
+  // This read does not mutate progression, create a reward receipt, or invalidate social metadata.
+  if(raw&&typeof raw==='object'&&(raw as CommandV2).type==='arcadeScores'){
+   const c=parseGo(raw);check(c.ranked===undefined||typeof c.ranked==='boolean','Kies een geldige ranglijst.');const p=await this.ensure(uid),now=this.clock();
+   if(c.ranked){const rows=await this.query<ArcadeRankedRank>('v2ArcadeRanks',[],{field:'rating',descending:true},50);if(this.arcadeRankCache.size>=1000)this.arcadeRankCache.clear();this.arcadeRankCache.set(uid,rows.filter(r=>Number.isFinite(r.rating)&&Number.isSafeInteger(r.wins)).map(r=>({name:r.name,rating:r.rating,wins:r.wins,me:r.uid===uid})));}
+   else{const key=this.arcadeScoresKey(p,now),scores=await arcadeScores(this.store,p,now);if(this.arcadeScoreCache.size>=1000)this.arcadeScoreCache.clear();this.arcadeScoreCache.set(key,scores);}
+   return this.state(uid,linked);
+  }
+  const c=parseGo(raw),now=this.clock(),secret=randomBytes(24).toString('hex'),id=randomBytes(16).toString('hex');let p=await this.ensure(uid);if(['arcadeRankedStart','arcadeStart','arcadePracticeStart'].includes(c.type)){this.rankedExpiryChecked.delete(uid);p=await this.refreshRanked(p,now);}if(c.type==='gymDefend'||c.type==='gymAttack'){const gymState=await this.gyms(p);if(gymState.changed)p=await this.store.run([pk(uid)],d=>this.get(d,uid,now));}if(p.go!.battle&&c.type!=='goAct')await this.advance(p.go!.battle);
   const habitat=c.type==='worldLocate'?await this.environment(validFix(c.fix,now),now):undefined;
   const echoDefense=c.type==='echoQueue'?chooseEchoMatch(p,linked||this.mode==='local'?await this.query<EchoDefense>('v2EchoDefenses',[{field:'league',op:'==',value:p.go!.league}]):[],now):null;
   const receipt='v2GoReceipts:'+uid+'-'+c.commandId,rate='v2GoRate:'+uid,keys=[pk(uid),receipt,rate,tk(uid)];let otherUid:string|undefined;
+  const arcadeGame=c.type==='arcadePracticeStart'?c.game as ArcadeGameId:c.type==='arcadeStart'?nextArcadeGame(p,now):undefined;
+  if(c.type==='arcadePracticeStart')check(ARCADE_GAMES.some(g=>g.id===c.game),'Kies een bekend spel.');
+  const rankedCandidate=c.type==='arcadeRankedStart'&&typeof c.league==='string'&&Object.hasOwn(LEAGUES,c.league)?await findRankedCandidate(this.store,p,c.league as League,now):undefined;
+  if(c.type==='arcadeRankedStart')keys.push(...rankedStartKeys(uid,c.commandId,rankedCandidate));
+  const arcadeOpponent=c.type==='arcadeStart'&&typeof c.league==='string'&&Object.hasOwn(LEAGUES,c.league)?await arcadeTarget(this.store,p,c.league as League,now,arcadeGame):undefined;
+  if(['arcadeStart','arcadePracticeStart','arcadeRankedStart','plaagArcadeStart'].includes(c.type)){keys.push(arcadeRunKey(uid,c.commandId));if(p.arcade?.active)keys.push(arcadeRunKey(uid,p.arcade.active));}
+  if(c.type==='arcadeSubmit'||c.type==='arcadeAbandon'){check(typeof c.run==='string'&&/^[\w-]{16,80}$/.test(c.run),'Kies een geldige ronde.');const key=arcadeRunKey(uid,c.run),ticket=await this.store.run([key],d=>document<ArcadeTicket>(d,key));check(ticket&&ticket.owner===uid,'Deze ronde is niet van jou.',403);keys.push(key,arcadeScoreKey(uid,ticket.challenge));if(ticket.mode==='ranked')keys.push(...rankedSubmitKeys(ticket,await readRankedDuel(this.store,ticket)));}
   if(c.type==='goJoin'||c.type==='friendRequest'){check(typeof c.code==='string'&&/^[A-Z0-9]{8}$/.test(c.code),'Gebruik een geldige achttekencode.');const entry=await this.store.run(['v2Codes:'+c.code],d=>document<{uid:string}>(d,'v2Codes:'+c.code));check(entry&&entry.uid!==uid,'Deze speler is niet gevonden.');otherUid=entry.uid;keys.push(pk(otherUid),'v2GoInvites:'+c.code,'v2FriendPairs:'+([uid,otherUid].sort().join('_')));}
   if(c.type==='friendAccept'||c.type==='friendRemove'||c.type==='giftSend'||c.type==='giftOpen'){check(typeof c.pair==='string'&&c.pair.length<256,'Kies een vriend.');keys.push('v2FriendPairs:'+c.pair);}
   const trading=['tradeStart','tradeOffer','tradeConfirm','tradeCancel'].includes(c.type);
@@ -286,7 +337,7 @@ export class GoServiceV2{
   if(c.type==='plaagFight'||c.type==='goTrain'||c.type==='cupFight'||c.type==='goJoin'||c.type==='echoQueue'||c.type==='goBoss'||c.type==='dailyChallenge'||c.type==='gymAttack')keys.push(bk(id));
   if(c.type==='echoSave'||AUTO_DEFENSE_COMMANDS.has(c.type))keys.push('v2EchoDefenses:'+uid,...Object.keys(LEAGUES).map(league=>'v2EchoDefenses:'+uid+'-'+league));
   if(p.go!.battle){const battleKeys=await this.battleKeys(p.go!.battle);keys.push(...battleKeys);await this.prefetchRaid(battleKeys);}
-  const raidToken=c.type==='raidJoin'||c.type==='raidInvite'||c.type==='plaagFight'?await this.raidToken():undefined;
+  const raidToken=c.type==='worldLocate'||c.type==='raidJoin'||c.type==='raidInvite'||c.type==='plaagFight'||c.type==='plaagArcadeStart'?await this.raidToken():undefined;
   const currentLobby=p.go!.raids?.lobby;let raidOthers=0,raidFriends:string[]=[],inviteFriends:string[]=[];
   if(c.type==='raidJoin'||c.type==='raidInvite'){check(typeof c.raid==='string'&&/^\d{4}-\d\d-\d\d:\d{1,2}:[\w-]{22}$/.test(c.raid),'Kies een zwerm.');keys.push(rk(c.raid));}
   if(c.type==='raidJoin'){const doc=await this.store.run([rk(c.raid as string)],d=>document<RaidDoc>(d,rk(c.raid as string))),open=doc?.open??0;keys.push(lk(c.raid+'#'+open),lk(c.raid+'#'+(open+1)),ik(uid));}
@@ -296,21 +347,26 @@ export class GoServiceV2{
   if(c.type==='raidClaim'){check(typeof c.lobby==='string'&&c.lobby.length<320,'Kies een zwerm.');const lobby=await this.store.run([lk(c.lobby)],d=>document<RaidLobby>(d,lk(c.lobby as string)));check(lobby&&lobby.members.some(m=>m.uid===uid),'Je zat niet in deze zwerm.',403);keys.push(lk(c.lobby),rk(lobby.raidId),...lobby.members.map(m=>dk(lobby.id,m.uid)));const {friends}=await this.social(uid);raidFriends=friends.filter(pair=>pair.accepted&&!pair.removed).flatMap(pair=>pair.users).filter(u=>u!==uid);}
   const snapshot=await this.store.run([...new Set(keys)],d=>{
    const fingerprint=hash(JSON.stringify(c)),old=document<{fingerprint:string}>(d,receipt);if(old){check(old.fingerprint===fingerprint,'Dit actie-ID is al voor iets anders gebruikt.',409);const player=this.get(d,uid,now);if(c.type==='goAct'){const battle=player.go!.battle?document<GoBattle>(d,bk(player.go!.battle)):undefined;if(battle){this.checkBattleKeys(d,battle);advanceGoBattle(battle,now);this.settle(d,battle,now);}}return this.commandSnapshot(d,player);}
-   const x=this.get(d,uid,now),g=x.go!,f=x.field!,closing=c.type==='goClose'&&typeof c.battle==='string'&&/^[\w:-]{1,160}$/.test(c.battle)&&(!g.battle||g.battle===c.battle);check(x.revision===c.expectedRevision||closing&&c.expectedRevision<=x.revision,'Je voortgang is veranderd. Probeer opnieuw.',409);const r=document<{at:number;count:number}>(d,rate)??{at:now,count:0};if(now-r.at>=60000){r.at=now;r.count=0;}check(++r.count<=600,'Even rustig: te veel acties.',429);d.set(rate,r);
+   const x=this.get(d,uid,now),g=x.go!,f=x.field!,closing=c.type==='goClose'&&typeof c.battle==='string'&&/^[\w:-]{1,160}$/.test(c.battle)&&(!g.battle||g.battle===c.battle);check(x.revision===c.expectedRevision||(closing||c.type==='arcadeSubmit')&&c.expectedRevision<=x.revision,'Je voortgang is veranderd. Probeer opnieuw.',409);const r=document<{at:number;count:number}>(d,rate)??{at:now,count:0};if(now-r.at>=60000){r.at=now;r.count=0;}check(++r.count<=600,'Even rustig: te veel acties.',429);d.set(rate,r);
    const idle=()=>check(!g.battle&&!g.queue,'Rond je gevecht of zoekopdracht eerst af.');
    switch(c.type){
+    case 'arcadePracticeStart':case 'arcadeStart':{idle();check(c.type==='arcadePracticeStart'||arcadeOpponent,'Kies een CP-klasse.');check(!x.arcade?.active||d.has(arcadeRunKey(uid,x.arcade.active)),'Je voortgang is veranderd. Probeer opnieuw.',409);const current=x.arcade?.active?document<ArcadeTicket>(d,arcadeRunKey(uid,x.arcade.active)):undefined;check(!current||current.status!=='started'||current.expiresAt<now,'Rond je opgeslagen ronde eerst af.');const ticket=issueArcade(x,c.ids,c.league,c.commandId,now,arcadeOpponent??{name:'Oefenen',score:0,kind:'personal'},arcadeGame,c.type==='arcadePracticeStart'?'practice':'rotation');d.set(arcadeRunKey(uid,ticket.id),ticket);break;}
+    case 'arcadeRankedStart':{idle();check(linked||this.mode==='local','Koppel je account om ranked te spelen.',403);check(!x.arcade?.active||d.has(arcadeRunKey(uid,x.arcade.active)),'Je voortgang is veranderd. Probeer opnieuw.',409);const current=x.arcade?.active?document<ArcadeTicket>(d,arcadeRunKey(uid,x.arcade.active)):undefined;check(!current||current.status!=='started'||current.expiresAt<now,'Rond je opgeslagen ronde eerst af.');startRanked(d,x,c.ids,c.league,c.commandId,now,rankedCandidate);break;}
+    case 'plaagArcadeStart':{idle();check(!x.arcade?.active||d.has(arcadeRunKey(uid,x.arcade.active)),'Je voortgang is veranderd. Probeer opnieuw.',409);const current=x.arcade?.active?document<ArcadeTicket>(d,arcadeRunKey(uid,x.arcade.active)):undefined;check(!current||current.status!=='started'||current.expiresAt<now,'Rond je opgeslagen ronde eerst af.');const crew=resolveCrew(x,c.target,now,raidToken!),ticket=issueCrewArcade(x,c.ids,c.league,c.commandId,now,crew);d.set(arcadeRunKey(uid,ticket.id),ticket);break;}
+    case 'arcadeSubmit':{const ticket=document<ArcadeTicket>(d,arcadeRunKey(uid,c.run as string)),wasAccepted=ticket?.status==='accepted';check(c.format===undefined||c.format==='original-2'&&ticket&&isOriginalRules(ticket),'Deze invoerversie klopt niet.');const result=submitArcade(d,x,ticket,c.inputs,now);if(ticket!.mode==='ranked')completeRanked(d,x,ticket!,now);if(!wasAccepted&&result.crew?.rescued){const rescued=x.specimens.find(b=>b.id===result.crew!.rescued!.id);if(rescued)this.note(x,'catch','crew:'+ticket!.id,rescued,now,{dust:result.dust,xp:result.xp});}break;}
+    case 'arcadeAbandon':{const ticket=document<ArcadeTicket>(d,arcadeRunKey(uid,c.run as string));check(ticket&&ticket.owner===uid,'Deze ronde is niet van jou.',403);if(ticket.status==='started'){if(ticket.mode==='ranked')completeRanked(d,x,ticket,now,true);else ticket.status='abandoned';}if(x.arcade?.active===ticket.id)delete x.arcade.active;break;}
     case 'gymTeam':idle();check(linked||this.mode==='local','Koppel je account voor gyms.',403);chooseGymTeam(x,c.team,now);break;
     case 'gymDefend':case 'gymAttack':{
      // After a won gym battle the kid goes straight to placing a bug: close the finished battle instead of failing.
      if(c.type==='gymDefend'&&g.battle&&document<GoBattle>(d,bk(g.battle))?.phase==='finished')g.battle=null;
      idle();check(linked||this.mode==='local','Koppel je account voor gyms.',403);const key=gyk(c.gym as string),remote=c.remote===true,won=gymWinRight(x,c.gym as string,now),site=(remote&&x.walking?this.visibleRaidSites(x.walking):gymSites(x.walking?.posts??[])).find(s=>s.id===c.gym);if(remote&&!won)check(site,'Deze gym zie je niet op je kaart.');let gym=document<Gym>(d,key);if(!gym){check(site,'Deze gym is niet beschikbaar.');gym={...site,team:null,revision:0,defenders:[]};d.set(key,gym);}
-     ensureNpcGym(gym,now);if(c.type==='gymDefend')placeGymDefender(x,gym,c.id,id,now,remote);else{const b=makeGymBattle(x,gym,c.ids,id,now,remote);d.set(bk(id),prepareGoBattle(b));g.battle=id;}break;
+     ensureNpcGym(gym,now);if(c.type==='gymDefend')placeGymDefender(x,gym,c.id,id,now,remote);else{const b=makeGymBattle(x,gym,c.ids,id,now,remote);d.set(bk(id),prepareGoBattle(b,3));g.battle=id;}break;
     }
     case 'coinBuy':idle();buyCoinOffer(x,c.offer,now);break;
     case 'profile':check(typeof c.name==='string'&&/^[\p{L}\p{N} _-]{2,18}$/u.test(c.name),'Gebruik 2 tot 18 letters of cijfers.');if(c.avatar!==undefined){check(isTrainerAvatar(c.avatar),'Kies een ranger.');x.avatar=c.avatar as TrainerAvatar;}if(c.outfit!==undefined){check(isOutfit(c.outfit),'Kies een kleur.');x.outfit=c.outfit;}if(c.starter!==undefined){check((STARTER_PARTNERS as readonly unknown[]).includes(c.starter),'Kies een eerste maatje.');if(!x.onboarded&&!x.specimens.some(s=>s.source==='partner'))this.givePartner(x,c.starter as string,now);}x.name=c.name;x.onboarded=true;break;
     case 'settings':for(const k of ['sound','reducedMotion','largeText'] as const){check(typeof c[k]==='boolean','Ongeldige instelling.');x.settings[k]=c[k] as boolean;}if(c.music!==undefined){check(typeof c.music==='boolean','Ongeldige muziekinstelling.');x.settings.music=c.music;}for(const k of ['volume','sfxVolume'] as const)if(c[k]!==undefined){check(typeof c[k]==='number'&&Number.isFinite(c[k])&&c[k]>=0&&c[k]<=1,'Kies een volume tussen 0 en 100%.');x.settings[k]=c[k] as number;}if(c.graphics!==undefined){check(['low','normal','high'].includes(c.graphics as string),'Kies lage, normale of hoge kwaliteit.');x.settings.graphics=c.graphics as 'low'|'normal'|'high';}break;
-    case 'worldLocate':idle();noteRouteCatches(x);if(locate(x,validFix(c.fix,now),secret,now,habitat)===false)break;x.walking!.siteSource=habitat?.sites&&habitat.sites.available!==false?'osm':'unavailable';x.walking!.posts=habitat?.sites?.posts??[];x.walking!.mapSites=habitat?.sites?.map??[];x.walking!.routes=habitat?.sites?.routes??[];const priorWalk=f.walk?.meters??0,priorDayWalk=f.walk?.dayMeters??0;recordWalk(x,now);mergeGPSWalk(x,priorWalk,priorDayWalk,now);advanceRoute(x,now,habitat);recordRouteFix(x,now);advanceFieldActivities(x,now,habitat);ensureBalloon(x,now,secret);this.auto(x,now,secret);if((g.auto.awayCredit??0)>=1000)this.awayCatch(x,0,now,secret);if(x.buddy&&x.field!.walk){ownedGo(x,x.buddy);creditBuddyWalk(x,now);}break;
-    case 'adventureSync':{idle();const priorHealthWalk=f.walk?.meters??0;syncAdventure(x,c.snapshot,now);this.awayCatch(x,Math.max(0,(f.walk?.meters??0)-priorHealthWalk),now,secret);if(x.buddy&&f.walk){ownedGo(x,x.buddy);creditBuddyWalk(x,now);}break;}
+    case 'worldLocate':idle();noteRouteCatches(x);if(locate(x,validFix(c.fix,now),secret,now,habitat)===false)break;x.walking!.siteSource=habitat?.sites&&habitat.sites.available!==false?'osm':'unavailable';x.walking!.posts=habitat?.sites?.posts??[];x.walking!.mapSites=habitat?.sites?.map??[];x.walking!.routes=habitat?.sites?.routes??[];const priorWalk=f.walk?.meters??0,priorDayWalk=f.walk?.dayMeters??0;recordWalk(x,now);mergeGPSWalk(x,priorWalk,priorDayWalk,now);advanceRoute(x,now,habitat);recordRouteFix(x,now);advanceFieldActivities(x,now,habitat);ensureBalloon(x,now,secret);prepareCrewViews(x,plaagView(x,now,raidToken!),now,raidToken!);this.auto(x,now,secret);if((g.auto.awayCredit??0)>=AWAY_STEP)this.awayCatch(x,0,now,secret);if(x.buddy&&x.field!.walk){ownedGo(x,x.buddy);creditBuddyWalk(x,now);}break;
+    case 'adventureSync':{idle();const priorHealthWalk=f.walk?.meters??0,priorHealthAt=f.healthSync?.at;syncAdventure(x,c.snapshot,now);this.awayCatch(x,Math.max(0,(f.walk?.meters??0)-priorHealthWalk),now,secret,priorHealthAt&&f.healthSync?Math.max(0,(f.healthSync.at-priorHealthAt)/1000):0);if(x.buddy&&f.walk){ownedGo(x,x.buddy);creditBuddyWalk(x,now);}break;}
     case 'worldEncounter':{idle();if(x.walking?.spawns.find(s=>s.id===c.spawn)?.source!=='raid')requireFieldLocation(x.walking,now);encounterWild(x,c.spawn,secret,now);const s=x.walking!.spawns.find(s=>s.id===c.spawn)!;markGoSeen(x,s.species,now);f.encounter!.cp=stats({...x.specimens[0],species:s.species},weatherGo(rollGoBug(s.species,wildSeed(x.walking!,s)+':go:'+s.id,s.boss),s)).cp;break;}
     case 'worldFocus':{idle();requireFieldLocation(x.walking,now);const e=f.encounter;check(e&&e.id===c.encounter,'Open deze bug opnieuw.');check(x.walking!.spawns.some(s=>s.id===e.spawn&&s.expiresAt>now&&!x.walking!.caught.includes(s.id)),'Deze bug is verdwenen.');e.focus={id,at:now+800};break;}
     case 'worldCast':{idle();const raidCast=x.walking?.spawns.find(s=>s.id===f.encounter?.spawn)?.source==='raid';if(!raidCast)requireFieldLocation(x.walking,now);check(raidCast||c.net!=='basic'||f.inventory.basic>0,'Je standaardnetten zijn op.');const bait=f.encounter?.bait??c.bait as string|null;castNet(x,c,id,now);if(c.net==='basic'&&!raidCast)f.inventory.basic--;if(f.lastCast?.outcome==='caught'){const spawn=x.walking!.spawns.find(s=>s.id===f.lastCast!.spawn)!,priorXP=ensureTrainer(x).xp,priorDust=g.dust,held=awardGoCatch(x,x.specimens.at(-1)!,wildSeed(x.walking!,spawn)+':go:'+f.lastCast.spawn,bait,f.lastCast.grade,f.lastCast.curved,spawn.boss);weatherCatch(x,x.specimens.at(-1)!,spawn);if(streakBonus(f.lastCast.streak))grantXP(x,streakBonus(f.lastCast.streak));awardGoCatchCard(x,x.specimens.at(-1)!,f.lastCast.spawn,now);awardCocoon(x,secret,now);f.lastCast.xp=ensureTrainer(x).xp-priorXP;if(held)f.lastCast.held=held;f.lastCast.nectar=g.dust-priorDust;f.lastCast.candy=goCatchRewards(f.lastCast.species,bait).candy;f.lastCast.cp=stats(x.specimens.at(-1)!).cp;x.walking!.lastCatch!.nectar=f.lastCast.nectar;this.note(x,'catch','catch:'+f.lastCast.spawn,x.specimens.at(-1)!,now,{method:'manual',dust:f.lastCast.nectar,xp:f.lastCast.xp});}break;}
@@ -340,20 +396,20 @@ export class GoServiceV2{
     case 'trainerClaim':claimTrainer(x);break;
     case 'goEvolve':{idle();const fromSpecies=ownedGo(x,c.id).species;evolveGo(x,c.id,secret,now);this.note(x,'evolve','evolve:'+c.commandId,ownedGo(x,c.id),now,{fromSpecies});break;}
     case 'goTeam':idle();teamGo(x,c.ids,c.league);break;
-    case 'goBoss':{idle();const post=c.post===undefined?undefined:x.walking?.posts?.find(s=>s.id===c.post);check(c.post===undefined||post,'Kies een gympost in de buurt.');check(!post||gymSites(x.walking!.posts??[]).some(g=>g.postId===post.id),'Deze post is geen gym.');check(c.ids===undefined||post,'Kies een kaartbaas voor een apart team.');const b=makeBossBattle(x,c.difficulty as BossDifficulty,id,now,post,secret,c.ids);d.set(bk(id),prepareGoBattle(b));g.battle=id;break;}
-    case 'dailyChallenge':{idle();const b=makeDailyChallengeBattle(x,id,now,c.practice===undefined?false:c.practice as boolean);d.set(bk(id),prepareGoBattle(b));g.battle=id;break;}
+    case 'goBoss':{idle();const post=c.post===undefined?undefined:x.walking?.posts?.find(s=>s.id===c.post);check(c.post===undefined||post,'Kies een gympost in de buurt.');check(!post||gymSites(x.walking!.posts??[]).some(g=>g.postId===post.id),'Deze post is geen gym.');check(c.ids===undefined||post,'Kies een kaartbaas voor een apart team.');const b=makeBossBattle(x,c.difficulty as BossDifficulty,id,now,post,secret,c.ids);d.set(bk(id),prepareGoBattle(b,3));g.battle=id;break;}
+    case 'dailyChallenge':{idle();const b=makeDailyChallengeBattle(x,id,now,c.practice===undefined?false:c.practice as boolean);d.set(bk(id),prepareGoBattle(b,3));g.battle=id;break;}
     case 'cocoonStart':idle();startCocoon(x,c.id,now,c.incubator);break;
     case 'cocoonClaim':{idle();const before={dust:g.dust,xp:g.trainer!.xp};hatchCocoon(x,now,c.id);this.note(x,'hatch','hatch:'+g.cocoons!.lastHatch!.id, x.specimens.at(-1)!,now,{dust:g.dust-before.dust,xp:g.trainer!.xp-before.xp});break;}
     case 'echoSave':{idle();check(linked||this.mode==='local','Koppel je account om je verdediging te bewaren.',403);const defense=saveEchoDefense(x,now);d.set('v2EchoDefenses:'+uid,defense);d.set('v2EchoDefenses:'+uid+'-'+g.league,defense);break;}
-    case 'echoQueue':{idle();check(echoDefense,'Deze tegenstander is niet beschikbaar.');const b=makeEchoBattle(x,echoDefense,id,now);d.set(bk(id),prepareGoBattle(b));g.battle=id;break;}
+    case 'echoQueue':{idle();check(echoDefense,'Deze tegenstander is niet beschikbaar.');const b=makeEchoBattle(x,echoDefense,id,now);d.set(bk(id),prepareGoBattle(b,3));g.battle=id;break;}
     case 'goAuto':check(typeof c.enabled==='boolean','Kies aan of uit.');g.auto.enabled=c.enabled as boolean;g.auto.moving=0;g.auto.status=c.enabled?'waiting':'off';g.motion=x.walking?{fix:{...x.walking.fix},at:now}:undefined;break;
     case 'goQueue':idle();check(linked||this.mode==='local','Koppel je account voor Ranked.',403);check((g.ratedCount??0)<25,'Vandaag zijn alle 25 Ranked-gevechten gespeeld.');teamGo(x,g.team,g.league);g.queue={league:g.league,at:now,until:now+120000};d.set(tk(uid),{uid,league:g.league,rating:g.rating,at:now,until:now+120000,status:'waiting'} satisfies Ticket);break;
     case 'goCancel':check(!g.battle,'Je tegenstander is al gevonden.');g.queue=null;d.set(tk(uid),{status:'cancelled'});break;
-    case 'plaagFight':{idle();const b=makePlaagBattle(x,c.target,c.ids,id,now,raidToken!);d.set(bk(id),prepareGoBattle(b));g.battle=id;break;}
-    case 'goTrain':{idle();teamGo(x,g.team,g.league);const b=makeGoBattle(x,this.npc(x,id,now),id,now,false,true);d.set(bk(id),prepareGoBattle(b));g.battle=id;break;}
-    case 'cupFight':{idle();const b=makeCupBattle(x,c.ids,id,now);d.set(bk(id),prepareGoBattle(b));g.battle=id;break;}
+    case 'plaagFight':{idle();const encounter=resolveCrew(x,c.target,now,raidToken!);check(encounter.game==='combat','Speel de vaste arcade-uitdaging van deze bende.');const crew={...encounter,practice:crewBudget(x,now).wins>=3},b=makePlaagBattle(x,c.target,c.ids,id,now,raidToken!,crew);b.shields=[2,1];d.set(bk(id),prepareGoBattle(b,3));g.battle=id;break;}
+    case 'goTrain':{idle();teamGo(x,g.team,g.league);const b=makeGoBattle(x,this.npc(x,id,now),id,now,false,true);d.set(bk(id),prepareGoBattle(b,3));g.battle=id;break;}
+    case 'cupFight':{idle();const b=makeCupBattle(x,c.ids,id,now);d.set(bk(id),prepareGoBattle(b,3));g.battle=id;break;}
     case 'goInvite':idle();teamGo(x,g.team,g.league);d.set('v2GoInvites:'+x.friendCode,{uid,league:g.league,until:now+300000});break;
-    case 'goJoin':{idle();const invite=document<{uid:string;league:League;until:number}>(d,'v2GoInvites:'+c.code);check(invite&&invite.uid===otherUid&&invite.until>now,'Deze uitnodiging is verlopen.');const other=this.get(d,otherUid!,now);check(!other.go!.battle&&!other.go!.queue,'Deze speler is al bezig.');teamGo(x,g.team,invite.league);teamGo(other,other.go!.team,invite.league);const b=makeGoBattle(other,x,id,now,false);d.set(bk(id),prepareGoBattle(b));g.battle=id;other.go!.battle=id;other.revision++;invite.until=0;break;}
+    case 'goJoin':{idle();const invite=document<{uid:string;league:League;until:number}>(d,'v2GoInvites:'+c.code);check(invite&&invite.uid===otherUid&&invite.until>now,'Deze uitnodiging is verlopen.');const other=this.get(d,otherUid!,now);check(!other.go!.battle&&!other.go!.queue,'Deze speler is al bezig.');teamGo(x,g.team,invite.league);teamGo(other,other.go!.team,invite.league);const b=makeGoBattle(other,x,id,now,false);d.set(bk(id),prepareGoBattle(b,3));g.battle=id;other.go!.battle=id;other.revision++;invite.until=0;break;}
     case 'buddyPlay':{const r=playBuddy(x,c.kind,now);if(r==='gift')x.revision++;break;}
     case 'raidPass':claimFreePass(ensureRaids(g,now),now);break;
     case 'raidJoin':{idle();check(typeof c.remote==='boolean','Kies lokaal of op afstand.');const rg=ensureRaids(g,now),raidId=c.raid as string;
@@ -374,7 +430,7 @@ export class GoServiceV2{
      const invite=raidInvite(raidDoc.raid,{uid,name:x.name},now);for(const f of inviteFriends){const inbox=document<{items:RaidInvite[]}>(d,ik(f))??{items:[]};inbox.items=addInvite(inbox.items,invite,now);d.set(ik(f),inbox);const friend=document<PlayerV2>(d,pk(f));if(friend?.go)ensureRaids(friend.go,now).invitedAt=now;}
      raidDoc.invited[uid]=(raidDoc.invited[uid]??0)+inviteFriends.length;rg.invites+=inviteFriends.length;this.inboxCache.clear();break;}
     case 'raidFight':{idle();const rg=ensureRaids(g,now),l=document<RaidLobby>(d,lk(rg.lobby!));check(l,'Deze zwerm bestaat niet meer.');startLobby(l,now);check(l.status!=='lobby','De lobby wacht nog op spelers.');
-     const dealt=document<DamageDoc>(d,dk(l.id,uid))?.damage??0,b=makeRaidBattle(x,l,c.ids,dealt,raidOthers,id,now);d.set(bk(id),prepareGoBattle(b));d.set(dk(l.id,uid),{uid,damage:dealt});g.battle=id;break;}
+     const dealt=document<DamageDoc>(d,dk(l.id,uid))?.damage??0,b=makeRaidBattle(x,l,c.ids,dealt,raidOthers,id,now);d.set(bk(id),prepareGoBattle(b,3));d.set(dk(l.id,uid),{uid,damage:dealt});g.battle=id;break;}
     case 'raidClaim':{const l=document<RaidLobby>(d,lk(c.lobby as string))!,damage=Object.fromEntries(l.members.map(m=>[m.uid,document<DamageDoc>(d,dk(l.id,m.uid))?.damage??0])) as Record<string,number>;resolveLobby(l,damage,now);
      check(l.status==='won'||l.status==='failed','Het zwermgevecht loopt nog.');const rg=ensureRaids(g,now),reward=claimRaid(l,rg,uid,damage,raidFriends);if(rg.lobby===l.id)rg.lobby=null;
      if(reward){g.dust+=reward.dust;grantXP(x,reward.xp);if(x.walking)x.walking.spawns.push({id:'raid-'+l.id.replace(/[^\w-]/g,'-'),species:l.species,lat:x.walking.fix.lat,lng:x.walking.fix.lng,expiresAt:now+30*60000,source:'raid',boss:{seed:secret,level:reward.catchLevel},raid:{nets:reward.nets}});}break;}
@@ -392,14 +448,14 @@ export class GoServiceV2{
     case 'friendAccept':case 'friendRemove':{const pair=document<FriendPair>(d,'v2FriendPairs:'+c.pair);check(pair&&pair.users.includes(uid)&&!pair.removed,'Deze vriendschap bestaat niet.',403);if(c.type==='friendRemove')pair.removed=true;else{check(pair.requestedBy!==uid,'Alleen de ontvanger kan accepteren.');pair.accepted=true;}break;}
    }
     trackWeeklyWalk(x,now,secret);
-    if(AUTO_DEFENSE_COMMANDS.has(c.type)&&(linked||this.mode==='local')&&!competitionTeamIssue(x)){const defense=saveEchoDefense(x,now);d.set('v2EchoDefenses:'+uid+'-'+g.league,defense);}
+    if(AUTO_DEFENSE_COMMANDS.has(c.type)&&(linked||this.mode==='local')&&!echoTeamIssue(x)){const defense=saveEchoDefense(x,now);d.set('v2EchoDefenses:'+uid+'-'+g.league,defense);}
     x.revision++;d.set(receipt,{fingerprint,at:now,type:c.type});return this.commandSnapshot(d,x);
-  });if(SOCIAL_COMMANDS.has(c.type))this.socialCache.clear();if(c.type.startsWith('raid'))this.raidDamageCache.clear();if(snapshot?.battle)this.rememberBattleKeys(snapshot.battle);return snapshot?this.view(uid,snapshot.player,snapshot.battle,linked):this.state(uid,linked);
+  });if(c.type==='arcadeSubmit'||c.type==='arcadeAbandon')this.arcadeRankCache.clear();if(SOCIAL_COMMANDS.has(c.type))this.socialCache.clear();if(c.type.startsWith('raid'))this.raidDamageCache.clear();if(snapshot?.battle)this.rememberBattleKeys(snapshot.battle);return snapshot?this.view(uid,snapshot.player,snapshot.battle,linked):this.state(uid,linked);
  }
  private async matchmake(uid:string){const now=this.clock(),mine=await this.store.run([tk(uid)],d=>document<Ticket>(d,tk(uid)));if(!mine||mine.status!=='waiting')return;
   if(mine.until<=now){await this.store.run([pk(uid),tk(uid)],d=>{const t=document<Ticket>(d,tk(uid));if(t?.status==='waiting'){t.status='expired';const p=this.get(d,uid,now);p.go!.queue=null;p.revision++;}});return;}
   const pool=await this.query<Ticket>('v2GoTickets',[{field:'status',op:'==',value:'waiting'}]),band=100+Math.floor((now-mine.at)/15000)*50,candidate=pool.filter(t=>t.uid!==uid&&t.league===mine.league&&t.until>now&&Math.abs(t.rating-mine.rating)<=Math.min(400,band,100+Math.floor((now-t.at)/15000)*50)).sort((a,b)=>Math.abs(a.rating-mine.rating)-Math.abs(b.rating-mine.rating)||a.at-b.at)[0];if(!candidate)return;
-  const id=randomBytes(16).toString('hex');await this.store.run([pk(uid),pk(candidate.uid),tk(uid),tk(candidate.uid),bk(id)],d=>{const a=document<Ticket>(d,tk(uid)),b=document<Ticket>(d,tk(candidate.uid));if(!a||!b||a.status!=='waiting'||b.status!=='waiting'||a.until<=now||b.until<=now)return;const p=this.get(d,uid,now),q=this.get(d,candidate.uid,now);if(p.go!.battle||q.go!.battle||!p.go!.queue||!q.go!.queue)return;const battle=makeGoBattle(p,q,id,now,true);d.set(bk(id),prepareGoBattle(battle));a.status=b.status='matched';for(const x of [p,q]){x.go!.queue=null;x.go!.battle=id;x.revision++;}});
+  const id=randomBytes(16).toString('hex');await this.store.run([pk(uid),pk(candidate.uid),tk(uid),tk(candidate.uid),bk(id)],d=>{const a=document<Ticket>(d,tk(uid)),b=document<Ticket>(d,tk(candidate.uid));if(!a||!b||a.status!=='waiting'||b.status!=='waiting'||a.until<=now||b.until<=now)return;const p=this.get(d,uid,now),q=this.get(d,candidate.uid,now);if(p.go!.battle||q.go!.battle||!p.go!.queue||!q.go!.queue)return;const battle=makeGoBattle(p,q,id,now,true);d.set(bk(id),prepareGoBattle(battle,3));a.status=b.status='matched';for(const x of [p,q]){x.go!.queue=null;x.go!.battle=id;x.revision++;}});
  }
  async advanceDue(){const battles=await this.query<GoBattle>('v2GoBattles',[{field:'settled',op:'==',value:false}]);for(const b of battles)await this.advance(b.id);return {battles:battles.length};}
 }

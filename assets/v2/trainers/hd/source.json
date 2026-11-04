@@ -1,0 +1,131 @@
+{
+ "created": "2026-11-02",
+ "style": "HD natuur zoals docs/concepts/combat-20261102 (Codex-beeld leidend)",
+ "tools": "Blender 5.1.2 Cycles (OptiX), eigen geometrie",
+ "license": "Eigen werk CC0; Poly Haven CC0-materialen/HDRI (lokaal .local/polyhaven, niet in Git)",
+ "set": "trainer-portraits-hd",
+ "rebuild": "BB_LIST=.local/portraits-hd/trainers.json blender ... scripts/render-bug-portraits-hd.py -- <repo> <out> 768 all; daarna bijsnijden naar 512 webp (figuur 82 %, voet onderaan)",
+ "use": "HD-profielportretten voor de 12 Kenney-mini-personages (avatar ids female_a..male_f); vervangen assets/v2/trainers/mini-*-v1.webp bij inbouw. Ranger-portretten (fern/amber/tidal) blijven de bestaande HD-schilderingen.",
+ "files": [
+  {
+   "file": "mini-female-a-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 25774,
+   "sha256": "c0bed393ed2123297960556fb052bea58c4307f1f763f4be3d02b0837da5ae17",
+   "avatar": "female_a"
+  },
+  {
+   "file": "mini-female-b-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 28170,
+   "sha256": "2e4e6eb0ef77105beddd30e94f9a3cc91e299412ad865a353b56264f79fde164",
+   "avatar": "female_b"
+  },
+  {
+   "file": "mini-female-c-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 25714,
+   "sha256": "3ec27966d509797e11e7533593137d6ba5cb25106e801c5eb7da246325b7547d",
+   "avatar": "female_c"
+  },
+  {
+   "file": "mini-female-d-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 22572,
+   "sha256": "9a118540e1305a845c694a33c1747297a44c636c4a66b65782d7b34da22d2f44",
+   "avatar": "female_d"
+  },
+  {
+   "file": "mini-female-e-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 23252,
+   "sha256": "50ecddf2f02585b22847b0885587463aaea5a94ae36772afb03c9c6c829b13b2",
+   "avatar": "female_e"
+  },
+  {
+   "file": "mini-female-f-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 30380,
+   "sha256": "1547bc4d70a99914ff726b4be3e47590d21581473a2f28809d59c5c006f258f7",
+   "avatar": "female_f"
+  },
+  {
+   "file": "mini-male-a-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 26656,
+   "sha256": "6f6cdd8d4b3a612683c4fde3b672e4c2ea252ccfa7ddf14812c196f8c14291dc",
+   "avatar": "male_a"
+  },
+  {
+   "file": "mini-male-b-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 26426,
+   "sha256": "2e0594ce43f4bf047a0a8b7790c1837aecc908ede63a1c2838e2076fb983b132",
+   "avatar": "male_b"
+  },
+  {
+   "file": "mini-male-c-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 25316,
+   "sha256": "13151262eadfbc4ca06f1bab137f97b87d0c9635119f68ea89cd57f1131c0548",
+   "avatar": "male_c"
+  },
+  {
+   "file": "mini-male-d-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 24804,
+   "sha256": "57d7849f2312b5af77595db69965ff6dc81308c69693b2140952080355810a9d",
+   "avatar": "male_d"
+  },
+  {
+   "file": "mini-male-e-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 26330,
+   "sha256": "e37f874d21e8ad9589c7a449939da89063fc99dc56446720af6ed76b6706bf21",
+   "avatar": "male_e"
+  },
+  {
+   "file": "mini-male-f-hd.webp",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 26700,
+   "sha256": "29a9d2d95a2382171b543c8c893121c52c6edf55eafb23b30ff48d889ef5211b",
+   "avatar": "male_f"
+  }
+ ]
+}

@@ -1,0 +1,132 @@
+{
+ "created": "2026-11-02",
+ "style": "HD natuur zoals docs/concepts/combat-20261102 (Codex-beeld leidend)",
+ "tools": "Blender 5.1.2 Cycles (OptiX), eigen geometrie",
+ "license": "Eigen werk CC0; Poly Haven CC0-materialen/HDRI (lokaal .local/polyhaven, niet in Git)",
+ "set": "type-emblems",
+ "rebuild": "blender --background --factory-startup --python assets/3d/emblems/authoring/build_emblems.py -- <repo> [types...]",
+ "use": "Typebadges (src/GoTypeV2.tsx GO_TYPES), ronde aanvalsknoppen uit het Codex-actieduel, info-popups. Kleur = GO_TYPES.color. 512px PNG transparant; naar webp bij inbouw.",
+ "files": [
+  {
+   "file": "bug.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 229236,
+   "sha256": "d5b090e219fbc777d41c33ac5b0adfaa537dff9c007ee4fa38938ca22ad3e0e1",
+   "type": "bug",
+   "name": "Insect"
+  },
+  {
+   "file": "dark.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 220093,
+   "sha256": "6e03b2a749d90f38f3fdf94b90274c8eb4e374333feeeeedab6799ae181e487b",
+   "type": "dark",
+   "name": "Duister"
+  },
+  {
+   "file": "fire.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 220703,
+   "sha256": "fb503b4ec07ab0ac1716f4cee96037839311c29e70fd7c297d018e2162d3aa59",
+   "type": "fire",
+   "name": "Vuur"
+  },
+  {
+   "file": "flying.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 217999,
+   "sha256": "7eea2c191e4e403afaa9781374f2f53275eec3216615c5768b51e6962f4911dd",
+   "type": "flying",
+   "name": "Vliegend"
+  },
+  {
+   "file": "grass.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 219690,
+   "sha256": "90efbc31364f5417d3f3cef42fd0a7ad5ae3a75fc451d2b8a6804c68e0b2b4cb",
+   "type": "grass",
+   "name": "Gras"
+  },
+  {
+   "file": "ground.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 215135,
+   "sha256": "11f10b5f064d64afeb8c71ac8d79b8ee9367e5655c63fa3f6eaf483e14f77439",
+   "type": "ground",
+   "name": "Grond"
+  },
+  {
+   "file": "normal.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 220179,
+   "sha256": "94488d8a5a585885d2674dc25f176a76baa1edeb45b66b74741a0a2f5fd128c5",
+   "type": "normal",
+   "name": "Normaal"
+  },
+  {
+   "file": "poison.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 223710,
+   "sha256": "df597fbd4039e964151f8d8257bbbd1836b8a5f6acecef3aa2b594b868e13954",
+   "type": "poison",
+   "name": "Gif"
+  },
+  {
+   "file": "rock.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 218211,
+   "sha256": "91624e02273496207a9c281dd0463229ece8366cdd174b147d6900e3d434c8e7",
+   "type": "rock",
+   "name": "Steen"
+  },
+  {
+   "file": "steel.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 217166,
+   "sha256": "8d0ef6f4d6c6f11328044d2824dfbd480ae3dee7f2808b9492ac76b2dc8592b9",
+   "type": "steel",
+   "name": "Staal"
+  },
+  {
+   "file": "water.png",
+   "size": [
+    512,
+    512
+   ],
+   "bytes": 221424,
+   "sha256": "f8561a2457cbca21e28fe90df1204be97b4b5c054c8b3ad050c46ee5ff46ddcf",
+   "type": "water",
+   "name": "Water"
+  }
+ ]
+}

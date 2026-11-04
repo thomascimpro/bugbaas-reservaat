@@ -6,7 +6,7 @@ import {GoServiceV2} from '../server/goServiceV2';
 import {freshV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField} from '../game/fieldV2';
-import {ensureGo,rollGoBug} from '../game/goV2';
+import {CHARGED,ensureGo,rollGoBug} from '../game/goV2';
 import {levelXP} from '../game/trainerV2';
 import {gymSites,ensureGyms,gymCoins,gymTimeLeft,placeGymDefender,settleExpiredGym,firstGymTab,gymFightable,GYM_RULES} from '../game/gymsV2';
 import {parseNativeFieldRequest} from '../src/nativeFieldProtocolV2';
@@ -24,7 +24,12 @@ function player(uid:string){
 async function setup(uid:string){
  const store=new SqliteStore(':memory:'),clock={now:NOW},service=new GoServiceV2(store,'local',()=>clock.now);await service.state(uid);await store.run(['v2Players:'+uid],d=>d.set('v2Players:'+uid,player(uid)));
  const box={v:await service.state(uid)};const send=async(type:string,params:Record<string,unknown>={})=>box.v=await service.command(uid,{type,...params,commandId:randomUUID(),expectedRevision:box.v.player.revision});
- const win=async()=>{for(let i=0;i<600&&box.v.goBattle&&box.v.goBattle.phase!=='finished';i++){clock.now+=500;box.v=await service.state(uid);}assert.equal(box.v.goBattle!.phase,'finished');assert.equal(box.v.goBattle!.winner,0,'the strong team beats the wild NPC wardens');};
+ const win=async()=>{for(let i=0;i<3000&&box.v.goBattle&&box.v.goBattle.phase!=='finished';i++){
+  clock.now+=100;box.v=await service.state(uid);const b=box.v.goBattle!,a=b.teams[0][b.active[0]];if(b.phase==='finished')break;
+  if(b.phase==='charge'){const c=b.charge!;if(c.side!==0&&!c.dodged&&b.shields[0]>0&&clock.now>=c.deadline-650)await send('goAct',{action:'dodge',value:{fromX:200,toX:400,fromY:500,toY:500},chargeAt:c.startedAt});continue;}
+  if(a.hp<=0){const next=b.teams[0].findIndex(f=>f.hp>0);if(next>=0)await send('goAct',{action:'switch',value:next});}
+  else if(!b.replaceAt.some(Boolean)&&a.readyAt<=clock.now&&!b.fast[0]){const move=a.go.charged.find(m=>CHARGED[m].energy<=a.energy);await send('goAct',{action:move?'charged':'fast',value:move??null});}
+ }assert.equal(box.v.goBattle!.phase,'finished');assert.equal(box.v.goBattle!.winner,0,'the strong team beats the wild NPC wardens');};
  return {store,clock,service,box,send,win};
 }
 const bug=(v:GameViewV2)=>v.player.specimens[0].id;

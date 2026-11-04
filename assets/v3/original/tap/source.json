@@ -1,0 +1,30 @@
+{
+  "sourceProject": "CimPro BugBaas-3.0",
+  "port": "shared deterministic replay; artwork/presentation are independent of score",
+  "files": [
+    {
+      "file": "src/screens/BugSmashDuelScreen.tsx",
+      "sha256": "bab4ce1e152e385d4126831a19e809f02f2ee936b4b567a512fe73ee1a8ed6ec"
+    },
+    {
+      "file": "src/services/bugSmashDuelService.ts",
+      "sha256": "dc45c96ec33a514346511a4733ca1edf8dea8208cffa6712b22d5997ed2d6674"
+    },
+    {
+      "file": "src/services/bugSquadGameBalance.ts",
+      "sha256": "df682136af861d825aed6e763b8a35801176a7d3a8881f8cc1bafae7b6d326f7"
+    },
+    {
+      "file": "src/services/pointsService.ts",
+      "sha256": "52765b069f13342deb919b5c43a92aafb4222c275628b7a688ea0600e6c1cc1d"
+    },
+    {
+      "file": "src/services/bugDexExpansion.ts",
+      "sha256": "ded6d5e9999ae7e31fa9e1c365b4f9cc0fd57be0c3ede7f0f4259aa10cdea18f"
+    },
+    {
+      "file": "src/services/bugDexNederlandPilot.ts",
+      "sha256": "7d0c87cf4598d7dfbdd0b61aa2906ebc7518ec8d1ab75855201bdc3dbbf0e7b6"
+    }
+  ]
+}

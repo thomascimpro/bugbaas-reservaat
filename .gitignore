@@ -1,4 +1,5 @@
 node_modules/
+server/cloudRuntime.cjs
 .expo/
 dist/
 dist-android-v2/

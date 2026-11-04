@@ -1,0 +1,1367 @@
+{
+  "sourcePackage": "bugbaas-creatorpakket-20261102",
+  "purpose": "First isolated Arcade block; no 3D changes",
+  "files": [
+    {
+      "id": "A05",
+      "file": "arena.webp",
+      "width": 720,
+      "height": 1279,
+      "bytes": 323942,
+      "sha256": "4c72441c1f59784b9afdf0fb670b6c02d9ca85e10dc1c45f66d53a2f4bd1c270",
+      "source": "assets/arena-forest.png",
+      "sourceSHA256": "9fd716b0bc15f911161eb2855fda3d0ffc36bb07f03ca0cd41b964a171fda634",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim"
+    },
+    {
+      "id": "A06",
+      "file": "trail.webp",
+      "width": 720,
+      "height": 1279,
+      "bytes": 396924,
+      "sha256": "710eecef1ed01954b351424bbb40e023b6ac11f4d890a416280a2bce9fc87c0a",
+      "source": "assets/arcade-trail.png",
+      "sourceSHA256": "143e7a748b317c6bff2a54f2353149e5b5fe7911e050465ddaefe977b938a1c6",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim"
+    },
+    {
+      "id": "A09",
+      "file": "logo.webp",
+      "width": 480,
+      "height": 160,
+      "bytes": 33136,
+      "sha256": "4a37d232375e27cbc6f03dcfaa1851f52b853f735cfd595328e702d34633e141",
+      "source": "assets/bugbaas-logo.png",
+      "sourceSHA256": "48419e72dc89c27e05e6264fb15e0072df0885f84e78bc14d1b2fa481855d9a8",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim"
+    },
+    {
+      "id": "A01",
+      "file": "navigation.webp",
+      "width": 640,
+      "height": 569,
+      "bytes": 159610,
+      "sha256": "6c1af799efa43445d4e3d753c2d70a27e18087012579a045ea6522e345680a8e",
+      "source": "assets/ui-navigation-atlas.png",
+      "sourceSHA256": "ac5a762e17db516de0899eb94b7e4d02c29f0e6586ac0a82b69aeab35229ed35",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim",
+      "regions": [
+        {
+          "name": "map",
+          "rect": [
+            0,
+            0,
+            167.45864661654136,
+            146.7669172932331
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "arcade",
+          "rect": [
+            167.45864661654136,
+            0,
+            156.87218045112783,
+            146.7669172932331
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "bugs",
+          "rect": [
+            324.3308270676692,
+            0,
+            148.21052631578948,
+            146.7669172932331
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "battle",
+          "rect": [
+            472.54135338345867,
+            0,
+            167.45864661654136,
+            146.7669172932331
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "bag",
+          "rect": [
+            0,
+            146.7669172932331,
+            167.45864661654136,
+            140.99248120300751
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "dex",
+          "rect": [
+            167.45864661654136,
+            146.7669172932331,
+            156.87218045112783,
+            142.91729323308272
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "cocoon",
+          "rect": [
+            324.3308270676692,
+            146.7669172932331,
+            148.21052631578948,
+            140.99248120300751
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "buddy",
+          "rect": [
+            472.54135338345867,
+            146.7669172932331,
+            167.45864661654136,
+            140.99248120300751
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "gym",
+          "rect": [
+            0,
+            287.7593984962406,
+            167.45864661654136,
+            144.3609022556391
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "raid",
+          "rect": [
+            167.45864661654136,
+            289.6842105263158,
+            156.87218045112783,
+            143.8796992481203
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "friends",
+          "rect": [
+            324.3308270676692,
+            287.7593984962406,
+            148.21052631578948,
+            140.99248120300751
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "daily",
+          "rect": [
+            472.54135338345867,
+            287.7593984962406,
+            167.45864661654136,
+            145.8045112781955
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "settings",
+          "rect": [
+            0,
+            432.1203007518797,
+            167.45864661654136,
+            136.66165413533835
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "info",
+          "rect": [
+            167.45864661654136,
+            433.56390977443607,
+            156.87218045112783,
+            135.21804511278197
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "gift",
+          "rect": [
+            324.3308270676692,
+            428.7518796992481,
+            148.21052631578948,
+            140.0300751879699
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "profile",
+          "rect": [
+            472.54135338345867,
+            433.56390977443607,
+            167.45864661654136,
+            135.21804511278197
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A19",
+      "file": "controls.webp",
+      "width": 640,
+      "height": 427,
+      "bytes": 58704,
+      "sha256": "35d79fcb470aa0ad7f395b1af66a8aae6f5691fe3ca622be26821e58b57acb3e",
+      "source": "assets/control-icons-atlas.png",
+      "sourceSHA256": "d0220e2b33b8b5a7fd9818ece49543fd15286f9f539182e64f4b1a294816ab59",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim",
+      "regions": [
+        {
+          "name": "back",
+          "rect": [
+            0,
+            0,
+            160,
+            118.75
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "close",
+          "rect": [
+            160,
+            0,
+            160,
+            118.75
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "play",
+          "rect": [
+            320,
+            0,
+            160,
+            118.75
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "pause",
+          "rect": [
+            480,
+            0,
+            160,
+            118.75
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "info",
+          "rect": [
+            0,
+            118.75,
+            160,
+            106.25
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "sound",
+          "rect": [
+            160,
+            118.75,
+            160,
+            106.25
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "mute",
+          "rect": [
+            320,
+            118.75,
+            160,
+            106.25
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "check",
+          "rect": [
+            480,
+            118.75,
+            160,
+            106.25
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "plus",
+          "rect": [
+            0,
+            225,
+            160,
+            97.91666666666667
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "minus",
+          "rect": [
+            160,
+            225,
+            160,
+            97.91666666666667
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "search",
+          "rect": [
+            320,
+            225,
+            160,
+            97.91666666666667
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "filter",
+          "rect": [
+            480,
+            225,
+            160,
+            97.91666666666667
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "sort",
+          "rect": [
+            0,
+            322.9166666666667,
+            160,
+            103.75
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "favorite",
+          "rect": [
+            160,
+            322.9166666666667,
+            160,
+            103.75
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "transfer",
+          "rect": [
+            320,
+            322.9166666666667,
+            160,
+            103.75
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "camera",
+          "rect": [
+            480,
+            322.9166666666667,
+            160,
+            103.75
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A17",
+      "file": "types.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 70218,
+      "sha256": "97fe842b73687e5d33a5b7eff8c44a397ecf6b5dafe19a70a7d23135dff788f3",
+      "source": "assets/type-icons-atlas.png",
+      "sourceSHA256": "e2f0af92181e676d1691fec6c4cf81ddb896f7cca16a8d1c34aadcfea6ae0ecd",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim",
+      "regions": [
+        {
+          "name": "normal",
+          "rect": [
+            0,
+            0,
+            160,
+            176.79558011049724
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "fire",
+          "rect": [
+            160,
+            0,
+            160,
+            176.79558011049724
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "water",
+          "rect": [
+            320,
+            0,
+            160,
+            176.79558011049724
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "grass",
+          "rect": [
+            480,
+            0,
+            160,
+            176.79558011049724
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "flying",
+          "rect": [
+            0,
+            176.79558011049724,
+            160,
+            145.85635359116023
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "bug",
+          "rect": [
+            160,
+            176.79558011049724,
+            160,
+            145.85635359116023
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "poison",
+          "rect": [
+            320,
+            176.79558011049724,
+            160,
+            145.85635359116023
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "ground",
+          "rect": [
+            480,
+            176.79558011049724,
+            160,
+            145.85635359116023
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "rock",
+          "rect": [
+            0,
+            322.65193370165747,
+            160,
+            157.34806629834253
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "steel",
+          "rect": [
+            160,
+            322.65193370165747,
+            160,
+            157.34806629834253
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "dark",
+          "rect": [
+            320,
+            322.65193370165747,
+            160,
+            157.34806629834253
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "help",
+          "rect": [
+            480,
+            322.65193370165747,
+            160,
+            157.34806629834253
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A04",
+      "file": "fx.webp",
+      "width": 768,
+      "height": 512,
+      "bytes": 47776,
+      "sha256": "b301e28bf8fb3ea585b419855c63c576d76b5c322a5f29876a6dc04173d2bddb",
+      "source": "assets/fx-atlas.png",
+      "sourceSHA256": "a1aa8f68fb93f92a533ec5a19f5a3198ca6812909986d38f99bf4a4a92238081",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim",
+      "regions": [
+        {
+          "name": "air-1",
+          "rect": [
+            0,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "air-2",
+          "rect": [
+            192,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "air-3",
+          "rect": [
+            384,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "air-4",
+          "rect": [
+            576,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "leaf-1",
+          "rect": [
+            0,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "leaf-2",
+          "rect": [
+            192,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "leaf-3",
+          "rect": [
+            384,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "leaf-4",
+          "rect": [
+            576,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "fire-1",
+          "rect": [
+            0,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "fire-2",
+          "rect": [
+            192,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "fire-3",
+          "rect": [
+            384,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "fire-4",
+          "rect": [
+            576,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "shield-1",
+          "rect": [
+            0,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "shield-2",
+          "rect": [
+            192,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "shield-3",
+          "rect": [
+            384,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "shield-4",
+          "rect": [
+            576,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A25",
+      "file": "fx-extra.webp",
+      "width": 768,
+      "height": 512,
+      "bytes": 60034,
+      "sha256": "e2b48d37fe5d1f44fc9405dc221ef999d3737c3d9b54796770250fee339c5456",
+      "source": "assets/fx-water-bug-poison-normal.png",
+      "sourceSHA256": "17c32a7642d564239913a242a32cf48c9881de1a5b7df5b71dbeeb5827578b69",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim",
+      "regions": [
+        {
+          "name": "water-anticipation",
+          "rect": [
+            0,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "water-strike",
+          "rect": [
+            192,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "water-impact",
+          "rect": [
+            384,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "water-fade",
+          "rect": [
+            576,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "bug-anticipation",
+          "rect": [
+            0,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "bug-strike",
+          "rect": [
+            192,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "bug-impact",
+          "rect": [
+            384,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "bug-fade",
+          "rect": [
+            576,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "poison-anticipation",
+          "rect": [
+            0,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "poison-strike",
+          "rect": [
+            192,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "poison-impact",
+          "rect": [
+            384,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "poison-fade",
+          "rect": [
+            576,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "normal-anticipation",
+          "rect": [
+            0,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "normal-strike",
+          "rect": [
+            192,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "normal-impact",
+          "rect": [
+            384,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "normal-fade",
+          "rect": [
+            576,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A26",
+      "file": "fx-last.webp",
+      "width": 768,
+      "height": 512,
+      "bytes": 73000,
+      "sha256": "99671826fd4127b7ae2a7f2bf0a4876cefeb9f1cfd2e086a2afa4d21abaa4d05",
+      "source": "assets/fx-ground-rock-steel-dark.png",
+      "sourceSHA256": "07ef885517f8f74436c7e9ca1f86a35adcf08aab58805ae16df18e828cdd3c7f",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim",
+      "regions": [
+        {
+          "name": "ground-anticipation",
+          "rect": [
+            0,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "ground-strike",
+          "rect": [
+            192,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "ground-impact",
+          "rect": [
+            384,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "ground-fade",
+          "rect": [
+            576,
+            0,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "rock-anticipation",
+          "rect": [
+            0,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "rock-strike",
+          "rect": [
+            192,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "rock-impact",
+          "rect": [
+            384,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "rock-fade",
+          "rect": [
+            576,
+            128,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "steel-anticipation",
+          "rect": [
+            0,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "steel-strike",
+          "rect": [
+            192,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "steel-impact",
+          "rect": [
+            384,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "steel-fade",
+          "rect": [
+            576,
+            256,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "dark-anticipation",
+          "rect": [
+            0,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "dark-strike",
+          "rect": [
+            192,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "dark-impact",
+          "rect": [
+            384,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "name": "dark-fade",
+          "rect": [
+            576,
+            384,
+            192,
+            128
+          ],
+          "anchor": [
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "file": "dragonfly.webp",
+      "bytes": 38088,
+      "source": "assets/cutouts/dragonfly.png",
+      "sourceSHA256": "3d59f17895303376f5e563155e066219718f4fa1c1fd2383d54f31cd88b93aaa",
+      "sha256": "b63b8207e7273b85ae66c43f9c5a8de044378d1b7ac5b98c3f3702ded1f98b03",
+      "provenance": "OpenAI imagegen; original prompt in creator package"
+    },
+    {
+      "file": "stag-beetle.webp",
+      "bytes": 33222,
+      "source": "assets/cutouts/stag-beetle.png",
+      "sourceSHA256": "00adf80abe73dcdf5fae8fa0a3e3ccafb1287c5b136851e57edf738366bd9421",
+      "sha256": "fdf240225f591d1b402cf0fe0e129dd14e514387d5acaa94ca7caf07469b1d3b",
+      "provenance": "OpenAI imagegen; original prompt in creator package"
+    },
+    {
+      "file": "firefly.webp",
+      "bytes": 32468,
+      "source": "assets/cutouts/firefly.png",
+      "sourceSHA256": "e0897661edc2142d6b577ce6c0b1ca30a29522868c236f0e3ff0cfb2dea47844",
+      "sha256": "6d5e97c1ac994e18b07f8f150ae64ca0e960a0a9ec44905dcd9ef3626e6c33d4",
+      "provenance": "OpenAI imagegen; original prompt in creator package"
+    },
+    {
+      "file": "katydid.webp",
+      "bytes": 37442,
+      "source": "assets/cutouts/katydid.png",
+      "sourceSHA256": "cf1c3934f87bc2d7b0fb5d7d6dd9c8e7f40aa9c8ded43d3aeeb669fdb0c19a25",
+      "sha256": "a7a09a7ec845afe78b1761e4f30a900b70e60652c6b6fdc8d41e100269227cf6",
+      "provenance": "OpenAI imagegen; original prompt in creator package"
+    },
+    {
+      "id": "A03",
+      "file": "nest.webp",
+      "width": 311,
+      "height": 291,
+      "bytes": 35900,
+      "sha256": "38c4ec8e50d6a68f17ebe805da3fb87f6bcec99dfc5003b09a36a13d39f8b095",
+      "source": "assets/arcade-objects-atlas.png#nest (rect 0,326,340,316, trimmed)",
+      "sourceSHA256": "56ee22bbbdd830c08040db1dbc211cb386d53b6d21601e15c7711ff8ec0b2dca",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim; cropped by Claude for Nestwacht 2026-11-04"
+    },
+    {
+      "id": "A07",
+      "file": "canopy.webp",
+      "width": 720,
+      "height": 1279,
+      "bytes": 202736,
+      "sha256": "1c83c20e32f3940fcaf0b8fa1061f8d7d251a82f8b86f382af242b496dbad0f3",
+      "source": "assets/arcade-canopy.png",
+      "sourceSHA256": "e36e5bf709c7bc389ebd4bc455936501906531fbd9f10553166237c976b51c7b",
+      "provenance": "OpenAI imagegen; no third-party CC0 claim; resized by Claude for Windvlucht 2026-11-04"
+    }
+  ]
+}

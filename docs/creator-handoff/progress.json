@@ -1,0 +1,535 @@
+{
+  "schemaVersion": 1,
+  "planRevision": "4 november 2026 — presentatie afwerken",
+  "updatedAt": "2026-11-04",
+  "sourceOfTruth": "PLAN.md",
+  "statusMeaning": "Presence/design/clip names do not prove an integrated finished game. Only mark af with relevant evidence.",
+  "delivery": {
+    "destination": "Codex primary, after Claude handoff",
+    "status": "0.1.31 release-ready; signed artifact and final native smoke verified",
+    "acknowledged": true,
+    "prompt": "CLAUDE_INBOX.md",
+    "reply": "CLAUDE_UITVOERING.md",
+    "acknowledgementEvidence": "CLAUDE_OVERDRACHT_AAN_CODEX.md and POGO_WERKREGISTER 4 November"
+  },
+  "roles": {
+    "design": "Codex",
+    "technical": "Sol 6.1, xhigh",
+    "visualAnimation3D": "Claude Opus 5.5"
+  },
+  "baseline": {
+    "species": 153,
+    "threeStageFamilies": 50,
+    "standaloneOerbugs": 3,
+    "new2Dsets": 26,
+    "new2Dcutouts": 16,
+    "firstTikduelPrototype": true,
+    "unitTestsPassed": 679,
+    "httpReplayTestPassed": 1,
+    "typecheck": "exit0; .local/release0131/typecheck-final.log",
+    "webExport": "exit0; .local/release0131/web.log",
+    "browser": "Seven original games on 320/430 widths; all seven low/reduced motion; no console errors. Offline receipt recovery verified.",
+    "unifiedNavigation": true,
+    "otherSixGames": true,
+    "newCombat": true,
+    "nativeAnimationTest": "Android15: native 3D Butterfly scene and60s result; background/resume, map, collection and battle overview; no new crash log",
+    "testsTotal": 679,
+    "tests": "679/679 after asset integration and native sprite regression"
+  },
+  "fileOwnership": {
+    "integrator": "Codex: all handed-off files; subagents stopped on workspace-credit error; no active parallel writers",
+    "visual": "Codex after explicit Claude handoff; preserve all existing Claude changes",
+    "rule": "One writer per file; transfer named files in Claude reply before both work on them"
+  },
+  "tasks": [
+    {
+      "id": "IN-01",
+      "title": "Eén shell en vier vaste tabs",
+      "owner": "Sol integratie / Claude gedeelde UI",
+      "dependsOn": [],
+      "spec": "sections/navigation.md",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        "sections/navigation-implementation.md",
+        ".local/tour/sheet.jpg (390x844: Kaart, Menu, Arcade, Bugs, Strijd met één onderbalk)",
+        "Final signed0.1.31 APK: same-signer update, native3D Butterfly60s, no new Android crash log; .local/release0131/native/."
+      ],
+      "blocker": null,
+      "note": "Sol: shell/onderbalk/9 menu-ingangen gebouwd. Claude 3 nov: alle vier tabs + menu bereikbaar en zonder paginafouten op 390x844. Open: 320x568/430x932 en native."
+    },
+    {
+      "id": "VS-01",
+      "title": "Gedeelde previewstijl in schermen",
+      "owner": "Claude",
+      "dependsOn": [
+        "IN-01"
+      ],
+      "spec": "PLAN.md",
+      "status": "bezig",
+      "claimedBy": "Claude",
+      "filesClaimed": [
+        "src/CatchResultV2.tsx",
+        "src/GoBattleV2.tsx (hub-presentatie, niet het gevecht)",
+        "src/GoEchoArenaV2.tsx (presentatie)",
+        "src/PogoUiV2.tsx",
+        "src/TabsV2.tsx",
+        "src/TypeEmblemV2.tsx",
+        "src/uiV2.tsx (basiscomponenten)"
+      ],
+      "assetsMade": true,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": false,
+      "evidence": [
+        ".local/glass-ui/2-menu.png",
+        ".local/glass-ui/3-detail.png",
+        ".local/tour/bugs-strijd.jpg (Bugs P04-1, Strijd P18-1)",
+        ".local/menu-pages/sheet.jpg (Team, Tas, Bugdex, Cocons, Buddy, Gyms, Profiel, Doelen, Instellingen in glas)"
+      ],
+      "blocker": null,
+      "note": "Glas in PogoUiV2 + basiscomponenten uiV2/TabsV2: alle menu-pagina's volgen; uitlegregels onder tabs weg. Bugs P04-1, Strijd P18-1. Open: Gym-ploegkeuze/volume-knoppen nog groen accent, 320/430-controle."
+    },
+    {
+      "id": "AN-00",
+      "title": "Eventadapter, cleanup, presets en geluid",
+      "owner": "Sol contract / Claude presentatie",
+      "dependsOn": [
+        "VS-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": "Claude",
+      "filesClaimed": [
+        "src/arcade/ArcadeScreenV3.tsx"
+      ],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        ".local/tap-ui/play-390-*.png (één HUD: sluiten links, tijd midden, 🏆 score + doel rechts)",
+        "Codex 4 nov: 679 unit tests; .local/arcade-status-20261104/release-*; low/reduced motion,320/430; pending/confirmed receipt proof."
+      ],
+      "blocker": null,
+      "note": "Claude 4 nov: gedeelde spel-HUD naar P13 (tijd midden, score rechts met doel/Oefenen eronder); aparte doelregel verwijderd. Open: resultaatscherm pending/accepted animatie, rewardbubbels, audio."
+    },
+    {
+      "id": "AN-01",
+      "title": "Bug- en trainerclips / variantmapping",
+      "owner": "Claude",
+      "dependsOn": [],
+      "spec": "sections/animations.md",
+      "status": "bezig",
+      "claimedBy": "Claude",
+      "filesClaimed": [
+        "scripts/upgrade-bug-materials.mjs",
+        "scripts/render-bug-portraits-hd.py",
+        "assets/3d/**"
+      ],
+      "assetsMade": true,
+      "integrated": false,
+      "visuallyChecked": true,
+      "functionalChecked": false,
+      "evidence": [
+        "assets/3d/README.md",
+        ".local/portraits-hd/full-a (306 HD-portretten)",
+        ".local/bug-upgrade (153 materiaalupgrades, animaties ongewijzigd)"
+      ],
+      "blocker": null,
+      "note": "Nog niet naar public/models of assets/v2/portraits gepromoveerd; wacht op 08_ASSETREVIEW-akkoord."
+    },
+    {
+      "id": "GM-01",
+      "title": "Tikduel volledig afwerken",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "IN-01",
+        "AN-00"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": "Claude",
+      "filesClaimed": [
+        "src/arcade/original/TapDuelScene.tsx",
+        "src/arcade/original/tapPortraits.ts (nieuw)"
+      ],
+      "assetsMade": true,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        ".local/tap-ui/play-390-1.png (doelen met HD-portret, tikbalk, rarity-gloed, squadringen)",
+        "src/arcade/original/tapPortraits.ts: 1000 identiteiten → 113 HD-portretten (was 36; max 69 i.p.v. 490 op één beeld)",
+        "Codex 4 nov: 679 unit tests; .local/arcade-status-20261104/release-*; low/reduced motion,320/430; pending/confirmed receipt proof."
+      ],
+      "blocker": null,
+      "note": "First isolated prototype exists; not the finished preview/integrated game. Claude 4 nov: Tikduel P13.1 — tekstblok weg, combo-chip met 160 ms puls, gesegmenteerde tikbalk, tikimpact 140 ms, vangst-burst 220 ms + punten 250 ms, helpertrail ≤300 ms, squad als glascirkels met cooldownring, één squadsteunchip. Simulatie ongewijzigd. Open: 320x568 en low/reduced bekijken."
+    },
+    {
+      "id": "GM-02",
+      "title": "Nestwacht volledige kring",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "GM-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": "Claude",
+      "filesClaimed": [
+        "src/arcade/original/NestDefenseScene.tsx",
+        "assets/v3/arcade/nest.webp (crop A03)"
+      ],
+      "assetsMade": true,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        ".local/nest-ui/play-390-1.png (HD-bospad, zandpad volgens NEST_PATH, HD-nest, glasknoppen)",
+        "Codex 4 nov: 679 unit tests; .local/arcade-status-20261104/release-*; low/reduced motion,320/430; pending/confirmed receipt proof."
+      ],
+      "blocker": null,
+      "note": "Claude 4 nov: Nestwacht — dubbele tijd/score weg (❤/🪙/🌊-chips), cartoon-showcase vervangen door trail.webp + pad, NORMAL/FAST/BAAS/RAAK vervangen door 👑/🛡️/genezer-ring/slow-contour en impactring 120 ms, bouw/upgrade-pop 220/250 ms, torenterugslag 150 ms, niveau-stippen. Open: spray/web-animatie, lekkage-flits, 320x568."
+    },
+    {
+      "id": "GM-03",
+      "title": "Bubbelzwerm volledige kring",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "GM-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        ".local/bubble-ui/play-390-1.png",
+        "Codex 4 nov: 679 unit tests; .local/arcade-status-20261104/release-*; low/reduced motion,320/430; pending/confirmed receipt proof."
+      ],
+      "blocker": null,
+      "note": " Claude 4 nov: HUD/labels/glas-presentatie gedaan, zie CLAUDE_OVERDRACHT_AAN_CODEX.md."
+    },
+    {
+      "id": "GM-04",
+      "title": "Webrenner volledige kring",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "GM-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        ".local/games-ui/original-web-runner-390-*.png",
+        "Codex 4 nov: 679 unit tests; .local/arcade-status-20261104/release-*; low/reduced motion,320/430; pending/confirmed receipt proof."
+      ],
+      "blocker": null,
+      "note": " Claude 4 nov: HUD/labels/glas-presentatie gedaan, zie CLAUDE_OVERDRACHT_AAN_CODEX.md."
+    },
+    {
+      "id": "GM-05",
+      "title": "Windvlucht volledige kring",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "GM-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        "nog niet bekeken (scriptfout bij openen)",
+        ".local/arcade-status-20261104/handoff-glide-{320,430}.png",
+        "Codex 4 nov: 679 unit tests; .local/arcade-status-20261104/release-*; low/reduced motion,320/430; pending/confirmed receipt proof."
+      ],
+      "blocker": null,
+      "note": "Codex: opened, input and stop verified on320x568/430x932. Earlier opening timeout was not reproduced. Missing animation work remains; not a complete visual approval."
+    },
+    {
+      "id": "GM-06",
+      "title": "Vlinderjacht volledige kring",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "GM-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        "nog niet bekeken (scriptfout bij openen)",
+        "Codex 4 nov: 679 unit tests; .local/arcade-status-20261104/release-*; low/reduced motion,320/430; pending/confirmed receipt proof."
+      ],
+      "blocker": null,
+      "note": " Claude 4 nov: HUD/labels/glas-presentatie gedaan, zie CLAUDE_OVERDRACHT_AAN_CODEX.md."
+    },
+    {
+      "id": "GM-07",
+      "title": "Bladtoren volledige kring",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "GM-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        ".local/games-ui/original-butterfly-catch-390-*.png",
+        ".local/arcade-status-20261104/handoff-tower-{320,430}.png",
+        "Final signed0.1.31 APK: same-signer update, native3D Butterfly60s, no new Android crash log; .local/release0131/native/."
+      ],
+      "blocker": null,
+      "note": "Codex: opened, input and stop verified on320x568/430x932. Earlier opening timeout was not reproduced. Missing animation work remains; not a complete visual approval."
+    },
+    {
+      "id": "CB-01",
+      "title": "Nieuw actief squadduel",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "AN-00",
+        "AN-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "open",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": false,
+      "visuallyChecked": false,
+      "functionalChecked": false,
+      "evidence": [],
+      "blocker": null
+    },
+    {
+      "id": "CR-01",
+      "title": "Bendes met toegewezen game en rescue",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "GM-01",
+        "GM-02",
+        "GM-03",
+        "GM-06",
+        "CB-01"
+      ],
+      "spec": "PLAN.md",
+      "status": "open",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": false,
+      "visuallyChecked": false,
+      "functionalChecked": false,
+      "evidence": [],
+      "blocker": null
+    },
+    {
+      "id": "WR-01",
+      "title": "Kaart/vangen/posts/gym/raid beeld en animatie",
+      "owner": "Claude / Sol bewaakt regels",
+      "dependsOn": [
+        "IN-01",
+        "AN-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "bezig",
+      "claimedBy": "Claude",
+      "filesClaimed": [
+        "src/FieldHomeV2.tsx (presentatie)",
+        "src/ExploreV2.web.tsx (markers)",
+        "src/MapPropsV2.tsx",
+        "src/CatchV2.web.tsx (presentatie)",
+        "src/WalkingSceneV2.ts (camera/presentatie)"
+      ],
+      "assetsMade": true,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": false,
+      "evidence": [
+        ".local/glass-ui/8-map-after-zoom-2d.png (zoom/2D/3D op kaart werkt)",
+        ".local/glass-ui/8b-gym.png (3D-gymtoren + verdediger)",
+        ".local/catch-ui/sheet-new.jpg (vangkop P03, grotere bug)",
+        "Nine bounded instanced nature batches and 96,672-byte Post integrated; no synchronous loader; low-quality procedural fallback. Source/asset HTTP hashes checked."
+      ],
+      "blocker": null,
+      "note": "Open: vangstkaart P03-3 visueel bewijzen (headless GPS blokkeert worp), netveeg-trail/wiebel/sparkle, post/natuur-GLB op kaart, raidcocon met actieve raid bekijken."
+    },
+    {
+      "id": "PR-01",
+      "title": "Collectie/evo/cocon/buddy/terugkomst",
+      "owner": "Claude / Sol bewaakt mutaties",
+      "dependsOn": [
+        "VS-01",
+        "AN-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "bezig",
+      "claimedBy": "Claude",
+      "filesClaimed": [
+        "src/BugDetailV2.tsx",
+        "src/GoCollectionV2.tsx (lijst/presentatie)",
+        "src/CollectionArtV2.tsx",
+        "src/CollectionPresentationV2.tsx",
+        "src/BugStrengthV2.tsx"
+      ],
+      "assetsMade": true,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": false,
+      "evidence": [
+        ".local/glass-ui/3-detail.png",
+        ".local/glass-ui/4-power-sheet.png (multi-power-up MAX tot 10)",
+        ".local/tour/bugs-strijd.jpg"
+      ],
+      "blocker": null,
+      "note": "Bugdetail + multi-power-up + Bugs-raster als P04-1/2. Open: evolutie-morph (P04-3), cocons/buddy/terugkomst."
+    },
+    {
+      "id": "RW-01",
+      "title": "Resultaten, rewards, scores, medailles en rotatie",
+      "owner": "Sol regels / Claude visueel",
+      "dependsOn": [
+        "GM-01"
+      ],
+      "spec": "sections/animations.md",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        ".local/handoff-tests.log",
+        ".local/arcade-status-20261104/handoff-result-offline.png",
+        ".local/arcade-status-20261104/handoff-result-confirmed.png",
+        "Codex 4 nov: 679 unit tests; .local/arcade-status-20261104/release-*; low/reduced motion,320/430; pending/confirmed receipt proof."
+      ],
+      "blocker": null,
+      "note": "Stored score stays pending during actual browser-offline test; retry after network restore confirms score48,175dust/20XP. Countup<=350ms, success sound only after receipt; no early local win sound. Overall reward/animation polish still open."
+    },
+    {
+      "id": "QA-01",
+      "title": "Gerichte integratie en kandidaat APK",
+      "owner": "Sol integrator / Claude visuele check",
+      "dependsOn": [
+        "IN-01",
+        "VS-01",
+        "GM-01",
+        "GM-02",
+        "GM-03",
+        "GM-04",
+        "GM-05",
+        "GM-06",
+        "GM-07",
+        "CB-01",
+        "CR-01",
+        "WR-01",
+        "PR-01",
+        "RW-01"
+      ],
+      "spec": "sections/technical.md",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        "679 tests, tsc, webexport, browser320/430/low/reduced, final signed APK smoke, cloud API/assets/index. Physical GPS/Health Connect and all seven complete native playthroughs not claimed."
+      ],
+      "blocker": null
+    },
+    {
+      "id": "AF-01",
+      "title": "Eerdere AFK-vraag: meer geverifieerde vangpogingen/km, compacte terugkomst en beschermde snelle transfer",
+      "owner": "Sol regels / Claude presentatie",
+      "dependsOn": [
+        "PR-01"
+      ],
+      "spec": "PLAN.md; existing server awayCatch and user-request snapshot",
+      "status": "controleren",
+      "claimedBy": "Claude (gebruikersbesluit 3 nov)",
+      "filesClaimed": [
+        "game/walkCatchV2.ts",
+        "server/goServiceV2.ts (auto/walkCatch/grantAutoCatch/awayCatch)",
+        "game/goV2.ts (type auto.walk)",
+        "src/backgroundAutoSessionV2.ts",
+        "src/BackgroundAutoCatchV2.ts",
+        "src/AwaySummaryV2.tsx",
+        "tests/autoAwayV2.test.ts",
+        "tests/backgroundAutoV2.test.ts",
+        "tests/goV2.test.ts",
+        "tests/goGiftsV2.test.ts",
+        "tests/afkLoopV2.test.ts"
+      ],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": false,
+      "functionalChecked": true,
+      "evidence": [
+        "tests/autoAwayV2.test.ts (7 nieuwe tests groen)",
+        "volledige suite 616/622 (6 bestaande serverfouten ongewijzigd)",
+        ".local/away-ui/popup.png, confirm.png, done.png (390x844: 1,44 km workout → 14 bugs, 3 zwakke weggestuurd)"
+      ],
+      "blocker": null,
+      "note": "Gebruiker: ~10 bugs/km bij echte workout, minder bij gewone beweging, wilde kansen, melding = spel. Wandelvangst: 1 per 200 m normaal (5/km), workout (gemiddeld >=6,3 km/u) telt dubbel (10/km), gratis/altijd gevangen, elke 10e = zeldzaamste van de plek, max 120/dag, rijden >25 km/u telt niet. Melding en terugkomst tonen dezelfde regel walkTodayText. Open: native meldingsproef op toestel, terugkomstpopup visueel. Claude 4 nov: terugkomstpopup met tegels in zeldzaamheidskleur, sterren/shiny/♻-markering en knop \"♻ n weg\" (twee tikken, goTransferMany, zelfde beschermregels als opruimhulp). Werkt pas live als GameV2 run/busy doorgeeft (verzoek aan Sol in CLAUDE_UITVOERING). Toastpositie boven het net nog niet opnieuw bewezen. Codex wired run/busy into real GameV2 AwaySummary, so protected cleanup is enabled. New native notification proof remains open."
+    }
+  ],
+  "trackerOwner": "Codex (overgedragen door Claude op 4 nov 2026)",
+  "trackerNote": "Claude stopt (credits op). Alle open punten en bestanden: docs/creator-handoff/CLAUDE_OVERDRACHT_AAN_CODEX.md.",
+  "deferredUserRequest": "Legacy account transfer/first-login compensation and showable legacy cosmetic: explicitly deferred until current Claude handoff work is finished; not implemented.",
+  "releaseCandidate": {
+    "version": "0.1.31",
+    "versionCode": 32,
+    "status": "verified; public publication follows source commit",
+    "assets": {
+      "models": 153,
+      "portraits": 306,
+      "rerendered": 20
+    },
+    "legacy": "explicitly deferred by user",
+    "url": "https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.31",
+    "apkSHA256": "4966bdb9713a14ec44990c23ff3ed4a40c770559d446904d991fcfa4146998cc",
+    "apkBytes": 94524301,
+    "backend": "https://bugbaas-reservaat-preview-2ttjnkmc0-thomas-cim-pro.vercel.app"
+  },
+  "nativeSmoke": {
+    "updateInstalled": true,
+    "sameSigner": true,
+    "nativeButterfly3D": true,
+    "nativeButterflyCompleted60s": true,
+    "existingCollectionVisible": true,
+    "backgroundResume": true,
+    "newCrashLogEntries": 0,
+    "physicalWalk": false,
+    "personalGoogleSignIn": false
+  }
+}

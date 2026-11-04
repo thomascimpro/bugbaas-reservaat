@@ -15,7 +15,8 @@ for(const id of ids){
   const name=id+(shiny?'-shiny':'');
   if(manifest.species[id][shiny?'shiny':'normal']!==name+'.png')throw new Error('Portrait manifest filename differs for '+name);
   const png=await readFile(join(source,name+'.png')),meta=await sharp(png).metadata(),webp=await stat(join(source,name+'.webp'));
-  if(meta.width!==1024||meta.height!==1024||!meta.hasAlpha)throw new Error('Expected completed transparent 1024px portrait for '+name);
+  const size=manifest.species[id].size;
+  if(![768,1024].includes(size)||meta.width!==size||meta.height!==size||!meta.hasAlpha)throw new Error('Expected completed transparent HD portrait for '+name);
   images.push({name,png});hdBytes+=webp.size;
  }
 }
@@ -35,4 +36,4 @@ await writeFile(resolve(root,'src/portraitThumbsV2.ts'),[
  'export const portraitThumbs:Record<string,readonly [ImageSourcePropType,ImageSourcePropType]>={',
  ...rows,'};','',
 ].join('\n'));
-console.log(JSON.stringify({species:ids.length,variants:images.length,size:256,transparent:true,hdWebPBytes:hdBytes,thumbnailWebPBytes:thumbBytes,byteReductionPercent:Number((100*(1-thumbBytes/hdBytes)).toFixed(2)),hdToThumbRatio:Number((hdBytes/thumbBytes).toFixed(2)),decodedPixelReduction:16}));
+console.log(JSON.stringify({species:ids.length,variants:images.length,size:256,transparent:true,hdWebPBytes:hdBytes,thumbnailWebPBytes:thumbBytes,byteReductionPercent:Number((100*(1-thumbBytes/hdBytes)).toFixed(2)),hdToThumbRatio:Number((hdBytes/thumbBytes).toFixed(2)),decodedPixelReduction:Math.min(...ids.map(id=>(manifest.species[id].size/256)**2))}));

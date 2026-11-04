@@ -1,0 +1,39 @@
+{
+  "set": "world-props",
+  "created": "2026-11-02",
+  "style": "HD natuur zoals docs/concepts/combat-20261102 (Codex-beeld leidend): bemost gesteente, schors, goud, warm boslicht",
+  "tools": "Blender 5.1.2 (Cycles, OptiX RTX 4050), eigen geometrie; scripts assets/3d/world-props/authoring/build_props.py + hd_lib.py",
+  "license": "Eigen werk CC0; materialen en HDRI CC0 van Poly Haven (forest_slope, mossy_rock, bark_willow_02, forest_ground_04), lokaal in .local/polyhaven (niet in Git)",
+  "rebuild": "blender --background --factory-startup --python assets/3d/world-props/authoring/build_props.py -- <repo> egg gym post   (toevoegen: preview = snelle 420px-proef)",
+  "models": [
+    {
+      "file": "public/models/props/Gym.glb",
+      "bytes": 629252,
+      "sha256": "c7588689034ad76d109a23ec1ca67746f264f73fa0df1ecabd4c441ea97e4003",
+      "recolorMaterial": "TeamColor (vaandels) + Crystal",
+      "use": "kaart-gym; zet ploegkleur op materiaal TeamColor/Crystal, verdediger-bug op platform (y\u22483.0 in Blender-z, top van Arena)"
+    },
+    {
+      "file": "public/models/props/RaidEgg.glb",
+      "bytes": 326060,
+      "sha256": "c0341b5bac086b128aec5b6d515a4e4fe5e230e23b00efa172f281f5e78d3c5d",
+      "recolorMaterial": "EggShell",
+      "use": "kaart-raidcocon; tint EggShell met tierkleur (\u26051 #5CC23A, \u26053 #3A9BEF, \u26054 #B45BEB, \u26055/Oerbug #F2A33A)"
+    },
+    {
+      "file": "public/models/props/Post.glb",
+      "bytes": 96672,
+      "sha256": "58c4bbb8d831712e547e5d656b70a59d68d4d2c234aeb6a6df04a24acc52b07e",
+      "recolorMaterial": "PostDisc",
+      "use": "kaart-post; PostDisc teal #43D7C0 klaar, lila #AAA1CA gebruikt",
+      "originalSha256": "966076a548c36bf799e962dfa3b519957de136c952f1ee90dcdb0b54875c0399",
+      "originalBytes": 250992,
+      "runtimeOptimization": "meshopt simplify ratio 0.5 error 0.005, quantization; no runtime decoder required"
+    }
+  ],
+  "notes": [
+    "Renders 768x768 PNG met transparante achtergrond; omzetten naar webp bij inbouw.",
+    "Kaartmodellen hebben vlakke kleuren (geen textures) en zijn gedecimeerd; nog verkleinen met gltf-transform voor inbouw (doel <150 KB).",
+    "Nog niet ingebouwd in de app."
+  ]
+}

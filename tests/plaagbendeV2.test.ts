@@ -7,6 +7,7 @@ import {ensureField} from '../game/fieldV2';
 import {ensureGo,movePool,rollGoBug,stats} from '../game/goV2';
 import {levelXP} from '../game/trainerV2';
 import {locate} from '../game/walkingV2';
+import {arcadeSeed} from '../game/arcade/tapDuel';
 import {gymCandidate} from '../game/worldSitesV2';
 import {BALLOON_EVERY_MS,BALLOON_STAYS_MS,PLAAG_WINDOW_MS,ensureBalloon,invasionAt,plaagPools,plaagTeam,plaagThemes} from '../game/plaagbendeV2';
 import type {GoBattle} from '../game/goBattleV2';
@@ -18,7 +19,7 @@ import type {GameViewV2} from '../game/typesV2';
 const T0=Date.UTC(2026,9,29,9),FIX={lat:51.4416,lng:5.4697,accuracy:5};
 const KEY='plaag-test-key',TOKEN=(input:string)=>createHmac('sha256',KEY).update(input).digest('base64url').slice(0,22);
 /** A non-gym post that is invaded at T0 (the schedule is keyed with the stored server secret). */
-function invadedPost(){for(let i=0;i<500;i++){const id='plaag-post-'+i;if(!gymCandidate(id)&&invasionAt(id,T0,TOKEN))return {id,name:'Plaagpost',lat:FIX.lat,lng:FIX.lng,source:'virtual' as const};}throw new Error('no fixture');}
+function invadedPost(){for(let i=0;i<5000;i++){const id='plaag-post-'+i,v=invasionAt(id,T0,TOKEN);if(!gymCandidate(id)&&v&&Math.floor(arcadeSeed(TOKEN('crew-1:'+v.id))/2)%100>=90)return {id,name:'Plaagpost',lat:FIX.lat,lng:FIX.lng,source:'virtual' as const};}throw new Error('no fixture');}
 /** gymSites turns the first post into a gym when no post is a gym candidate, so fixtures add one real gym post. */
 function gymPost(){for(let i=0;;i++){const id='gym-post-'+i;if(gymCandidate(id))return {id,name:'Gympost',lat:FIX.lat+.0003,lng:FIX.lng,source:'virtual' as const};}}
 function player(uid:string,now:number,posts:unknown[]){
@@ -50,7 +51,7 @@ test('every theme has three different species of that main type, led by the resc
   for(let i=0;i<20;i++){const team=plaagTeam('x'+i+type,type);assert.equal(new Set(team).size,3);for(const s of team)assert.equal(movePool(s).types[0],type);}}
 });
 
-test('post invasion: distance enforced, fair CP, win rewards once with a rescued bug, post cleared, receipts idempotent',async()=>{
+test('post leader invasion: distance enforced, fixed tierCP, crew rewards once, post cleared, receipts idempotent',async()=>{
  const post=invadedPost(),gym=gymPost(),uid='plaag-player',t=await setup(uid,[gym,post]),inv=t.view.plaagbende!.find(v=>v.postId===post.id)!;
  assert.ok(inv&&!inv.far,'the invaded post is on the map');const ids=['bug-0','bug-1','bug-2'];
  // Too far away: the server refuses.
@@ -59,14 +60,14 @@ test('post invasion: distance enforced, fair CP, win rewards once with a rescued
  await t.store.run(['v2Players:'+uid],d=>{const p=d.get('v2Players:'+uid) as PlayerV2;p.walking!.posts=[gym,post];d.set('v2Players:'+uid,p);});t.view=await t.service.state(uid);
  // A loss costs nothing and the post stays.
  await t.send('plaagFight',{target:post.id,ids});const b=t.view.goBattle!;assert.ok(b.plaagbende&&b.plaagbende.type===inv.type);
- const mine=ids.map(id=>stats(t.view.player.specimens.find(s=>s.id===id)!).cp),average=mine.reduce((a,c)=>a+c,0)/3;assert.ok(b.teams[1][0].cp<=average,'grunt is not stronger than the team');assert.ok(b.teams[1][0].cp>average*.6,'grunt is still a fight');
+ assert.ok(b.teams[1][0].cp<=900,'tier2 CP cap');assert.equal(b.plaagbende!.crew!.tier,2);assert.equal(b.teams[1].length,3);
  const before={dust:t.view.player.go!.dust,count:t.view.player.specimens.length};await t.finish(false);
  assert.equal(t.view.player.go!.dust,before.dust);assert.equal(t.view.player.specimens.length,before.count);assert.ok(t.view.plaagbende!.some(v=>v.id===inv.id),'still there after a loss');
  // Win: reward once, a rescued bug of the theme, counter, post cleared. A replayed command id does not start a second fight.
  const commandId=randomUUID(),cmd={type:'plaagFight',target:post.id,ids,commandId,expectedRevision:t.view.player.revision};t.view=await t.service.command(uid,cmd);const battle=t.view.player.go!.battle;t.view=await t.service.command(uid,cmd);assert.equal(t.view.player.go!.battle,battle);
  await t.finish(true);const p=t.view.player,rescued=p.specimens.find(s=>s.source==='plaagbende')!;
- assert.ok(rescued&&movePool(rescued.species).types[0]===inv.type,'rescued bug has the grunt type');assert.equal(rescued.species,inv.team[0]);assert.ok(rescued.go!.iv.every(n=>n>=10),'good IVs');
- assert.ok(p.go!.dust>=before.dust+500);assert.equal(p.go!.plaagbende!.wins,1);assert.ok(!t.view.plaagbende!.some(v=>v.id===inv.id),'cleared for this player');
+ assert.ok(rescued&&movePool(rescued.species).types[0]===inv.type,'rescued bug has the grunt type');assert.equal(rescued.species,p.go!.plaagbende!.encounters![inv.id].rescueSpecies);assert.equal(rescued.go!.level,10);assert.ok(rescued.go!.iv.every(n=>n>=0&&n<=15),'free IV roll');
+ assert.equal(p.go!.dust,before.dust+250);assert.equal(p.go!.plaagbende!.wins,1);assert.ok(!t.view.plaagbende!.some(v=>v.id===inv.id),'cleared for this player');
  await assert.rejects(t.send('plaagFight',{target:post.id,ids}),/al verslagen/);assert.equal(t.view.player.specimens.filter(s=>s.source==='plaagbende').length,1);
 });
 
@@ -77,6 +78,8 @@ test('balloon: one at a time near the player, every ~6 hours, playable from anyw
  assert.equal(ensureBalloon(p,T0+BALLOON_EVERY_MS+BALLOON_STAYS_MS,'s6'),null,'an old balloon flies away');
 
  const uid='balloon-player',t=await setup(uid,[]);t.clock.now+=5000;await t.send('worldLocate',{fix:{...FIX,timestamp:t.clock.now}});const balloon=t.view.player.go!.plaagbende!.balloon!;assert.ok(balloon);
+ // This service fixture isolates balloon authority; the full weighted mode generator is tested separately.
+ await t.store.run(['v2Players:'+uid],d=>{const p=d.get('v2Players:'+uid) as PlayerV2;p.go!.plaagbende!.encounters![balloon.id].game='combat';p.go!.plaagbende!.encounters![balloon.id].targetScore=0;});t.view=await t.service.state(uid);
  // Far away and with old GPS: the balloon still works.
  t.clock.now+=10*60000;await t.send('plaagFight',{target:'balloon',ids:['bug-0','bug-1','bug-2']});assert.equal(t.view.goBattle!.plaagbende!.kind,'balloon');
  await t.finish(true);assert.equal(t.view.player.go!.plaagbende!.balloon,null);assert.equal(t.view.player.go!.plaagbende!.wins,1);

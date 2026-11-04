@@ -47,6 +47,7 @@
   //   },
   // ]
   "indexes": [
+    { "collectionGroup": "v2ArcadeDuels", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.status", "order": "ASCENDING" }, { "fieldPath": "payload.league", "order": "ASCENDING" }, { "fieldPath": "payload.expiresAt", "order": "ASCENDING" }] },
     { "collectionGroup": "v2ChallengeScores", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.day", "order": "ASCENDING" }, { "fieldPath": "payload.rule", "order": "ASCENDING" }, { "fieldPath": "payload.score", "order": "DESCENDING" }] },
     { "collectionGroup": "v2ArenaGhosts", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.rule", "order": "ASCENDING" }, { "fieldPath": "payload.round", "order": "ASCENDING" }, { "fieldPath": "payload.createdAt", "order": "DESCENDING" }] },
     { "collectionGroup": "v2ArenaRanks", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "payload.season", "order": "ASCENDING" }, { "fieldPath": "payload.rating", "order": "DESCENDING" }] },

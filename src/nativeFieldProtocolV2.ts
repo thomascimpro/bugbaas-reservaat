@@ -1,12 +1,13 @@
 import type {MapCameraV2} from './mapCameraV2';
 import {MAP_ZOOM} from './mapCameraV2';
 
-const fieldCommands=new Set(['plaagFight','raidPass','raidJoin','raidInvite','raidFight','raidClaim','raidLeave','routeRecord','routeSave','routeDelete','postResearch','goBoss','gymTeam','gymDefend','gymAttack','coinBuy','worldLocate','worldEncounter','worldFocus','worldCast','fieldSupply','fieldTask','fieldLure','goAuto','poiSpin','routeStart','routePause','routeResume','routeFinish','routeCancel']);
-const destinations=new Set(['gyms','coinShop','map','team','ranked','bugdex','profile','buddy','friends','cocoons','settings','account']);
-export type NativeFieldRequest={kind:'ready'}|{kind:'command';id:string;command:string;params:Record<string,unknown>}|{kind:'navigate';name:string;specimenId?:string;camera?:MapCameraV2}|{kind:'geo';action:'get'|'watch'|'clear';id:number}|{kind:'backResult';handled:boolean};
+const fieldCommands=new Set(['plaagArcadeStart','plaagFight','raidPass','raidJoin','raidInvite','raidFight','raidClaim','raidLeave','routeRecord','routeSave','routeDelete','postResearch','goBoss','gymTeam','gymDefend','gymAttack','coinBuy','worldLocate','worldEncounter','worldFocus','worldCast','fieldSupply','fieldTask','fieldLure','goAuto','poiSpin','routeStart','routePause','routeResume','routeFinish','routeCancel']);
+const destinations=new Set(['gyms','coinShop','map','team','ranked','bugdex','profile','buddy','friends','cocoons','settings','account','bag','teamPicker','goals','arcade']);
+export type NativeFieldRequest={kind:'ready'}|{kind:'command';id:string;command:string;params:Record<string,unknown>}|{kind:'navigate';name:string;specimenId?:string;camera?:MapCameraV2}|{kind:'geo';action:'get'|'watch'|'clear';id:number}|{kind:'backResult';handled:boolean}|{kind:'presentation';focus:'catch'|null};
 export function parseNativeFieldRequest(raw:string):NativeFieldRequest|null{
  if(raw.length>16384)return null;try{const m=JSON.parse(raw);if(!m||typeof m!=='object'||Array.isArray(m))return null;
   if(m.kind==='ready'&&Object.keys(m).length===1)return m;
+  if(m.kind==='presentation'&&Object.keys(m).length===2&&(m.focus===null||m.focus==='catch'))return m;
   if(m.kind==='command'&&Object.keys(m).every(k=>['kind','id','command','params'].includes(k))&&typeof m.id==='string'&&/^[\w-]{1,80}$/.test(m.id)&&fieldCommands.has(m.command)&&m.params&&typeof m.params==='object'&&!Array.isArray(m.params)&&!['type','commandId','expectedRevision'].some(k=>Object.hasOwn(m.params,k)))return m;
   if(m.kind==='navigate'&&Object.keys(m).every(k=>['kind','name','camera','specimenId'].includes(k))&&destinations.has(m.name)){
    if(Object.hasOwn(m,'specimenId')&&(m.name!=='team'||typeof m.specimenId!=='string'||!/^[\w-]{1,160}$/.test(m.specimenId)))return null;

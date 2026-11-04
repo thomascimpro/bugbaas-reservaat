@@ -4,6 +4,7 @@ import type {Map as GameMap} from 'maplibre-gl';
 import {areaBiome,biomeAt,contains,edgeDistance,natureSpot} from '../game/habitatsV2';
 import type {AreaFeature} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
+import {mapPropBatch} from './mapPropBatchV3';
 
 export function buildingHeight(p:Record<string,unknown>){return Math.min(12,Math.max(2.5,(Number(p.render_height)||5)*.42));}
 function texture(r:number,g:number,b:number){const data=new Uint8Array(64*64*4);for(let y=0;y<64;y++)for(let x=0;x<64;x++){const i=(y*64+x)*4,n=Math.sin(x*Math.PI/16)*Math.cos(y*Math.PI/16)*3+Math.sin((x+y)*Math.PI/8)*1.5;data[i]=r+n;data[i+1]=g+n;data[i+2]=b+n;data[i+3]=255;}return {width:64,height:64,data};}
@@ -60,6 +61,7 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
  const group=new THREE.Group(),roofGroup=new THREE.Group();group.add(roofGroup);scene.add(group);
  const resources=new Set<{dispose:()=>void}>(),matrix=new THREE.Object3D(),instances:THREE.InstancedMesh[]=[];let signature='',last=-Infinity,dirty=true,removed=false,revision=0;
  const invalidate=()=>{if(!removed){dirty=true;map.triggerRepaint?.();}};
+ const props={oak:mapPropBatch(group,'nature/TreeOak',11,SCENERY_LIMITS.trees,invalidate),pine:mapPropBatch(group,'nature/TreePine',11,SCENERY_LIMITS.trees,invalidate),shrub:mapPropBatch(group,'nature/Shrub',2,SCENERY_LIMITS.shrubs,invalidate),flowers:mapPropBatch(group,'nature/Flowers',1,SCENERY_LIMITS.flowers,invalidate),grass:mapPropBatch(group,'nature/Grass',1.1,SCENERY_LIMITS.grass,invalidate),reeds:mapPropBatch(group,'nature/Reeds',2.5,SCENERY_LIMITS.reeds,invalidate),rock:mapPropBatch(group,'nature/Rock',1.2,12,invalidate),mushroom:mapPropBatch(group,'nature/Mushroom',.8,12,invalidate),log:mapPropBatch(group,'nature/Log',1,8,invalidate)};
  // Rotation/pitch do not change terrain. Rebuilding roofs/vegetation on every
  // camera move caused periodic main-thread stalls while orbiting the trainer.
  const sourceChanged=(event:{sourceId?:string;sourceDataType?:string})=>{if(event.sourceId==='openmaptiles'&&event.sourceDataType==='content')invalidate();};
@@ -95,27 +97,28 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
  function refresh(fix:Fix){
   const now=Date.now();if(removed||now-last<1000)return;last=now;
   const view=map.getCenter?.()??fix,key=[view.lat,view.lng,fix.lat,fix.lng].map(n=>Math.round(n*5000)).join(':');if(!dirty&&key===signature)return;dirty=false;signature=key;
-  const all=features(map),greens=all.filter(f=>areaBiome(f)),origin=local(view.lng,view.lat);for(const m of instances)m.count=0;
+  const all=features(map),greens=all.filter(f=>areaBiome(f)),origin=local(view.lng,view.lat);for(const m of instances)m.count=0;for(const prop of Object.values(props))prop.reset();
   const points:{lat:number;lng:number;x:number;y:number;d:number}[]=[],stepLat=14/111320,stepLng=14/(111320*Math.cos(view.lat*Math.PI/180)),cx=Math.round(view.lng/stepLng),cy=Math.round(view.lat/stepLat);
   for(let y=cy-17;y<=cy+17;y++)for(let x=cx-17;x<=cx+17;x++){const random=hash(x,y),p={lng:(x+(random-.5)*.65)*stepLng,lat:(y+(hash(y,x)-.5)*.65)*stepLat},d=Math.hypot((p.lng-view.lng)/stepLng,(p.lat-view.lat)/stepLat);if(d<18)points.push({...p,x,y,d});}points.sort((a,b)=>a.d-b.d);
   for(const p of points){
    const r=hash(p.x,p.y),biome=biomeAt(p,greens),at=local(p.lng,p.lat),forest=greens.some(f=>areaBiome(f)==='forest'&&contains(p,f.geometry)),meadow=greens.some(f=>areaBiome(f)==='meadow'&&contains(p,f.geometry));
    if((forest&&r>.3||meadow&&r>.94)&&trunks.count<SCENERY_LIMITS.trees&&scenerySpot(p,all,fix,5.2,'tree')){
     const s=.8+hash(p.y,p.x)*.4,pine=forest&&r>.74;
+    if(!(pine?props.pine:props.oak).place(at,s,r*6)){
     place(trunks,at.clone().add(new THREE.Vector3(0,2.5*s,0)),new THREE.Vector3(s,s,s));
     if(pine)place(pines[Math.floor(r*173)%pines.length],at.clone().add(new THREE.Vector3(0,4.7*s,0)),new THREE.Vector3(2*s,1.3*s,2*s),r*6);
     else{place(branches,at.clone().add(new THREE.Vector3(0,4.2*s,0)),new THREE.Vector3(s,s,s),r*6);place(crowns[Math.floor(r*997)%crowns.length],at.clone().add(new THREE.Vector3(0,5.7*s,0)),new THREE.Vector3(2.2*s,1.85*s,2.2*s),r*6);}
-    place(shadows,at.clone().add(new THREE.Vector3(.5,.035,.4)),new THREE.Vector3(pine?3.4*s:4.4*s,1,3.1*s),r*6);
+    }place(shadows,at.clone().add(new THREE.Vector3(.5,.035,.4)),new THREE.Vector3(pine?3.4*s:4.4*s,1,3.1*s),r*6);
    }else if((forest&&r<.17||meadow&&r>.75)&&shrubs.count<SCENERY_LIMITS.shrubs&&scenerySpot(p,all,fix,2.3,'shrub')){
-    const s=.65+r*.5;place(shrubs,at.clone().add(new THREE.Vector3(0,.5,0)),new THREE.Vector3(s,.6*s,s),r*6);place(shadows,at.clone().add(new THREE.Vector3(0,.03,0)),new THREE.Vector3(1.8*s,1,1.4*s));
+    const s=.65+r*.5;if(!props.shrub.place(at,s,r*6))place(shrubs,at.clone().add(new THREE.Vector3(0,.5,0)),new THREE.Vector3(s,.6*s,s),r*6);place(shadows,at.clone().add(new THREE.Vector3(0,.03,0)),new THREE.Vector3(1.8*s,1,1.4*s));
    }else if(meadow&&r<.65&&scenerySpot(p,all,fix,2.3,'low')){
     for(let i=0;i<3&&stems.count<SCENERY_LIMITS.flowers;i++){
      const offset={lng:p.lng+(i-1)*1.1/111320/Math.cos(view.lat*Math.PI/180),lat:p.lat+(i%2)*.8/111320};if(!scenerySpot(offset,all,fix,.6,'low'))continue;
-     const pos=local(offset.lng,offset.lat),s=.7+hash(p.x+i,p.y)*.55;place(grass,pos,new THREE.Vector3(s,s,s),r*6);place(stems,pos.clone().add(new THREE.Vector3(0,.4*s,0)),new THREE.Vector3(s,s,s));place(flowers[Math.floor(hash(p.y+i,p.x)*3)],pos.clone().add(new THREE.Vector3(0,.85*s,0)),new THREE.Vector3(s,s,s),r*6);
+     const pos=local(offset.lng,offset.lat),s=.7+hash(p.x+i,p.y)*.55;if(!props.flowers.place(pos,s,r*6)){place(grass,pos,new THREE.Vector3(s,s,s),r*6);place(stems,pos.clone().add(new THREE.Vector3(0,.4*s,0)),new THREE.Vector3(s,s,s));place(flowers[Math.floor(hash(p.y+i,p.x)*3)],pos.clone().add(new THREE.Vector3(0,.85*s,0)),new THREE.Vector3(s,s,s),r*6);}
     }
    }else if(biome==='wetland'&&all.some(f=>(f.layer==='water'||f.layer==='waterway')&&edgeDistance(p,f.geometry)<14)&&scenerySpot(p,all,fix,1.2,'low')){
-    const s=.8+r*.4;place(reeds,at,new THREE.Vector3(s,s,s),r*6);place(reedHeads,at,new THREE.Vector3(s,s,s),r*6);
-   }else if(forest&&scenerySpot(p,all,fix,.7,'low'))place(grass,at,new THREE.Vector3(1.4,.7,1.4),r*6);
+    const s=.8+r*.4;if(!props.reeds.place(at,s,r*6)){place(reeds,at,new THREE.Vector3(s,s,s),r*6);place(reedHeads,at,new THREE.Vector3(s,s,s),r*6);}
+   }else if(forest&&scenerySpot(p,all,fix,.7,'low')){if(r<.03)props.mushroom.place(at,1,r*6);else if(r<.05)props.rock.place(at,1,r*6);else if(r<.06)props.log.place(at,1,r*6);else if(!props.grass.place(at,1,r*6))place(grass,at,new THREE.Vector3(1.4,.7,1.4),r*6);}
   }
   for(const child of [...roofGroup.children]){roofGroup.remove(child);(child as THREE.Mesh).geometry.dispose();}
   const buildings=buildingFootprints(all,local,origin),roofBatches:THREE.BufferGeometry[][]=[[],[],[],[]],wallBatches:THREE.BufferGeometry[][]=[[],[],[],[]],shadowBatch:THREE.BufferGeometry[]=[];
@@ -148,8 +151,8 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
   }
   for(let i=0;i<4;i++)for(const [batch,materials] of [[wallBatches,wallMaterials],[roofBatches,roofMaterials]] as const){if(!batch[i].length)continue;const geometry=combined(batch[i]);roofGroup.add(new THREE.Mesh(geometry,materials[i]));}
   if(shadowBatch.length)roofGroup.add(new THREE.Mesh(combined(shadowBatch),shadowMaterial));
-  for(const mesh of instances)mesh.instanceMatrix.needsUpdate=true;
+  for(const mesh of instances)mesh.instanceMatrix.needsUpdate=true;for(const prop of Object.values(props))prop.commit();
   Object.assign(map.getCanvas().dataset,{sceneryCenter:JSON.stringify({lat:view.lat,lng:view.lng}),sceneryRevision:String(++revision),sceneryBuildings:String(buildings.length),sceneryTrees:String(trunks.count),sceneryConifers:String(pines.reduce((n,m)=>n+m.count,0)),sceneryShrubs:String(shrubs.count),sceneryFlowers:String(stems.count),sceneryReeds:String(reeds.count),sceneryWindows:String(windows.count)});
  }
- return {update:refresh,dispose(){removed=true;if(listen)map.off('sourcedata',sourceChanged);scene.remove(group);for(const child of roofGroup.children)(child as THREE.Mesh).geometry.dispose();for(const m of instances)m.dispose();resources.forEach(r=>r.dispose());}};
+ return {update:refresh,dispose(){removed=true;if(listen)map.off('sourcedata',sourceChanged);for(const prop of Object.values(props))prop.dispose();scene.remove(group);for(const child of roofGroup.children)(child as THREE.Mesh).geometry.dispose();for(const m of instances)m.dispose();resources.forEach(r=>r.dispose());}};
 }

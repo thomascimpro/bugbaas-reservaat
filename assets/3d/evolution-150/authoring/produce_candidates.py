@@ -73,11 +73,26 @@ STAGE_PALETTES={
  ('dragonfly',3):('#0B2A4A','#1E88E5','#BFF3FF','#29B6F6'),
  ('mosquito',3):('#141414','#EDEDED','#FFFFFF','#BFE6FF'),
  ('snail',2):('#5A3A22','#E8B83A','#FFF0B8'),
+ # 2026-11-01 growth pass: final forms that had no own palette yet.
+ ('ant',3):('#2A0E08','#B8321C','#F6B84E','#D4502A'),
+ ('termite',3):('#3A2410','#C98A3A','#FFE6A8','#E0A040'),
+ ('butterfly',3):('#1A1446','#7A4CE0','#FFD86A','#B07CFF'),
+ ('armabee',3):('#1E2A3A','#E8B020','#FFF1B0','#9FB6C8'),
 }
 EVOLVED={f for f,s in STAGE_PALETTES if s==3}
 EYES3={'hoverfly':('#B8241C',2.0),'cicada':('#E0261C',1.6),'tigerbeetle':('#1A2A30',1.4),'bee':('#1A1410',1.35),'firefly':('#101410',1.3),'lacewing':('#E8B820',1.35),'antlion':('#2A2010',1.25),'dragonfly':('#19C3E6',1.8)}
 WING_SPOTS3={'antlion':3,'lacewing':1,'dragonfly':1}
 LEGS3={'flea':1.04,'waterstrider':1.3,'cranefly':1.22,'tigerbeetle':1.15,'stick':1.12}
+# 2026-11-01 growth pass ("evoluties moeten er echt anders uitzien"): families whose Elite/Ultimate only differed by
+# colour get kid-readable growth steps in grow(): stage 2 = one new silhouette feature, stage 3 = dramatic final form
+# (horns/crown, spikes or crest, armour, glowing parts, extra wings) plus sturdier legs. Families absent here keep their
+# 2026-10-29 geometry byte-for-byte.
+GROW={'aphid','lacewing','waterstrider','hoverfly','leafhopper','cricket','leaf','silverfish','cockroach','cranefly','flea',
+ 'giantwaterbug','mayfly','termite','tigerbeetle','tortoisebeetle','bee','dragonfly','firefly','cicada','mosquito','ant',
+ 'butterfly','armabee'}
+LEG_THICK={2:1.25,3:1.6}
+BULK={2:1.2,3:1.55};BULK_Z=.35
+EYES3.update({'flea':('#F2C230',1.3)})
 
 def anatomy(f):
  if f in ['moth','butterfly']:return 'butterfly'
@@ -193,6 +208,145 @@ def generate(name,family,stage):
   elif family=='cicada':
    sphere('CrownPlate',(0,yy+.2,.4),(.24,.08,.18),plate)
    for side in [-1,1]:rod('OrangeWingBase',(side*.12,yy+.2,.25),(side*.3,yy+.22,.15),.04,plate)
+ def grow():
+  # 2026-11-01 growth pass: stage 2 gains one new silhouette feature, stage 3 a dramatic final form. Coordinates follow
+  # the anatomy built above (body top T, head hy/hz, abdomen tip zb).
+  s=stage;f=family
+  if cat=='beetle':top,hy,hz,zb=.36,yy,.61,-.95
+  elif cat=='segmented':
+   n=(11 if s==2 else 15) if f=='silverfish' else 8 if f=='earwig' else 13 if (f=='termite' and s==3) else 6
+   top,hy,hz,zb=(.67,yy,.54,-.62) if f=='flea' else (.13 if f=='silverfish' else .19,yy,.54,.18-(n-1)*.14-.12)
+  elif cat=='orthopteran':top,hy,hz,zb=.15,yy+.12,.75,-1.1
+  elif cat=='sap':top,hy,hz,zb=.29,yy+.08,.56,-.72
+  else:
+   slender=cat in ['lacewing','longfly'];n=6+s*2 if slender else 3+s*2
+   top,hy,hz=(.12 if slender else .2),yy+.04,.61
+   zb=-1.33 if f=='ant' else (-.33 if f=='wasp' else -.06)-(n-1)*(.13 if slender else .12)-.09
+  T=yy+top
+  def usheet(n,points,c,par=None):return sheet(n+str(len(b.nodes)),points,c,par)
+  def horns(n,h,spread,c,tip=None,lean=.05,r=.06,y0=.12,z0=0.):
+   for k in range(n):
+    x=0 if n==1 else spread*(2*k/(n-1)-1)
+    curve('GrowthHorn',[(x,hy+y0,hz+z0),(x*1.45,hy+y0+h*.55,hz+z0+.08),(x*1.8,hy+y0+h,hz+z0-lean)],r,r*.35,c,tip=tip)
+  def crown(n,h,c,tip=None,glow=False):
+   for k in range(n):
+    a=(k-(n-1)/2)*.42;base=(math.sin(a)*.1,hy+.14,hz-.04);end=(math.sin(a)*(.1+h*.7),hy+.14+h*math.cos(a),hz-.08)
+    rod('CrownSpike',base,end,.045,c)
+    if tip is not None:sphere('CrownGem',end,(.055,)*3,tip,glow=1.2 if glow else False)
+  def spikes(n,z0,z1,h,c,pair=0.,r=.045,y=None,lean=.08,out=0.):
+   for i in range(n):
+    z=z0+(z1-z0)*i/max(n-1,1);hh=h*(1-.35*abs(i-(n-1)/2)/max((n-1)/2,1))
+    for side in ([-1,1] if pair else [0]):
+     x=side*pair;yb=(T if y is None else y)-.03
+     rod('GrowthSpike',(x,yb,z),(x+side*out,yb+hh,z-lean),r,c)
+  def plates(n,z0,z1,w,c,y=None,th=.07):
+   for i in range(n):z=z0+(z1-z0)*i/max(n-1,1);sphere('ArmourPlate',(0,(T if y is None else y)-.02,z),(w*(1-.3*i/max(n,1)),th,.11),c)
+  def fin(z0,z1,h,c,y=None):
+   yb=(T if y is None else y)-.02;usheet('BackCrest',[(0,yb,z0),(0,yb+h*.75,z0-(z0-z1)*.15),(0,yb+h,z0-(z0-z1)*.45),(0,yb+h*.55,z0-(z0-z1)*.8),(0,yb,z1)],c)
+  def orbs(pts,c,r=.06,glow=1.3,par=None):
+   for p in pts:sphere('GlowOrb',p,(r,)*3,c,par,glow=glow)
+  def wings2(z,span,chord,kind='clear',**k):
+   for side in [-1,1]:wing(side,z,span,chord,kind,**k)
+  def antenna_orbs(c,r=.065,span=.21,length=.27):orbs([(side*span*1.2,yy+.35,.72+length) for side in [-1,1]],c,r)
+  def tail(length,c,fork=0.,r=.05,glow=False):
+   for side in ([-1,1] if fork else [0]):rod('TailSpike',(side*fork*.3,yy,zb+.05),(side*fork,yy+.12,zb-length),r,c,glow=glow)
+  def foot_glow(c,r=.06):
+   for pv,side,i,kind,kn,end in limbs:sphere('GlowFoot',end,(r*1.2,r*.6,r*1.4),c,pv,glow=1.)
+  def armour_body(c1,c2,r=.17,n=5):
+   sphere('ArmouredThorax',(0,yy+.03,.22),(r*1.5,r*1.35,r*1.9),c1)
+   for i in range(n):z=-.08+((zb+.25)+.08)*i/(n-1);w=1-.4*i/n;sphere('AbdomenArmour',(0,yy,z),(r*w,r*.9*w,.13),c2 if i%2 else c1)
+  def big_eyes(x,y,z,r=.11,cartoon=False):
+   for side in [-1,1]:
+    sphere('CompoundEye',(side*x,y,z),(r,r*1.1,r),color('#F4F2EA') if cartoon else black)
+    if cartoon:sphere('EyePupil',(side*x*1.05,y+.01,z+r*.7),(r*.5,r*.6,r*.4),black)
+  if f=='aphid':
+   if s==2:spikes(3,-.05,-.45,.22,light,r=.05)
+   else:horns(2,.5,.15,plate,tip=light,r=.085);orbs([(side*.27,yy+.52,-.58) for side in [-1,1]],light,.09)
+  elif f=='lacewing':
+   if s==2:mandibles(yy,.17,.28)
+   else:armour_body(accent,plate);mandibles(yy,.24,.42);crown(5,.4,light,tip=plate,glow=True);fin(.25,-.7,.45,light);antenna_orbs(light,.08)
+  elif f=='waterstrider':
+   if s==2:
+    for pv,side,i,kind,kn,end in limbs:
+     if i==1:usheet('OarFoot',[(end[0]-.1,end[1]+.01,end[2]-.18),(end[0]+.1,end[1]+.01,end[2]-.18),(end[0]+.12,end[1]+.01,end[2]+.15),(end[0]-.12,end[1]+.01,end[2]+.15)],accent,pv)
+   else:fin(.35,-.9,.62,light);horns(1,.4,0,plate,tip=light,lean=-.25,r=.07);foot_glow(light,.07)
+  elif f=='hoverfly':
+   if s==2:horns(2,.3,.1,light,tip=plate,r=.055)
+   else:horns(2,.5,.15,plate,tip=light,r=.075);plates(3,.25,-.15,.24,light,th=.08);spikes(3,-.3,-.75,.3,plate,r=.06);antenna_orbs(light,.08)
+  elif f=='leafhopper':
+   if s==3:orbs([((k-1)*.342,yy+.68,.5) for k in range(3)],light,.08);fin(-.05,-.65,.35,light)
+  elif f=='cricket':
+   if s==2:sphere('ArmouredPronotum',(0,yy+.1,.28),(.31,.21,.33),accent)
+   else:horns(2,.45,.16,plate,tip=light,r=.08);spikes(4,.1,-.7,.32,plate,pair=.14,out=.06,r=.06)
+  elif f=='leaf':
+   if s==2:usheet('HeadLeafCrest',[(0,yy+.2,.7),(.1,yy+.38,.62),(0,yy+.5,.55),(-.1,yy+.38,.62)],light)
+   else:usheet('GrandLeafCrest',[(0,yy+.22,.72),(.2,yy+.6,.6),(0,yy+.9,.45),(-.2,yy+.6,.6)],light);wings2(.05,1.1,1.0,'leaf',membrane=accent);orbs([(0,yy+.9,.45)],plate,.07)
+  elif f=='silverfish':
+   if s==2:spikes(5,.1,-.9,.13,light,r=.03,lean=.06)
+   else:spikes(8,.1,-1.5,.45,plate,r=.055,lean=.12);horns(2,.4,.12,plate,tip=light,r=.07);orbs([(i*.32,yy+.06,-1.95) for i in [-1,0,1]],light,.06)
+  elif f=='cockroach':
+   if s==2:
+    for side in [-1,1]:curve('PronotalHorn',[(side*.12,yy+.24,.44),(side*.15,yy+.32,.56),(side*.14,yy+.36,.68)],.05,.02,light)
+   else:horns(2,.55,.15,plate,tip=light,r=.085);spikes(4,-.05,-.75,.3,plate,pair=.2,out=.1,r=.06)
+  elif f=='cranefly':
+   if s==2:
+    for side in [-1,1]:rod('Haltere',(side*.12,yy+.1,.02),(side*.3,yy+.2,-.1),.016,dark);sphere('HaltereKnob',(side*.3,yy+.2,-.1),(.05,)*3,light)
+   else:armour_body(accent,plate);crown(3,.4,light,tip=plate,glow=True);fin(.3,-.5,.4,light)
+  elif f=='flea':
+   if s==2:spikes(3,0.,-.3,.16,light,r=.04,lean=.1)
+   else:spikes(5,.15,-.45,.42,plate,r=.06,lean=.18);horns(2,.3,.12,plate,tip=light)
+  elif f=='giantwaterbug':
+   if s==2:
+    for pv,side,i,kind,kn,end in limbs:
+     if kind=='raptorial':curve('RaptorialClaw',[end,(end[0]+side*.05,end[1]+.12,end[2]+.18),(end[0]-side*.05,end[1]+.1,end[2]+.3)],.05,.02,light,par=pv)
+   else:horns(1,.35,0,plate,tip=light,lean=-.3);spikes(5,.1,-.8,.18,plate,pair=.45,out=.12,y=yy+.2)
+  elif f=='mayfly':
+   if s==2:
+    for side in [-1,1]:sphere('TurbinateEye',(side*.08,yy+.25,.6),(.09,.08,.09),accent)
+   else:armour_body(accent,plate);crown(3,.4,light,tip=plate,glow=True);orbs([(i*.36,yy+.12,-2.2) for i in [-1,0,1]],light,.07);fin(.3,-.6,.45,light)
+  elif f=='termite':
+   if s==3:
+    sphere('QueenAbdomen',(0,yy+.06,-1.05),(.55,.45,.8),accent)
+    for i in range(5):sphere('QueenBand',(0,yy+.06,-.65-i*.18),(.56-abs(i-2)*.04,.46-abs(i-2)*.04,.035),dark)
+    crown(5,.3,plate,tip=light,glow=True);mandibles(yy,.26,.48)
+  elif f=='tigerbeetle':
+   if s==2:
+    for side in [-1,1]:
+     for i in range(3):sphere('ElytralMaculation',(side*.33,yy+.2,-.82+i*.3),(.09,.04,.07),light)
+    spikes(1,.3,.3,.2,light,pair=.18,out=.06)
+   else:mandibles(yy,.42,.85);horns(2,.35,.14,plate,tip=light);spikes(3,-.15,-.75,.22,plate,pair=.3,out=.1,y=yy+.3)
+  elif f=='tortoisebeetle':
+   if s==2:
+    for i in range(6):a=(i-2.5)*.22;rod('ShieldSpike',(.62*math.sin(a),yy+.12,-.22+.74*math.cos(a)),(.8*math.sin(a),yy+.1,-.22+.92*math.cos(a)),.035,light)
+   else:spikes(3,.05,-.45,.4,plate,y=yy+.46,r=.06,lean=.05);orbs([(0,yy+.84,-.25)],light,.09);horns(2,.3,.2,plate,tip=light,z0=.05)
+  elif f=='bee':
+   if s==2:
+    for i in range(12):a=i/12*math.tau;sphere('FuzzyCollar',(.27*math.cos(a),yy+.06+.2*math.sin(a),.4),(.09,.09,.09),light)
+   else:crown(5,.45,light,tip=plate,glow=True);plates(3,-.3,-.75,.3,light,y=yy+.24,th=.06);tail(.25,light,r=.07)
+  elif f=='dragonfly':
+   if s==2:tail(.25,light,fork=.14,r=.03)
+   else:armour_body(accent,plate);horns(2,.42,.12,light,tip=plate,r=.07);tail(.3,light,fork=.2,r=.045,glow=.8);fin(.35,-.4,.4,light)
+  elif f=='firefly':
+   if s==3:antenna_orbs(light,.08);horns(2,.3,.15,plate,tip=light);wings2(.08,1.15,.85)
+  elif f=='cicada':
+   if s==3:
+    horns(2,.36,.22,plate,tip=light);spikes(3,.3,-.1,.2,plate)
+    for side in [-1,1]:sphere('GlowTymbal',(side*.3,yy,-.19),(.1,.14,.18),plate,glow=1.)
+  elif f=='mosquito':
+   if s==3:armour_body(accent,dark);horns(2,.4,.12,light,tip=plate,r=.065);fin(.35,-.4,.4,light);orbs([(0,yy-.4,1.31)],light,.06)
+  elif f=='ant':
+   if s==3:
+    sphere('WarriorHead',(0,yy+.06,.66),(.3,.26,.28),accent);big_eyes(.24,yy+.14,.84);mandibles(yy,.32,.62)
+    crown(3,.28,plate,tip=light,glow=True);spikes(1,.12,.12,.3,plate,pair=.12,out=.12)
+    for i in range(3):sphere('GasterBand',(0,yy-.03,-.6-i*.17),(.39-i*.03,.3-i*.02,.035),plate)
+  elif f=='butterfly':
+   if s==3:antenna_orbs(light,.08);crown(3,.22,plate,tip=light,glow=True)
+  elif f=='armabee':
+   if s==3:
+    sphere('ArmouredRoundBody',(0,yy,-.38),(.5,.44,.62),accent)
+    for i in range(3):sphere('BodyBand',(0,yy,-.18-i*.22),(.51-i*.04,.45-i*.04,.05),dark)
+    sphere('HelmetHead',(0,yy+.08,.56),(.3,.28,.27),plate);big_eyes(.17,yy+.16,.76,.12,True)
+    horns(2,.45,.16,plate,tip=light);plates(3,.05,-.6,.3,plate,y=yy+.44);wings2(.05,1.15,.85)
  b=GLB(name);cat=anatomy(family);pal=STAGE_PALETTES.get((family,stage),PALETTES[family]);dark,accent,light=map(color,pal[:3]);plate=color(pal[3]) if len(pal)>3 else accent;evolved=stage==3 and family in EVOLVED;custom=False;black=color('#131E21');glass=color('#B3C7AC');gold=color('#7C6A42');detail=[];legs=[];wings=[];pincers=[];limbs=[]
  def shine(c,m):return m if m is not None else .3 if evolved and c is accent else .72 if evolved and c is plate else 0.
  def sphere(n,p,s,c=dark,par=None,m=None,glow=False):return b.sphere(n,p,s,c,par,emissive=glow,metal=shine(c,m))
@@ -241,6 +395,7 @@ def generate(name,family,stage):
   elif kind=='digger':knee=(sign*.44,-.03,.19);end=(sign*.72,-yy+.12,.38);thick=.08
   elif kind=='raptorial':knee=(sign*.42,.48,.35);end=(sign*.25,.12,.72);thick=.055
   else:knee=(sign*.49,-.08,.08-i*.07);end=(sign*.75,-yy+.06,.22-i*.18);thick=.035 if cat!='scorpion' else .045
+  if family in GROW and stage>1:thick*=LEG_THICK[stage]
   knee=tuple(v*length for v in knee);end=tuple(v*length if j!=1 else v for j,v in enumerate(end));rod('LegFemur',(0,0,0),knee,thick,dark,pivot);sphere('LegKnee',knee,(thick*1.15,)*3,accent,pivot);rod('LegTibia',knee,end,thick*.6,dark,pivot)
   if kind=='digger':
    for k in range(3):rod('DiggingClaw',end,(end[0]+sign*.13,end[1]-.02,end[2]+(k-1)*.1),.03,light,pivot)
@@ -490,9 +645,12 @@ def generate(name,family,stage):
    for side in [-1,1]:
     for i,z in enumerate([.36,.02,-.32]):
      kind='long' if family in ['waterstrider','cranefly','mosquito','mayfly'] else 'jump' if i==2 and family in ['grasshopper','cricket','flea'] else 'raptorial' if i==0 and family in ['mantis','giantwaterbug'] else 'digger' if i==0 and (family=='cricket' or (family=='dungbeetle' and stage>1) or (family=='cicada' and stage==1)) else 'normal'
-     leg(side,i,z,kind,(1.1*LEGS3.get(family,1)*(1.12 if family=='flea' and i==2 else 1)) if evolved else 1.1 if stage==3 else .96)
+     leg(side,i,z,kind,(.96*(1.12 if family=='flea' and i==2 else 1)) if family in GROW else (1.1*LEGS3.get(family,1)*(1.12 if family=='flea' and i==2 else 1)) if evolved else 1.1 if stage==3 else .96)
    if family in ['moth','butterfly']:
-    for side in [-1,1]:wing(side,.28,1.05 if family=='butterfly' else .95,.95,'round' if family=='butterfly' else 'luna',.25);wing(side,-.08,.76,.85,'round' if family=='butterfly' else 'luna',.42)
+    if family=='butterfly' and stage==3:
+     for side in [-1,1]:wing(side,.28,1.4,1.1,'round');wing(side,-.08,1.0,.95,'luna',.9)
+    else:
+     for side in [-1,1]:wing(side,.28,1.05 if family=='butterfly' else .95,.95,'round' if family=='butterfly' else 'luna',.25);wing(side,-.08,.76,.85,'round' if family=='butterfly' else 'luna',.42)
    elif family in ['lacewing','antlion','dragonfly']:
     for side in [-1,1]:
      wing(side,.3,.65+stage*.2,.6+stage*.12)
@@ -522,8 +680,20 @@ def generate(name,family,stage):
    if family=='mantis':
     for side in [-1,1]:wing(side,.06,.5,.8,'leaf');wing(side,-.08,.35,.6)
    if evolved:evolve()
+   if family in GROW and stage>1:grow()
    if family=='armabee':
     for side in [-1,1]:sphere('ForearmArmour',(side*.5,yy+.02,.48),(.23,.22,.25),accent);rod('ShoulderHorn',(side*.2,yy+.14,.29),(side*.49,yy+.48,.33),.06,light)
+ if family in GROW and stage>1:
+  # "It grew up": body, head and growth parts sit under one GrowthBulk node that widens/heightens them more than it
+  # lengthens them; legs and wings keep their size (their hips/roots move with the body, feet stay on the ground).
+  k=BULK[stage];kz=1+(k-1)*BULK_Z
+  bulk=b.node('GrowthBulk',b.root,(0,yy*(1-k),0),None,(k,k,kz));keep=[];moved=[]
+  for ix in b.nodes[b.root]['children']:
+   if ix==bulk:continue
+   n=b.nodes[ix]
+   if n['name'].startswith(('LegJoint_','WingJoint_')):t=n['translation'];n['translation']=[t[0]*k,yy+(t[1]-yy)*k,t[2]*kz];keep.append(ix)
+   else:moved.append(ix)
+  b.nodes[b.root]['children']=keep+[bulk];b.nodes[bulk]['children']=moved
  # Dedicated node channels are subsequently converted to a single skinned mesh.
  motion=b.node('Motion',b.root);children=list(b.nodes[b.root]['children']);b.nodes[b.root]['children']=[motion];b.nodes[motion]['children']=[n for n in children if n!=motion]
  for kind in ['idle','walk','attack','hit','dead']+(['fly'] if wings else []):

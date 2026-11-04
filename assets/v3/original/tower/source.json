@@ -1,0 +1,41 @@
+{
+  "source": "Existing BugBaas game assets copied without visual edits",
+  "files": [
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/bug-tower/bug-tower-background.jpg",
+      "file": "bug-tower-background.jpg",
+      "sha256": "445b52ad2ce2bdeae3625d2a954875dc1e6bd42cad93f44ed0cda4214741105f",
+      "bytes": 252043
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/bug-tower/bug-tower-jungle.jpg",
+      "file": "bug-tower-jungle.jpg",
+      "sha256": "be3498e1ac99bd61068bddc3a4f0462d39f8dc4571b3e84aea6dd6826d74e649",
+      "bytes": 240618
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/bug-tower/bug-tower-forge.jpg",
+      "file": "bug-tower-forge.jpg",
+      "sha256": "c6b6a4d066b50656ca33ba0297b42f5a0af1ae450bf3d99f098ef18bbea4e7d3",
+      "bytes": 242971
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/bug-tower/bug-tower-sky.jpg",
+      "file": "bug-tower-sky.jpg",
+      "sha256": "1c5c217b2d7355a8f435965e97fcd2d679dd3219cc33fd5847388efd6936f2c5",
+      "bytes": 196847
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/bug-tower/bug-tower-void.jpg",
+      "file": "bug-tower-void.jpg",
+      "sha256": "539df24f0b6bac4a8297a50d5586cfc7fc53be37e73252ba3cfb67813656a08e",
+      "bytes": 226542
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/bug-tower/bug-tower-beetle.webp",
+      "file": "bug-tower-beetle.webp",
+      "sha256": "de921f4f51a46a66551801b2ff40020272f6b648f5a0bb07c150e222327c2b70",
+      "bytes": 146038
+    }
+  ]
+}

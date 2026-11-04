@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "source": "CC0 imported insect models and original BugBaas anatomy; rendered with src/bugModelV2.ts normal/shiny materials",
+  "source": "Approved BugBaas model materials, Blender Cycles 768px transparent HD render; existing hand-painted illustrations retain priority",
   "species": {
     "beetle": {
       "model": "ClickBeetle",
@@ -9,9 +9,10 @@
         "#9B4BB7",
         "#E7AF65"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "beetle.png",
-      "shiny": "beetle-shiny.png"
+      "shiny": "beetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "ant": {
       "model": "LeafcutterAnt",
@@ -20,9 +21,10 @@
         "#2597B1",
         "#BCF2E3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "ant.png",
-      "shiny": "ant-shiny.png"
+      "shiny": "ant-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "aphid": {
       "model": "Aphid",
@@ -31,9 +33,10 @@
         "#DB78AF",
         "#FFE0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "aphid.png",
-      "shiny": "aphid-shiny.png"
+      "shiny": "aphid-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "weevil": {
       "model": "GiraffeWeevil",
@@ -42,9 +45,10 @@
         "#39B8A0",
         "#DDF1A4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "weevil.png",
-      "shiny": "weevil-shiny.png"
+      "shiny": "weevil-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "moth": {
       "model": "HawkMoth",
@@ -53,9 +57,10 @@
         "#5BB8CD",
         "#E4E2FF"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "moth.png",
-      "shiny": "moth-shiny.png"
+      "shiny": "moth-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "earwig": {
       "model": "Earwig",
@@ -64,9 +69,10 @@
         "#51B79A",
         "#F2D797"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "earwig.png",
-      "shiny": "earwig-shiny.png"
+      "shiny": "earwig-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "grasshopper": {
       "model": "Katydid",
@@ -75,9 +81,10 @@
         "#BE76B6",
         "#F5DAC2"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "grasshopper.png",
-      "shiny": "grasshopper-shiny.png"
+      "shiny": "grasshopper-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "lacewing": {
       "model": "Lacewing",
@@ -86,9 +93,10 @@
         "#D19C66",
         "#FFF1C1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "lacewing.png",
-      "shiny": "lacewing-shiny.png"
+      "shiny": "lacewing-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "dungbeetle": {
       "model": "DungBeetle",
@@ -97,9 +105,10 @@
         "#418AB2",
         "#B9F0DC"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "dungbeetle.png",
-      "shiny": "dungbeetle-shiny.png"
+      "shiny": "dungbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mantis": {
       "model": "OrchidMantis",
@@ -108,9 +117,10 @@
         "#6EAE83",
         "#F2DEA8"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mantis.png",
-      "shiny": "mantis-shiny.png"
+      "shiny": "mantis-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "butterfly": {
       "model": "Swallowtail",
@@ -119,9 +129,10 @@
         "#668DDB",
         "#F9D898"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "butterfly.png",
-      "shiny": "butterfly-shiny.png"
+      "shiny": "butterfly-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "divingbeetle": {
       "model": "DivingBeetle",
@@ -130,9 +141,10 @@
         "#A16DC5",
         "#D4EDFC"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "divingbeetle.png",
-      "shiny": "divingbeetle-shiny.png"
+      "shiny": "divingbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "waterstrider": {
       "model": "WaterStrider",
@@ -141,9 +153,10 @@
         "#7A93B4",
         "#E8C782"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "waterstrider.png",
-      "shiny": "waterstrider-shiny.png"
+      "shiny": "waterstrider-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "hoverfly": {
       "model": "Hoverfly",
@@ -152,9 +165,10 @@
         "#5FC9BA",
         "#E5FFE4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "hoverfly.png",
-      "shiny": "hoverfly-shiny.png"
+      "shiny": "hoverfly-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "leafhopper": {
       "model": "Treehopper",
@@ -163,9 +177,10 @@
         "#B48AD9",
         "#F8DAB8"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "leafhopper.png",
-      "shiny": "leafhopper-shiny.png"
+      "shiny": "leafhopper-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cricket": {
       "model": "MoleCricket",
@@ -174,9 +189,10 @@
         "#7998C9",
         "#E2D8B2"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cricket.png",
-      "shiny": "cricket-shiny.png"
+      "shiny": "cricket-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "stick": {
       "model": "StickInsect",
@@ -185,9 +201,10 @@
         "#7D77B8",
         "#D7E3EC"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "stick.png",
-      "shiny": "stick-shiny.png"
+      "shiny": "stick-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "leaf": {
       "model": "LeafInsect",
@@ -196,9 +213,10 @@
         "#C8A04E",
         "#F6EDB8"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "leaf.png",
-      "shiny": "leaf-shiny.png"
+      "shiny": "leaf-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "silverfish": {
       "model": "Silverfish",
@@ -207,9 +225,10 @@
         "#CF9870",
         "#F9D8AD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "silverfish.png",
-      "shiny": "silverfish-shiny.png"
+      "shiny": "silverfish-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "hercules": {
       "model": "HerculesBeetle",
@@ -218,9 +237,10 @@
         "#639BA3",
         "#F0CD7C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "hercules.png",
-      "shiny": "hercules-shiny.png"
+      "shiny": "hercules-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "caterpillar": {
       "model": "HawkCaterpillar",
@@ -229,10 +249,11 @@
         "#B291CE",
         "#F5DEB9"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "caterpillar.png",
       "shiny": "caterpillar-shiny.png",
-      "source": "Original BugBaas mesh; scripts/generate-hawk-caterpillar.mjs"
+      "source": "Original BugBaas mesh; scripts/generate-hawk-caterpillar.mjs",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "antlion": {
       "model": "AntlionLarva",
@@ -241,9 +262,10 @@
         "#5990A8",
         "#D9EBC9"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "antlion.png",
-      "shiny": "antlion-shiny.png"
+      "shiny": "antlion-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cockroach": {
       "model": "Cockroach",
@@ -252,9 +274,10 @@
         "#428D9C",
         "#D2E8E5"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cockroach.png",
-      "shiny": "cockroach-shiny.png"
+      "shiny": "cockroach-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cranefly": {
       "model": "CraneFly",
@@ -263,9 +286,10 @@
         "#AF7BBE",
         "#F1D6B3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cranefly.png",
-      "shiny": "cranefly-shiny.png"
+      "shiny": "cranefly-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "flea": {
       "model": "Flea",
@@ -274,9 +298,10 @@
         "#6FB5A3",
         "#D5EFBA"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "flea.png",
-      "shiny": "flea-shiny.png"
+      "shiny": "flea-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "giantwaterbug": {
       "model": "GiantWaterBug",
@@ -285,9 +310,10 @@
         "#AA79B4",
         "#F1DAA4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "giantwaterbug.png",
-      "shiny": "giantwaterbug-shiny.png"
+      "shiny": "giantwaterbug-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mayfly": {
       "model": "Mayfly",
@@ -296,9 +322,10 @@
         "#79B7D1",
         "#EFF5D8"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mayfly.png",
-      "shiny": "mayfly-shiny.png"
+      "shiny": "mayfly-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "termite": {
       "model": "SoldierTermite",
@@ -307,9 +334,10 @@
         "#8A92C5",
         "#F2DBA8"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "termite.png",
-      "shiny": "termite-shiny.png"
+      "shiny": "termite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "tigerbeetle": {
       "model": "TigerBeetle",
@@ -318,9 +346,10 @@
         "#BB6E9A",
         "#F4CF87"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "tigerbeetle.png",
-      "shiny": "tigerbeetle-shiny.png"
+      "shiny": "tigerbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "tortoisebeetle": {
       "model": "TortoiseBeetle",
@@ -329,9 +358,10 @@
         "#53BEB0",
         "#F2DEA0"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "tortoisebeetle.png",
-      "shiny": "tortoisebeetle-shiny.png"
+      "shiny": "tortoisebeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "beetlegrub": {
       "model": "BeetleGrub",
@@ -340,9 +370,10 @@
         "#885DCF",
         "#78F0D0"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "beetlegrub.png",
-      "shiny": "beetlegrub-shiny.png"
+      "shiny": "beetlegrub-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "bee": {
       "model": "Bee",
@@ -351,9 +382,10 @@
         "#5EA6C4",
         "#E8F4D4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "bee.png",
-      "shiny": "bee-shiny.png"
+      "shiny": "bee-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "beetle_elite": {
       "model": "beetleEliteUnique",
@@ -362,9 +394,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "beetle_elite.png",
-      "shiny": "beetle_elite-shiny.png"
+      "shiny": "beetle_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "ant_elite": {
       "model": "GardenAntAdult",
@@ -373,9 +406,10 @@
         "#2597B1",
         "#BCF2E3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "ant_elite.png",
-      "shiny": "ant_elite-shiny.png"
+      "shiny": "ant_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "aphid_elite": {
       "model": "aphidEliteUnique",
@@ -384,9 +418,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "aphid_elite.png",
-      "shiny": "aphid_elite-shiny.png"
+      "shiny": "aphid_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "weevil_elite": {
       "model": "weevilEliteUnique",
@@ -395,9 +430,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "weevil_elite.png",
-      "shiny": "weevil_elite-shiny.png"
+      "shiny": "weevil_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "moth_elite": {
       "model": "mothEliteUnique",
@@ -406,9 +442,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "moth_elite.png",
-      "shiny": "moth_elite-shiny.png"
+      "shiny": "moth_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "earwig_elite": {
       "model": "earwigEliteUnique",
@@ -417,9 +454,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "earwig_elite.png",
-      "shiny": "earwig_elite-shiny.png"
+      "shiny": "earwig_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "grasshopper_elite": {
       "model": "grasshopperEliteUnique",
@@ -428,9 +466,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "grasshopper_elite.png",
-      "shiny": "grasshopper_elite-shiny.png"
+      "shiny": "grasshopper_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "lacewing_elite": {
       "model": "lacewingEliteUnique",
@@ -439,9 +478,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "lacewing_elite.png",
-      "shiny": "lacewing_elite-shiny.png"
+      "shiny": "lacewing_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "dungbeetle_elite": {
       "model": "dungbeetleEliteUnique",
@@ -450,9 +490,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "dungbeetle_elite.png",
-      "shiny": "dungbeetle_elite-shiny.png"
+      "shiny": "dungbeetle_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mantis_elite": {
       "model": "EmeraldMantisAdult",
@@ -461,9 +502,10 @@
         "#A66FD0",
         "#F5D6F3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mantis_elite.png",
-      "shiny": "mantis_elite-shiny.png"
+      "shiny": "mantis_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "butterfly_elite": {
       "model": "MonarchButterflyAdult",
@@ -472,9 +514,10 @@
         "#668DDB",
         "#F9D898"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "butterfly_elite.png",
-      "shiny": "butterfly_elite-shiny.png"
+      "shiny": "butterfly_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "divingbeetle_elite": {
       "model": "divingbeetleEliteUnique",
@@ -483,9 +526,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "divingbeetle_elite.png",
-      "shiny": "divingbeetle_elite-shiny.png"
+      "shiny": "divingbeetle_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "waterstrider_elite": {
       "model": "waterstriderEliteUnique",
@@ -494,9 +538,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "waterstrider_elite.png",
-      "shiny": "waterstrider_elite-shiny.png"
+      "shiny": "waterstrider_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "hoverfly_elite": {
       "model": "hoverflyEliteUnique",
@@ -505,9 +550,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "hoverfly_elite.png",
-      "shiny": "hoverfly_elite-shiny.png"
+      "shiny": "hoverfly_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "leafhopper_elite": {
       "model": "leafhopperEliteUnique",
@@ -516,9 +562,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "leafhopper_elite.png",
-      "shiny": "leafhopper_elite-shiny.png"
+      "shiny": "leafhopper_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cricket_elite": {
       "model": "cricketEliteUnique",
@@ -527,9 +574,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cricket_elite.png",
-      "shiny": "cricket_elite-shiny.png"
+      "shiny": "cricket_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "stick_elite": {
       "model": "stickEliteUnique",
@@ -538,9 +586,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "stick_elite.png",
-      "shiny": "stick_elite-shiny.png"
+      "shiny": "stick_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "leaf_elite": {
       "model": "leafEliteUnique",
@@ -549,9 +598,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "leaf_elite.png",
-      "shiny": "leaf_elite-shiny.png"
+      "shiny": "leaf_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "silverfish_elite": {
       "model": "silverfishEliteUnique",
@@ -560,9 +610,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "silverfish_elite.png",
-      "shiny": "silverfish_elite-shiny.png"
+      "shiny": "silverfish_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "hercules_elite": {
       "model": "herculesEliteUnique",
@@ -571,9 +622,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "hercules_elite.png",
-      "shiny": "hercules_elite-shiny.png"
+      "shiny": "hercules_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "antlion_elite": {
       "model": "antlionEliteUnique",
@@ -582,9 +634,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "antlion_elite.png",
-      "shiny": "antlion_elite-shiny.png"
+      "shiny": "antlion_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cockroach_elite": {
       "model": "cockroachEliteUnique",
@@ -593,9 +646,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cockroach_elite.png",
-      "shiny": "cockroach_elite-shiny.png"
+      "shiny": "cockroach_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cranefly_elite": {
       "model": "craneflyEliteUnique",
@@ -604,9 +658,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cranefly_elite.png",
-      "shiny": "cranefly_elite-shiny.png"
+      "shiny": "cranefly_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "flea_elite": {
       "model": "fleaEliteUnique",
@@ -615,9 +670,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "flea_elite.png",
-      "shiny": "flea_elite-shiny.png"
+      "shiny": "flea_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "giantwaterbug_elite": {
       "model": "giantwaterbugEliteUnique",
@@ -626,9 +682,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "giantwaterbug_elite.png",
-      "shiny": "giantwaterbug_elite-shiny.png"
+      "shiny": "giantwaterbug_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mayfly_elite": {
       "model": "mayflyEliteUnique",
@@ -637,9 +694,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mayfly_elite.png",
-      "shiny": "mayfly_elite-shiny.png"
+      "shiny": "mayfly_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "termite_elite": {
       "model": "termiteEliteUnique",
@@ -648,9 +706,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "termite_elite.png",
-      "shiny": "termite_elite-shiny.png"
+      "shiny": "termite_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "tigerbeetle_elite": {
       "model": "tigerbeetleEliteUnique",
@@ -659,9 +718,10 @@
         "#AB75D2",
         "#ECDDF3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "tigerbeetle_elite.png",
-      "shiny": "tigerbeetle_elite-shiny.png"
+      "shiny": "tigerbeetle_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "tortoisebeetle_elite": {
       "model": "tortoisebeetleEliteUnique",
@@ -670,9 +730,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "tortoisebeetle_elite.png",
-      "shiny": "tortoisebeetle_elite-shiny.png"
+      "shiny": "tortoisebeetle_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "bee_elite": {
       "model": "beeEliteUnique",
@@ -681,9 +742,10 @@
         "#659DCB",
         "#CCE7E4"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "bee_elite.png",
-      "shiny": "bee_elite-shiny.png"
+      "shiny": "bee_elite-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "lesserstag": {
       "model": "LesserStagBeetle",
@@ -692,9 +754,10 @@
         "#6FA8C3",
         "#E8D89B"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "lesserstag.png",
-      "shiny": "lesserstag-shiny.png"
+      "shiny": "lesserstag-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "goldenstag": {
       "model": "GoldenStagBeetle",
@@ -703,9 +766,10 @@
         "#65B9CA",
         "#F1DFB6"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "goldenstag.png",
-      "shiny": "goldenstag-shiny.png"
+      "shiny": "goldenstag-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "giraffestag": {
       "model": "GiraffeStagBeetle",
@@ -714,9 +778,10 @@
         "#A477C5",
         "#DBF5DE"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "giraffestag.png",
-      "shiny": "giraffestag-shiny.png"
+      "shiny": "giraffestag-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "minotaurbeetle": {
       "model": "Minotaurbeetle",
@@ -725,9 +790,10 @@
         "#AB78C2",
         "#F3D797"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "minotaurbeetle.png",
-      "shiny": "minotaurbeetle-shiny.png"
+      "shiny": "minotaurbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "atlasbeetle": {
       "model": "AtlasBeetle",
@@ -736,9 +802,10 @@
         "#72B2BD",
         "#E5DCAC"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "atlasbeetle.png",
-      "shiny": "atlasbeetle-shiny.png"
+      "shiny": "atlasbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "caucasusbeetle": {
       "model": "CaucasusBeetle",
@@ -747,9 +814,10 @@
         "#C889AC",
         "#F8D5A0"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "caucasusbeetle.png",
-      "shiny": "caucasusbeetle-shiny.png"
+      "shiny": "caucasusbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "rosechafer": {
       "model": "RoseChafer",
@@ -758,9 +826,10 @@
         "#AC7ED1",
         "#EFDA9E"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "rosechafer.png",
-      "shiny": "rosechafer-shiny.png"
+      "shiny": "rosechafer-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "flowerchafer": {
       "model": "FlowerChafer",
@@ -769,9 +838,10 @@
         "#5DA7CA",
         "#EEDFC5"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "flowerchafer.png",
-      "shiny": "flowerchafer-shiny.png"
+      "shiny": "flowerchafer-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "rainbowscarab": {
       "model": "RainbowScarab",
@@ -780,9 +850,10 @@
         "#D380A3",
         "#F6D782"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "rainbowscarab.png",
-      "shiny": "rainbowscarab-shiny.png"
+      "shiny": "rainbowscarab-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "acornweevil": {
       "model": "Acornweevil",
@@ -791,9 +862,10 @@
         "#709FC9",
         "#F4DB9D"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "acornweevil.png",
-      "shiny": "acornweevil-shiny.png"
+      "shiny": "acornweevil-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "leafrollingweevil": {
       "model": "LeafRollingWeevil",
@@ -802,9 +874,10 @@
         "#C780A3",
         "#E9E5B2"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "leafrollingweevil.png",
-      "shiny": "leafrollingweevil-shiny.png"
+      "shiny": "leafrollingweevil-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "harlequinbeetle": {
       "model": "HarlequinBeetle",
@@ -813,9 +886,10 @@
         "#71C5BA",
         "#F6D18D"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "harlequinbeetle.png",
-      "shiny": "harlequinbeetle-shiny.png"
+      "shiny": "harlequinbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "asianladybeetle": {
       "model": "Asianladybeetle",
@@ -824,9 +898,10 @@
         "#789FD4",
         "#F6E2AC"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "asianladybeetle.png",
-      "shiny": "asianladybeetle-shiny.png"
+      "shiny": "asianladybeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "ladybird28": {
       "model": "Twentyeightspotladybird",
@@ -835,9 +910,10 @@
         "#B28AD9",
         "#F6DCB8"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "ladybird28.png",
-      "shiny": "ladybird28-shiny.png"
+      "shiny": "ladybird28-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "leafbeetle": {
       "model": "Leafbeetle",
@@ -846,9 +922,10 @@
         "#BD85C4",
         "#EDE5B2"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "leafbeetle.png",
-      "shiny": "leafbeetle-shiny.png"
+      "shiny": "leafbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cucumberbeetle": {
       "model": "SpottedCucumberBeetle",
@@ -857,9 +934,10 @@
         "#68B3C9",
         "#F2D8A5"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cucumberbeetle.png",
-      "shiny": "cucumberbeetle-shiny.png"
+      "shiny": "cucumberbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "deerflowerbeetle": {
       "model": "DeerHornedFlowerBeetle",
@@ -868,9 +946,10 @@
         "#CE829F",
         "#ECF5D6"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "deerflowerbeetle.png",
-      "shiny": "deerflowerbeetle-shiny.png"
+      "shiny": "deerflowerbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cardinalbeetle": {
       "model": "CardinalBeetle",
@@ -879,9 +958,10 @@
         "#6CA9CD",
         "#EFE0B6"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cardinalbeetle.png",
-      "shiny": "cardinalbeetle-shiny.png"
+      "shiny": "cardinalbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "rosalialonghorn": {
       "model": "RosaliaLonghorn",
@@ -890,9 +970,10 @@
         "#C292B6",
         "#F0D99D"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "rosalialonghorn.png",
-      "shiny": "rosalialonghorn-shiny.png"
+      "shiny": "rosalialonghorn-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "asianlonghorn": {
       "model": "AsianLongHornedBeetle",
@@ -901,9 +982,10 @@
         "#8AA4CE",
         "#E7F1D3"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "asianlonghorn.png",
-      "shiny": "asianlonghorn-shiny.png"
+      "shiny": "asianlonghorn-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "eyedclickbeetle": {
       "model": "EyedClickBeetle",
@@ -912,9 +994,10 @@
         "#A67DC9",
         "#F1DFB2"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "eyedclickbeetle.png",
-      "shiny": "eyedclickbeetle-shiny.png"
+      "shiny": "eyedclickbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "golofabeetle": {
       "model": "GolofaBeetle",
@@ -923,9 +1006,10 @@
         "#70B9BE",
         "#EDDBA2"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "golofabeetle.png",
-      "shiny": "golofabeetle-shiny.png"
+      "shiny": "golofabeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "elephantbeetle": {
       "model": "ElephantBeetle",
@@ -934,9 +1018,10 @@
         "#C68DB7",
         "#F2DFB2"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "elephantbeetle.png",
-      "shiny": "elephantbeetle-shiny.png"
+      "shiny": "elephantbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "sacredscarab": {
       "model": "SacredScarab",
@@ -945,9 +1030,10 @@
         "#789FC5",
         "#F5DC9A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "sacredscarab.png",
-      "shiny": "sacredscarab-shiny.png"
+      "shiny": "sacredscarab-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "moonhornedbeetle": {
       "model": "MoonHornedDungBeetle",
@@ -956,9 +1042,10 @@
         "#AE85CA",
         "#E7E7B0"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "moonhornedbeetle.png",
-      "shiny": "moonhornedbeetle-shiny.png"
+      "shiny": "moonhornedbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "neptunebeetle": {
       "model": "NeptuneBeetle",
@@ -967,9 +1054,10 @@
         "#6EB6C9",
         "#F2D9AF"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "neptunebeetle.png",
-      "shiny": "neptunebeetle-shiny.png"
+      "shiny": "neptunebeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "manticora": {
       "model": "Manticora",
@@ -978,9 +1066,10 @@
         "#C18EB5",
         "#EFE6B9"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "manticora.png",
-      "shiny": "manticora-shiny.png"
+      "shiny": "manticora-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "titanbeetle": {
       "model": "TitanBeetle",
@@ -989,9 +1078,10 @@
         "#7EA9CE",
         "#F2D6A5"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "titanbeetle.png",
-      "shiny": "titanbeetle-shiny.png"
+      "shiny": "titanbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "fivehornbeetle": {
       "model": "FiveHornedRhinocerosBeetle",
@@ -1000,9 +1090,10 @@
         "#75BCB5",
         "#EFE2AF"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "fivehornbeetle.png",
-      "shiny": "fivehornbeetle-shiny.png"
+      "shiny": "fivehornbeetle-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "jewelchafer": {
       "model": "Jewelbeetle",
@@ -1011,9 +1102,10 @@
         "#D990B0",
         "#E9F3D2"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "jewelchafer.png",
-      "shiny": "jewelchafer-shiny.png"
+      "shiny": "jewelchafer-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "beetle_ultimate": {
       "model": "beetleUltimate",
@@ -1022,9 +1114,10 @@
         "#79BCE0",
         "#F4D58C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "beetle_ultimate.png",
-      "shiny": "beetle_ultimate-shiny.png"
+      "shiny": "beetle_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "ant_ultimate": {
       "model": "antUltimate",
@@ -1033,9 +1126,10 @@
         "#BE83DD",
         "#E8F0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "ant_ultimate.png",
-      "shiny": "ant_ultimate-shiny.png"
+      "shiny": "ant_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "aphid_ultimate": {
       "model": "aphidUltimate",
@@ -1044,9 +1138,10 @@
         "#68D0C5",
         "#F5D49A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "aphid_ultimate.png",
-      "shiny": "aphid_ultimate-shiny.png"
+      "shiny": "aphid_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "weevil_ultimate": {
       "model": "weevilUltimate",
@@ -1055,9 +1150,10 @@
         "#E088BD",
         "#C4E8F1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "weevil_ultimate.png",
-      "shiny": "weevil_ultimate-shiny.png"
+      "shiny": "weevil_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "earwig_ultimate": {
       "model": "earwigUltimate",
@@ -1066,9 +1162,10 @@
         "#7EADEB",
         "#F0DEB1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "earwig_ultimate.png",
-      "shiny": "earwig_ultimate-shiny.png"
+      "shiny": "earwig_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "grasshopper_ultimate": {
       "model": "grasshopperUltimate",
@@ -1077,9 +1174,10 @@
         "#C59AE1",
         "#C6F0D7"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "grasshopper_ultimate.png",
-      "shiny": "grasshopper_ultimate-shiny.png"
+      "shiny": "grasshopper_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "lacewing_ultimate": {
       "model": "lacewingUltimate",
@@ -1088,9 +1186,10 @@
         "#84D3B8",
         "#F1CE8E"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "lacewing_ultimate.png",
-      "shiny": "lacewing_ultimate-shiny.png"
+      "shiny": "lacewing_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "dungbeetle_ultimate": {
       "model": "dungbeetleUltimate",
@@ -1099,9 +1198,10 @@
         "#DE9AB6",
         "#E5EDBB"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "dungbeetle_ultimate.png",
-      "shiny": "dungbeetle_ultimate-shiny.png"
+      "shiny": "dungbeetle_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mantis_ultimate": {
       "model": "mantisUltimate",
@@ -1110,9 +1210,10 @@
         "#79BCE0",
         "#F4D58C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mantis_ultimate.png",
-      "shiny": "mantis_ultimate-shiny.png"
+      "shiny": "mantis_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "butterfly_ultimate": {
       "model": "butterflyUltimate",
@@ -1121,9 +1222,10 @@
         "#BE83DD",
         "#E8F0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "butterfly_ultimate.png",
-      "shiny": "butterfly_ultimate-shiny.png"
+      "shiny": "butterfly_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "divingbeetle_ultimate": {
       "model": "divingbeetleUltimate",
@@ -1132,9 +1234,10 @@
         "#68D0C5",
         "#F5D49A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "divingbeetle_ultimate.png",
-      "shiny": "divingbeetle_ultimate-shiny.png"
+      "shiny": "divingbeetle_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "waterstrider_ultimate": {
       "model": "waterstriderUltimate",
@@ -1143,9 +1246,10 @@
         "#E088BD",
         "#C4E8F1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "waterstrider_ultimate.png",
-      "shiny": "waterstrider_ultimate-shiny.png"
+      "shiny": "waterstrider_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "hoverfly_ultimate": {
       "model": "hoverflyUltimate",
@@ -1154,9 +1258,10 @@
         "#7EADEB",
         "#F0DEB1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "hoverfly_ultimate.png",
-      "shiny": "hoverfly_ultimate-shiny.png"
+      "shiny": "hoverfly_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "leafhopper_ultimate": {
       "model": "leafhopperUltimate",
@@ -1165,9 +1270,10 @@
         "#C59AE1",
         "#C6F0D7"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "leafhopper_ultimate.png",
-      "shiny": "leafhopper_ultimate-shiny.png"
+      "shiny": "leafhopper_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cricket_ultimate": {
       "model": "cricketUltimate",
@@ -1176,9 +1282,10 @@
         "#84D3B8",
         "#F1CE8E"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cricket_ultimate.png",
-      "shiny": "cricket_ultimate-shiny.png"
+      "shiny": "cricket_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "stick_ultimate": {
       "model": "stickUltimate",
@@ -1187,9 +1294,10 @@
         "#DE9AB6",
         "#E5EDBB"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "stick_ultimate.png",
-      "shiny": "stick_ultimate-shiny.png"
+      "shiny": "stick_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "leaf_ultimate": {
       "model": "leafUltimate",
@@ -1198,9 +1306,10 @@
         "#79BCE0",
         "#F4D58C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "leaf_ultimate.png",
-      "shiny": "leaf_ultimate-shiny.png"
+      "shiny": "leaf_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "silverfish_ultimate": {
       "model": "silverfishUltimate",
@@ -1209,9 +1318,10 @@
         "#BE83DD",
         "#E8F0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "silverfish_ultimate.png",
-      "shiny": "silverfish_ultimate-shiny.png"
+      "shiny": "silverfish_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "antlion_ultimate": {
       "model": "antlionUltimate",
@@ -1220,9 +1330,10 @@
         "#68D0C5",
         "#F5D49A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "antlion_ultimate.png",
-      "shiny": "antlion_ultimate-shiny.png"
+      "shiny": "antlion_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cockroach_ultimate": {
       "model": "cockroachUltimate",
@@ -1231,9 +1342,10 @@
         "#E088BD",
         "#C4E8F1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cockroach_ultimate.png",
-      "shiny": "cockroach_ultimate-shiny.png"
+      "shiny": "cockroach_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cranefly_ultimate": {
       "model": "craneflyUltimate",
@@ -1242,9 +1354,10 @@
         "#7EADEB",
         "#F0DEB1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cranefly_ultimate.png",
-      "shiny": "cranefly_ultimate-shiny.png"
+      "shiny": "cranefly_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "flea_ultimate": {
       "model": "fleaUltimate",
@@ -1253,9 +1366,10 @@
         "#C59AE1",
         "#C6F0D7"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "flea_ultimate.png",
-      "shiny": "flea_ultimate-shiny.png"
+      "shiny": "flea_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "giantwaterbug_ultimate": {
       "model": "giantwaterbugUltimate",
@@ -1264,9 +1378,10 @@
         "#84D3B8",
         "#F1CE8E"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "giantwaterbug_ultimate.png",
-      "shiny": "giantwaterbug_ultimate-shiny.png"
+      "shiny": "giantwaterbug_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mayfly_ultimate": {
       "model": "mayflyUltimate",
@@ -1275,9 +1390,10 @@
         "#DE9AB6",
         "#E5EDBB"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mayfly_ultimate.png",
-      "shiny": "mayfly_ultimate-shiny.png"
+      "shiny": "mayfly_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "termite_ultimate": {
       "model": "termiteUltimate",
@@ -1286,9 +1402,10 @@
         "#79BCE0",
         "#F4D58C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "termite_ultimate.png",
-      "shiny": "termite_ultimate-shiny.png"
+      "shiny": "termite_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "tigerbeetle_ultimate": {
       "model": "tigerbeetleUltimate",
@@ -1297,9 +1414,10 @@
         "#BE83DD",
         "#E8F0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "tigerbeetle_ultimate.png",
-      "shiny": "tigerbeetle_ultimate-shiny.png"
+      "shiny": "tigerbeetle_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "tortoisebeetle_ultimate": {
       "model": "tortoisebeetleUltimate",
@@ -1308,9 +1426,10 @@
         "#68D0C5",
         "#F5D49A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "tortoisebeetle_ultimate.png",
-      "shiny": "tortoisebeetle_ultimate-shiny.png"
+      "shiny": "tortoisebeetle_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "bee_ultimate": {
       "model": "beeUltimate",
@@ -1319,9 +1438,10 @@
         "#E088BD",
         "#C4E8F1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "bee_ultimate.png",
-      "shiny": "bee_ultimate-shiny.png"
+      "shiny": "bee_ultimate-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "spider_1": {
       "model": "SpiderStage1",
@@ -1330,9 +1450,10 @@
         "#79BCE0",
         "#F4D58C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "spider_1.png",
-      "shiny": "spider_1-shiny.png"
+      "shiny": "spider_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "spider_2": {
       "model": "SpiderStage2",
@@ -1341,9 +1462,10 @@
         "#68D0C5",
         "#F5D49A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "spider_2.png",
-      "shiny": "spider_2-shiny.png"
+      "shiny": "spider_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "spider_3": {
       "model": "SpiderStage3",
@@ -1352,9 +1474,10 @@
         "#7EADEB",
         "#F0DEB1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "spider_3.png",
-      "shiny": "spider_3-shiny.png"
+      "shiny": "spider_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "armabee_1": {
       "model": "ArmabeeStage1",
@@ -1363,9 +1486,10 @@
         "#BE83DD",
         "#E8F0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "armabee_1.png",
-      "shiny": "armabee_1-shiny.png"
+      "shiny": "armabee_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "armabee_2": {
       "model": "ArmabeeStage2",
@@ -1374,9 +1498,10 @@
         "#E088BD",
         "#C4E8F1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "armabee_2.png",
-      "shiny": "armabee_2-shiny.png"
+      "shiny": "armabee_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "armabee_3": {
       "model": "ArmabeeStage3",
@@ -1385,9 +1510,10 @@
         "#C59AE1",
         "#C6F0D7"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "armabee_3.png",
-      "shiny": "armabee_3-shiny.png"
+      "shiny": "armabee_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "scorpion_1": {
       "model": "ScorpionStage1",
@@ -1396,9 +1522,10 @@
         "#68D0C5",
         "#F5D49A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "scorpion_1.png",
-      "shiny": "scorpion_1-shiny.png"
+      "shiny": "scorpion_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "scorpion_2": {
       "model": "ScorpionStage2",
@@ -1407,9 +1534,10 @@
         "#7EADEB",
         "#F0DEB1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "scorpion_2.png",
-      "shiny": "scorpion_2-shiny.png"
+      "shiny": "scorpion_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "scorpion_3": {
       "model": "ScorpionStage3",
@@ -1418,9 +1546,10 @@
         "#84D3B8",
         "#F1CE8E"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "scorpion_3.png",
-      "shiny": "scorpion_3-shiny.png"
+      "shiny": "scorpion_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "centipede_1": {
       "model": "CentipedeStage1",
@@ -1429,9 +1558,10 @@
         "#E088BD",
         "#C4E8F1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "centipede_1.png",
-      "shiny": "centipede_1-shiny.png"
+      "shiny": "centipede_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "centipede_2": {
       "model": "CentipedeStage2",
@@ -1440,9 +1570,10 @@
         "#C59AE1",
         "#C6F0D7"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "centipede_2.png",
-      "shiny": "centipede_2-shiny.png"
+      "shiny": "centipede_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "centipede_3": {
       "model": "CentipedeStage3",
@@ -1451,9 +1582,10 @@
         "#DE9AB6",
         "#E5EDBB"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "centipede_3.png",
-      "shiny": "centipede_3-shiny.png"
+      "shiny": "centipede_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "wasp_1": {
       "model": "WaspStage1",
@@ -1462,9 +1594,10 @@
         "#7EADEB",
         "#F0DEB1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "wasp_1.png",
-      "shiny": "wasp_1-shiny.png"
+      "shiny": "wasp_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "wasp_2": {
       "model": "WaspStage2",
@@ -1473,9 +1606,10 @@
         "#84D3B8",
         "#F1CE8E"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "wasp_2.png",
-      "shiny": "wasp_2-shiny.png"
+      "shiny": "wasp_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "wasp_3": {
       "model": "WaspStage3",
@@ -1484,9 +1618,10 @@
         "#79BCE0",
         "#F4D58C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "wasp_3.png",
-      "shiny": "wasp_3-shiny.png"
+      "shiny": "wasp_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "dragonfly_1": {
       "model": "DragonflyStage1",
@@ -1495,9 +1630,10 @@
         "#C59AE1",
         "#C6F0D7"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "dragonfly_1.png",
-      "shiny": "dragonfly_1-shiny.png"
+      "shiny": "dragonfly_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "dragonfly_2": {
       "model": "DragonflyStage2",
@@ -1506,9 +1642,10 @@
         "#DE9AB6",
         "#E5EDBB"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "dragonfly_2.png",
-      "shiny": "dragonfly_2-shiny.png"
+      "shiny": "dragonfly_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "dragonfly_3": {
       "model": "DragonflyStage3",
@@ -1517,9 +1654,10 @@
         "#BE83DD",
         "#E8F0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "dragonfly_3.png",
-      "shiny": "dragonfly_3-shiny.png"
+      "shiny": "dragonfly_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "firefly_1": {
       "model": "FireflyStage1",
@@ -1528,9 +1666,10 @@
         "#84D3B8",
         "#F1CE8E"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "firefly_1.png",
-      "shiny": "firefly_1-shiny.png"
+      "shiny": "firefly_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "firefly_2": {
       "model": "FireflyStage2",
@@ -1539,9 +1678,10 @@
         "#79BCE0",
         "#F4D58C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "firefly_2.png",
-      "shiny": "firefly_2-shiny.png"
+      "shiny": "firefly_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "firefly_3": {
       "model": "FireflyStage3",
@@ -1550,9 +1690,10 @@
         "#68D0C5",
         "#F5D49A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "firefly_3.png",
-      "shiny": "firefly_3-shiny.png"
+      "shiny": "firefly_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cicada_1": {
       "model": "CicadaStage1",
@@ -1561,9 +1702,10 @@
         "#DE9AB6",
         "#E5EDBB"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cicada_1.png",
-      "shiny": "cicada_1-shiny.png"
+      "shiny": "cicada_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cicada_2": {
       "model": "CicadaStage2",
@@ -1572,9 +1714,10 @@
         "#BE83DD",
         "#E8F0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cicada_2.png",
-      "shiny": "cicada_2-shiny.png"
+      "shiny": "cicada_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "cicada_3": {
       "model": "CicadaStage3",
@@ -1583,9 +1726,10 @@
         "#E088BD",
         "#C4E8F1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "cicada_3.png",
-      "shiny": "cicada_3-shiny.png"
+      "shiny": "cicada_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mosquito_1": {
       "model": "MosquitoStage1",
@@ -1594,9 +1738,10 @@
         "#79BCE0",
         "#F4D58C"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mosquito_1.png",
-      "shiny": "mosquito_1-shiny.png"
+      "shiny": "mosquito_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mosquito_2": {
       "model": "MosquitoStage2",
@@ -1605,9 +1750,10 @@
         "#68D0C5",
         "#F5D49A"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mosquito_2.png",
-      "shiny": "mosquito_2-shiny.png"
+      "shiny": "mosquito_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "mosquito_3": {
       "model": "MosquitoStage3",
@@ -1616,9 +1762,10 @@
         "#7EADEB",
         "#F0DEB1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "mosquito_3.png",
-      "shiny": "mosquito_3-shiny.png"
+      "shiny": "mosquito_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "snail_1": {
       "model": "SnailStage1",
@@ -1627,9 +1774,10 @@
         "#BE83DD",
         "#E8F0BD"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "snail_1.png",
-      "shiny": "snail_1-shiny.png"
+      "shiny": "snail_1-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "snail_2": {
       "model": "SnailStage2",
@@ -1638,9 +1786,10 @@
         "#E088BD",
         "#C4E8F1"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "snail_2.png",
-      "shiny": "snail_2-shiny.png"
+      "shiny": "snail_2-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "snail_3": {
       "model": "SnailStage3",
@@ -1649,9 +1798,10 @@
         "#C59AE1",
         "#C6F0D7"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "snail_3.png",
-      "shiny": "snail_3-shiny.png"
+      "shiny": "snail_3-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "kristalkoning": {
       "model": "Kristalkoning",
@@ -1660,9 +1810,10 @@
         "#D4568E",
         "#FFE3B0"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "kristalkoning.png",
-      "shiny": "kristalkoning-shiny.png"
+      "shiny": "kristalkoning-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "donderwiek": {
       "model": "Donderwiek",
@@ -1671,9 +1822,10 @@
         "#E09A2E",
         "#FFF2C0"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "donderwiek.png",
-      "shiny": "donderwiek-shiny.png"
+      "shiny": "donderwiek-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "lavaklauw": {
       "model": "Lavaklauw",
@@ -1682,9 +1834,10 @@
         "#2F6FE0",
         "#BFF4FF"
       ],
-      "size": 1024,
+      "size": 768,
       "normal": "lavaklauw.png",
-      "shiny": "lavaklauw-shiny.png"
+      "shiny": "lavaklauw-shiny.png",
+      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     }
   }
 }

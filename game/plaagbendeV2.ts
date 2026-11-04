@@ -21,10 +21,10 @@ export const PLAAG_EMOJI:Record<Element,string>={bug:'🐛',flying:'🪶',poison
 const NAMES:Record<Element,string>={bug:'Plaagbende-kriebel',flying:'Plaagbende-fladder',poison:'Plaagbende-stinker',grass:'Plaagbende-grasdief',ground:'Plaagbende-graver',rock:'Plaagbende-keitje',steel:'Plaagbende-blikkie',dark:'Plaagbende-sluiper',normal:'Plaagbende-rover',fire:'Plaagbende-vonk',water:'Plaagbende-spetter'};
 export const plaagName=(type:Element)=>NAMES[type]??'Plaagbende-rover';
 export type PlaagBalloon={id:string;type:Element;lat:number;lng:number;at:number;until:number};
-export type PlaagbendeProgress={wins:number;cleared:string[];balloon?:PlaagBalloon|null;nextBalloonAt?:number};
+export type PlaagbendeProgress={wins:number;cleared:string[];balloon?:PlaagBalloon|null;nextBalloonAt?:number;encounters?:Record<string,import('./arcade/crew').CrewEncounter>;arcadeReward?:{day:string;wins:number}};
 /** Public invasion on a post (near: playable post; far: horizon marker only). */
 export type PlaagView={id:string;postId:string;type:Element;team:string[];endsAt:number;far?:true};
-export type PlaagBattleMeta={id:string;kind:'post'|'balloon';type:Element;team:string[];postId?:string;rewarded?:boolean;rescued?:string};
+export type PlaagBattleMeta={id:string;kind:'post'|'balloon';type:Element;team:string[];postId?:string;rewarded?:boolean;rescued?:string;crew?:import('./arcade/crew').CrewEncounter};
 export type PlaagToken=(input:string)=>string;
 
 let pools:Partial<Record<Element,string[]>>|undefined;
@@ -58,7 +58,7 @@ export function ensureBalloon(p:PlayerV2,now:number,seed:string){
  const themes=plaagThemes(),type=themes[Math.floor(rng(seed+':plaag-type')()*themes.length)];
  g.balloon={id:'b'+Math.floor(now/1000).toString(36),type,...place('new'),at:now,until:now+BALLOON_STAYS_MS};g.nextBalloonAt=now+BALLOON_EVERY_MS;return g.balloon;
 }
-function target(p:PlayerV2,raw:unknown,now:number,token:PlaagToken):{id:string;kind:'post'|'balloon';type:Element;postId?:string}{
+export function plaagTarget(p:PlayerV2,raw:unknown,now:number,token:PlaagToken):{id:string;kind:'post'|'balloon';type:Element;postId?:string}{
  check(typeof raw==='string'&&raw.length>0&&raw.length<240,'Kies de Plaagbende.');const g=ensurePlaag(p);
  if(raw==='balloon'){const b=g.balloon;check(b&&b.until>now,'De ballon is weggevlogen.');check(!g.cleared.includes(b.id),'Deze ballon is al verslagen.');return {id:b.id,kind:'balloon',type:b.type};}
  const w=requireFieldLocation(p.walking,now) as Walking,post=w.posts?.find(s=>s.id===raw);check(post,'Deze post is niet in de buurt.');check(!gymSites(w.posts??[]).some(s=>s.postId===post.id),'Deze post is een gym.');
@@ -68,14 +68,14 @@ function target(p:PlayerV2,raw:unknown,now:number,token:PlaagToken):{id:string;k
 /** A fair fight for kids: the grunt's bugs sit just below the player's own team CP; no CP limit, one shield. */
 /** Kid-friendly villains: their bugs sit at 70% of your team's average CP and they have no shields, so a fair team usually wins. */
 export const PLAAG_CP_SHARE=.7;
-export function makePlaagBattle(p:PlayerV2,raw:unknown,ids:unknown,id:string,now:number,token:PlaagToken):GoBattle{
- const issue=teamIssue(p,ids,'master',true);check(!issue,issue??'Kies drie bugs.');const t=target(p,raw,now,token),team=plaagTeam(t.id,t.type);
- const mine=(ids as string[]).map(x=>p.specimens.find(s=>s.id===x)!),goal=Math.max(10,Math.round(mine.reduce((n,s)=>n+stats(s).cp,0)/3*PLAAG_CP_SHARE));
+export function makePlaagBattle(p:PlayerV2,raw:unknown,ids:unknown,id:string,now:number,token:PlaagToken,crew?:import('./arcade/crew').CrewEncounter):GoBattle{
+ const issue=teamIssue(p,ids,'master',true);check(!issue,issue??'Kies drie bugs.');const t=plaagTarget(p,raw,now,token),team=plaagTeam(t.id,t.type);
+ const mine=(ids as string[]).map(x=>p.specimens.find(s=>s.id===x)!),goal=crew?[450,900,1400][crew.tier-1]:Math.max(10,Math.round(mine.reduce((n,s)=>n+stats(s).cp,0)/3*PLAAG_CP_SHARE));
  const attacker=structuredClone(p);attacker.go!.league='master';attacker.go!.team=[...ids as string[]];
  const q=freshV2('plaagbende-'+t.id,'PLAAGBND',now);ensureGo(q,now);q.name=plaagName(t.type);q.go!.league='master';
  q.specimens=team.map((kind,i)=>{const s:Specimen={id:'plaag-'+i,species:kind,level:1,shiny:false,favorite:false,obtainedAt:now,source:'plaagbende',hearts:0,item:null,go:{...rollGoBug(kind,'plaag:'+t.id+':'+i),iv:[10,10,10]}};let best=1;for(let l=1;l<=50;l+=.5){s.go!.level=l;if(stats(s).cp<=goal)best=l;else break;}s.go!.level=best;return s;});
  q.go!.team=q.specimens.map(s=>s.id);const b=makeGoBattle(attacker,q,id,now,false,true,true);b.shields[1]=0;
- b.plaagbende={id:t.id,kind:t.kind,type:t.type,team,...(t.postId?{postId:t.postId}:{})};return b;
+ b.plaagbende={id:t.id,kind:t.kind,type:t.type,team,...(t.postId?{postId:t.postId}:{}),...(crew?{crew:structuredClone(crew)}:{})};return b;
 }
 /** Win once per invasion/balloon: stof, XP and a rescued bug of the grunt's type with good IVs. Losing costs nothing; retry any time. */
 export function settlePlaag(p:PlayerV2,b:GoBattle,now:number):{dust:number;xp:number;rescued?:Specimen}|null{

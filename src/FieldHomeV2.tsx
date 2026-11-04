@@ -1,64 +1,64 @@
 import {activeEvent} from '../game/eventsV2';
 import {TrainerPortrait} from './AvatarV2';
-
 import {DailyResearchV2} from './TrainerV2';
-
 import {FieldBagV2} from './FieldBagV2';
-import {BeginnerGuideV2} from './BeginnerGuideV2';
+import {BeginnerGuideV2,useBeginnerGuideV2} from './BeginnerGuideV2';
 import {unlockLevel} from '../game/beginnerGuideV2';
-
 import {trainerLevel} from '../game/trainerV2';
-
 import {GO_DAILY,dailyProgress} from '../game/dailyResearchV2';
-
 import {PostArtV2,WorldSitesSheetV2} from './WorldSitesV2';
 import {RoutesSheetV2} from './RoutesV2';
-
 import type {FieldTarget} from './WorldSitesV2';
-
 import {useGoBack} from './GoBackV2';
-
 import React,{useContext,useEffect,useState} from 'react';
-
 import {Modal,Pressable,ScrollView,Text,View} from 'react-native';
-
-import Svg,{Circle} from 'react-native-svg';
-
-import {buddyDistance,family} from '../game/goV2';
-import {familyName} from './resourceGainV2';
-
 import {cocoonWalked,cocoonActive} from '../game/goCocoonsV2';
-
-import {BAITS,NETS} from '../game/fieldV2';
-
-import type {Bait,Net} from '../game/fieldV2';
-
 import type {GameViewV2} from '../game/typesV2';
-
+import type {FieldEnvironment} from '../game/habitatsV2';
 import type {Fix,WildBug} from '../game/walkingV2';
-
 import {CATCH_RADIUS,distance} from '../game/walkingV2';
-
 import {species} from '../game/catalogV2';
 import {bugRarity,RARITY_TIERS} from '../game/rarityDisplayV2';
-
 import type {RunV2} from './ShopViewV2';
-
 import {SpriteView} from './artV2';
-
 import {FieldArt,FieldActivityArt} from './FieldArtV2';
+import {environmentInfo} from './EnvironmentV2';
+import {font,Glyph,IconButton,MotionPrefs,Title,useInfo,V} from './uiV2';
+import type {GameIconName} from './gameUiArt';
+import {PO,PoChoice,PoCircle,PoClose,PoPill,PoSheet,poText} from './PogoUiV2';
+import {AutoCatchToastV2} from './AutoCatchToastV2';
+import {walkTodayText} from '../game/walkCatchV2';
 
-import {Button,Counter,Glyph,Help,IconButton,Label,MotionPrefs,Panel,Title,useInfo,V} from './uiV2';
+/** Camera actions of the 3D map, offered in the net menu (the map itself only keeps pinch/scroll zoom). */
+export type MapControlsV2={tilted:()=>boolean;toggleTilt:()=>void;zoom:(by:number)=>void};
 
-function FieldBadgeV2({count}:{count:number}){return count>0?<View pointerEvents="none" accessibilityLabel={count+' klaar'} style={{position:'absolute',right:-2,top:-3,minWidth:22,height:22,paddingHorizontal:4,borderRadius:11,alignItems:'center',justifyContent:'center',backgroundColor:'#F1D184',borderWidth:1.5,borderColor:'#F9F4D9'}}><Label small bold color="#173E32">{count}</Label></View>:null;}
+type Sheet='options'|'menu'|'still'|'bag'|'research'|'nearby'|'lure'|'auto'|'post'|'routes'|null;
+const LIGHT:Sheet[]=['options','menu','nearby','still','lure','auto'];
 
-type Sheet='menu'|'still'|'bag'|'research'|'nearby'|'lure'|'auto'|'post'|'routes'|null;
+function FieldSheetHost({menu,visible,inset,reduced,onClose,children}:{menu:boolean;visible:boolean;inset:number;reduced:boolean;onClose:()=>void;children:React.ReactNode}){
+ return menu?<View style={{position:'absolute',inset:0,bottom:inset,zIndex:40,backgroundColor:PO.bg}}>{children}</View>:<Modal visible={visible} transparent animationType={reduced?'none':'slide'} onRequestClose={onClose}>{children}</Modal>;
+}
 
-export function FieldHomeV2({view,run,busy,gpsReady,spawns,fix,open,onSelect,now,onGPS,postSelection,onPostShown,onTarget,mapVisible=true,onSheetVisible}:{onSheetVisible?:(visible:boolean)=>void;mapVisible?:boolean;postSelection?:{id:string;nonce:number;shown?:boolean};onPostShown?:(nonce:number)=>void;onTarget?:(target:FieldTarget)=>void;view:GameViewV2;run:RunV2;busy:boolean;gpsReady:boolean;spawns:WildBug[];fix:Fix;open:(name:string)=>void;onSelect:(s:WildBug)=>void;now:number;onGPS:()=>void}){
+function RedBadge({count}:{count:number}){return count>0?<View pointerEvents="none" accessibilityLabel={count+' klaar'} style={{position:'absolute',right:-3,top:-3,minWidth:22,height:22,borderRadius:11,paddingHorizontal:5,backgroundColor:PO.raid,alignItems:'center',justifyContent:'center',borderWidth:2,borderColor:PO.white}}><Text style={{fontFamily:font,color:PO.white,fontSize:11,fontWeight:'800'}}>{count}</Text></View>:null;}
+
+/** PoChoice look (white circle + short grey name), but with its own accessibility label and optional painted art instead of a Glyph. */
+function MenuChoice({label,name,icon,art,badge=0,lockedAt=0,onPress,testID}:{label:string;name:string;icon?:GameIconName;art?:React.ReactNode;badge?:number;lockedAt?:number;onPress:()=>void;testID?:string}){
+ const size=58;
+ return <View style={{width:'33.333%',alignItems:'center',gap:5,paddingVertical:5}}>
+  <View style={{width:size,height:size}}><PoCircle testID={testID} size={size} label={lockedAt?label+' (vanaf level '+lockedAt+')':label} onPress={onPress}><View style={{opacity:lockedAt?.35:1}}>{art??(icon&&<Glyph name={icon} size={size*.68}/>)}</View></PoCircle>
+   {lockedAt?<View pointerEvents="none" style={{position:'absolute',right:-10,top:-6,flexDirection:'row',alignItems:'center',gap:1,height:22,paddingHorizontal:5,borderRadius:11,backgroundColor:PO.surface,boxShadow:'0px 1px 4px #1E3C3233'}}><Glyph name="lock" size={14}/><Text style={{fontFamily:font,fontSize:10,fontWeight:'800',color:PO.muted}}>{lockedAt}</Text></View>:<RedBadge count={badge}/>}</View>
+  <Text numberOfLines={1} style={{fontFamily:font,fontSize:12,fontWeight:'700',color:lockedAt?PO.muted:PO.text}}>{name}</Text>
+ </View>;
+}
+const Caption=({children}:{children:string})=><Text style={[poText.label,{marginTop:4,marginLeft:4}]}>{children}</Text>;
+const Grid=({children}:{children:React.ReactNode})=><View style={{flexDirection:'row',flexWrap:'wrap'}}>{children}</View>;
+const Line=({children,bold}:{children:React.ReactNode;bold?:boolean})=><Text style={{fontFamily:font,fontSize:bold?20:13,fontWeight:bold?'800':'500',color:bold?PO.text:PO.muted,textAlign:'center',lineHeight:bold?26:18}}>{children}</Text>;
+
+export function FieldHomeV2({view,run,busy,gpsReady,spawns,fix,open,onSelect,now,onGPS,postSelection,onPostShown,onTarget,mapVisible=true,onSheetVisible,mapControls,environment,bottomInset=0}:{bottomInset?:0|72;mapControls?:React.MutableRefObject<MapControlsV2|null>;environment?:FieldEnvironment;onSheetVisible?:(visible:boolean)=>void;mapVisible?:boolean;postSelection?:{id:string;nonce:number;shown?:boolean};onPostShown?:(nonce:number)=>void;onTarget?:(target:FieldTarget)=>void;view:GameViewV2;run:RunV2;busy:boolean;gpsReady:boolean;spawns:WildBug[];fix:Fix;open:(name:string)=>void;onSelect:(s:WildBug)=>void;now:number;onGPS:()=>void}){
 
  const nativeAuto=typeof window!=='undefined'&&!!(window as unknown as {ReactNativeWebView?:unknown}).ReactNativeWebView;
 
- const [sheet,setSheet]=useState<Sheet>(null),[postId,setPostId]=useState(''),[nearbyKind,setNearbyKind]=useState<'bugs'|'posts'>('bugs'),reduced=useContext(MotionPrefs),info=useInfo(),p=view.player,f=p.field!,g=p.go!,buddy=p.specimens.find(s=>s.id===p.buddy&&s.go),nearby=[...spawns].sort((x,y)=>distance(fix,x)-distance(fix,y)),lure=f.lure,activeLure=!!lure&&lure.expiresAt>now,lureUsed=lure?.day===f.daily.day,seconds=Math.max(0,Math.ceil(((lure?.expiresAt??now)-now)/1000)),clock=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0'),auto=g.auto;
+ const [sheet,setSheet]=useState<Sheet>(null),[postId,setPostId]=useState(''),[nearbyKind,setNearbyKind]=useState<'bugs'|'posts'>('bugs'),[eventSeen,setEventSeen]=useState(''),reduced=useContext(MotionPrefs),info=useInfo(),p=view.player,f=p.field!,g=p.go!,buddy=p.specimens.find(s=>s.id===p.buddy&&s.go),nearby=[...spawns].sort((x,y)=>distance(fix,x)-distance(fix,y)),lure=f.lure,activeLure=!!lure&&lure.expiresAt>now,lureUsed=lure?.day===f.daily.day,seconds=Math.max(0,Math.ceil(((lure?.expiresAt??now)-now)/1000)),clock=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0'),auto=g.auto,guide=useBeginnerGuideV2(p);
 
  useEffect(()=>{onSheetVisible?.(!!sheet);return()=>onSheetVisible?.(false);},[!!sheet,onSheetVisible]);
 
@@ -77,46 +77,86 @@ export function FieldHomeV2({view,run,busy,gpsReady,spawns,fix,open,onSelect,now
 
  const tradesReady=(view.goTrades??[]).filter(t=>t.status==='offering'&&t.expiresAt>now&&view.friends.some(f=>f.id===t.pair&&f.accepted)&&!t.accepted[t.users.indexOf(p.uid)]).length;
 
- const buddyRequired=buddy?buddyDistance(buddy.species):1000,buddyProgress=Math.max(0,(f.walk?.meters??0)-g.buddyMeters)%buddyRequired,buddyCircumference=2*Math.PI*18.5;
+ const level=trainerLevel(g.trainer?.xp??0),lockedAt=(label:string)=>{const need=unlockLevel(label);return level<need?need:0;},locked=(label:string,go:()=>void)=>lockedAt(label)?()=>info.show({title:label,icon:'lock',body:'Dit speel je vrij op level '+unlockLevel(label)+'. Vang bugs en draai posten om sneller te groeien.'}):go;
 
- const circle={width:48,height:48,borderRadius:19,backgroundColor:'#193F35EF',alignItems:'center' as const,justifyContent:'center' as const,borderWidth:1,borderColor:'#7C9564'};
+ const raidReady=(view.raidInvites?.filter(i=>i.endsAt>now).length??0)+(view.raidLobby&&view.raidLobby.status!=='lobby'&&view.raidLobby.status!=='fighting'?1:0),routeReady=g.sites?.run?.status==='ready'||g.sites?.recording?.status==='ready'?1:0,eventNew=event&&eventSeen!==event.name?1:0;
+
+ const PLAY=[{label:'Team',icon:'team',go:()=>navigate('teamPicker'),count:0},{label:'Tas',icon:'bag',go:()=>navigate('bag'),count:!f.daily.supply?1:0},{label:'Bugdex',icon:'book',go:()=>navigate('bugdex'),count:0},{label:'Cocons',icon:'clock',go:()=>navigate('cocoons'),count:cocoonsReady},{label:'Buddy',icon:'heart',go:()=>navigate('buddy'),count:0},{label:'Gyms',icon:'shield',go:()=>navigate('gyms'),count:raidReady},{label:'Vrienden',icon:'friends',go:()=>navigate('friends'),count:giftsReady+tradesReady},{label:'Doelen',icon:'research',go:()=>navigate('goals'),count:researchReady},{label:'Instellingen',icon:'settings',go:()=>navigate('settings'),count:0}] as const;
+
+ // Everything that used to sit on the map; the net shows one red count for all of it.
+ const ready=PLAY.reduce((sum,item)=>sum+(lockedAt(item.label)?0:item.count),0)+researchReady+(lockedAt('Routes')?0:routeReady)+(guide?.fresh?1:0)+eventNew;
+
+ const openMenu=()=>{setSheet('menu');guide?.markSeen();if(event)setEventSeen(event.name);};
+
+ const tilted=mapControls?.current?.tilted()??true;
+
+ const weather=environment?environmentInfo(environment):{title:'Weer',icon:'compass' as const,body:'Het weer en het leefgebied verschijnen zodra je GPS nauwkeurig is.'};
 
  return <>
 
-  {(mapVisible||auto.enabled)&&<View style={{position:'absolute',left:14,top:84,gap:11}}>{mapVisible&&(!lureUsed||activeLure)&&<Pressable accessibilityRole="button" accessibilityLabel="Wandellokker" onPress={()=>setSheet('lure')} style={{...circle,height:activeLure?73:58,width:60}}><FieldActivityArt id="incense" size={49}/>{activeLure&&<Label small bold>{clock}</Label>}</Pressable>}<Pressable accessibilityRole="button" accessibilityLabel="Autovangst" onPress={()=>setSheet('auto')} style={{...circle,width:60,height:70,borderColor:auto.enabled?'#289B82':'#7C9564',backgroundColor:auto.enabled?'#346850EF':'#193F35EF'}}><FieldArt id="basic" size={42}/><Label small bold>{auto.enabled?auto.status==='too-fast'?'Te snel':auto.status==='gps'?'GPS':auto.status==='empty'?'Op':'Auto aan':'Auto uit'}</Label></Pressable>{auto.last&&now-auto.last.at<10000&&<View style={{...circle,width:60,height:63}}><SpriteView id={auto.last.species} size={37}/><Glyph name={auto.last.caught?'check':'close'} size={19}/></View>}</View>}
+  {mapVisible&&auto.enabled&&<AutoCatchToastV2 player={p}/>}
+  {mapVisible&&auto.enabled&&<View pointerEvents="box-none" style={{position:'absolute',right:16,top:138,alignItems:'center',gap:4}}><PoCircle size={50} label="Autovangst" onPress={()=>setSheet('auto')} ring={PO.teal}>{auto.last&&now-auto.last.at<10000?<SpriteView id={auto.last.species} size={40}/>:<FieldArt id="basic" size={38}/>}</PoCircle><View pointerEvents="none" style={{paddingHorizontal:7,paddingVertical:1,borderRadius:9,backgroundColor:PO.surface}}><Text style={{fontFamily:font,fontSize:10,fontWeight:'800',color:PO.tealText}}>{auto.status==='too-fast'?'Te snel':auto.status==='gps'?'GPS':auto.status==='empty'?'Op':auto.last&&now-auto.last.at<10000?(auto.last.caught?'Raak!':'Weg'):'Auto'}</Text></View></View>}
 
-  <View pointerEvents="box-none" style={{position:'absolute',left:14,right:72,bottom:108}}><BeginnerGuideV2 player={p} onAction={action=>{if(action==='nearby'||action==='posts'){setNearbyKind(action==='posts'?'posts':'bugs');setSheet('nearby');}else navigate(action==='team'?'team':action==='battle'?'ranked':'bugdex');}}/></View><View style={{position:'absolute',right:14,bottom:108}}><IconButton name="research" label="Open veldonderzoek" onPress={()=>setSheet('research')}/><FieldBadgeV2 count={researchReady}/></View>{event&&<View pointerEvents="box-none" style={{position:'absolute',top:66,left:90,right:90,alignItems:'center'}}><Pressable testID="event-chip" accessibilityRole="button" accessibilityLabel={event.name+': '+event.line} onPress={()=>info.show({title:event.emoji+' '+event.name,icon:'star',body:'✦ '+event.line+' (1 op '+event.shinyOdds+').'+'\n⏱ Nog '+Math.max(1,Math.ceil((event.endsAt-now)/3600000))+' uur.'})} style={{paddingHorizontal:12,paddingVertical:5,borderRadius:16,backgroundColor:'#3B2F6BEE',borderWidth:1,borderColor:'#F2D16E'}}><Text style={{color:'#FFF6D8',fontWeight:'800',fontSize:13}}>{event.emoji+' '+event.name+' · '+event.line}</Text></Pressable></View>}<View style={{position:'absolute',right:14,bottom:170,gap:8}}><Pressable testID="map-still" accessibilityRole="button" accessibilityLabel="Spelen zonder lopen" onPress={()=>setSheet('still')} style={{width:48,height:48,borderRadius:24,alignItems:'center',justifyContent:'center',backgroundColor:'#214C40',borderWidth:1,borderColor:'#9AB38A'}}><Text style={{fontSize:22}}>🛋️</Text></Pressable><Pressable testID="map-legend" accessibilityRole="button" accessibilityLabel="Wat zie ik op de kaart?" onPress={()=>info.show({title:'Wat zie ik?',icon:'info',body:'🐞 Bug: tik om te vangen.\n🔵 Post (blauwe straal): draai voor netten.\n🛡️ Gym (kleur van een ploeg): win hem voor jouw ploeg. 1× per dag ook op afstand.\n🥚 Raid (ei of baas met klok): versla SAMEN een grote baas en vang hem. 1× per dag gratis op afstand.\n🦝 Plaagbende (paars, ⚔️ Versla!): boeven die een bug pakken. Versla ze en red de bug. Ook de 🎈 ballon.\n🏁 Route: loop mee voor extra bugs en een kist.\n🌀 Weer: deze bug is extra sterk door het weer.'})} style={{width:48,height:48,borderRadius:24,alignItems:'center',justifyContent:'center',backgroundColor:'#214C40',borderWidth:1,borderColor:'#9AB38A'}}><Text style={{fontSize:22}}>❓</Text></Pressable></View>
+  <View pointerEvents="box-none" style={{position:'absolute',right:16,top:78}}><PoCircle size={48} label="Kaartopties" onPress={()=>setSheet('options')}><Glyph name="settings" size={28}/></PoCircle></View>
+  {/* 2D/3D and zoom stay on the map as small glass buttons, top-left (the right column holds compass and Arcade). */}
+  <View pointerEvents="box-none" style={{position:'absolute',left:16,top:24,gap:10}}>
+   <PoCircle size={44} label={tilted?'Kaart van boven':'Kaart in 3D'} onPress={()=>mapControls?.current?.toggleTilt()}><Text style={{fontFamily:font,fontSize:14,fontWeight:'800',color:PO.tealText}}>{tilted?'2D':'3D'}</Text></PoCircle>
+   <PoCircle size={44} label="Zoom in" onPress={()=>mapControls?.current?.zoom(1)}><Text style={{fontFamily:font,fontSize:24,fontWeight:'700',color:PO.text}}>+</Text></PoCircle>
+   <PoCircle size={44} label="Zoom uit" onPress={()=>mapControls?.current?.zoom(-1)}><Text style={{fontFamily:font,fontSize:24,fontWeight:'700',color:PO.text}}>−</Text></PoCircle>
+  </View>
+  <View pointerEvents="box-none" style={{position:'absolute',left:16,right:16,bottom:22+bottomInset,flexDirection:'row',justifyContent:'space-between',alignItems:'flex-end'}}>
+   <View style={{width:72,height:72,justifyContent:'flex-end'}}>
+    <PoCircle size={68} label="Open profiel" onPress={()=>open('profile')}><TrainerPortrait avatar={p.avatar} outfit={p.outfit} size={62}/></PoCircle>
+    <View pointerEvents="none" style={{position:'absolute',left:-2,bottom:-2,minWidth:24,height:24,paddingHorizontal:5,borderRadius:12,backgroundColor:PO.teal,borderWidth:2,borderColor:PO.white,alignItems:'center',justifyContent:'center'}}><Text style={{fontFamily:font,fontSize:11,fontWeight:'800',color:PO.white}}>{level}</Text></View>
+    {g.trainer&&level>g.trainer.claimedLevel&&<RedBadge count={1}/>}
+   </View>
+   <View style={{width:100,height:100,borderRadius:50,alignItems:'center',justifyContent:'center',backgroundColor:'#BDEBDD80',marginBottom:-6}}>
+    <PoCircle size={88} label="Open veldmenu" onPress={openMenu} ring="#A8E2D2"><FieldArt id="basic" size={70}/></PoCircle>
+    <RedBadge count={ready}/>
+   </View>
+   <PoCircle size={68} label="In de buurt" onPress={()=>setSheet('nearby')}>{nearby.length?<View style={{opacity:g.dex?.includes(nearby[0].species)?1:.5}}><SpriteView id={nearby[0].species} size={54}/></View>:<Glyph name={gpsReady?'leaf':'compass'} size={40}/>}</PoCircle>
+  </View>
 
-  <View pointerEvents="box-none" style={{position:'absolute',left:14,right:14,bottom:20,flexDirection:'row',justifyContent:'space-between',alignItems:'flex-end'}}><View style={{width:80,height:78}}><Pressable accessibilityRole="button" accessibilityLabel="Open profiel" onPress={()=>open('profile')} style={{...circle,width:63,height:63,borderRadius:32}}><TrainerPortrait avatar={p.avatar} outfit={p.outfit} size={57}/><View style={{position:'absolute',left:-3,bottom:-3,minWidth:25,height:22,paddingHorizontal:5,borderRadius:11,backgroundColor:V.pine,borderWidth:1,borderColor:'#FFF0C7',alignItems:'center',justifyContent:'center'}}><Label small bold color="#FFF5D8">{trainerLevel(g.trainer?.xp??0)}</Label></View>{g.trainer&&trainerLevel(g.trainer.xp)>g.trainer.claimedLevel&&<View style={{position:'absolute',right:-2,top:-3}}><Glyph name="gift" size={23}/></View>}</Pressable><Pressable accessibilityRole="button" accessibilityLabel="Open buddy" onLongPress={()=>info.show({title:"Buddyafstand",body:buddy?(buddyProgress/1000).toLocaleString("nl-NL",{maximumFractionDigits:2})+" / "+buddyRequired/1000+" km voor 1 "+familyName(family(buddy.species))+"-nectar.":"Kies een buddy om nectar te verdienen.",icon:"heart"})} onPress={()=>open('buddy')} style={{...circle,position:'absolute',right:0,bottom:0,width:40,height:40,borderRadius:20}}>{buddy?<SpriteView id={buddy.species} shiny={buddy.shiny} size={37}/>:<Glyph name="heart" size={27}/>}<View pointerEvents="none" style={{position:"absolute",inset:0}}><Svg width={40} height={40} viewBox="0 0 40 40"><Circle cx={20} cy={20} r={18.5} fill="none" stroke="#D8DDBF" strokeWidth={2}/>{buddy&&<Circle cx={20} cy={20} r={18.5} fill="none" stroke="#289B82" strokeWidth={2} strokeLinecap="round" strokeDasharray={[buddyCircumference,buddyCircumference]} strokeDashoffset={buddyCircumference*(1-buddyProgress/buddyRequired)} rotation={-90} origin="20, 20"/>}</Svg></View></Pressable></View><Pressable accessibilityRole="button" accessibilityLabel="Open veldmenu" onPress={()=>setSheet('menu')} style={{...circle,width:77,height:77,borderRadius:39,borderWidth:3}}><FieldArt id="basic" size={65}/></Pressable><Pressable accessibilityRole="button" accessibilityLabel="In de buurt" onPress={()=>setSheet('nearby')} style={{...circle,width:95,height:58,flexDirection:'row'}}>{nearby.slice(0,2).map(s=><View key={s.id} style={{opacity:g.dex?.includes(s.species)?1:.45}}><SpriteView id={s.species} size={39}/></View>)}{!nearby.length&&<><Glyph name={gpsReady?"leaf":"compass"} size={23}/><Label small>{gpsReady?"Geen bugs":"GPS uit"}</Label></>}</Pressable></View>
+  <FieldSheetHost menu={sheet==='menu'} visible={!!sheet} inset={bottomInset} reduced={reduced} onClose={()=>setSheet(null)}><View style={{flex:1,backgroundColor:LIGHT.includes(sheet)?'#0E2B2459':'#092C29A8',alignItems:'center',justifyContent:'flex-end'}}>
 
-  <Modal visible={!!sheet} transparent animationType={reduced?'none':'slide'} onRequestClose={()=>setSheet(null)}><View style={{flex:1,backgroundColor:'#092C29A8',alignItems:'center',justifyContent:'flex-end'}}><View style={{width:'100%',maxWidth:560,maxHeight:'89%',backgroundColor:V.paper,borderTopLeftRadius:30,borderTopRightRadius:30,padding:17,gap:14,...(sheet==='menu'?{maxHeight:'94%',paddingTop:72,boxShadow:'0px -8px 30px #06191466'}:{})}}>{sheet!=='menu'&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><Title>{({menu:'Veldmenu',bag:'Veldtas',research:'Onderzoek',nearby:'In de buurt',lure:'Wandellokker',auto:'Autovangst',post:'Veldpost',routes:'Routes'} as Record<string,string>)[sheet??'']}</Title><IconButton name="close" label="Sluit veldscherm" onPress={()=>setSheet(null)}/></View>}{sheet==='menu'&&<View style={{position:'absolute',right:17,top:20,zIndex:4}}><Pressable accessibilityRole="button" accessibilityLabel="Instellingen" onPress={()=>navigate('settings')} style={{minHeight:44,flexDirection:'row',alignItems:'center',gap:8}}><Label small bold>INSTELLINGEN</Label><Glyph name="settings" size={32}/></Pressable></View>}<ScrollView contentContainerStyle={{gap:13,paddingBottom:20,...(sheet==='menu'?{flexGrow:1,justifyContent:'flex-end'}:{})}}>
+  {LIGHT.includes(sheet)?<PoSheet style={{...(sheet==='menu'?{flex:1,borderRadius:0}:{}),width:'100%',maxWidth:560,maxHeight:sheet==='menu'?'100%':'92%',paddingHorizontal:14,paddingTop:16,paddingBottom:16,gap:10}}>{sheet==='menu'&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',minHeight:48}}><Title>Menu</Title><IconButton name="close" label="Sluit menu" onPress={()=>setSheet(null)}/></View>}<ScrollView contentContainerStyle={{gap:10,paddingBottom:4}}>
 
-   {sheet==='menu'&&<View testID="field-main-menu" style={{gap:18,paddingTop:4}}>
-
-
-
-    <View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:10}}>{([{icon:'swords',label:'Strijd',go:()=>navigate('ranked'),count:0,big:false},{icon:'coin',label:'Shop',go:()=>navigate('coinShop'),count:0,big:true},{icon:'shield',label:'Gyms',go:()=>navigate('gyms'),count:(view.raidInvites?.filter(i=>i.endsAt>now).length??0)+(view.raidLobby&&view.raidLobby.status!=='lobby'&&view.raidLobby.status!=='fighting'?1:0),big:false},{icon:'book',label:'Bugdex',go:()=>navigate('bugdex'),count:0,big:false},{icon:'team',label:'Bugs',go:()=>navigate('team'),count:0,big:true},{icon:'bag',label:'Veldtas',go:()=>setSheet('bag'),count:!f.daily.supply?1:0,big:false}] as const).map(item=>{const need=unlockLevel(item.label),locked=trainerLevel(g.trainer?.xp??0)<need;return <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={locked?item.label+' (vanaf level '+need+')':item.label} onPress={locked?()=>info.show({title:item.label,icon:'lock',body:'Dit speel je vrij op level '+need+'. Vang bugs en draai posten om sneller te groeien.'}):item.go} style={({pressed})=>({width:'30%',maxWidth:132,aspectRatio:1,alignItems:'center',justifyContent:'center',gap:4,borderRadius:999,backgroundColor:item.big?'#2F6247':'#24503F',borderWidth:item.big?3:1,borderColor:item.big?'#F2D16E':'#8DAE9055',borderTopColor:item.big?'#FFF0B0':'#D6E6C066',boxShadow:item.big?'0px 6px 20px #F2D16E55':'0px 6px 16px #0619144D',transform:[{scale:(pressed?.96:1)*(item.big?1.08:1)}]})}><View style={{opacity:locked?.35:1,alignItems:'center',gap:6}}><Glyph name={item.icon} size={item.big?62:52}/><Label small bold>{item.label}</Label></View>{locked?<View style={{position:'absolute',top:6,right:6,flexDirection:'row',alignItems:'center',gap:2,paddingHorizontal:6,paddingVertical:2,borderRadius:10,backgroundColor:'#0E2B24E6'}}><Glyph name="lock" size={14}/><Label small bold color="#F2D16E">Lv {need}</Label></View>:<FieldBadgeV2 count={item.count}/>}</Pressable>;})}</View>
-
-    <View style={{flexDirection:'row',justifyContent:'center',flexWrap:'wrap',gap:8}}>{([{icon:'clock',label:'Cocons',go:()=>navigate('cocoons'),count:cocoonsReady},{icon:'friends',label:'Vrienden',go:()=>navigate('friends'),count:giftsReady+tradesReady},{icon:'compass' as const,label:'Routes',go:()=>setSheet('routes'),count:g.sites?.run?.status==='ready'||g.sites?.recording?.status==='ready'?1:0}] as const).map(item=>{const need=unlockLevel(item.label),locked=trainerLevel(g.trainer?.xp??0)<need;return <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={locked?item.label+' (vanaf level '+need+')':item.label} onPress={locked?()=>info.show({title:item.label,icon:'lock',body:'Dit speel je vrij op level '+need+'.'}):item.go} style={{opacity:locked?.45:1,minHeight:44,flexDirection:'row',alignItems:'center',gap:5,paddingHorizontal:10,borderRadius:20,backgroundColor:'#244E40'}}><Glyph name={locked?'lock':item.icon} size={23}/><Label small>{item.label}{locked?' · Lv '+need:''}</Label>{!locked&&<FieldBadgeV2 count={item.count}/>}</Pressable>;})}</View>
-
+   {sheet==='menu'&&<View testID="field-main-menu" style={{gap:6}}>
+    {guide&&<BeginnerGuideV2 guide={guide} onAction={action=>{if(action==='nearby'||action==='posts'){setNearbyKind(action==='posts'?'posts':'bugs');setSheet('nearby');}else navigate(action==='team'?'team':action==='battle'?'ranked':'bugdex');}}/>}
+    <Grid>{PLAY.map(item=><MenuChoice key={item.label} label={item.label} name={item.label} icon={item.icon} badge={item.count} lockedAt={lockedAt(item.label)} onPress={locked(item.label,item.go)}/>)}</Grid>
    </View>}
 
+   {sheet==='options'&&<><Text style={[poText.big,{textAlign:'center'}]}>Kaart</Text><Grid>
+    <MenuChoice label="Routes" name="Routes" icon="compass" badge={routeReady} lockedAt={lockedAt('Routes')} onPress={locked('Routes',()=>setSheet('routes'))}/>
+    <MenuChoice label="Wandellokker" name={activeLure?clock:'Lokker'} art={<FieldActivityArt id="incense" size={44}/>} onPress={()=>setSheet('lure')}/>
+    <MenuChoice label="Autovangst" name={auto.enabled?'Auto aan':'Auto uit'} art={<FieldArt id="basic" size={40}/>} onPress={()=>setSheet('auto')}/>
+    <MenuChoice label="Bioom en weer" name="Weer" icon={environment?.weather.isDay===false?'itemMoon':'itemSun'} onPress={()=>info.show(weather)}/>
+    <MenuChoice label="Wat zie ik op de kaart?" name="Uitleg" icon="info" onPress={()=>info.show({title:'Jouw kaart',icon:'compass',body:'Tik een bug om te vangen. Draai een post voor netten. Versla gyms voor munten of een raid voor een zeldzame bug. Veeg om te draaien; knijp of tik +/− om te zoomen.'})}/>
+    {event&&<MenuChoice label={event.name} name="Event" icon="star" badge={eventNew} onPress={()=>info.show({title:event.name,icon:'star',body:event.line+' · shiny 1 op '+event.shinyOdds})}/>}
+   </Grid></>}
 
+   {sheet==='nearby'&&<>
+    <Text style={[poText.big,{textAlign:'center'}]}>In de buurt</Text>
+    <View style={{flexDirection:'row',alignSelf:'center',gap:4,padding:4,borderRadius:22,backgroundColor:PO.bg}}>{([['bugs','Bugs'],['posts','Posten']] as const).map(([id,name])=><Pressable key={id} accessibilityRole="button" accessibilityLabel={name} accessibilityState={{selected:nearbyKind===id}} onPress={()=>setNearbyKind(id)} style={{minWidth:96,height:38,borderRadius:19,alignItems:'center',justifyContent:'center',backgroundColor:nearbyKind===id?PO.teal:'transparent'}}><Text style={{fontFamily:font,fontSize:14,fontWeight:'800',color:nearbyKind===id?PO.white:PO.muted}}>{name}</Text></Pressable>)}{(p.walking?.routes?.length||g.sites?.run)&&<Pressable accessibilityRole="button" accessibilityLabel="Routes" onPress={()=>setSheet('routes')} style={{minWidth:80,height:38,borderRadius:19,alignItems:'center',justifyContent:'center'}}><Text style={{fontFamily:font,fontSize:14,fontWeight:'800',color:PO.muted}}>Routes</Text></Pressable>}</View>
+    {nearbyKind==='posts'?<View style={{gap:8}}>{[...(p.walking?.posts??[])].sort((a,b)=>distance(fix,a)-distance(fix,b)).map(post=>{const cooling=now-(g.sites?.visits[post.id]??0)<300000;return <Pressable key={post.id} accessibilityRole="button" accessibilityLabel={'Open post '+post.name} onPress={()=>{setPostId(post.id);setSheet('post');}} style={{padding:8,borderRadius:20,backgroundColor:PO.bg,flexDirection:'row',gap:10,alignItems:'center'}}><PoCircle size={54} label={post.name}><PostArtV2 size={46} available={!cooling}/></PoCircle><View style={{flex:1}}><Text numberOfLines={1} style={{fontFamily:font,fontSize:15,fontWeight:'800',color:PO.text}}>{post.name}</Text><Text style={{fontFamily:font,fontSize:12,color:PO.muted}}>{Math.round(distance(fix,post))} m</Text></View><Glyph name={cooling?'clock':'gift'} size={28}/></Pressable>;})}{!p.walking?.posts?.length&&<Line>{p.walking?.siteSource==='unavailable'?'Locatiepunten laden tijdelijk niet.':'Geen geschikte insectenposten gevonden.'}</Line>}</View>
+    :<View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>{!nearby.length&&<View style={{alignItems:'center',gap:8,padding:12}}><Glyph name={gpsReady?'leaf':'compass'} size={40}/><Line>{gpsReady?'Geen bugs in de buurt. Wandel rustig verder.':'Zet GPS aan om bugs in de buurt te zien.'}</Line></View>}{nearby.map(s=>{const tier=RARITY_TIERS[bugRarity(s.species)];return <Pressable key={s.id} accessibilityRole="button" accessibilityLabel={'Volg '+species(s.species).name} onPress={()=>{setSheet(null);if(distance(fix,s)<=CATCH_RADIUS)onSelect(s);else onTarget?.({...s,name:species(s.species).name,spawnId:s.id});}} style={({pressed})=>({width:'33.3%',alignItems:'center',gap:4,paddingVertical:6,transform:[{scale:pressed?.95:1}]})}><View accessibilityLabel={'Zeldzaamheid: '+tier.name} style={{width:80,height:80,borderRadius:40,borderWidth:4,borderColor:tier.color,alignItems:'center',justifyContent:'center',backgroundColor:PO.surface,boxShadow:'0px 3px 10px #1E3C3226'+(bugRarity(s.species)>=4?', 0px 0px 10px '+tier.color:'')}}><SpriteView id={s.species} silhouette={!g.dex?.includes(s.species)} size={62}/>{s.weather&&!s.boss&&<View accessibilityLabel="Weerbonus" style={{position:'absolute',right:-5,top:-5,width:24,height:24,borderRadius:12,backgroundColor:PO.surface,borderWidth:2,borderColor:PO.white,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:13}}>🌀</Text></View>}</View><Text style={{fontFamily:font,fontSize:12,fontWeight:'700',color:PO.text}}>{Math.round(distance(fix,s))} m</Text></Pressable>;})}</View>}
+   </>}
 
+   {sheet==='still'&&<View testID="still-sheet" style={{gap:12}}><Text style={[poText.big,{textAlign:'center'}]}>🛋️ Zonder lopen</Text><View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'space-around',rowGap:14}}>{([['shield','Raid op afstand','gyms',0],['shield','Gym op afstand','gyms',0],['swords','Vechten','ranked',0],['heart','Buddy aaien','buddy',0],['gift','Cadeaus','friends',giftsReady],['power','Bugs sterker','team',0]] as const).map(([icon,label,go,count])=><View key={label} style={{width:'33%',alignItems:'center'}}><PoChoice icon={label==='Raid op afstand'?'star':icon} label={label} badge={count} size={64} onPress={()=>navigate(go)}/></View>)}</View></View>}
+
+   {sheet==='lure'&&<View style={{alignItems:'center',gap:10}}><Text style={poText.big}>Wandellokker</Text><FieldActivityArt id="incense" size={150}/><Line bold>{activeLure?clock:lureUsed?'Morgen weer':'15 minuten'}</Line>{activeLure&&<Line>{(lure?.caught??0)+' gevangen'}</Line>}<View style={{alignSelf:'stretch'}}>{!gpsReady?<PoPill icon="compass" label="GPS aan" onPress={()=>{setSheet(null);onGPS();}}/>:<PoPill icon="compass" disabled={busy||activeLure||lureUsed} label={activeLure?'Actief':lureUsed?'Vandaag gebruikt':'Start wandeling'} onPress={()=>void run('fieldLure').then(ok=>{if(ok)setSheet(null);})}/>}</View><Line>Elke dag gratis 15 minuten. Loop met de kaart open: na minimaal 25 goedgekeurde meters en 30 seconden verschijnt een extra bug, tot maximaal 20. De timer loopt door na sluiten.</Line></View>}
+
+   {sheet==='auto'&&<View style={{alignItems:'center',gap:10}}><Text style={poText.big}>Autovangst</Text><FieldArt id="basic" size={120}/><Line bold>{auto.enabled?'Aan':'Uit'}</Line><Line bold>{walkTodayText(p,now)}</Line><Line>{'👟 5 per km · 🏃 10 per km'}</Line><View style={{alignSelf:'stretch'}}><PoPill icon={auto.enabled?'close':'check'} disabled={busy} label={auto.enabled?'Uitzetten':!gpsReady?'GPS aan':'Aanzetten'} onPress={()=>{if(!gpsReady&&!auto.enabled){setSheet(null);onGPS();}else void run('goAuto',{enabled:!auto.enabled});}}/></View><Line>{nativeAuto?'Scherm uit: blijft lopen met locatietoestemming.':'Houd deze browserkaart open.'}</Line><Pressable accessibilityRole="button" accessibilityLabel="Uitleg autovangst" onPress={()=>info.show({title:'Autovangst',icon:'compass',body:(nativeAuto?'Android: achtergrondlocatie en meldingen aan. Geforceerd afsluiten of batterijbeperking kan de dienst stoppen. Adventure Sync: 1 poging per 250 meter, maximaal 20 per dag; verwerkt na terugkomst met verse GPS. ':'Een gesloten browsertab telt geen GPS-afstand. ' )+'Elke poging kost 1 standaardnet en heeft 25% minder vangkans dan actief vangen zonder bonus. Alleen onderweg, circa 2,5–25 km/u. Stilstand, slecht GPS en hogere snelheid geven geen vangsten.'})} style={{minHeight:48,justifyContent:'center',alignItems:'center'}}><Text style={{fontFamily:font,color:PO.tealText,fontWeight:'800'}}>ⓘ</Text></Pressable></View>}
+
+  </ScrollView>{sheet!=='menu'&&<View style={{alignItems:'center'}}><PoClose label="Sluit veldscherm" onPress={()=>setSheet(null)}/></View>}</PoSheet>
+
+  :<View style={{width:'100%',maxWidth:560,maxHeight:'89%',backgroundColor:V.paper,borderTopLeftRadius:30,borderTopRightRadius:30,padding:17,gap:14}}><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><Title>{({bag:'Veldtas',research:'Onderzoek',post:'Veldpost',routes:'Routes'} as Record<string,string>)[sheet??'']}</Title><IconButton name="close" label="Sluit veldscherm" onPress={()=>setSheet(null)}/></View><ScrollView contentContainerStyle={{gap:13,paddingBottom:20}}>
    {sheet==='bag'&&<FieldBagV2 {...{view,run,busy}} open={navigate}/>}
-   {sheet==='still'&&<View testID="still-sheet" style={{gap:8}}><Label bold center>🛋️ Zonder lopen</Label><View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{([['🥚','Raid op afstand','gyms',0],['🛡️','Gym op afstand','gyms',0],['⚔️','Vechten','ranked',0],['🐞','Buddy aaien','buddy',0],['🎁','Cadeaus','friends',giftsReady],['💪','Bugs sterker','team',0]] as const).map(([emoji,label,go,count])=><Pressable key={label} accessibilityRole="button" accessibilityLabel={label} onPress={()=>{setSheet(null);navigate(go);}} style={{width:'48.5%',minHeight:84,alignItems:'center',justifyContent:'center',gap:3,borderRadius:20,backgroundColor:'#214C40',borderWidth:1,borderColor:'#9AB38A66'}}><Text style={{fontSize:32,lineHeight:38}}>{emoji}</Text><Label small bold>{label}</Label><FieldBadgeV2 count={count}/></Pressable>)}</View></View>}
-
    {sheet==='research'&&<DailyResearchV2 player={p} {...{run,busy}}/>}
-
-   {sheet==='lure'&&<><View style={{alignItems:'center',gap:12}}><FieldActivityArt id="incense" size={180}/><Label bold>{activeLure?clock:lureUsed?'Morgen weer':'15 minuten'}</Label>{activeLure&&<Counter icon="leaf" value={lure?.caught??0} label="Gevangen"/>}</View>{!gpsReady?<Button icon="compass" onPress={()=>{setSheet(null);onGPS();}}>GPS aan</Button>:<Button icon="compass" disabled={busy||activeLure||lureUsed} onPress={()=>void run('fieldLure').then(ok=>{if(ok)setSheet(null);})}>{activeLure?'Actief':lureUsed?'Vandaag gebruikt':'Start wandeling'}</Button>}<Help title="Wandellokker" body="Elke dag gratis 15 minuten. Loop met de GPS-kaart open: na minimaal 25 goedgekeurde meters en 30 seconden verschijnt een extra bug, tot maximaal 20. De timer loopt door na sluiten."/></>}
-
-   {sheet==='auto'&&<><View style={{alignItems:'center',gap:9}}><FieldArt id="basic" size={150}/><Label bold>{auto.enabled?'Aan':'Uit'}</Label><View style={{flexDirection:'row',gap:25}}><Counter icon="leaf" value={f.inventory.basic} label="Standaardnetten"/><Counter icon="compass" value="2,5–25" label="km/u"/></View></View><Button icon={auto.enabled?'close':'check'} disabled={busy} onPress={()=>{if(!gpsReady&&!auto.enabled){setSheet(null);onGPS();}else void run('goAuto',{enabled:!auto.enabled});}}>{auto.enabled?'Uitzetten':!gpsReady?'GPS aan':'Aanzetten'}</Button><Help title="Autovangst" body={(nativeAuto?"Android: zet autovangst aan terwijl BugBaas open is. Met locatie en meldingen toegestaan blijft de locatiedienst werken als je naar een andere app gaat of het scherm uitzet. De blijvende melding laat zien dat afstand en autovangst actief zijn. Stop via Uitzetten in BugBaas. Geforceerd afsluiten en batterijbeperkingen kunnen de dienst stoppen. Loop je met de app helemaal dicht en staat Adventure Sync aan, dan krijg je bij terugkomst per gelopen kilometer een vangpoging (maximaal 5 per dag). ":"Browser: houd de GPS-kaart open. Een gesloten tab of vergrendeld scherm wordt niet ondersteund. De game houdt waar mogelijk het scherm wakker. ")+"Beweeg op circa 2,5–25 km/u. Na twee nauwkeurige bewegingsmetingen probeert de autocatcher maximaal iedere 30 seconden één bug: één standaardnet, één poging, zonder lokmiddel of mikbonus. Bij mislukken vlucht de bug. De autovanger heeft 25% minder vangkans en bezoekt ook posten in de buurt voor nieuwe netten. Actief mikken met lokmiddelen geeft meer kansen. Stilstand, slecht GPS en rijden op hogere snelheid geven geen vangsten. GPS alleen kan een langzaam rijdende auto niet betrouwbaar onderscheiden van een fiets."}/></>}
-
-   {sheet==='nearby'&&<><View style={{flexDirection:'row',gap:8}}><Button small secondary={nearbyKind!=='bugs'} onPress={()=>setNearbyKind('bugs')}>Bugs</Button><Button small secondary={nearbyKind!=='posts'} onPress={()=>setNearbyKind('posts')}>Posten</Button>{(p.walking?.routes?.length||g.sites?.run)&&<Button small secondary onPress={()=>setSheet('routes')}>Routes</Button>}</View>{nearbyKind==='posts'?<View style={{gap:8}}>{[...(p.walking?.posts??[])].sort((a,b)=>distance(fix,a)-distance(fix,b)).map(post=><Pressable key={post.id} accessibilityRole="button" accessibilityLabel={'Open post '+post.name} onPress={()=>{setPostId(post.id);setSheet('post');}} style={{padding:10,borderRadius:18,backgroundColor:'#214B40',flexDirection:'row',gap:10,alignItems:'center'}}><PostArtV2 size={65} available={now-(g.sites?.visits[post.id]??0)>=300000}/><View style={{flex:1}}><Label bold>{post.name}</Label><Label small>{Math.round(distance(fix,post))} m</Label></View><Glyph name={now-(g.sites?.visits[post.id]??0)<300000?"clock":"gift"} size={28}/></Pressable>)}{!p.walking?.posts?.length&&<Label>{p.walking?.siteSource==='unavailable'?'Locatiepunten laden tijdelijk niet.':'Geen geschikte insectenposten gevonden.'}</Label>}</View>:<View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{!nearby.length&&<View style={{flexDirection:"row",alignItems:"center",gap:8,padding:10}}><Glyph name={gpsReady?"leaf":"compass"} size={25}/><Label small>{gpsReady?"Geen bugs in de buurt. Wandel rustig verder.":"Zet GPS aan om bugs in de buurt te zien."}</Label></View>}{nearby.map(s=><Pressable key={s.id} accessibilityRole="button" accessibilityLabel={'Volg '+species(s.species).name} onPress={()=>{if(distance(fix,s)<=CATCH_RADIUS){setSheet(null);onSelect(s);}else{setSheet(null);onTarget?.({...s,name:species(s.species).name,spawnId:s.id});}}} style={{width:'30%',flexGrow:1,padding:8,borderRadius:20,backgroundColor:'#214B40',alignItems:'center',gap:5}}><View accessibilityLabel={'Zeldzaamheid: '+RARITY_TIERS[bugRarity(s.species)].name} style={{width:86,height:86,borderRadius:43,borderWidth:4,borderColor:RARITY_TIERS[bugRarity(s.species)].color,alignItems:'center',justifyContent:'center',backgroundColor:'#163B33',boxShadow:bugRarity(s.species)>=4?'0px 0px 9px '+RARITY_TIERS[bugRarity(s.species)].color:undefined}}><SpriteView id={s.species} silhouette={!g.dex?.includes(s.species)} size={70}/>{s.weather&&!s.boss&&<View accessibilityLabel="Weerbonus" style={{position:'absolute',right:-4,top:-4,width:24,height:24,borderRadius:12,backgroundColor:'#1D3F6A',borderWidth:1,borderColor:'#9FD0E8',alignItems:'center',justifyContent:'center'}}><Label small>🌀</Label></View>}</View><Label small>{Math.round(distance(fix,s))} m</Label></Pressable>)}</View>}</>}
-
    {sheet==='post'&&<WorldSitesSheetV2 kind={sheet} postId={postId} {...{view,run,busy,gpsReady,fix,now}} onTarget={target=>{setSheet(null);onTarget?.(target);}}/>}{sheet==='routes'&&<RoutesSheetV2 {...{view,run,busy,gpsReady,fix,now}} onTarget={target=>{setSheet(null);onTarget?.(target);}}/>}
+  </ScrollView></View>}
 
-  </ScrollView>{sheet==='menu'&&<View style={{alignItems:'center',paddingBottom:20}}><IconButton name="close" label="Sluit veldscherm" onPress={()=>setSheet(null)}/></View>}</View></View></Modal>
+  </View></FieldSheetHost>
 
  </>;
 

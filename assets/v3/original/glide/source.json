@@ -1,0 +1,47 @@
+{
+  "source": "Existing BugBaas game assets copied without visual edits",
+  "files": [
+    {
+      "source": "CimPro BugBaas-3.0/assets/animated/Bumble Bee Sprite Sheet.png",
+      "file": "Bumble Bee Sprite Sheet.png",
+      "sha256": "8b72df1a98c7e802d527dfc835a058402b9f3852ba2f630532f978dc0e64ad1d",
+      "bytes": 4553
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/generated/duel_effect_shield_hd.png",
+      "file": "duel_effect_shield_hd.png",
+      "sha256": "6cf21fe5b5057ef4ee0e4d186e311eebd37d13fa2e19f00b2ae85b5441bef474",
+      "bytes": 228386
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/generated/duel_effect_lightning_hd.png",
+      "file": "duel_effect_lightning_hd.png",
+      "sha256": "1703499b782e21a8f1b193d062903a8092d79340c59848e0c0df5c3d0fd5f899",
+      "bytes": 173959
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/extracted/glide_nectar.png",
+      "file": "glide_nectar.png",
+      "sha256": "decaed8bd7fd395f3a87784486fe01e1eff4ab3f5c89cd84636a56fce3bcf7bd",
+      "bytes": 3801
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/extracted/glide_pollen.png",
+      "file": "glide_pollen.png",
+      "sha256": "e62c4de39910b7ec80819b49938a291edabf643a863351c1e3185169b6e533db",
+      "bytes": 4413
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/extracted/glide_rain.png",
+      "file": "glide_rain.png",
+      "sha256": "21a8a150c74d4f47939c67919d10db43643bb401fa50f607fbaa19b08fba057d",
+      "bytes": 5089
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/extracted/glide_thorn.png",
+      "file": "glide_thorn.png",
+      "sha256": "399ca3f2a0b1ed76153dfdfed5bf99fc220a3c6d70ca1842a164d3eb1eb6e9e1",
+      "bytes": 6286
+    }
+  ]
+}

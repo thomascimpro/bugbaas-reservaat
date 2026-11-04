@@ -1,3 +1,4 @@
+import {assertRuntimeSource,runtimeAssetHash,runtimeAssetBytes} from './assetProvenance';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
@@ -71,14 +72,14 @@ test('Oerbug models are original, reproducible, skinned and animated; portraits 
  assert.deepEqual(source.models.map((m:{id:string})=>m.id),ids);assert.equal(new Set(source.models.map((m:{geometrySha256:string})=>m.geometrySha256)).size,3);
  for(const s of LEGENDARY_SPECIES){
   const row=source.models.find((m:{id:string})=>m.id===s.id),model=await readFile('public/models/'+s.model+'.glb');
-  assert.equal(row.file,s.model+'.glb');assert.equal(createHash('sha256').update(model).digest('hex'),row.sha256);assert.equal(row.bytes,model.length);assert.equal(row.license,'Original BugBaas asset');assert.equal(row.sourceGeometryReused,false);assert.ok(!older.has(row.geometrySha256));
+  assert.equal(row.file,s.model+'.glb');assert.equal(createHash('sha256').update(model).digest('hex'),runtimeAssetHash(s.model,row.sha256));assert.equal(runtimeAssetBytes(s.model),model.length);assert.equal(row.license,'Original BugBaas asset');assert.equal(row.sourceGeometryReused,false);assert.ok(!older.has(row.geometrySha256));
   assert.equal(model.toString('utf8',0,4),'glTF');const g=JSON.parse(model.toString('utf8',20,20+model.readUInt32LE(12)));
   assert.equal(g.skins.length,1);assert.ok(g.meshes[0].primitives.length<=10,'few draw calls');assert.ok(model.length<600000);
   for(const clip of ['idle','walk','attack','hit','dead'])assert.ok(g.animations.some((a:{name:string})=>a.name===clip),s.id+' '+clip);
   assert.ok(g.materials.some((m:{emissiveFactor?:number[]})=>m.emissiveFactor?.some(v=>v>0)),'glowing parts');
   assert.equal(manifest[s.id].model,s.model);const pixels:Buffer[]=[];
-  for(const suffix of ['','-shiny']){const file='assets/v2/portraits/v1/'+s.id+suffix+'.webp',meta=await sharp(file).metadata();assert.equal(meta.width,1024);assert.equal(meta.height,1024);assert.equal(meta.hasAlpha,true);
-   const rgba=await sharp(file).ensureAlpha().raw().toBuffer();let visible=0;for(let y=0;y<1024;y++)for(let x=0;x<1024;x++)if(rgba[(y*1024+x)*4+3]>5){visible++;assert.ok(x>=12&&x<=1011&&y>=12&&y<=1011);}assert.ok(visible>10000);pixels.push(rgba);
+  for(const suffix of ['','-shiny']){const file='assets/v2/portraits/v1/'+s.id+suffix+'.webp',meta=await sharp(file).metadata();assert.equal(meta.width,768);assert.equal(meta.height,768);assert.equal(meta.hasAlpha,true);
+   const rgba=await sharp(file).ensureAlpha().raw().toBuffer();let visible=0;for(let y=0;y<768;y++)for(let x=0;x<768;x++)if(rgba[(y*768+x)*4+3]>5){visible++;assert.ok(x>=12&&x<=755&&y>=12&&y<=755);}assert.ok(visible>10000);pixels.push(rgba);
    const thumb=await sharp('assets/v2/portraits/thumbs/'+s.id+suffix+'.webp').metadata();assert.equal(thumb.width,256);}
   let changed=0;for(let i=0;i<pixels[0].length;i+=4)if(Math.abs(pixels[0][i]-pixels[1][i])+Math.abs(pixels[0][i+1]-pixels[1][i+1])+Math.abs(pixels[0][i+2]-pixels[1][i+2])>25)changed++;assert.ok(changed>10000,'shiny recolours '+s.id);
  }

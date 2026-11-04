@@ -12,12 +12,12 @@ import {useGoBack} from './GoBackV2';
 import {Button,Label,V} from './uiV2';
 
 export const browserExploration=false;
-type Props={paused?:boolean;view:GameViewV2;run:RunV2;busy:boolean;now:number;open:(name:string,specimenId?:string)=>void;camera?:React.MutableRefObject<MapCameraV2|null>};
+type Props={paused?:boolean;bottomInset?:0|72;onFocusChange?:(focus:'catch'|null)=>void;view:GameViewV2;run:RunV2;busy:boolean;now:number;open:(name:string,specimenId?:string)=>void;camera?:React.MutableRefObject<MapCameraV2|null>};
 export function ExploreV2(props:Props){
  const web=useRef<WebView>(null),latest=useRef(props),alive=useRef(true),ready=useRef(false),active=useRef(AppState.currentState==='active'),sequence=useRef(0),generation=useRef(0),watches=useRef(createNativeGPSWatches()),backPending=useRef(false),exitPrompt=useRef(0),[problem,setProblem]=useState(''),[loading,setLoading]=useState(true);latest.current=props;
  let uri='';try{uri=nativeFieldURL(gameServerURL,__DEV__);}catch{}
  const send=(value:Record<string,unknown>)=>{if(alive.current&&ready.current)web.current?.postMessage(JSON.stringify({...value,seq:++sequence.current}));};
- const state=()=>{const p=latest.current;send({kind:'state',view:p.view,busy:p.busy,now:p.now,paused:!!p.paused,camera:p.camera?.current});};
+ const state=()=>{const p=latest.current;send({kind:'state',view:p.view,busy:p.busy,now:p.now,paused:!!p.paused,bottomInset:p.bottomInset??0,camera:p.camera?.current});};
  const stop=()=>{generation.current++;watches.current.stop();};
  const permission=async()=>{const p=await Location.getForegroundPermissionsAsync();send({kind:'permission',state:p.granted?'granted':p.canAskAgain?'prompt':'denied'});return p;};
  const permissionRequest=useRef<Promise<Location.LocationPermissionResponse>|null>(null);
@@ -37,14 +37,16 @@ export function ExploreV2(props:Props){
   }catch{error(2);}
  };
   useEffect(()=>{alive.current=true;const listener=AppState.addEventListener('change',status=>{active.current=status==='active';if(!active.current)stop();send({kind:'active',active:active.current&&!latest.current.paused});if(active.current&&!latest.current.paused)void permission();});return()=>{alive.current=false;ready.current=false;stop();listener.remove();};},[]);
-  useEffect(()=>{if(props.paused)stop();send({kind:'active',active:active.current&&!props.paused});},[props.paused]);
- useEffect(()=>{if(ready.current)state();},[props.view.player.revision,props.view.goGyms,props.busy,props.paused,props.view.player.settings.reducedMotion,props.view.player.settings.largeText]);
+  useEffect(()=>{if(props.paused){stop();backPending.current=false;latest.current.onFocusChange?.(null);}send({kind:'active',active:active.current&&!props.paused});},[props.paused]);
+ useEffect(()=>()=>latest.current.onFocusChange?.(null),[]);
+ useEffect(()=>{if(ready.current)state();},[props.view.player.revision,props.view.goGyms,props.busy,props.paused,props.bottomInset,props.view.player.settings.reducedMotion,props.view.player.settings.largeText]);
   useGoBack(!props.paused,()=>{if(!ready.current)return false;backPending.current=true;send({kind:'back'});return true;},50);
   async function message(raw:string){const m=parseNativeFieldRequest(raw);if(!m){const rejected=rejectedNativeFieldCommand(raw);if(rejected)send(rejected);return;}
    if(m.kind==='ready'){stop();ready.current=true;setLoading(false);setProblem('');state();send({kind:'active',active:active.current&&!latest.current.paused});if(!latest.current.paused)await permission();}
   else if(m.kind==='geo')await gps(m.action,m.id);
     else if(m.kind==='command'){if(!active.current||latest.current.paused){send({kind:'result',id:m.id,ok:false,error:'Open de kaart om deze actie uit te voeren.'});return;}let error='';try{const ok=await latest.current.run(m.command,m.params,message=>{error=message;});state();send({kind:'result',id:m.id,ok,...(!ok?{error:error||'Actie niet verwerkt. Probeer opnieuw.'}:{})});}catch{send({kind:'result',id:m.id,ok:false,error:'Verbinding met de app onderbroken. Probeer opnieuw.'});}}
    else if(m.kind==='navigate'&&!latest.current.paused){if(m.camera&&latest.current.camera)latest.current.camera.current=m.camera;latest.current.open(m.name,m.specimenId);}
+   else if(m.kind==='presentation'&&active.current&&!latest.current.paused)latest.current.onFocusChange?.(m.focus);
   else if(m.kind==='backResult'&&backPending.current){backPending.current=false;if(!m.handled){if(Date.now()-exitPrompt.current<2000)BackHandler.exitApp();else{exitPrompt.current=Date.now();ToastAndroid.show('Druk nog een keer op terug om BugBaas te sluiten',ToastAndroid.SHORT);}}}
  }
  if(!uri)return <View style={{flex:1,justifyContent:'center',padding:24}}><Label>De beveiligde kaartverbinding is nog niet ingesteld.</Label></View>;

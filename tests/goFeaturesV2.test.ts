@@ -23,7 +23,7 @@ function player(uid='a'){
  p.specimens=['ant','beetle','moth'].map((species,i)=>({id:'owned-'+i,species,level:1,shiny:false,favorite:false,obtainedAt:NOW,source:'walking',hearts:0,item:null,go:{...rollGoBug(species,uid+i),level:15}}));
  p.go!.team=p.specimens.map(s=>s.id);return p;
 }
-test('offline server duel falls back to NPC, normalizes an absent human snapshot, keeps owner/live Elo intact and settles once',async()=>{
+test('offline server duel falls back to NPC, uses actual owned human stats, keeps owner/live Elo intact and settles once',async()=>{
  const store=new SqliteStore(':memory:');try{
   let now=NOW;const service=new GoServiceV2(store,'local',()=>now);
   for(const id of ['a','b'])await store.run(['v2Players:'+id],d=>d.set('v2Players:'+id,player(id)));
@@ -31,7 +31,7 @@ test('offline server duel falls back to NPC, normalizes an absent human snapshot
   const send=async(uid:string,v:GameViewV2,type:string,data:Record<string,unknown>={})=>service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});
   a=await send('a',a,'echoSave');a=await send('a',a,'echoQueue');assert.equal(a.goBattle!.echo!.npc,true);a=await send('a',a,'goAct',{action:'forfeit',value:null});assert.equal(a.player.go!.echo!.rating,1000);assert.equal(a.player.go!.dust,50);a=await send('a',a,'goClose');
   b=await send('b',b,'echoSave');const owner=structuredClone(b.player);
-  a=await send('a',a,'echoQueue');assert.ok(a.goBattle!.echo);assert.equal(a.goBattle!.echo!.npc,false);assert.equal(a.goBattle!.ranked,false);assert.equal(a.goBattle!.teams[1][0].cp,normalizeCompetitionFighter(fighterGo(owner.specimens[0]),'great').cp);
+  a=await send('a',a,'echoQueue');assert.ok(a.goBattle!.echo);assert.equal(a.goBattle!.echo!.npc,false);assert.equal(a.goBattle!.ranked,false);const enemy=a.goBattle!.teams[1][a.goBattle!.active[1]],owned=owner.specimens.find(s=>s.id===enemy.id)!;assert.ok(owned);assert.equal(enemy.cp,fighterGo(owned).cp);
   const before=a.player.go!.dust,command={type:'goAct',action:'forfeit',value:null,commandId:randomUUID(),expectedRevision:a.player.revision};
   a=await service.command('a',command);const settled=structuredClone(a.player.go);assert.equal(a.player.go!.dust,before+50);assert.equal(a.player.go!.rating,1000);assert.ok(a.player.go!.echo!.rating<1000);const ownDefense=await store.run(['v2EchoDefenses:a'],d=>d.get('v2EchoDefenses:a') as {rating:number});assert.equal(ownDefense.rating,a.player.go!.echo!.rating);
   a=await service.command('a',command);assert.deepEqual(a.player.go,settled);assert.deepEqual((await service.state('b')).player,owner);

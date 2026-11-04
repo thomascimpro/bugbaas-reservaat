@@ -1,0 +1,14 @@
+{
+  "sourceProject": "CimPro BugBaas-3.0",
+  "port": "shared deterministic replay; artwork/presentation are independent of score",
+  "files": [
+    {
+      "file": "public/butterfly-catch-3d/prototype.js",
+      "sha256": "32ccfd09986706796943d67d7ad199623908376a1eda3465ddd75913c4eb3ca6"
+    },
+    {
+      "file": "public/butterfly-catch-3d/index.html",
+      "sha256": "bc9fbcd660e068aa82cb9f485ec48c6590fc91d962bcbd0963d42926f6db9ede"
+    }
+  ]
+}

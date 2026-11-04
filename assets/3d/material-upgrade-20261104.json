@@ -1,0 +1,4371 @@
+{
+  "at": "2026-11-04",
+  "criteria": "geometry/transforms/skins/clips/colour/alpha/textures preserved; only material gloss/extensions may differ",
+  "models": [
+    {
+      "id": "beetle",
+      "model": "ClickBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "0e5e0e4dbfdc9fabb8f00f46f3a59cc19c1979296d603e5479b6d00c5387e81b",
+      "staged": "a9d7a4081f572e108c073b6dd9bd42aa9adf50183d7634da3921472804e01cd4",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 360172
+    },
+    {
+      "id": "ant",
+      "model": "LeafcutterAnt",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "3e12ba83cfa5d0a46961f903ab8f00b5143292914823fe44f64bd07b81835e37",
+      "staged": "f5a9471c76ee5870eff8e6140766beda4d801d663841e50041c2f9ce1783e1d6",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 360640
+    },
+    {
+      "id": "aphid",
+      "model": "Aphid",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "2584c100c4e52bdabef92f298104420869d391578a2cf1239262e172ea258465",
+      "staged": "385b90905e55265754d7fb2d16c0220f5066b629fcdbf6ccd1cb8172bfdae9ee",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 351704
+    },
+    {
+      "id": "weevil",
+      "model": "GiraffeWeevil",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "18f9178170b80978e0501da7cb0f9814a00d7b01ba56bb77336e49f6288d40d8",
+      "staged": "b1169be3e300f5a04943a642548abab9e6349264f18bff328615259306e9f26f",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 348788
+    },
+    {
+      "id": "moth",
+      "model": "HawkMoth",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "234003a952a7bb01b628adbf4f5646a923d6e960dd4855aff1ba845cdd20bb9d",
+      "staged": "187f221b3577a5d0fe7835c32296b0382100e06d194e2484b08a632bc587510c",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 391952
+    },
+    {
+      "id": "earwig",
+      "model": "Earwig",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "1c017d9193b9401e1d2da1f0444850368e707da2060647e858e653d6737367e1",
+      "staged": "a99bb709de81253424edab3972fd48d0c2e38643a4083ab19299979879fd662f",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 357804
+    },
+    {
+      "id": "grasshopper",
+      "model": "Katydid",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "e4985d5fa9cd12ca5519f09038122775f06bc388b5ab3a87e4dc9c7e2d218e60",
+      "staged": "7d811c3a2b4c9ec2dc2216012489a3379c54a9249e65c9315e47c24e214ea17c",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 354524
+    },
+    {
+      "id": "lacewing",
+      "model": "Lacewing",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "759a6677add4acce8b67a69c2f5fb71c202b4c5b2b889969b8445b22b2beab17",
+      "staged": "873de869bf7fe1281716eff8b4750ecc9ca8b1e8eb2065b88300afedd79d2915",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 356644
+    },
+    {
+      "id": "dungbeetle",
+      "model": "DungBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "76eadc8aa4943f118d1593a71312b23b4a2478747a369f36642a9b1f1350fdcb",
+      "staged": "5d37623a053a9a05308562c563056277ad88a8a9078397149caf639695169f4a",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 353428
+    },
+    {
+      "id": "mantis",
+      "model": "OrchidMantis",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "28107468d82c360d1aeb3ece569097b34b9811522b96f31c79fa1f932abf40d9",
+      "staged": "7746e3d1e6376a5d1ba730e431acbf2caf2ac50f2947181c01362f1efb5e4a8e",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 359616
+    },
+    {
+      "id": "butterfly",
+      "model": "Swallowtail",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "73265fcc0c7def098f443dd0cc692acaccab537900fd427aa44b818b7d30ce05",
+      "staged": "9ab66342ddd69cb85bddd6851c6f0174c6bff3348c699dd71b1e2669cb8b429c",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 390392
+    },
+    {
+      "id": "divingbeetle",
+      "model": "DivingBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "62f85d7801648390e67924bd2e9ec7af257d70783496115140493330d876ce1b",
+      "staged": "31bbe9d6113463ba8775ada8be4e5df702a139b8e43df01355c7ebbb86f656c8",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 352896
+    },
+    {
+      "id": "waterstrider",
+      "model": "WaterStrider",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "3028f2eed4b5d28252a4165658c39ffc5ea91ce864dfe4f571335ed3eed45111",
+      "staged": "c483f2848aa5adee8ca251486513e5f144a6fa20c049dd1dbc8381831fe435e2",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 352520
+    },
+    {
+      "id": "hoverfly",
+      "model": "Hoverfly",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "5a0c4b5bc2df9fb56fca9fe78ec190d961449e03e7a1d6dd1bc70f93385882d7",
+      "staged": "1f96ac6ff87d0a9e8e0ba20772902fd81d455accc05de0f20ffd78e7b440e2ed",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 370204
+    },
+    {
+      "id": "leafhopper",
+      "model": "Treehopper",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "1343f3115631113ac307396054ac9602b9fae19ef9871915e57944cf45199628",
+      "staged": "7d1817af97d9afa254518ac6e56e4b34cdf8a825584e958c5b1d31feaa38f680",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 354484
+    },
+    {
+      "id": "cricket",
+      "model": "MoleCricket",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "750399c12221a0fa457d68c7b1ba1f09c3014290b013deac4f8254f191eef629",
+      "staged": "1d44c3ff9fdc3d3e0ad69ede86bd1c1470c8022db1ea1e5d59d783dbb17350cb",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 356772
+    },
+    {
+      "id": "stick",
+      "model": "StickInsect",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "5bec2f3ffcd74dc12055c7668133cdcfa039aac99699bd845effd81754239fe2",
+      "staged": "d06699cb517da0a7d2cf861658a06ea6c91b0eb4913996019a9e20b02915f5ac",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 353960
+    },
+    {
+      "id": "leaf",
+      "model": "LeafInsect",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "172298ad3509494bdbc8122c5dc015e46e3cc667a14d790e5fbbe24424432baf",
+      "staged": "308563eec1c2ff862bd966e5f6534556f90165ae55f2fd685c3aaf6a5b8767c2",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 355836
+    },
+    {
+      "id": "silverfish",
+      "model": "Silverfish",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "8aa1688cf5211a79d49f66cc1cb67f7af4902d437ab4ab1a240b2eeb1dcf2dd0",
+      "staged": "6e19a67509a9d7969cf2d97882e5f0982dbff158a964befde7533104c80b1382",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 353884
+    },
+    {
+      "id": "hercules",
+      "model": "HerculesBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "0050ee886d79c0725720e6718a4116782c3b522625723cb385291705e2560460",
+      "staged": "31fed5b43bf18001869ab34100bfc7a2feb8b30ce0768f431917a272680b4aad",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 357880
+    },
+    {
+      "id": "caterpillar",
+      "model": "HawkCaterpillar",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "c78cc9a9e3a048246f53beea265189f39adb146670054e71e679d65ac2411ff7",
+      "staged": "232404f5ddb5452ede4ac7d07b94ad4b580803826e3f99b06f632d81aeb5a0bd",
+      "materials": 5,
+      "clips": [
+        "idle",
+        "walk"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 26720
+    },
+    {
+      "id": "antlion",
+      "model": "AntlionLarva",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "13e132dcae9d41fb78ff94d7f7879640190f770b9f3a01f9a9ec836f91ff72a1",
+      "staged": "d254747945933dee52931141f1b55718253939c0143bb9cde1d0e66692bfb7a1",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 359568
+    },
+    {
+      "id": "cockroach",
+      "model": "Cockroach",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "f477667b3892f67d7f88e9375ed3b327d7c295868f6ad756a4a3fa5ce00cb3bf",
+      "staged": "a7ccbed47581a2afd0cf4f588450ae19485e3ce741843c5e06d718631d8d3984",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 359004
+    },
+    {
+      "id": "cranefly",
+      "model": "CraneFly",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "f4d46a7ba527642749de3b67034f8d6b37fa38548405184c3add687ef341675d",
+      "staged": "0d230807d8a89cdd155ef99c06c67a6adba928e48ad865466152c31070c0544b",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 372888
+    },
+    {
+      "id": "flea",
+      "model": "Flea",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "8030c9700e0991178b9a12b740dfca4a32a1f4a458a6479dc1d4b20d8f448235",
+      "staged": "3081084008ac5f05e0c368008a30bae4c71bdfc8fa9e8f770e75d9add0769d50",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 360464
+    },
+    {
+      "id": "giantwaterbug",
+      "model": "GiantWaterBug",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "48444688865921685e858debbf351e63289ed28c6ea9d1c266494115f8df4bfe",
+      "staged": "5f6b941fc4de212246eca8de2f5b437896949b5d1017628ee4f59f7a8c05fc1d",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 347952
+    },
+    {
+      "id": "mayfly",
+      "model": "Mayfly",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "c59a1dab94f8656a73f11e8c27cca49e334afe7273ce3fdb307f4c492ba659a3",
+      "staged": "b13fe9bd64944097dbff1b75a716c55e85aaec610a59ed849a1b5373f0c8e491",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 359852
+    },
+    {
+      "id": "termite",
+      "model": "SoldierTermite",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "ee746b096b87286df1488f5b549585e75b6cdca62fb03e462585678998276b4c",
+      "staged": "0d3c657258accb9426523c46f2bd7a72e9cb3aef98a59b30258fdbf007dc317d",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 352368
+    },
+    {
+      "id": "tigerbeetle",
+      "model": "TigerBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9b10f921c915ecf6478fa0ea2c73d897678e0e45ed7b05f914fb7274bf9e7d55",
+      "staged": "7ede6f079cc21cf0f56ef2215823d3aa662cffadc00d3fea96c5a04ae1eb8186",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 363460
+    },
+    {
+      "id": "tortoisebeetle",
+      "model": "TortoiseBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "f4f944f9798df054f0aa7841e5d88989a53e9276887d753f71ef6946957ed5eb",
+      "staged": "d04943fe052e2c9a5797a4d53678bc8ff1db886ebabede4c4cb7d05a7884348a",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 355172
+    },
+    {
+      "id": "beetlegrub",
+      "model": "BeetleGrub",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "64ddb6f4860af5025c327a91bbf78a6b17f2c9551d610ca44e9890cb906299a4",
+      "staged": "8d0a865454778e70adc5cd34a258b53a9dc998ee9675cd744940db7a7917d7f2",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk",
+        "groom",
+        "alert",
+        "run",
+        "crawl",
+        "jump",
+        "fly",
+        "sting",
+        "eat",
+        "threat",
+        "hit",
+        "perch",
+        "buzz",
+        "sing",
+        "carry",
+        "dart",
+        "sway",
+        "curl",
+        "pounce",
+        "flip"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 353120
+    },
+    {
+      "id": "bee",
+      "model": "Bee",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "15dcefc04a7730a613d7a6065af19320891be5930596e9c39d04992765b3cf40",
+      "staged": "caf52183c3fcfca2a1f1b51de0581021c7a86b81060b4a43bcffda09753e17a0",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 157060
+    },
+    {
+      "id": "lesserstag",
+      "model": "LesserStagBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a05ef8927b4ffaa669a0c4030c1d8ce917ba6c4824060aae891838a9ee61ca4b",
+      "staged": "38094e0416b033bd958015e5dec2237311c7952ccf75945fc5b323cbd6325c0a",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 407088
+    },
+    {
+      "id": "goldenstag",
+      "model": "GoldenStagBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "91ecf731850fe1ce8d757275ccbd5b61146eb4ab5a4106fb80618519d437a9dd",
+      "staged": "25684e2697512d958ad11f25307fda79246def7ec34467626ee5b8918f469ebc",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 407840
+    },
+    {
+      "id": "giraffestag",
+      "model": "GiraffeStagBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "76c6f1b358b10f8a42843c9bd2e2b7ca18aa900256985ff91f8d9fbd43672fbf",
+      "staged": "33dab74dab370525730e17b57c86185cd02a4d3bef0e6d4c350f7ff10b0e2c06",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 407184
+    },
+    {
+      "id": "minotaurbeetle",
+      "model": "Minotaurbeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9189e1126d2ffe7fccc18efc8ff78d2d2d2317dc173504f678d35880dddf5b0b",
+      "staged": "907137b28f151a6f71a20664f2dd345ac600e10fad4ab7cff9c344cb1f680c4d",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 411052
+    },
+    {
+      "id": "atlasbeetle",
+      "model": "AtlasBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "8efc946e954b4c37dfa53840f50f8b8754784e287327bd30f863ce181039536f",
+      "staged": "aa0f6022ccc5dfe484242333104812084cce3d28ed772265f291f4647855806c",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 406016
+    },
+    {
+      "id": "caucasusbeetle",
+      "model": "CaucasusBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9f90d7a83866644c516fe46791ba0b6e2e2c3ec962c12ed5ee6f9394a5512bb1",
+      "staged": "ca90fa4a71f1c380c9e845a4ca633c5591f44801142cc054e8e6cc570ed5d0ef",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 409868
+    },
+    {
+      "id": "rosechafer",
+      "model": "RoseChafer",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9df879b376141d1b22eab5b308ce3f1279ca5713fb3222a276c42620c2b06aba",
+      "staged": "00e7d9a1fab979686883cf1ae72f0a8e35148778093bbd058c7bbbec7227cdf3",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 416920
+    },
+    {
+      "id": "flowerchafer",
+      "model": "FlowerChafer",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "be0919ddcbcee67dbbf00ffa0c49dbcbff98936c1db0afdce1e12b09396a2482",
+      "staged": "8659004c3c15472f81bde17b3f7f0b1630134e1a21f829835fad4071efa9a43d",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 413836
+    },
+    {
+      "id": "rainbowscarab",
+      "model": "RainbowScarab",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "651287aa74c75f5a4c909dfe721a05e331f4d7012e05f672674c94f4321551cb",
+      "staged": "e1fe06b4e144aaf8d7d745ad1215e0f6e316c41e79ff58c189c4241c772be338",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 403144
+    },
+    {
+      "id": "acornweevil",
+      "model": "Acornweevil",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "f0e7bfb74ac0f4011cb6336c7da65e921f31d9fb09daeb3e2066ccef49712411",
+      "staged": "10fdfc63d7c9e30901bcdae5da1a9030cc7cf67a0c15544a33224b11f183d9e6",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 413620
+    },
+    {
+      "id": "leafrollingweevil",
+      "model": "LeafRollingWeevil",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "62839dd9cbc0a4f6b83970bbd8f920949a32a43f46d38424d00808618d881994",
+      "staged": "414ae78516897c4f6eed4e6fdd367d537339b8293cc78e4ef24c72c7b16b02ad",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 406132
+    },
+    {
+      "id": "harlequinbeetle",
+      "model": "HarlequinBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "6ec6999f11bffef9bf11317270cf5e3661389304bb527d5bc065ab9a32c0f06e",
+      "staged": "c639bd60d32c0fefbddbc402fd094e9594d067f9532d062c4cd953bb68030c57",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 418736
+    },
+    {
+      "id": "asianladybeetle",
+      "model": "Asianladybeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "1e0d9b233dea6037576640f78ffc2b1880e6fb98791c009890dd508e2cd4b530",
+      "staged": "02216077b336d3cb7e739ad948057b311990a20887910e5bd3bfb9fc56b4e53f",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 415476
+    },
+    {
+      "id": "ladybird28",
+      "model": "Twentyeightspotladybird",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "429f0d884c1c38888d0468a37a2de4b0c89ee0e62f12b97e9eb98652804bb6d2",
+      "staged": "8c46a4ada2dffa4fcb285456acbdf1941850540d3e80f5fb113d2ca84f2b6112",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 415308
+    },
+    {
+      "id": "jewelchafer",
+      "model": "Jewelbeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "b28a7d5eb980db2ba6714c83998da717e2f9948660e7fb09093435946be839bb",
+      "staged": "9c1d0ecdbd399616361e44d5f15ab2463d810bfb367b32033938aa48a939f961",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 411580
+    },
+    {
+      "id": "leafbeetle",
+      "model": "Leafbeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "bd8cf3c1a748b79f44a3570c6b1490d314c61a03367b71426286361ba4ea5d98",
+      "staged": "5b65978d5219d8720888f508a2c423452b26da3eb259e49173a25a65d492415c",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 404352
+    },
+    {
+      "id": "cucumberbeetle",
+      "model": "SpottedCucumberBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "663b7b12ee176a4f591c033623b2b76a811b7b54a1c7fa5cfc1b4b0e4aa39fe4",
+      "staged": "06b7fcb48b4a3da02acaaa3b87ba71ae1370cc76c141d2ed453a654756347ef4",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 410328
+    },
+    {
+      "id": "deerflowerbeetle",
+      "model": "DeerHornedFlowerBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "4e013b3dce4b6e4dbf9e82c0ff1abc4eb11df3c08723ff333a7ba85694eabd8e",
+      "staged": "70868f35352f852694777509ca8c83916598e64fb88da51cfc07e5933909d0d8",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 409484
+    },
+    {
+      "id": "cardinalbeetle",
+      "model": "CardinalBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "2f47cb9480a6e5fe103f7cfb53b5865f40fbcc93e889718fc2d9a9046854b9db",
+      "staged": "80bc379484ecdcf105daf0fb4c45edf705ab75c5124342c8ebdc2232b59faf89",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 407492
+    },
+    {
+      "id": "rosalialonghorn",
+      "model": "RosaliaLonghorn",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "83cab27c4e3a34067589f0c5d1cb18b431d7ccba93e7d226cfa675e5b44d7021",
+      "staged": "44b1ca65df94a566bf7864709ec3dffa7b811bf0ca5112cc121efcf933c9be25",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 417736
+    },
+    {
+      "id": "asianlonghorn",
+      "model": "AsianLongHornedBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "56694fc1ef7d4e078fd80012d4ef019d04a918b77d2959648eba5338eb2c0b2d",
+      "staged": "e9a42c888062d325c243b951b9833c4cd79ae33b3a14319dcc767cb60cedf8d9",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 416740
+    },
+    {
+      "id": "eyedclickbeetle",
+      "model": "EyedClickBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "b833b66b94190fab35d0ab4172c70aae8aacd2a9e27c11ff5c717c2809135dc5",
+      "staged": "875843c61a168d6a0d1e712cbc227f9d1b8e6b716f2220c9d0850755b59cc15e",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 415040
+    },
+    {
+      "id": "golofabeetle",
+      "model": "GolofaBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "b5075ff26c667e7d54c97dc1f5f0b3031485a1432bdb397d7634ebed1704901d",
+      "staged": "978654cae1ed60a6a5a546d6cde25fe950472f93bd1df78738f5fc97cadf7334",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat",
+        "fly",
+        "dart",
+        "buzz",
+        "perch",
+        "takeoff",
+        "land",
+        "glide",
+        "fall"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 525436
+    },
+    {
+      "id": "elephantbeetle",
+      "model": "ElephantBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "26b7740a9188235f21b221cc8260b109a358003e8c797387bf630e386d3cdac4",
+      "staged": "5578e4bfc879e2992c4626acedf6a0141fd828bf026e88c0ec9d66770157e9d5",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 405264
+    },
+    {
+      "id": "sacredscarab",
+      "model": "SacredScarab",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "223e383b65006d279d04dfae4948b20f56aa9c4f48849f4b93800faa3816b5b8",
+      "staged": "b23c365f08cf04e1037d6a63dd272faad5bd9ec4a8803de53c0fddd450e00137",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 416728
+    },
+    {
+      "id": "moonhornedbeetle",
+      "model": "MoonHornedDungBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "58e76a6bc4244089475376fd80cb1852a0aaf46c7647fa0588020a67558b7001",
+      "staged": "cb1588e70746a989a6d3f77ecf7503d8333051087a8f11f168b28dad34b25800",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 411764
+    },
+    {
+      "id": "neptunebeetle",
+      "model": "NeptuneBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "920f10a298f36bc37dbf4c64176c926155888487fa6c8641956f7ddac4dfa4a7",
+      "staged": "a6cc2f5067cf5afd2413dbc524039eb8da81b1ff190f28cff0de3dcd931b89ef",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 411764
+    },
+    {
+      "id": "manticora",
+      "model": "Manticora",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "7da2041dc7ea092b1c5f2d5a30085708f5ff585b7f64a8ea39781d7708c11f9a",
+      "staged": "455d9a848f6c3759b964f0d5e4e89a6f4409a98426b9a9b2ec3ef65028f0dbf1",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 411708
+    },
+    {
+      "id": "titanbeetle",
+      "model": "TitanBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "1eb9af477248b1ff3f544388ca6197541478b53cfe2db7353921a6ec973ae667",
+      "staged": "682a36e831c29ad9d2570ed4c6529f20905260628d0eb635f2b63ca2c98416ae",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 410284
+    },
+    {
+      "id": "fivehornbeetle",
+      "model": "FiveHornedRhinocerosBeetle",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "09b91ee011fd43101b739813f8f3281b82b5c89797bb70fe386015efb717308f",
+      "staged": "9bd432900d1b3a41c871fb6d3e8d993bbf4abfa22e7ab5bd44f4c2a07afcba08",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "attack",
+        "hit",
+        "dead",
+        "alert",
+        "eat",
+        "groom",
+        "turnL",
+        "turnR",
+        "back",
+        "sense",
+        "sleep",
+        "tripod",
+        "push",
+        "dig",
+        "flip",
+        "threat"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 408692
+    },
+    {
+      "id": "beetle_elite",
+      "model": "beetleEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "c0db797e2be9376fc0358e3a5347efd5a5f80ff1be128323c74bdae1cda9c8c6",
+      "staged": "907240ed5a4b82bd6cc8d04d554bd75d04625c2cfd994aed40545fb12768cc00",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 86644
+    },
+    {
+      "id": "ant_elite",
+      "model": "GardenAntAdult",
+      "preserved": true,
+      "maxNodeDelta": 2.5999874087023755e-07,
+      "base": "80e4ce8d9edbdc6d73d8ac8f29b571858c20754119a9799c5c758713423c09b2",
+      "staged": "9f699baab453fcdb09fc4a5b905b5d841f020663e47371b82347effef76eb064",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "bite",
+        "walk",
+        "attack"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 165588
+    },
+    {
+      "id": "aphid_elite",
+      "model": "aphidEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "391b65937b7502c49f90cc534b279011450f4a90dd809da79beef2926d403888",
+      "staged": "20bcbe507d4fd605eadf513d3c585357523b4b4bb1c77101eff910a1efd834f1",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 92584
+    },
+    {
+      "id": "weevil_elite",
+      "model": "weevilEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "b03291cb4024334b3dc619622e71f233c7de839d3c9df2e734593995ba15964c",
+      "staged": "b6f7ca74ddae580f3a955becac892f4697de6f9fd7ece53ce5b1965c2d5ed8ae",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 81012
+    },
+    {
+      "id": "moth_elite",
+      "model": "mothEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a213376f48278e6b4909067f58f2c6f11418cc136539af933cd19b17a902759f",
+      "staged": "9fb4b179d7e547c8ed61512748c270327027d6722a7b25f81641685cb86a46aa",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 212216
+    },
+    {
+      "id": "earwig_elite",
+      "model": "earwigEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "207929b332e71f21cad86c8e497d44ded28f1f8ef7d849e4b62d2518dcb8d4a0",
+      "staged": "7d9104f663240cfd1886006b2f702d3e93c2fdbd26402af515b97840afd2491d",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 91316
+    },
+    {
+      "id": "grasshopper_elite",
+      "model": "grasshopperEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "f9322768417f496bb1090a4e0c5c1b6bd89c4638730294219d26dbf60022fb06",
+      "staged": "090c0e0e78fa307c9f4987c0a8f26e3e26daa0f18019156de2b87c9b534706fd",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 66048
+    },
+    {
+      "id": "lacewing_elite",
+      "model": "lacewingEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a0ce6a44e723790b307041fed1d4c557953cb36e942a08ca041aa56deb7ef01a",
+      "staged": "8922aa843dadf1bd38d7e6d69adc948d053b93583e19830fe67388a0ad9bf538",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 126848
+    },
+    {
+      "id": "dungbeetle_elite",
+      "model": "dungbeetleEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "997ed256ccd6ad31d7a40760e8083e4501e30e2fb33d102bb8cd62ead221b4b9",
+      "staged": "16cecbc1dee3703e0ac42afd4fd5786917de0e09091e908cbe839ac566915909",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 88936
+    },
+    {
+      "id": "mantis_elite",
+      "model": "EmeraldMantisAdult",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "d4ff15e01a07e3f6dc2132ea74dcab0de9a2e88845dc18e5de58ceb3c98dac09",
+      "staged": "2182b470c7d4bc663ba6ca7d8ddd5a5c791c90466d8e76afc18fda77b3815426",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "move",
+        "attack",
+        "walk"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 357408
+    },
+    {
+      "id": "butterfly_elite",
+      "model": "MonarchButterflyAdult",
+      "preserved": true,
+      "maxNodeDelta": 5.298955612076384e-07,
+      "base": "d2b8dc085ecf7d3344e7ce0d1b54a1aa96045954da29834244a6b692a8cc2d69",
+      "staged": "cac23f6d5f8263a152668b4cc60d7974614bca9315a73a1131073e4dad1c309c",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "Flying",
+        "Sitting1",
+        "Sitting2",
+        "fly",
+        "walk"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence"
+      ],
+      "bytes": 219296
+    },
+    {
+      "id": "divingbeetle_elite",
+      "model": "divingbeetleEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "6ee0c623551317f31de9561770e326bff3a10754b7c952043594302aac688aec",
+      "staged": "5c57f71251ae13ad73ae70bb666f7cf6601fc4afd8ce42a303227f04e45f3599",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 77316
+    },
+    {
+      "id": "waterstrider_elite",
+      "model": "waterstriderEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "85c150bff2980664d68cea88eba9c06ba35e59580c12860535e25580e4d50326",
+      "staged": "33393f0ce3e49405a772d5950f163f62e38dc8af8f590def9e0823cba170ac22",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 99616
+    },
+    {
+      "id": "hoverfly_elite",
+      "model": "hoverflyEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a50d33ceae7d589211f0b977a7277dbb904bdcac2cbd5496d3f098dde78c11b6",
+      "staged": "da2304d506bfd83bf18b99a868871547fc64436a87ca0282ead293eb2ebe8d3c",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 120224
+    },
+    {
+      "id": "leafhopper_elite",
+      "model": "leafhopperEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "49f0b4834d4dc86c8dba056ebc8b967c2083663504bf095186df6705418a0266",
+      "staged": "bf8301adce137a7299f39dd8b9585f457f2c50af2863eb2952793edfd504239d",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 88972
+    },
+    {
+      "id": "cricket_elite",
+      "model": "cricketEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "29bbd29d07b421421ddcc9b9448545992fa044592f7e18489c489ad2384db3f6",
+      "staged": "0de27c775d15755d7dc0261140f7c2332e21e34d5c566872b233835833531075",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 76084
+    },
+    {
+      "id": "stick_elite",
+      "model": "stickEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "aa8e1ffd2eb318a4e5204fd1f6ea5172c06f0bc6667f387689889786f169c46e",
+      "staged": "f4b3b1e8f8bf5945eb74bbecf689886263890841c833b32fc054768149771b4f",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 72000
+    },
+    {
+      "id": "leaf_elite",
+      "model": "leafEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "93e8dd6a489ba6f7a87584ee772ca3b5674a02e2bc76a345b905f5274e28cdfc",
+      "staged": "52d2b8c80112121bd16ab844c13192b243778fb50be7bbfadf9e19c28ce7a138",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 74876
+    },
+    {
+      "id": "silverfish_elite",
+      "model": "silverfishEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "41d66fc50514597275ff4d64198aad348ba2e308bcf9b7c30fd3a338b65d8f4d",
+      "staged": "0da4dadd2abbe7548cc464fba58b1f405f77124071f6c2bfa74ab554d8924889",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 107328
+    },
+    {
+      "id": "hercules_elite",
+      "model": "herculesEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a1c0e8235cbbd5e639bafe1321ad725fb69d8864bf46a2d6176f4e47ac07c8f6",
+      "staged": "1e41fecc67d930b722389c355e17e70f681462d65c1c7ccc1433125c7dc30b2c",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 89044
+    },
+    {
+      "id": "antlion_elite",
+      "model": "antlionEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "8a1c364f06586ea645453e11c84ea593605765c725629c776dc87836c9bd8edb",
+      "staged": "c46580f8070cc15ec16d6bff9fd18c133d008a4b2301c9e0973c8ea184c20792",
+      "materials": 5,
+      "clips": [
+        "attack",
+        "fly",
+        "idle",
+        "walk"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 150280
+    },
+    {
+      "id": "cockroach_elite",
+      "model": "cockroachEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "633c95889bb1014db9d7770b860de6f6f2ff7f070f432324b3a429aff319cc9e",
+      "staged": "5eb6ea5bdf8166f0d8e1d4e1e021913171f6de9b3e71219f2d5e7bf41d1e7586",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 103896
+    },
+    {
+      "id": "cranefly_elite",
+      "model": "craneflyEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "662e9afda257391cb63c950b0ce89b1e15836d3dab88b7027f048692e0d0d5fa",
+      "staged": "6597f8aae6298050615c7631414ae73e9574b88b6779187d4ca65d55b07b47d4",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 118308
+    },
+    {
+      "id": "flea_elite",
+      "model": "fleaEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "ca84720ffd25949c642f28e81c24838d54fb12276d89d7b05d8d1a61ca16ef40",
+      "staged": "231f8231ff4e0afe037bdeca1be6d2c015421063e40b3faa823526ec682472f0",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 66364
+    },
+    {
+      "id": "giantwaterbug_elite",
+      "model": "giantwaterbugEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "b1695c804c43235698c630b2b73de67ae30dd0a75aa6424898b3eb9a5d3380eb",
+      "staged": "ed4d1d1757bd3dcfd5c989d62d6e1046f00fa8a1acbeebc335095f5e65a38d94",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 97228
+    },
+    {
+      "id": "mayfly_elite",
+      "model": "mayflyEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "189c8c58124174abedf4b4f6effc2d5e5553097d1c104bbc3d5c7672832e9f4f",
+      "staged": "f7140b36594d8bdc923179e7c52b61dd055563f3617d1beea6124e256ddb41ac",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 130676
+    },
+    {
+      "id": "termite_elite",
+      "model": "termiteEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "f12ef6a1344a2ea3ab32a68735037c88c60957384326ed09ee0a1ec7a405fbba",
+      "staged": "e396f78406da445ce68ed0e0b0802071b89e9c48fadf172b7375460df24fb161",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 112312
+    },
+    {
+      "id": "tigerbeetle_elite",
+      "model": "tigerbeetleEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "4f35f0a410d8275d63b420db51435a3ec0962b4fdd2c255aad3ed550a1d37649",
+      "staged": "025b340925f73da1eb1dab3c714e8a6866cfeb7944392ea019d421e3a1f4ba9c",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 106360
+    },
+    {
+      "id": "tortoisebeetle_elite",
+      "model": "tortoisebeetleEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "4bed51bbab8b18df0813a1a3fc2b274c0da7683873eeb18bafab11989c86460f",
+      "staged": "6c335235037b292ac1e43a56bffe5483876f4159e5de37c7cea3f420542c2428",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 86236
+    },
+    {
+      "id": "bee_elite",
+      "model": "beeEliteUnique",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "388dd5a6063b89ae387d074f41d6a9406ba391fbc26df381569155ca50282a5b",
+      "staged": "60b12dbb35e65a72cd5788cdf77842ae86116417fb943b3a42505db7c614862c",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 155536
+    },
+    {
+      "id": "beetle_ultimate",
+      "model": "beetleUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a828191fd1056b5437ea7b9b0e6ad4590995b13ce11856ddc799495aa1056c10",
+      "staged": "da633ae5cb407f37438c6031fbe66134ba0e7b02a93717c711021680dfe4e0e7",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 107200
+    },
+    {
+      "id": "ant_ultimate",
+      "model": "antUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "47f8845530d6c8fc71d9c7bc666367d7ea63d7367d7a1f63f6cedfbffadb7c72",
+      "staged": "32dae057828ec0bd3e67febe7e3d2691ae17b8634a37bd9afaa20fd9142255fa",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 139496
+    },
+    {
+      "id": "aphid_ultimate",
+      "model": "aphidUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "d1380d2719399afeea2de2fd040f763dc5bacc48a03883cfdb655cfd2be7ff48",
+      "staged": "b330451b7fd31ab0e0e2a260564b88b825b3633d3c7a26e22e7fe66643515f6c",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 153136
+    },
+    {
+      "id": "weevil_ultimate",
+      "model": "weevilUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "442d409553045db4d2860ae09b0e05d8f8f822b32fc3b7d5c7af4d19991896f2",
+      "staged": "339c7930018482a97557dd090640d479e9c7074bdaa56c38bb3ddf2b71c2407d",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 109060
+    },
+    {
+      "id": "earwig_ultimate",
+      "model": "earwigUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "1ea5b19725955a5a695edb9816b05cabd89fead1073ab4bc2e690c2fa9f64d44",
+      "staged": "c5b50c303e71e44b3b5e04307c12c9d5436bf4d4b9a479d1c1d16e0ac4b9afbe",
+      "materials": 5,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 127436
+    },
+    {
+      "id": "grasshopper_ultimate",
+      "model": "grasshopperUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "8e5e6ff152a55e20f2896c8d16b016d23d4c8665d55b1736ae49d777a820f28d",
+      "staged": "f723372addeef564193730528263e433ef7b46bb58ff5ced9855709228f20bc4",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 87220
+    },
+    {
+      "id": "lacewing_ultimate",
+      "model": "lacewingUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "3c66681fc5be3f66d8baf904846c026b6b4da1b0f9b905b385a5add2c5a4f9af",
+      "staged": "5c2de0a7ac9ca8198051bdf0e273d879b877e8f6dbc395b8db6312ca1ca40f59",
+      "materials": 8,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 200296
+    },
+    {
+      "id": "dungbeetle_ultimate",
+      "model": "dungbeetleUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a9a3d8e4d0e0006d87ba8ddc70f18e4093908ae5ca8a6d2f9ab2ad8ba65294b9",
+      "staged": "2b1e474ae6ac0ffb8a2eec13702b84f0fbaebfc7ca53d617ae2f7f28c653b7df",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 114216
+    },
+    {
+      "id": "mantis_ultimate",
+      "model": "mantisUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9eaed2d182293f921f685ff6ece60231865448c6dd968101b5cc5ae15167e856",
+      "staged": "308fb041b711c149985aee2909f2181826ebee78f0082f23c9f5440c79196874",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 145508
+    },
+    {
+      "id": "butterfly_ultimate",
+      "model": "butterflyUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9d3777fb5eac38137942628496a51a1293a5ab27de72a1e2bb64feea04a6f07a",
+      "staged": "10503b7fc9dc2e6774c937a038d373643c0fde7c7e20ee42837a2bb2b5f91642",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 224876
+    },
+    {
+      "id": "divingbeetle_ultimate",
+      "model": "divingbeetleUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "4f2024852197e5d4c6896dd4c7928f3bc41e286f426b2c52cc352dbeac9b66f6",
+      "staged": "61286dcdbb931432dc407f793e0c5deefed8930de840eafb111fa58d7015957f",
+      "materials": 8,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 176056
+    },
+    {
+      "id": "waterstrider_ultimate",
+      "model": "waterstriderUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "c62232413be72383632b24588856c40194af842cb2cf989c85fed75d344e9edb",
+      "staged": "5a8fb12954da94e63b195376ddf623d3064a377d3021cfaf8792f93521080d99",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 175924
+    },
+    {
+      "id": "hoverfly_ultimate",
+      "model": "hoverflyUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "028f3a302bb87e439938b3a516248d664b32c6c6f219a7813a76b061c68cd391",
+      "staged": "59215b3f387f946014bc54920fe38d6b4d9c8d631a5f48109647eca986a10399",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 163492
+    },
+    {
+      "id": "leafhopper_ultimate",
+      "model": "leafhopperUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "eedb6f32935ff7b41b39996bdb221b261cf1503ff0b607c54ed8c7333845fada",
+      "staged": "1b07a9c479351f704df85fd477a8fdf2ae253acd1a54165ee4af6233db4e8832",
+      "materials": 8,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 129892
+    },
+    {
+      "id": "cricket_ultimate",
+      "model": "cricketUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "ced16f7d0bec0bc43a24013855fc94b0c26145052128c0064b5a8fbef4024569",
+      "staged": "104ff37dac20d3fb201572124d59ca8d1debc800fbdeeef320c28ac1982cf5fa",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 130384
+    },
+    {
+      "id": "stick_ultimate",
+      "model": "stickUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "7506ef3de6a1ed0a59dc7ea52552780c9ae98d16105f561b846f368d96ac83ad",
+      "staged": "68d6fda32d20b8ad62c0141ef3de7725f2d1556372d28d0bfdcf4875e70f8ee8",
+      "materials": 5,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 107912
+    },
+    {
+      "id": "leaf_ultimate",
+      "model": "leafUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "6205e1033bf1275f92fc1afef659462f1202600847087b10ca29b6515679464f",
+      "staged": "382a67d0f315586fef66295a60fc16eccbcb0ae2bc9fd635a68d09659c9085e2",
+      "materials": 8,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 102508
+    },
+    {
+      "id": "silverfish_ultimate",
+      "model": "silverfishUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "bc5a4299c305b98b20f54771969ac73815ec40872f00da8614b3a49c4f035319",
+      "staged": "810ee99282aec538d12bd2cdd73dddd41d6085dc02610ed51bc338dceb59b0e6",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 186660
+    },
+    {
+      "id": "antlion_ultimate",
+      "model": "antlionUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9db93f913802c53fd3b4f6774ba4844422e07e4b2f89e4a7ec5b0616c65c5e08",
+      "staged": "5f7a0c26b64ffa3c4ac2c04213b0a46e1d2696f147eeb168a51b69976c2ec7ea",
+      "materials": 5,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 178704
+    },
+    {
+      "id": "cockroach_ultimate",
+      "model": "cockroachUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "edfb5a4a5262ea5d377c2f4734159b0d86b631769758d3eb1f3bfffd1120f6bf",
+      "staged": "db99a216a0df656cacd4ec615ac8cfdc9a9eab97f9d67303090396c167a0e81c",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 163992
+    },
+    {
+      "id": "cranefly_ultimate",
+      "model": "craneflyUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "8c14b123379ce1bc5ced92578daa1980779c34e7e063275c38406f667a923b55",
+      "staged": "22bfd6fb9f2ebb3384cf14962c0c4a8b51f558d3009825d5f5e116a023578567",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 187784
+    },
+    {
+      "id": "flea_ultimate",
+      "model": "fleaUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "0ec005657e6ee2e9ec845e697d63468098711b06bf0025ac39761ea4e05d8c90",
+      "staged": "132305fe77428c7d7312cc3a77260889af2d6dd04c56dcb5b508306e8f8ae892",
+      "materials": 5,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 116056
+    },
+    {
+      "id": "giantwaterbug_ultimate",
+      "model": "giantwaterbugUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "00bc27ec9c921b72e295a3e9220ff7e046ec4f7583dd35fdaec7d94ea470301a",
+      "staged": "3a8d58fa5a9fb51d44086659c43c9f789a0f41a565b34b1c294a759b211fc9da",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 218712
+    },
+    {
+      "id": "mayfly_ultimate",
+      "model": "mayflyUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "7509475ff544a35cbd70433c420a4bcde5855ed18dd26c4ff12ae8501a937f5b",
+      "staged": "39cf144d1248a4f136e74827a70c8913c746f8e01138dd8188e7e63fd018a453",
+      "materials": 9,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 195344
+    },
+    {
+      "id": "termite_ultimate",
+      "model": "termiteUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "51bd5eedcf2a248826b33b7116a86603c6c216f5ba96d8daae1bf9a075040e6a",
+      "staged": "441652709a14ea36843efb95ad4409a210a1b822e2b34f892e18cdba1f885806",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 168228
+    },
+    {
+      "id": "tigerbeetle_ultimate",
+      "model": "tigerbeetleUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "8bef51153b3f4c4817a9b78d7575316f8905b723304eb60e240b5921bb904c4c",
+      "staged": "959dc2a978c19e5556a196039fe5df4f0dad038880e08d158702c19fc146c2d3",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 169720
+    },
+    {
+      "id": "tortoisebeetle_ultimate",
+      "model": "tortoisebeetleUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "c9e1c23ce4ae1de506cb298d5007f1f2c208fab776737e1538b2f0e341de6624",
+      "staged": "a1975f5cbb6c69ef76da565a78d57e576612948f87456bc404027bb432b31d2e",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 181424
+    },
+    {
+      "id": "bee_ultimate",
+      "model": "beeUltimate",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "39c844f47e89c8e8cfc017c7050e8ffbbff5e0353dfac2dc4a273ff3d885b597",
+      "staged": "4a40bc12c8d371257f33cc3b03986084d93829510d055b8d34b991dd55c3fd0b",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 209276
+    },
+    {
+      "id": "spider_1",
+      "model": "SpiderStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "17d33cf3462616f57f33002c5328ac3c1bc19a94d5cdbd3c17b0ef5ed1eeebc8",
+      "staged": "091b1d6003357bc01f1b603d3588bafd4be53505c11ddb52d58cf97fe0748013",
+      "materials": 1,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Hit",
+        "Death",
+        "GetUp",
+        "Bite",
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 1034024
+    },
+    {
+      "id": "spider_2",
+      "model": "SpiderStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "4889b6f23825f8028d3b35e461277ebca735808fc3524cd3f855b07c6d818c6c",
+      "staged": "48e8aed027757423a520bdbf4dfa0ee6dcd0d0bc27f9b8f79c50090392bd1636",
+      "materials": 1,
+      "clips": [
+        "GetUp",
+        "Idle",
+        "Walk",
+        "Run",
+        "Hit",
+        "Death",
+        "Bite",
+        "Strike",
+        "WebSpit",
+        "Threat",
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 2083044
+    },
+    {
+      "id": "spider_3",
+      "model": "SpiderStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "b5970e6a1df02e1d07f355799188e915b1a2843a2b7edb27f512d44f3821d190",
+      "staged": "aea66671786395fd5b268455c9a6b986d0fe1f5578c0d607a2413cc20e5924d7",
+      "materials": 1,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Hit",
+        "Death",
+        "GetUp",
+        "Bite",
+        "Threat",
+        "Spawn",
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 2271788
+    },
+    {
+      "id": "armabee_1",
+      "model": "ArmabeeStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a223f40a6311a806a326a5e28c88e8de635939da166f5be6e5bf005c30fbafd6",
+      "staged": "ca3e2424864cdd94530ba9369ad54acc809cfc8ffa1724dec2cf4d651dcb9a80",
+      "materials": 4,
+      "clips": [
+        "CharacterArmature|Death",
+        "CharacterArmature|Fast_Flying",
+        "CharacterArmature|Flying_Idle",
+        "CharacterArmature|Headbutt",
+        "CharacterArmature|HitReact",
+        "CharacterArmature|No",
+        "CharacterArmature|Punch",
+        "CharacterArmature|Yes",
+        "idle",
+        "walk",
+        "fly",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 100088
+    },
+    {
+      "id": "armabee_2",
+      "model": "ArmabeeStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "23fa6f30e551f68dfcce00b7efafc3b80ac934ad624f013b2ddfeb42e2ebdfae",
+      "staged": "d1524a52203b98ae45ada2a789b8553ae048ece22357dcc41451d4e7fd2bc8a5",
+      "materials": 6,
+      "clips": [
+        "CharacterArmature|Death",
+        "CharacterArmature|Fast_Flying",
+        "CharacterArmature|Flying_Idle",
+        "CharacterArmature|Headbutt",
+        "CharacterArmature|HitReact",
+        "CharacterArmature|No",
+        "CharacterArmature|Punch",
+        "CharacterArmature|Yes",
+        "idle",
+        "walk",
+        "fly",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 123544
+    },
+    {
+      "id": "armabee_3",
+      "model": "ArmabeeStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "72667d194ee0b23fe9ff74e3c79ea960413017f75fd70e774f703b71605a6794",
+      "staged": "41d58b4ff4827287002b45bd3f02bc7a98822aa2e32aa86304b801a2f3007181",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 199496
+    },
+    {
+      "id": "scorpion_1",
+      "model": "ScorpionStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a9d738aa4de48853355e5235bf1df174018ca1347b2d7de2ac4cc7d14111b4f6",
+      "staged": "b17147b73e72c287d8ff1263f0be3138903a98cd070f377a3c1b65ec573ca456",
+      "materials": 1,
+      "clips": [
+        "idle",
+        "attack",
+        "dead",
+        "walk"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 64984
+    },
+    {
+      "id": "scorpion_2",
+      "model": "ScorpionStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "31bfd6025a7df2a506af8ad274c91dae567db88a34249406f099287bf0835e16",
+      "staged": "c1e233c953437bdd71376815316f8a345b400b88471c5d8cc7bc1c864216f525",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 106848
+    },
+    {
+      "id": "scorpion_3",
+      "model": "ScorpionStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "92620fdfc9da8d3cb83e5500aba8372ea18e2ad4221b4c6d7138756af62052eb",
+      "staged": "e7557e1ffcba05635e463ad223fe6a28f1eec46d711d2c2e3abc67d89c163d7d",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 144060
+    },
+    {
+      "id": "centipede_1",
+      "model": "CentipedeStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "bf8609ce746d219c3b8beadcc0e382a1c664a1beadd481fdbc3a20025ca45046",
+      "staged": "3fd6332a9e540b3a53e50edebca4da662bcfd8055f3644902a1085d2dae01fb6",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "move",
+        "attack",
+        "walk"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 164924
+    },
+    {
+      "id": "centipede_2",
+      "model": "CentipedeStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "0266f6e5fbd75564bb66665647a432d33a5633c7a9e5fc31959587b6ddcfbaa2",
+      "staged": "4a144955c7295be8d80b71c9440f451147f527f3e7ac3ae99a93ea7b4688a4b7",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 269800
+    },
+    {
+      "id": "centipede_3",
+      "model": "CentipedeStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "acbf10497d4a5f74654ef8d3e6b4f77d605e81e003cf26932b568cc73b124b2c",
+      "staged": "5777af8589bcf41c40f0a07a74b91d8ff09b828ad2c98562c5ede4b18f661214",
+      "materials": 1,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Threat",
+        "Bite",
+        "Burrow",
+        "Emerge",
+        "Hit",
+        "Death",
+        "GetUp",
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 3419208
+    },
+    {
+      "id": "wasp_1",
+      "model": "WaspStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "ba106bdfd2d0a45a37e4b779fef15c594d8ab53301dab0f787d2d006c16ced55",
+      "staged": "e7668be27c53d7c50c4b83b8ccb0e1204801e9ba9c459e33682d1fd5eb4f2753",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 43612
+    },
+    {
+      "id": "wasp_2",
+      "model": "WaspStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "ecc6644d9d2ae3b409aa19c0a7bcee2b5be0819f257a5e9c266f28861d1b5b72",
+      "staged": "b93bfa583d39455b927eb6a42e4e06bb1e5102e9acc400ffc343114318e1cfab",
+      "materials": 4,
+      "clips": [
+        "WaspArmature|Wasp_Attack",
+        "WaspArmature|Wasp_Death",
+        "WaspArmature|Wasp_Flying",
+        "idle",
+        "walk",
+        "fly",
+        "attack",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 257964
+    },
+    {
+      "id": "wasp_3",
+      "model": "WaspStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "8c05044d215b30b9781933632d59195a37aa03e826710114060b23c1bfd9574d",
+      "staged": "a08796a4a5650136b513cb0fa384efd820e11046609c7610b42c3c8c90c950f4",
+      "materials": 2,
+      "clips": [
+        "Idle",
+        "Fly",
+        "Threat",
+        "Sting",
+        "Dive",
+        "Hit",
+        "Death",
+        "GetUp",
+        "idle",
+        "walk",
+        "fly",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 1495732
+    },
+    {
+      "id": "dragonfly_1",
+      "model": "DragonflyStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "260e57dd86ac6c4f6b8acb9dbc58a3dc8def05b2faa6ce02b4282b6db9e68558",
+      "staged": "bc7bcc4911bdb8b888062219abc80d06c1d71581bcacb2f3c33d0029bf7680ce",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 93688
+    },
+    {
+      "id": "dragonfly_2",
+      "model": "DragonflyStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "4a4b741f5f5fd1a764fd8d7ca271f8faaf19c0567d23b0fbc19e044a667a1cff",
+      "staged": "9933a36576e07ab2383acaddb0100e29a0e3e447d3ef7823f42b9a94e5bf67a5",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 122996
+    },
+    {
+      "id": "dragonfly_3",
+      "model": "DragonflyStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "f9a2929fd3604f34dc057b8dbb4fa87df3e57adff01aeec0e3919d0ec5ca8869",
+      "staged": "89ccdda0b77ef67bae6f6b3740353ef3c5876d163b3bb017860806aff6d3a7fa",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 191996
+    },
+    {
+      "id": "firefly_1",
+      "model": "FireflyStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "16a94c7d2c8b0105875ea6ca250afd9478030704fb0fad28a16a921ca914e15e",
+      "staged": "9e4de9e8ca32766eb65bfd783f54d4bc13bf99c486ccb5a69b01a6239bdeeb4f",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 97920
+    },
+    {
+      "id": "firefly_2",
+      "model": "FireflyStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "73a2c2a698777732efb465ea849d0ecb40f2b11db0e3745dbf7fb93d0dc133b5",
+      "staged": "4cc7b532e5ec68a344ed7a1363816fc90f5f610d517cefc72df891670f1addd2",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 122272
+    },
+    {
+      "id": "firefly_3",
+      "model": "FireflyStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "60973ee50cf48183998ccf8a5b7e6004047418fa633828160eadd587d2575d2b",
+      "staged": "ad8c52354511ea70abff0d3e903c29176ab7fac231112f9cd4d3e6937f6b8431",
+      "materials": 10,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 183452
+    },
+    {
+      "id": "cicada_1",
+      "model": "CicadaStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "25ee05c61c0dace04b9418841d2ae1e3d81592ff0b49642a6affff2621d2faa1",
+      "staged": "37b1412ff0780c5ffbf46f24ae78822e0d4040351bb87ba6b820a8000ab246ac",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 87260
+    },
+    {
+      "id": "cicada_2",
+      "model": "CicadaStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9ae161b4fed2c8c4b72df052acac530535d61e61fc9491c316a35718fa06fdea",
+      "staged": "9e9efab7c99ac6c3d09d22a3c0818e8472b26832e25ca0ee98bf821a3e53c1f3",
+      "materials": 5,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 91780
+    },
+    {
+      "id": "cicada_3",
+      "model": "CicadaStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "2c7c2c5a53c176571718ca6284c6d0df5781fec0e2e49c591b4475336bf91080",
+      "staged": "e3d5106812c721c5238d97d8c4e632609b4b352e16fd9bfa17ab1c7534018743",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 145560
+    },
+    {
+      "id": "mosquito_1",
+      "model": "MosquitoStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "835a0d2652df428975aac253d2b0bc791b6b1e03fa487f06e9d817338578bcc1",
+      "staged": "81ed1e9642bf1ca0c0b6dde921beea10563fa1fe38a697c061e2659eb5691297",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 46664
+    },
+    {
+      "id": "mosquito_2",
+      "model": "MosquitoStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "717917e1f44e7478443f7a803b98d87c39ca2b4a43041d4137e7bfc152f86109",
+      "staged": "e6fc5318a62a7521fa6a9f31b3baf38374846a2941f4b8bf295753bb46116ac4",
+      "materials": 5,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 120668
+    },
+    {
+      "id": "mosquito_3",
+      "model": "MosquitoStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "a3f34d69af6f3260e69c548e39368de6f6d70d4c4e4b7cfeaa3951791c102ef0",
+      "staged": "c593db70243210896f0a50a24c45f8413ec3dde8c501ea8f13e3b838ba5f323b",
+      "materials": 7,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 252716
+    },
+    {
+      "id": "snail_1",
+      "model": "SnailStage1",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "9244ca30391be1e31c61bece6a4b0a9be1584df49a3bf088d035f7e9b4fb2174",
+      "staged": "739c1b11bd53de1848f0bb08fdadf5c0663f5a299aef7672016eeecdd447d2f6",
+      "materials": 4,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 80676
+    },
+    {
+      "id": "snail_2",
+      "model": "SnailStage2",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "574fba770fe85ee52ff119cb76ecfeb43ede2cbb8e56b60ebc7df7cd6d5e076e",
+      "staged": "1b049cbcc9f9104d8fd6250f205124cd9ee0c5d97025545fe7ddbe1226d86818",
+      "materials": 3,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 79572
+    },
+    {
+      "id": "snail_3",
+      "model": "SnailStage3",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "2701fc8283077f3432ece121291492860d1a5270f9d7c6edcacb4f11cb632424",
+      "staged": "5a6ea552b51c8c812a5585f7919acf748be42cc28d0223d904209fc7e7f472c0",
+      "materials": 12,
+      "clips": [
+        "idle",
+        "move",
+        "attack",
+        "walk"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_emissive_strength",
+        "KHR_materials_ior",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 263636
+    },
+    {
+      "id": "kristalkoning",
+      "model": "Kristalkoning",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "7ab2005c24876ba08398c8a38765c5aa67ab597119f3ee7dfde349bc2bc8162a",
+      "staged": "fd3326a95b3fb9065d51c48aa654a3818d850e03c91ef6a6103c08f2df2fdf6c",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 376896
+    },
+    {
+      "id": "donderwiek",
+      "model": "Donderwiek",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "563d6f46c0e5a22a98df50d290188b1e3a4c1f68dbcb94d7f8cd17cebdfa9566",
+      "staged": "85690d2eb9cdb3aebe825f97d7a72a037cbc019c20d071dd700bfbc1416e78d7",
+      "materials": 9,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 437492
+    },
+    {
+      "id": "lavaklauw",
+      "model": "Lavaklauw",
+      "preserved": true,
+      "maxNodeDelta": 0,
+      "base": "c0bcfb260cf45370f58a40fedcc1ebc92c947a33e2f77235ca0dcdec608e1492",
+      "staged": "e0e252cfe17a00a01ed3c064753db6dfe8a2fe8b9827a3bf0b548e08ca5ad66a",
+      "materials": 6,
+      "clips": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "extensions": [
+        "KHR_materials_clearcoat",
+        "KHR_materials_iridescence",
+        "KHR_mesh_quantization"
+      ],
+      "bytes": 236704
+    }
+  ]
+}

@@ -9,14 +9,19 @@ import type {Held} from './goV2';
 import {checkV2 as check} from './shopV2';
 export type GoFighter={id:string;species:string;shiny:boolean;go:GoBug;cp:number;attack:number;defense:number;maxHP:number;hp:number;energy:number;readyAt:number};
 export type GoBattleInput={index:number;due:number;kind:'fast'|'charged'|'switch';value:string|number|null};
-export type GoBattle={flow?:2;npcChargeAt?:number;dailyChallenge?:DailyChallengeBattleMeta;queued?:[GoBattleInput|null,GoBattleInput|null];gym?:GymBattleMeta;echo?:EchoBattleMeta;boss?:BossBattleMeta;raid?:import('./raidsV2').RaidBattleMeta;plaagbende?:import('./plaagbendeV2').PlaagBattleMeta;id:string;revision:number;players:[string,string];names:[string,string];ratings:[number,number];league:League;ranked:boolean;training:boolean;teams:[GoFighter[],GoFighter[]];active:[number,number];shields:[number,number];swapAt:[number,number];replaceAt:[number,number];fast:[{index:number;due:number}|null,{index:number;due:number}|null];phase:'fight'|'charge'|'finished';charge:{side:Side;move:Charged;startedAt:number;deadline:number;hits:number[];lastTap:number;shield:boolean|null}|null;winner:Side|null;settled:boolean;delta:number;rewards?:GoBattleReward[];createdAt:number;endsAt:number;events:{id:number;side:Side;kind:string;amount:number}[];serial:number};
+export type GoFastAim={x:number;y:number};
+export type GoDodgeTrace={fromX:number;toX:number;fromY:number;toY:number};
+export type GoBattle={flow?:2|3;aiPolicy?:'squad-1';aiStep?:number;npcChargeAt?:number;dailyChallenge?:DailyChallengeBattleMeta;queued?:[GoBattleInput|null,GoBattleInput|null];gym?:GymBattleMeta;echo?:EchoBattleMeta;boss?:BossBattleMeta;raid?:import('./raidsV2').RaidBattleMeta;plaagbende?:import('./plaagbendeV2').PlaagBattleMeta;id:string;revision:number;players:[string,string];names:[string,string];ratings:[number,number];league:League;ranked:boolean;training:boolean;teams:[GoFighter[],GoFighter[]];active:[number,number];shields:[number,number];swapAt:[number,number];replaceAt:[number,number];fast:[{index:number;due:number;aimed?:boolean}|null,{index:number;due:number;aimed?:boolean}|null];phase:'fight'|'charge'|'finished';charge:{side:Side;move:Charged;startedAt:number;deadline:number;hits:number[];lastTap:number;shield:boolean|null;dodged?:boolean;dodgeAt?:number}|null;winner:Side|null;settled:boolean;delta:number;rewards?:GoBattleReward[];createdAt:number;endsAt:number;events:{id:number;side:Side;kind:string;amount:number}[];serial:number};
 export type GoBattleView=GoBattle&{side:Side};
 export type GoBattleReward={item?:Held|null;dust:number;xp:number;fastTMs:number;chargedTMs:number};
 export const SWITCH_COOLDOWN=45000;
 export const FLOW_TURN_MS=400,FLOW_CHARGE_MS=3500,FLOW_SWITCH_MS=12000;
+export const FLOW3_CHARGE_MS=1000,FLOW3_DODGE_MS=650,FLOW3_DURATION_MS=180000;
+/** Normalized stage coordinates; the renderer shows this exact generous ellipse. */
+export const COMBAT_AIM={x:740,y:290,rx:150,ry:110};
 export const battleTurnMs=(b:GoBattle)=>b.flow===2?FLOW_TURN_MS:500;
-/** New battles share automatic basic attacks; old stored fights keep their original rules. */
-export function prepareGoBattle(b:GoBattle){b.flow=2;nextInputs(b,b.createdAt);return b;}
+/** Select rules only at construction. Stored versioned fights retain their rules. */
+export function prepareGoBattle(b:GoBattle,flow:2|3=2){if(b.flow!==undefined)return b;b.flow=flow;if(flow===3){b.aiPolicy='squad-1';b.aiStep=0;if(!b.gym&&!b.raid)b.endsAt=Math.min(b.endsAt,b.createdAt+FLOW3_DURATION_MS);nextInputs3(b,b.createdAt);}else nextInputs(b,b.createdAt);return b;}
 const chart=TYPE_CHART;
 export function effectiveness(type:Element,defender:Element[]){return defender.reduce((n,t)=>n*(type==='ground'&&t==='flying'||type==='poison'&&t==='steel'?.390625:chart[type]?.strong.includes(t)?1.6:chart[type]?.weak.includes(t)?.625:1),1);}
 export function damage(a:GoFighter,d:GoFighter,type:Element,power:number,quality=1){return Math.max(1,Math.floor(.5*power*a.attack/d.defense*(movePool(a.species).types.includes(type)?1.2:1)*effectiveness(type,movePool(d.species).types)*1.3*quality)+1);}
@@ -48,6 +53,7 @@ function nextInputs(b:GoBattle,at:number){
  for(const q of inputs){if(b.phase==='fight')startInput(b,q.side,q.input,at);else if(b.flow===2&&q.input.kind==='charged'&&b.charge?.side!==q.side){b.queued??=[null,null];b.queued[q.side]=q.input;}}
 }
 export function advanceGoBattle(b:GoBattle,now:number){
+ if(b.flow===3){advanceFlow3(b,now);return;}
  b.replaceAt??=[0,0];for(const side of [0,1] as const)if(b.replaceAt[side]&&b.replaceAt[side]<=now){b.active[side]=b.teams[side].findIndex(f=>f.hp>0);b.replaceAt[side]=0;event(b,side,'replace');}
  if(b.phase==='finished')return;
  if(b.phase==='charge'){if(b.training&&b.charge!.side===0&&b.charge!.shield===null)b.charge!.shield=b.shields[1]>0&&active(b,1).hp>active(b,1).maxHP*.25;if(b.training&&b.charge!.side===1)b.charge!.hits=Array.from({length:6},(_,i)=>i);const c=b.charge!,early=b.flow===2&&c.shield!==null&&(c.hits.length===8||b.training&&c.side===1)&&now-c.startedAt>=2000;if(early&&now<c.deadline)c.deadline=now;if(now>=c.deadline)chargeEnd(b,c.deadline);else return;}
@@ -65,6 +71,7 @@ export function advanceGoBattle(b:GoBattle,now:number){
  nextInputs(b,now);
 }
 export function actGoBattle(b:GoBattle,side:Side,kind:unknown,value:unknown,now:number,chargeAt?:unknown){
+ if(b.flow===3){actFlow3(b,side,kind,value,now,chargeAt);return;}
  advanceGoBattle(b,now);
  if(chargeAt!==undefined){check(Number.isSafeInteger(chargeAt)&&Number(chargeAt)>0,'Ongeldige aanval.');if(b.flow===2&&(kind==='chargeTap'||kind==='shield')&&(b.phase!=='charge'||b.charge?.startedAt!==chargeAt))return;}
  if(b.flow===2&&b.phase==='finished'&&['fast','charged','switch','chargeTap','shield'].includes(String(kind)))return;
@@ -86,4 +93,81 @@ export function actGoBattle(b:GoBattle,side:Side,kind:unknown,value:unknown,now:
  if(kind==='charged')check(validInput(b,side,q,now),'Deze aanval is nog niet opgeladen.');
  if(kind==='switch')check(Number.isInteger(value)&&Number(value)>=0&&Number(value)<b.teams[side].length&&Number(value)!==b.active[side]&&b.teams[side][Number(value)].hp>0&&(forced||b.swapAt[side]<=now),'Je kunt nu niet wisselen.');
  startInput(b,side,q,now);
+}
+
+
+function normalizedObject(value:unknown,keys:string[]){return !!value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===keys.length&&keys.every(key=>Object.hasOwn(value,key)&&Number.isInteger((value as Record<string,unknown>)[key])&&Number((value as Record<string,unknown>)[key])>=0&&Number((value as Record<string,unknown>)[key])<=1000);}
+function aimBonus(value:unknown){if(value===null||value===undefined)return false;check(normalizedObject(value,['x','y']),'Ongeldig richtpunt.');const p=value as GoFastAim;return ((p.x-COMBAT_AIM.x)/COMBAT_AIM.rx)**2+((p.y-COMBAT_AIM.y)/COMBAT_AIM.ry)**2<=1;}
+function finish3(b:GoBattle,at:number){
+ const alive=b.teams.map(t=>t.some(f=>f.hp>0));
+ if(!alive[0]||!alive[1]){b.phase='finished';b.winner=alive[0]===alive[1]?null:alive[0]?0:1;b.charge=null;b.fast=[null,null];b.queued=[null,null];event(b,0,'result');return;}
+ for(const side of [0,1] as const)if(active(b,side).hp<=0&&!b.replaceAt[side]){b.fast=[null,null];b.queued=[null,null];b.replaceAt[side]=at+5000;event(b,side,'faint');}
+}
+function timeout3(b:GoBattle){const score=b.teams.map(team=>{let numerator=0n,denominator=1n;for(const unit of team){const max=BigInt(unit.maxHP);numerator=numerator*max+BigInt(unit.hp)*denominator;denominator*=max;}return {alive:team.filter(f=>f.hp>0).length,numerator,denominator};}),left=score[0].numerator*score[1].denominator,right=score[1].numerator*score[0].denominator;b.phase='finished';b.winner=b.gym||b.raid||b.boss?1:score[0].alive!==score[1].alive?score[0].alive>score[1].alive?0:1:left===right?null:left>right?0:1;b.fast=[null,null];b.queued=[null,null];b.charge=null;event(b,0,'result');}
+function start3(b:GoBattle,side:Side,input:GoBattleInput,at:number,aimed=false){
+ const a=active(b,side);if(b.dailyChallenge&&side===0&&(input.kind==='fast'||input.kind==='charged'))b.dailyChallenge.turns++;
+ if(input.kind==='fast'){const due=at+FAST[a.go.fast].turns*500;b.fast[side]={index:b.active[side],due,...(aimed?{aimed:true}:{})};a.readyAt=due;event(b,side,'fast');return;}
+ if(input.kind==='switch'){b.active[side]=Number(input.value);if(a.hp>0)b.swapAt[side]=at+FLOW_SWITCH_MS;b.replaceAt[side]=0;b.fast[side]=null;if(b.queued)b.queued[side]=null;active(b,side).readyAt=Math.max(active(b,side).readyAt,at+300);event(b,side,'switch');return;}
+ const move=input.value as Charged;a.energy-=CHARGED[move].energy;b.phase='charge';if(b.queued)b.queued[side]=null;b.charge={side,move,startedAt:at,deadline:at+FLOW3_CHARGE_MS,hits:[],lastTap:0,shield:false,dodged:false};event(b,side,'charge');
+}
+function aiInput3(b:GoBattle,at:number):GoBattleInput{
+ const side=1 as const,a=active(b,side),enemy=active(b,0),step=b.aiStep??0;b.aiStep=step+1;
+ // Snapshot-only decisions: the opponent's submitted/queued choice is never inspected.
+ const matchup=(unit:GoFighter)=>effectiveness(FAST[unit.go.fast].type,movePool(enemy.species).types)/effectiveness(FAST[enemy.go.fast].type,movePool(unit.species).types);
+ if(b.swapAt[side]<=at){const current=matchup(a),best=b.teams[side].map((unit,index)=>({unit,index,score:unit.hp>0?matchup(unit):0})).sort((x,y)=>y.score-x.score||x.index-y.index)[0];if(best.index!==b.active[side]&&best.score>current*1.2)return {index:b.active[side],due:at,kind:'switch',value:best.index};}
+ const moves=[...a.go.charged].sort((x,y)=>damage(a,enemy,CHARGED[y].type,CHARGED[y].power)/CHARGED[y].energy-damage(a,enemy,CHARGED[x].type,CHARGED[x].power)/CHARGED[x].energy||a.go.charged.indexOf(x)-a.go.charged.indexOf(y));
+ const heavy=[...moves].sort((x,y)=>CHARGED[y].energy-CHARGED[x].energy)[0],saveHeavy=step%3===2&&heavy&&a.energy<CHARGED[heavy].energy;
+ const move=saveHeavy?undefined:moves.find(move=>a.energy>=CHARGED[move].energy);
+ return {index:b.active[side],due:at,kind:move?'charged':'fast',value:move??null};
+}
+function nextInputs3(b:GoBattle,at:number){
+ if(b.phase!=='fight'||b.replaceAt.some(Boolean))return;
+ const due:{side:Side;input:GoBattleInput}[]=[];
+ for(const side of [0,1] as const){const input=b.queued?.[side];if(input&&input.due<=at&&!b.fast[side]){b.queued![side]=null;if(validInput(b,side,input,at))due.push({side,input});}}
+ if(b.training&&!b.fast[1]&&!b.queued?.[1]&&active(b,1).hp>0&&active(b,1).readyAt<=at&&!due.some(q=>q.side===1))due.push({side:1,input:aiInput3(b,at)});
+ const tie=[...b.id].reduce((n,c)=>(n+c.charCodeAt(0))%2,b.serial%2);
+ due.sort((x,y)=>inputPriority(y.input.kind)-inputPriority(x.input.kind)||(x.input.kind==='charged'?active(b,y.side).attack-active(b,x.side).attack:0)||((x.side+tie)%2)-((y.side+tie)%2));
+ for(const q of due){if((b.phase as GoBattle['phase'])==='fight'&&validInput(b,q.side,q.input,at))start3(b,q.side,q.input,at);else if((b.phase as GoBattle['phase'])==='charge'&&q.input.kind==='charged'&&b.charge?.side!==q.side){b.queued??=[null,null];b.queued[q.side]={...q.input,due:b.charge!.deadline};}}
+}
+function dodge3(b:GoBattle,side:Side,value:unknown,at:number){
+ const c=b.charge;if(!c||side===c.side||c.dodged||b.shields[side]<=0||at<c.deadline-FLOW3_DODGE_MS||at>=c.deadline)return;
+ check(normalizedObject(value,['fromX','toX','fromY','toY']),'Ongeldige veeg.');const v=value as GoDodgeTrace;
+ const dx=Math.abs(v.toX-v.fromX)*360/1000,dy=Math.abs(v.toY-v.fromY)*640/1000;
+ if(dx<40||dx<dy)return;c.dodged=true;c.dodgeAt=at;b.shields[side]--;event(b,side,'dodge');
+}
+function resolveCharge3(b:GoBattle){
+ const c=b.charge!,at=c.deadline,side=(1-c.side) as Side,a=active(b,c.side),d=active(b,side),move=CHARGED[c.move],full=damage(a,d,move.type,move.power),amount=c.dodged?Math.ceil(full*.25):full;
+ d.hp=Math.max(0,d.hp-amount);event(b,side,'damage',amount);
+ for(const s of [0,1] as const){if(b.fast[s])b.fast[s]!.due+=FLOW3_CHARGE_MS;if(b.queued?.[s]&&b.queued[s]!.due<at)b.queued[s]!.due=at;for(const unit of b.teams[s])if(unit.readyAt>c.startedAt)unit.readyAt+=FLOW3_CHARGE_MS;}
+ b.phase='fight';b.charge=null;finish3(b,at);nextInputs3(b,at);
+}
+function advanceFlow3(b:GoBattle,now:number){
+ if(b.phase==='finished')return;b.replaceAt??=[0,0];
+ for(let safety=0;safety<1800&&(b.phase as GoBattle['phase'])!=='finished';safety++){
+  if(b.phase==='charge'){
+   const c=b.charge!,window=c.deadline-FLOW3_DODGE_MS;
+   if(b.training&&c.side===0&&!c.dodged&&now>=window&&b.shields[1]>0&&(b.serial%3!==0||damage(active(b,0),active(b,1),CHARGED[c.move].type,CHARGED[c.move].power)>=active(b,1).hp))dodge3(b,1,{fromX:0,toX:1000,fromY:500,toY:500},window);
+   if(b.endsAt<c.deadline&&now>=b.endsAt){timeout3(b);return;}if(now<c.deadline)return;resolveCharge3(b);continue;
+  }
+  const fastDue=Math.min(...b.fast.filter(Boolean).map(f=>f!.due)),replaceDue=Math.min(...b.replaceAt.filter(Boolean)),blocked=b.replaceAt.some(Boolean),queuedDue=blocked?Infinity:Math.min(...(b.queued??[]).filter((q,index)=>q&&!b.fast[index]).map(q=>q!.due)),aiDue=b.training&&!blocked&&!b.fast[1]&&!b.queued?.[1]&&active(b,1).hp>0?Math.max(b.createdAt,active(b,1).readyAt):Infinity;
+  const at=Math.min(fastDue,replaceDue,queuedDue,aiDue,b.endsAt);if(at>now)return;
+  for(const side of [0,1] as const)if(b.replaceAt[side]&&b.replaceAt[side]<=at){b.active[side]=b.teams[side].findIndex(f=>f.hp>0);b.replaceAt[side]=0;active(b,side).readyAt=Math.max(active(b,side).readyAt,at+300);event(b,side,'replace');}
+  const hits:{side:Side;amount:number;energy:number}[]=[];
+  for(const side of [0,1] as const){const f=b.fast[side];if(!f||f.due!==at)continue;b.fast[side]=null;const a=active(b,side);if(a.hp<=0||f.index!==b.active[side])continue;const move=FAST[a.go.fast],ordinary=damage(a,active(b,(1-side) as Side),move.type,move.power);hits.push({side,amount:f.aimed?Math.floor(ordinary*1.15):ordinary,energy:move.energy});}
+  for(const hit of hits){const defender=active(b,(1-hit.side) as Side);defender.hp=Math.max(0,defender.hp-hit.amount);active(b,hit.side).energy=Math.min(100,active(b,hit.side).energy+hit.energy);event(b,(1-hit.side) as Side,'damage',hit.amount);}
+  if(hits.length)finish3(b,at);if((b.phase as string)==='finished')return;if(at>=b.endsAt){timeout3(b);return;}nextInputs3(b,at);
+ }
+}
+function actFlow3(b:GoBattle,side:Side,kind:unknown,value:unknown,now:number,chargeAt:unknown){
+ advanceFlow3(b,now);
+ if(kind==='dodge'){check(Number.isSafeInteger(chargeAt)&&Number(chargeAt)>0,'Ongeldige aanval.');if(b.phase!=='charge'||b.charge?.startedAt!==chargeAt)return;dodge3(b,side,value,now);return;}
+ if(b.phase==='finished')return;
+ if(kind==='forfeit'){b.phase='finished';b.winner=(1-side) as Side;b.fast=[null,null];b.queued=[null,null];b.charge=null;event(b,side,'forfeit');return;}
+ if(b.phase==='charge')return;
+ check(kind==='fast'||kind==='charged'||kind==='switch','Onbekende gevechtsactie.');
+ const a=active(b,side),forced=a.hp<=0;if(kind!=='switch'&&b.replaceAt.some(Boolean))return;
+ if(kind==='fast'){const aimed=aimBonus(value);if(a.hp<=0||b.fast[side]||a.readyAt>now)return;start3(b,side,{index:b.active[side],due:now,kind:'fast',value:null},now,aimed);return;}
+ const q:GoBattleInput={index:b.active[side],due:Math.max(b.fast[side]?.due??now,Math.floor(now/100)*100+100),kind:kind as 'charged'|'switch',value:value as string|number};
+ if(kind==='switch'&&forced){check(Number.isInteger(value)&&Number(value)>=0&&Number(value)<b.teams[side].length&&b.teams[side][Number(value)].hp>0,'Kies een levende reserve.');start3(b,side,q,now);return;}
+ check(validInput(b,side,q,now),kind==='switch'?'Je kunt nu niet wisselen.':'Deze aanval is nog niet opgeladen.');b.queued??=[null,null];const prior=b.queued[side];if(!prior||inputPriority(q.kind)>=inputPriority(prior.kind)){b.queued[side]=q;b.revision++;}
 }

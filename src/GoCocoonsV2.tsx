@@ -16,7 +16,7 @@ import {Button,Glyph,Help,Label,Panel,Title,useInfo,V} from './uiV2';
 
 type CocoonTab='cocoons'|'pool'|'machines'|'last';
 const COCOON_COLOR={2:'#214B40',5:'#51475F',7:'#6B3F57',10:'#6A5520'} as const;
-const COCOON_HELP='🥚 Je eerste cocon is gratis. Daarna: veldposten 20%, kaartvangsten 10%.\n📏 Posts: 2, 5 of soms 10 km. Vangsten: 2 of 5 km. 🎁 Cadeau van een vriend: soms 7 km. Max. '+COCOON_CAP+' in je tas.\n👟 Alleen lopen telt (GPS of Health Connect), wachten niet.\n🔥 Basismachine: onbeperkt. Extra machine uit de shop: 3 keer. Eén cocon per machine.\n🎲 Inhoud ligt vast. IV 10–15, ✦ shiny 1 op 64.\n🎒 Eerste uitkomst: ook een held item als je er nog geen hebt. Telt niet als dagvangst.';
+const COCOON_HELP='👟 Loop de km om hem uit te broeden.\n🎒 Max. '+COCOON_CAP+' in je tas.';
 
 export function GoCocoonsV2({view,run,busy,now,embedded=false,open}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;embedded?:boolean;open?:(name:string,id?:string)=>void}){
  const p=view.player,g=p.go?.cocoons,[selected,setSelected]=useState(''),[tab,setTab]=useState<CocoonTab>('cocoons'),[machine,setMachine]=useState('basic'),info=useInfo(),chosen=g?.items.find(c=>c.id===selected)??g?.items.find(c=>c.id===g.active?.id)??g?.items[0],active=chosen&&cocoonActive(p,chosen.id),walked=cocoonWalked(p,chosen?.id),ready=!!chosen&&!!active&&walked>=chosen.km*1000,blocked=!!p.go?.battle||!!p.go?.queue;

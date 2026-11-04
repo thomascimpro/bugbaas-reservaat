@@ -1,19 +1,26 @@
-import React,{useEffect,useRef,useState} from 'react';
+import React,{useContext,useEffect,useRef,useState} from 'react';
 import {AppState,Modal,Pressable,Text,useWindowDimensions,View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {GameViewV2} from '../game/typesV2';
 import {awayCursorV2,awaySummaryV2,validAwayCursorV2} from '../game/awaySummaryV2';
 import type {AwayCursorV2,AwaySummaryV2 as Report} from '../game/awaySummaryV2';
 import {species} from '../game/catalogV2';
+import {walkTodayText} from '../game/walkCatchV2';
 import {movePool} from '../game/goV2';
 import {SpriteView} from './artV2';
 import {GO_TYPES} from './GoTypeV2';
-import {Button,font,Glyph,Label,Panel,V} from './uiV2';
+import {font,Glyph,MotionPrefs} from './uiV2';
+import {PO,PoPill} from './PogoUiV2';
+import {CandyIconV2} from './CandyIconV2';
+import {bugRarity,RARITY_TIERS} from '../game/rarityDisplayV2';
+import {DEFAULT_TRANSFER_OPTIONS,TRANSFER_BATCH,transferNectarV2,transferSelectionV2} from '../game/transferSelectionV2';
+import type {RunV2} from './ShopViewV2';
 import type {PlayerV2} from '../game/typesV2';
 const weekTiers=(p:PlayerV2)=>awayCursorV2(p).tiers??0,healthAt=(p:PlayerV2)=>p.field?.healthSync?.at??0;
 
 /** Only a notification: every catch, resource and distance comes from confirmed server state. */
-export function AwaySummaryV2({view,visible,open}:{view:GameViewV2|null;visible:boolean;open:(name:string,id?:string)=>void}){
+/** run/busy are optional: without them the cleanup button stays hidden (GameV2 passes them once wired). */
+export function AwaySummaryV2({view,visible,open,run,busy=false}:{view:GameViewV2|null;visible:boolean;open:(name:string,id?:string)=>void;run?:RunV2;busy?:boolean}){
  const current=useRef(view),uid=useRef(''),cursor=useRef<AwayCursorV2|null>(null),returning=useRef(false),ignore=useRef<GameViewV2|null>(null),late=useRef<{cursor:AwayCursorV2;until:number;away:number;tiers:number;health:number;meters:number}|null>(null),[report,setReport]=useState<Report|null>(null);current.current=view;
  const key=(id:string)=>'bugbaas-away-summary-v1:'+id;
  function consider(next:GameViewV2){
@@ -31,12 +38,30 @@ export function AwaySummaryV2({view,visible,open}:{view:GameViewV2|null;visible:
  },[view?.player.uid]);
  useEffect(()=>{if(view)consider(view);},[view]);
  useEffect(()=>{const listener=AppState.addEventListener('change',state=>{if(state==='active'){returning.current=true;ignore.current=current.current;}else if(current.current?.player.uid===uid.current){cursor.current=awayCursorV2(current.current.player);void AsyncStorage.setItem(key(uid.current),JSON.stringify(cursor.current)).catch(()=>{});}});return()=>listener.remove();},[]);
- const {height}=useWindowDimensions(),[page,setPage]=useState(0),perPage=height<600?4:8,pages=Math.max(1,Math.ceil((report?.bugs.length??0)/perPage)),shownPage=Math.min(page,pages-1);
- useEffect(()=>setPage(0),[report?.bugs[0]?.id]);
- const close=()=>setReport(null),show=visible&&!!report;
- return <Modal visible={show} transparent animationType="fade" onRequestClose={close}><View style={{flex:1,backgroundColor:'#061F25BB',justifyContent:'center',alignItems:'center',padding:16}}>{report&&<Panel style={{width:'100%',maxWidth:340,maxHeight:'92%',backgroundColor:'#153F35',gap:8,padding:12}}><Label bold center>Terwijl je weg was</Label><View style={{flexDirection:'row',justifyContent:'center',gap:24}}><View accessibilityLabel={'Afgelegd: '+report.meters+' meter'} style={{flexDirection:'row',alignItems:'center',gap:4}}><Glyph name="compass" size={23}/><Label bold>{(report.meters/1000).toLocaleString('nl-NL',{maximumFractionDigits:2})+' km'}</Label></View><View accessibilityLabel={'Gevangen: '+report.caught} style={{flexDirection:'row',alignItems:'center',gap:4}}><SpriteView id="ant" size={23}/><Label bold>{report.caught}</Label></View></View>
-   {!!report.bugs.length&&<View testID="away-caught-bugs" style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:6}}>{report.bugs.slice(shownPage*perPage,(shownPage+1)*perPage).map(b=>{const name=species(b.species!).name,types=movePool(b.species!).types,color=GO_TYPES[types[0]].color,cp=b.cp===undefined?'CP —':'CP '+b.cp;return <Pressable key={b.id} accessibilityRole="button" accessibilityLabel={name+' · '+cp+' · '+types.map(t=>GO_TYPES[t].name).join(' / ')+(b.shiny?' · shiny':'')} accessibilityHint="Open deze bug" onPress={()=>{close();open('team',b.specimenId);}} style={{width:'23%',flexGrow:1,maxWidth:'24%',alignItems:'center',paddingVertical:4,paddingHorizontal:1,borderRadius:12,borderWidth:1,borderColor:color,backgroundColor:color+'38'}}><View><SpriteView id={b.species!} shiny={b.shiny} size={42}/>{b.shiny&&<View style={{position:'absolute',right:0,top:0}}><Label small bold color="#FFE18B">✦</Label></View>}</View><Text style={{fontFamily:font,fontSize:11,fontWeight:'700',color:V.ink,fontVariant:['tabular-nums']}}>{cp}</Text></Pressable>;})}</View>}
-   {pages>1&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:16}}><Pressable accessibilityRole="button" accessibilityLabel="Vorige bugs" disabled={shownPage===0} onPress={()=>setPage(shownPage-1)} style={{minWidth:40,minHeight:32,alignItems:'center',justifyContent:'center',opacity:shownPage?1:.3}}><Label bold>‹</Label></Pressable><Label small>{shownPage+1} / {pages}</Label><Pressable accessibilityRole="button" accessibilityLabel="Volgende bugs" disabled={shownPage===pages-1} onPress={()=>setPage(shownPage+1)} style={{minWidth:40,minHeight:32,alignItems:'center',justifyContent:'center',opacity:shownPage<pages-1?1:.3}}><Label bold>›</Label></Pressable></View>}
-   {(report.dust>0||report.xp>0||report.reached.length>0)&&<View style={{flexDirection:'row',justifyContent:'center',gap:14}}>{report.dust>0&&<View accessibilityLabel={'Stof: '+report.dust} style={{flexDirection:'row',alignItems:'center',gap:3}}><Glyph name="nectar" size={18}/><Label small>+{report.dust}</Label></View>}{report.xp>0&&<View accessibilityLabel={'XP: '+report.xp} style={{flexDirection:'row',alignItems:'center',gap:3}}><Glyph name="star" size={18}/><Label small>+{report.xp}</Label></View>}{report.reached.length>0&&<View accessibilityLabel={'Weekkisten: '+report.reached.length} style={{flexDirection:'row',alignItems:'center',gap:3}}><Glyph name="gift" size={18}/><Label small>+{report.reached.length}</Label></View>}</View>}
-   <View style={{flexDirection:'row',gap:8}}><View style={{flex:1}}><Button small secondary icon="book" onPress={()=>{close();open('team');}}>Bugs</Button></View><View style={{flex:1}}><Button small onPress={close}>Verder</Button></View></View></Panel>}</View></Modal>;
+ const {height}=useWindowDimensions(),reduced=useContext(MotionPrefs),[page,setPage]=useState(0),[sure,setSure]=useState(false),[sent,setSent]=useState(0),perPage=height<700?6:9,pages=Math.max(1,Math.ceil((report?.bugs.length??0)/perPage)),shownPage=Math.min(page,pages-1);
+ useEffect(()=>{setPage(0);setSure(false);setSent(0);},[report?.bugs[0]?.id]);
+ const close=()=>setReport(null),show=visible&&!!report,player=view?.player;
+ // Weak = what the cleanup helper would send with its default (safe) options, limited to the bugs caught while away.
+ const caught=player&&report?report.bugs.map(b=>player.specimens.find(s=>s.id===b.specimenId)).filter((s):s is NonNullable<typeof s>=>!!s):[];
+ const weak=player?transferSelectionV2(player,DEFAULT_TRANSFER_OPTIONS,caught).slice(0,TRANSFER_BATCH):[],weakIds=new Set(weak.map(s=>s.id)),nectar=transferNectarV2(weak);
+ const discard=()=>{if(!run||busy||!weak.length)return;if(!sure){setSure(true);return;}void run('goTransferMany',{ids:weak.map(s=>s.id)}).then(ok=>{setSure(false);if(ok)setSent(weak.length);});};
+ const bugs=report?report.bugs.slice(shownPage*perPage,(shownPage+1)*perPage):[];
+ return <Modal visible={show} transparent animationType={reduced?'none':'fade'} onRequestClose={close}><View style={{flex:1,backgroundColor:'#041416CC',justifyContent:'center',alignItems:'center',padding:16,paddingTop:height<700?56:84}}>{report&&<View testID="away-summary" style={{width:'100%',maxWidth:360,maxHeight:'100%',gap:10,padding:14,borderRadius:28,backgroundColor:'#0E2828',borderWidth:1.5,borderColor:PO.rim,boxShadow:'0px 10px 40px #00000099'}}>
+   <View style={{alignItems:'center',gap:2}}><Text testID="walk-today" style={{fontFamily:font,fontSize:22,fontWeight:'900',color:PO.text,textAlign:'center'}}>{view?walkTodayText(view.player,view.now):''}</Text>
+    <View style={{flexDirection:'row',gap:14}}><Text accessibilityLabel={'Afgelegd: '+report.meters+' meter'} style={{fontFamily:font,fontSize:13,fontWeight:'700',color:PO.muted}}>{'+'+(report.meters/1000).toLocaleString('nl-NL',{maximumFractionDigits:2})+' km'}</Text><Text accessibilityLabel={'Gevangen: '+report.caught} style={{fontFamily:font,fontSize:13,fontWeight:'700',color:PO.muted}}>{'+'+report.caught+' 🐞'}</Text></View></View>
+   {!!bugs.length&&<View testID="away-caught-bugs" style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:6}}>{bugs.map(b=>{const s=player?.specimens.find(x=>x.id===b.specimenId),gone=!s,tier=bugRarity(b.species!),color=RARITY_TIERS[tier].color,name=species(b.species!).name,types=movePool(b.species!).types,cp=b.cp===undefined?'CP —':'CP '+b.cp,isWeak=!!s&&weakIds.has(s.id)&&!sent;
+    return <Pressable key={b.id} disabled={gone} accessibilityRole="button" accessibilityLabel={name+' · '+cp+' · '+RARITY_TIERS[tier].name+' · '+types.map(t=>GO_TYPES[t].name).join(' / ')+(b.shiny?' · shiny':'')+(isWeak?' · zwak':'')} accessibilityHint="Open deze bug" onPress={()=>{close();open('team',b.specimenId);}}
+     style={{width:'31%',maxWidth:104,aspectRatio:.86,alignItems:'center',justifyContent:'center',borderRadius:16,overflow:'hidden',borderWidth:b.shiny?2:1.5,borderColor:b.shiny?PO.gold:color,backgroundColor:color+'55',backgroundImage:'radial-gradient(circle at 50% 38%, '+color+'CC 0%, '+color+'55 55%, #0E2828 100%)',opacity:gone||isWeak&&sure?.45:1} as never}>
+     <SpriteView id={b.species!} shiny={b.shiny} size={62}/>
+     <Text style={{fontFamily:font,fontSize:12,fontWeight:'800',color:PO.white,fontVariant:['tabular-nums'],textShadowColor:'#000A',textShadowRadius:3}}>{gone?'♻':cp}</Text>
+     <View style={{position:'absolute',left:6,top:5,flexDirection:'row'}}>{Array.from({length:tier},(_,i)=><Text key={i} style={{fontSize:8,color:PO.white,textShadowColor:'#0008',textShadowRadius:2}}>★</Text>)}</View>
+     {b.shiny&&<Text style={{position:'absolute',right:6,top:3,fontSize:13,color:PO.gold}}>✦</Text>}
+     {isWeak&&<View style={{position:'absolute',right:4,bottom:4,width:18,height:18,borderRadius:9,backgroundColor:'#0E2828CC',alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:10}}>♻</Text></View>}
+    </Pressable>;})}</View>}
+   {pages>1&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:16}}><Pressable accessibilityRole="button" accessibilityLabel="Vorige bugs" disabled={shownPage===0} onPress={()=>setPage(shownPage-1)} style={{minWidth:44,minHeight:36,alignItems:'center',justifyContent:'center',opacity:shownPage?1:.3}}><Text style={{fontSize:22,color:PO.text}}>‹</Text></Pressable><Text style={{fontFamily:font,fontSize:13,color:PO.muted}}>{shownPage+1} / {pages}</Text><Pressable accessibilityRole="button" accessibilityLabel="Volgende bugs" disabled={shownPage===pages-1} onPress={()=>setPage(shownPage+1)} style={{minWidth:44,minHeight:36,alignItems:'center',justifyContent:'center',opacity:shownPage<pages-1?1:.3}}><Text style={{fontSize:22,color:PO.text}}>›</Text></Pressable></View>}
+   {(report.dust>0||report.xp>0||report.reached.length>0)&&<View style={{flexDirection:'row',justifyContent:'center',gap:14}}>{report.dust>0&&<View accessibilityLabel={'Stof: '+report.dust} style={{flexDirection:'row',alignItems:'center',gap:3}}><Glyph name="nectar" size={18}/><Text style={{fontFamily:font,fontSize:13,fontWeight:'700',color:PO.text}}>+{report.dust}</Text></View>}{report.xp>0&&<View accessibilityLabel={'XP: '+report.xp} style={{flexDirection:'row',alignItems:'center',gap:3}}><Glyph name="star" size={18}/><Text style={{fontFamily:font,fontSize:13,fontWeight:'700',color:PO.text}}>+{report.xp}</Text></View>}{report.reached.length>0&&<View accessibilityLabel={'Weekkisten: '+report.reached.length} style={{flexDirection:'row',alignItems:'center',gap:3}}><Glyph name="gift" size={18}/><Text style={{fontFamily:font,fontSize:13,fontWeight:'700',color:PO.text}}>+{report.reached.length}</Text></View>}</View>}
+   {!!run&&weak.length>0&&!sent&&<PoPill testID="away-discard" variant={sure?'raid':'ghost'} height={50} disabled={busy} accessibilityLabel={sure?'Bevestig: '+weak.length+' zwakke bugs wegsturen':weak.length+' zwakke bugs wegsturen voor nectar'} label={(sure?'Zeker? ♻ ':'♻ ')+weak.length+' weg'} onPress={discard}
+    right={<View style={{flexDirection:'row',alignItems:'center',gap:2}}>{nectar.slice(0,2).map(([f,n])=><View key={f} style={{flexDirection:'row',alignItems:'center'}}><CandyIconV2 family={f} size={18}/><Text style={{fontFamily:font,fontSize:12,fontWeight:'800',color:PO.text}}>+{n}</Text></View>)}</View>}/>}
+   {sent>0&&<Text testID="away-discarded" style={{fontFamily:font,fontSize:13,fontWeight:'800',color:PO.tealText,textAlign:'center'}}>♻ {sent} weg · nectar binnen</Text>}
+   <PoPill testID="away-continue" label="Verder" height={52} onPress={close}/></View>}</View></Modal>;
 }

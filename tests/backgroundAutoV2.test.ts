@@ -58,17 +58,21 @@ test('foreground handoff resolves a committed in-flight receipt before disabling
  }finally{store.close();}
 });
 
-test('real background GPS commits keep existing movement rules and a lost response cannot spend a second net',async()=>{
- const store=new SqliteStore(':memory:');let now=NOW;try{
+test('real background GPS commits earn walk bugs and a lost response never pays them twice',async()=>{
+ // Same walk twice: once normally, once with the second response lost and replayed. Both must end with the same walk bugs.
+ const run=async(loseSecond:boolean)=>{const store=new SqliteStore(':memory:');let now=NOW;try{
   const service=new GoServiceV2(store,'local',()=>now),uid='background-owner',key='v2Players:'+uid;let v=await service.state(uid);
   const send=async(type:string,data:Record<string,unknown>)=>v=await service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});
   await send('worldLocate',{fix:{...FIX,timestamp:now}});await send('goAuto',{enabled:true});await store.run([key],d=>{(d.get(key) as PlayerV2).go!.dex=['ant'];});const stock=v.player.field!.inventory.basic,session:AutoSessionV2={uid};let lose=false,lostId='',replayed=0;
   const api=io({now:()=>now,state:()=>service.state(uid),command:async c=>{const next=await service.command(uid,c);if(c.commandId===lostId)replayed++;if(lose){lose=false;lostId=c.commandId;throw {status:0};}return next;}});
-  for(let i=1;i<=3;i++){
-   now+=15000;const lat=FIX.lat+i*.0002;await store.run([key],d=>{(d.get(key) as PlayerV2).walking!.spawns.push({id:'background-ant-'+i,species:'ant',lat,lng:FIX.lng,expiresAt:now+900000});});
-   if(i===2){lose=true;await assert.rejects(()=>backgroundAutoTickV2(session,[location(now,lat)],api));assert.equal((await service.state(uid)).player.field!.inventory.basic,stock-1);assert.ok(session.pending);}
+  for(let i=1;i<=8;i++){
+   now+=15000;const lat=FIX.lat+i*30/111320;
+   if(i===2&&loseSecond){lose=true;await assert.rejects(()=>backgroundAutoTickV2(session,[location(now,lat)],api));assert.ok(session.pending);}
    else await backgroundAutoTickV2(session,[location(now,lat)],api);
   }
-  const after=await service.state(uid);assert.equal(replayed,1);assert.equal(session.pending,undefined);assert.equal(after.player.field!.inventory.basic,stock-1);assert.ok(after.player.go!.auto.last);assert.equal(after.player.go!.rating,1000);
- }finally{store.close();}
+  const after=await service.state(uid);assert.equal(session.pending,undefined);assert.equal(after.player.field!.inventory.basic,stock,'walk bugs use no nets');assert.equal(after.player.go!.rating,1000);
+  return {caught:after.player.go!.auto.walk?.caught??0,replayed};
+ }finally{store.close();}};
+ const clean=await run(false),lost=await run(true);
+ assert.ok(clean.caught>=1,'240 m of background walking gives a walk bug');assert.equal(lost.replayed,1);assert.equal(lost.caught,clean.caught,'the replayed lost response did not pay twice');
 });

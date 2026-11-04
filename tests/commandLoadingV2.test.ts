@@ -40,13 +40,22 @@ test('social edits still invalidate warm metadata while ordinary edits keep it r
  }finally{db.close();}
 });
 
+test('Arcade scores load on request without changing the player, then ordinary actions reuse the rows',async()=>{
+ const {db,calls,service,reset}=meter();try{
+  let v=await ready(service,db,'score-load');const before=structuredClone(v.player);assert.deepEqual(v.arcadeScores,[]);
+  reset();v=await service.command(v.player.uid,command(v,'arcadeScores'));assert.deepEqual(calls,{runs:2,queries:1});assert.deepEqual(v.player,before);assert.deepEqual(v.arcadeScores,[{name:'Veldwachter',score:80,kind:'computer',me:false}]);
+  const rows=structuredClone(v.arcadeScores);reset();v=await service.command(v.player.uid,command(v,'settings',{sound:true,reducedMotion:false,largeText:false,music:false}));assert.deepEqual(calls,{runs:2,queries:0});assert.deepEqual(v.arcadeScores,rows);
+  reset();await service.state(v.player.uid);assert.deepEqual(calls,{runs:1,queries:0});
+ }finally{db.close();}
+});
+
 test('queued acknowledgements still match immediately and new battle snapshots retain private data masking',async()=>{
  const {db,calls,service,reset}=meter();try{
   let a=await ready(service,db,'match-load-a'),b=await ready(service,db,'match-load-b');
   a=await service.command(a.player.uid,command(a,'goQueue'));assert.ok(a.player.go!.queue);assert.equal(a.goBattle,null);
   b=await service.command(b.player.uid,command(b,'goQueue'));assert.equal(b.player.go!.queue,null);assert.ok(b.goBattle);a=await service.state(a.player.uid);assert.equal(a.goBattle!.id,b.goBattle!.id);
   a=await service.command(a.player.uid,command(a,'goAct',{action:'forfeit',value:null}));a=await service.command(a.player.uid,command(a,'goClose'));
-  a=await service.command(a.player.uid,command(a,'goTrain'));assert.ok(a.goBattle!.training);const other=(1-a.goBattle!.side) as 0|1;assert.equal(a.goBattle!.teams[other][0].attack,0);assert.equal(a.goBattle!.teams[other][1].species,'unknown');
+  a=await service.command(a.player.uid,command(a,'goTrain'));assert.ok(a.goBattle!.training);const other=(1-a.goBattle!.side) as 0|1;assert.equal(a.goBattle!.teams[other][0].attack,0);a.goBattle!.teams[other].forEach((fighter,index)=>{assert.equal(fighter.attack,0);if(index!==a.goBattle!.active[other])assert.equal(fighter.species,'unknown');});
   reset();a=await service.command(a.player.uid,command(a,'goAct',{action:'fast',value:null}));assert.deepEqual(calls,{runs:2,queries:0});assert.equal(a.goBattle!.teams[other][0].attack,0);
  }finally{db.close();}
 });

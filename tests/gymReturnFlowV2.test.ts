@@ -6,7 +6,7 @@ import {GoServiceV2} from '../server/goServiceV2';
 import {freshV2} from '../game/safariV2';
 import {ensureAdventure} from '../game/tacticsV2';
 import {ensureField} from '../game/fieldV2';
-import {ensureGo,rollGoBug} from '../game/goV2';
+import {CHARGED,ensureGo,rollGoBug} from '../game/goV2';
 import {ensureGyms,firstGymTab,placeGymDefender,GYM_RULES} from '../game/gymsV2';
 import type {Gym} from '../game/gymsV2';
 import type {PlayerV2} from '../game/typesV2';
@@ -22,7 +22,12 @@ test('winning a remote round can finish the same human gym, close safely, place 
   let v=await service.state(p.uid);const send=async(type:string,params:Record<string,unknown>={},revision=v.player.revision)=>v=await service.command(p.uid,{type,...params,commandId:randomUUID(),expectedRevision:revision});
   for(let round=0;round<3;round++){
    await send('gymAttack',{gym:g.id,ids:p.go!.team,remote:true});const battle=v.goBattle!.id,oldRevision=v.player.revision;
-   for(let step=0;step<200&&v.goBattle!.phase!=='finished';step++){now+=400;v=await service.state(p.uid);}
+   for(let step=0;step<800&&v.goBattle!.phase!=='finished';step++){
+    now+=100;v=await service.state(p.uid);const b=v.goBattle!,a=b.teams[0][b.active[0]];if(b.phase==='finished')break;
+    if(b.phase==='charge'){const c=b.charge!;if(c.side!==0&&!c.dodged&&b.shields[0]>0&&now>=c.deadline-650)await send('goAct',{action:'dodge',value:{fromX:200,toX:400,fromY:500,toY:500},chargeAt:c.startedAt});continue;}
+    if(a.hp<=0){const next=b.teams[0].findIndex(f=>f.hp>0);if(next>=0)await send('goAct',{action:'switch',value:next});}
+    else if(!b.replaceAt.some(Boolean)&&a.readyAt<=now&&!b.fast[0]){const move=a.go.charged.find(m=>CHARGED[m].energy<=a.energy);await send('goAct',{action:move?'charged':'fast',value:move??null});}
+   }
    assert.equal(v.goBattle!.phase,'finished');assert.equal(v.goBattle!.winner,0);assert.equal(v.player.go!.gyms!.remoteDay,'2026-11-01');
    await send('goClose',{battle},oldRevision);assert.equal(v.goBattle,null,'a stale revision may close only its finished battle');
    await send('goClose',{battle},oldRevision);assert.equal(v.goBattle,null,'a delayed second close is harmless');

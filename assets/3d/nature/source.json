@@ -1,0 +1,74 @@
+{
+ "created": "2026-11-02",
+ "style": "HD natuur zoals docs/concepts/combat-20261102 (Codex-beeld leidend)",
+ "tools": "Blender 5.1.2 Cycles (OptiX), eigen geometrie",
+ "license": "Eigen werk CC0; Poly Haven CC0-materialen/HDRI (lokaal .local/polyhaven, niet in Git)",
+ "set": "nature",
+ "rebuild": "blender --background --factory-startup --python assets/3d/nature/authoring/build_nature.py -- <repo>",
+ "use": "Kaartdecor (vervangt de primitieve blokjes in src/natureMapV2.ts). Eén mesh + één materiaal met vertexkleur (COLOR_0) per GLB, 1 eenheid = 1 m, voet op de oorsprong: geschikt voor InstancedMesh.",
+ "files": [
+  {
+   "file": "Flowers.glb",
+   "size": null,
+   "bytes": 127064,
+   "sha256": "52a9f2e8dddafbe20accf43d2551c568a39b693babfa4f545eb0423e0413acd9",
+   "name": "Flowers"
+  },
+  {
+   "file": "Grass.glb",
+   "size": null,
+   "bytes": 4836,
+   "sha256": "774c6249425a002f2e9dd86996e423909d735a8e7a284a7fb38147405929c169",
+   "name": "Grass"
+  },
+  {
+   "file": "Log.glb",
+   "size": null,
+   "bytes": 14556,
+   "sha256": "b9b1cbf285bb95581a818edbf2ac340eca16c67d8160fb54f3fa32ab4cfd546a",
+   "name": "Log"
+  },
+  {
+   "file": "Mushroom.glb",
+   "size": null,
+   "bytes": 82716,
+   "sha256": "dc78ff7cd2ba30600e690eb54d4be0405148a3fcb1800a1bbc435c80779e90e1",
+   "name": "Mushroom"
+  },
+  {
+   "file": "Reeds.glb",
+   "size": null,
+   "bytes": 15776,
+   "sha256": "2cccc913b01b17be6826d247e998da84357b2e2adfbc3a5daac8a7cb9e8f9fdf",
+   "name": "Reeds"
+  },
+  {
+   "file": "Rock.glb",
+   "size": null,
+   "bytes": 17892,
+   "sha256": "0def1a8ad5a9d1e01a065e9683d2ba0a0fbadf7b61da8fb421d204a647abbd72",
+   "name": "Rock"
+  },
+  {
+   "file": "Shrub.glb",
+   "size": null,
+   "bytes": 28940,
+   "sha256": "7a730dbd7c7dafa5ff0018f3a1b5358c13dea9153c56c567d0d57ac7418e6a7d",
+   "name": "Shrub"
+  },
+  {
+   "file": "TreeOak.glb",
+   "size": null,
+   "bytes": 24132,
+   "sha256": "4ee7e9a377dc6db5828e7b226266b4f03159808bb315afc0be29f7a725085b95",
+   "name": "TreeOak"
+  },
+  {
+   "file": "TreePine.glb",
+   "size": null,
+   "bytes": 8944,
+   "sha256": "47f14621f16a333d864a8466ebe50c9dcdd46080554670174db4d63d3bd866d6",
+   "name": "TreePine"
+  }
+ ]
+}

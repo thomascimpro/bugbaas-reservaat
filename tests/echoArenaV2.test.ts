@@ -1,9 +1,9 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {freshV2} from '../game/safariV2';
-import {ensureGo,rollGoBug} from '../game/goV2';
-import {actGoBattle,advanceGoBattle} from '../game/goBattleV2';
-import {chooseEchoMatch,ensureEcho,makeEchoBattle,saveEchoDefense,settleEcho,echoNPCDefenses,normalizeCompetitionFighter} from '../game/echoArenaV2';
+import {ensureGo,rollGoBug,stats} from '../game/goV2';
+import {actGoBattle,advanceGoBattle,fighterGo,prepareGoBattle} from '../game/goBattleV2';
+import {chooseEchoMatch,ensureEcho,makeEchoBattle,saveEchoDefense,settleEcho,echoNPCDefenses,normalizeCompetitionFighter,competitionTeamIssue,echoTeamIssue} from '../game/echoArenaV2';
 import type {EchoDefense} from '../game/echoArenaV2';
 import type {PlayerV2} from '../game/typesV2';
 
@@ -15,10 +15,11 @@ function player(uid='a'){
 }
 function finished(p:PlayerV2,d:EchoDefense,id:string,now=NOW,winner:0|1|null=0){const b=makeEchoBattle(p,d,id,now);b.phase='finished';b.winner=winner;return b;}
 
-test('echo defense normalizes battle IV and level while preserving chosen species, moves, shiny and items',()=>{
+test('new Echo defense snapshots actual owned level, IV, stats, moves, shiny and items within the CP cap',()=>{
  const p=player(),before=structuredClone(p.specimens),d=saveEchoDefense(p,NOW);
  assert.equal(d.uid,p.uid);assert.equal(d.league,p.go!.league);assert.deepEqual(d.team.map(f=>f.id),p.go!.team);
- for(let i=0;i<3;i++){assert.deepEqual(d.team[i].go,normalizeCompetitionFighter({...d.team[i],go:before[i].go!},d.league).go);assert.deepEqual(d.team[i].go.iv,[10,10,10]);assert.equal(d.team[i].shiny,before[i].shiny);assert.ok(d.team[i].attack>0);assert.ok(d.team[i].cp>0);}
+ assert.equal(d.policy,'owned-1');assert.equal(p.go!.echo!.defense!.policy,'owned-1');
+ for(let i=0;i<3;i++){assert.deepEqual(d.team[i],fighterGo(before[i]));assert.deepEqual(d.team[i].go.iv,before[i].go!.iv);assert.equal(d.team[i].go.level,before[i].go!.level);assert.equal(d.team[i].shiny,before[i].shiny);assert.equal(d.team[i].attack,stats(before[i]).attack);assert.ok(d.team[i].cp<=1500);}
  assert.equal(d.team[0].go.item,'leaf');const frozen=structuredClone(d);
  p.specimens[0].go!.iv[0]=15;p.specimens[0].go!.level=11;p.specimens[0].go!.charged.push('buzz');p.specimens[1].shiny=false;p.go!.team.reverse();
  assert.deepEqual(d,frozen);assert.equal(Object.hasOwn(p.go!.echo!.defense!,'team'),false);
@@ -29,6 +30,8 @@ test('saving unchanged defense preserves its fingerprint across time; a real bui
  const p=player(),first=saveEchoDefense(p,NOW),again=saveEchoDefense(p,NOW+DAY);
  assert.equal(first.snapshotId,again.snapshotId);assert.notEqual(first.savedAt,again.savedAt);
  p.specimens[0].go!.item='thorn';assert.notEqual(saveEchoDefense(p,NOW+DAY).snapshotId,first.snapshotId);
+ const itemChanged=saveEchoDefense(p,NOW+DAY);p.specimens[0].go!.level+=.5;assert.notEqual(saveEchoDefense(p,NOW+DAY).snapshotId,itemChanged.snapshotId);
+ const levelChanged=saveEchoDefense(p,NOW+DAY);p.specimens[0].go!.iv[0]=(p.specimens[0].go!.iv[0]+1)%16;assert.notEqual(saveEchoDefense(p,NOW+DAY).snapshotId,levelChanged.snapshotId);
 });
 
 test('echo chooses genuine other owners in the same league closest to the separate echo rating',()=>{
@@ -43,9 +46,10 @@ test('echo chooses genuine other owners in the same league closest to the separa
 
 test('offline battle runs existing combat against an independent copy and never mutates the defense owner',()=>{
  const a=player(),owner=player('b'),d=saveEchoDefense(owner,NOW),original=structuredClone(d),before=structuredClone(owner);
- // Competition copies recalculate normalized stats rather than trusting saved account power.
- d.team[0].attack+=2;const b=makeEchoBattle(a,d,'combat',NOW);assert.equal(b.training,true);assert.equal(b.ranked,false);
- assert.equal(b.echo!.defenderUid,owner.uid);assert.deepEqual(b.ratings,[1000,1000]);assert.equal(b.teams[1][0].attack,normalizeCompetitionFighter(d.team[0],d.league).attack);assert.notEqual(b.teams[1][0].attack,d.team[0].attack);
+ // A forged aggregate cannot masquerade as an owned-stat snapshot.
+ d.team[0].attack+=2;assert.throws(()=>makeEchoBattle(a,d,'forged',NOW),/opgeslagen team/);d.team[0].attack=original.team[0].attack;
+ const b=makeEchoBattle(a,d,'combat',NOW);assert.equal(b.training,true);assert.equal(b.ranked,false);assert.equal(b.echo!.policy,'owned-1');assert.equal(b.echo!.normalized,false);
+ assert.equal(b.echo!.defenderUid,owner.uid);assert.deepEqual(b.ratings,[1000,1000]);assert.deepEqual(b.teams[1],original.team);assert.deepEqual(b.teams[0],a.specimens.map(fighterGo));
  actGoBattle(b,0,'fast',null,NOW);advanceGoBattle(b,NOW+1000);advanceGoBattle(b,NOW+2000);
  assert.ok(b.events.some(e=>e.kind==='damage'));assert.ok(b.teams[0][0].hp<b.teams[0][0].maxHP||b.teams[1][0].hp<b.teams[1][0].maxHP);
  assert.deepEqual(owner,before);assert.deepEqual(d.team[0].go,original.team[0].go);assert.equal(d.team[0].hp,d.team[0].maxHP);
@@ -93,8 +97,26 @@ test('solo echo has stable same-league NPC identities and grants at most five re
  assert.equal(p.go!.echo!.rating,1000);assert.equal(p.go!.echo!.wins,0);assert.equal(p.go!.echo!.losses,0);assert.equal(p.go!.rating,before.rating);assert.equal(p.go!.wins,before.wins);
 });
 
-test('fresh human defenses outrank NPCs, exhausted human defense yields to fresh NPC, and actual growth never changes fair copied power',()=>{
+test('fresh human defenses outrank NPCs, exhausted human defense yields to fresh NPC, and actual growth changes copied power',()=>{
  const p=player(),d=saveEchoDefense(player('owner'),NOW),before=structuredClone(p.specimens);assert.equal(chooseEchoMatch(p,[d],NOW).uid,d.uid);settleEcho(p,finished(p,d,'first-human'),NOW);assert.equal(chooseEchoMatch(p,[d],NOW).npc,true);
- const low=makeEchoBattle(p,d,'low',NOW);p.specimens.forEach(s=>{s.go!.level=50;s.go!.iv=[15,15,15];});const actual=structuredClone(p.specimens),high=makeEchoBattle(p,d,'high',NOW);assert.deepEqual(high.teams[0],low.teams[0]);assert.deepEqual(p.specimens,actual);assert.notDeepEqual(p.specimens,before);
+ const low=makeEchoBattle(p,d,'low',NOW);p.specimens.forEach(s=>{s.go!.level=11;s.go!.iv=[15,15,15];});const actual=structuredClone(p.specimens),high=makeEchoBattle(p,d,'high',NOW);assert.ok(high.teams[0][0].cp>low.teams[0][0].cp);assert.ok(high.teams[0][0].attack>low.teams[0][0].attack);assert.deepEqual(high.teams[1],low.teams[1]);assert.deepEqual(p.specimens,actual);assert.notDeepEqual(p.specimens,before);
  for(const league of ['great','ultra','master'] as const)for(const npc of echoNPCDefenses(league,NOW))assert.ok(npc.team.every(f=>f.cp<=(league==='great'?1500:league==='ultra'?2500:Infinity)));
+});
+
+test('above-cap actual teams are rejected without changing the normalized daily-challenge helper',()=>{
+ const p=player();p.specimens.forEach(s=>{s.go!.level=50;s.go!.iv=[15,15,15];});const before=structuredClone(p);
+ assert.match(echoTeamIssue(p)!,/CP-limiet/);assert.equal(competitionTeamIssue(p),null);assert.throws(()=>saveEchoDefense(p,NOW),/CP-limiet/);assert.deepEqual(p,before);
+ const d=saveEchoDefense(player('other'),NOW);assert.throws(()=>makeEchoBattle(p,d,'over-cap',NOW),/CP-limiet/);
+});
+
+test('unknown legacy defenses stay stored but are excluded from owned-stat matchmaking; explicit legacy battles retain flow2',()=>{
+ const owner=player('legacy-owner'),current=saveEchoDefense(owner,NOW),legacy:EchoDefense={...structuredClone(current),snapshotId:'old-normalized-snapshot',team:current.team.map(f=>normalizeCompetitionFighter(f,current.league))};delete legacy.policy;const saved=structuredClone(legacy),p=player();
+ assert.equal(chooseEchoMatch(p,[legacy],NOW).npc,true);assert.deepEqual(legacy,saved);
+ const b=makeEchoBattle(p,legacy,'legacy',NOW);assert.equal(b.echo!.policy,'normalized-1');assert.equal(b.echo!.normalized,true);assert.equal(b.flow,2);const prepared=prepareGoBattle(b);assert.equal(prepared.flow,2);assert.deepEqual(b.teams[1],legacy.team);assert.ok(b.teams[0].every(f=>f.go.iv.every(n=>n===10)));
+ const active=structuredClone(b);owner.specimens[0].go!.level+=.5;const replacement=saveEchoDefense(owner,NOW+1000);assert.equal(replacement.policy,'owned-1');assert.equal(chooseEchoMatch(p,[replacement],NOW).uid,owner.uid);assert.deepEqual(b,active);assert.deepEqual(legacy,saved);
+});
+
+test('already stored old-policy battles settle without upgrading missing policy or flow',()=>{
+ const p=player(),d=saveEchoDefense(player('legacy'),NOW),b=makeEchoBattle(p,d,'stored',NOW);delete b.flow;delete b.echo!.policy;b.echo!.normalized=true;b.phase='finished';b.winner=0;
+ assert.deepEqual(settleEcho(p,b,NOW),{dust:150,xp:100,delta:10,rewarded:true});assert.equal(b.flow,undefined);assert.equal(b.echo!.policy,undefined);assert.equal(b.echo!.normalized,true);
 });

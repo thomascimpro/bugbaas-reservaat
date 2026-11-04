@@ -1,3 +1,4 @@
+import {assertRuntimeSource,runtimeAssetHash,runtimeAssetBytes} from './assetProvenance';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -43,9 +44,9 @@ test('new species have genuine licensed animated models and distinct framed shin
  const provenance=JSON.parse(await readFile('assets/3d/gobkit-insects002/source.json','utf8'));assert.equal(provenance.license,'CC0-1.0');
  for(const s of FIELD_FAMILY_SPECIES){
   const source=provenance.models.find((m:{file:string})=>m.file===s.model+'.glb'),model=await readFile('public/models/'+s.model+'.glb');
-  assert.equal(createHash('sha256').update(model).digest('hex'),source.sha256);const gltf=JSON.parse(model.toString('utf8',20,20+model.readUInt32LE(12)));
+  assert.equal(createHash('sha256').update(model).digest('hex'),runtimeAssetHash(s.model,source.sha256));const gltf=JSON.parse(model.toString('utf8',20,20+model.readUInt32LE(12)));
   assert.ok(gltf.meshes.length);assert.ok(gltf.animations.some((a:{name:string})=>a.name==='idle'));assert.ok(gltf.animations.some((a:{name:string})=>a.name==='attack'));
-  const variants=[];for(const suffix of ['','-shiny']){const image=sharp('assets/v2/portraits/v1/'+s.id+suffix+'.webp'),meta=await image.metadata();assert.equal(meta.width,1024);assert.equal(meta.height,1024);assert.equal(meta.hasAlpha,true);const pixels=await image.ensureAlpha().raw().toBuffer();let visible=0;for(let y=0;y<1024;y++)for(let x=0;x<1024;x++)if(pixels[(y*1024+x)*4+3]>5){visible++;assert.ok(x>=12&&x<=1011&&y>=12&&y<=1011);}assert.ok(visible>10000);variants.push(pixels);}
+  const variants=[];for(const suffix of ['','-shiny']){const image=sharp('assets/v2/portraits/v1/'+s.id+suffix+'.webp'),meta=await image.metadata();assert.equal(meta.width,768);assert.equal(meta.height,768);assert.equal(meta.hasAlpha,true);const pixels=await image.ensureAlpha().raw().toBuffer();let visible=0;for(let y=0;y<768;y++)for(let x=0;x<768;x++)if(pixels[(y*768+x)*4+3]>5){visible++;assert.ok(x>=12&&x<=755&&y>=12&&y<=755);}assert.ok(visible>10000);variants.push(pixels);}
   assert.notDeepEqual(variants[0],variants[1]);
  }
 });

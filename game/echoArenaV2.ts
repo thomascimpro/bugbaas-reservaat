@@ -7,10 +7,11 @@ import {checkV2 as check} from './shopV2';
 import type {PlayerV2,Specimen} from './typesV2';
 
 export const ECHO_DAILY_LIMIT=5;
-export type EchoDefenseSummary={league:League;savedAt:number;snapshotId:string};
+export type EchoPolicy='owned-1'|'normalized-1';
+export type EchoDefenseSummary={league:League;savedAt:number;snapshotId:string;policy?:EchoPolicy};
 export type EchoProgress={rating:number;wins:number;losses:number;day:string;rewarded:number;defeated:string[];snapshots:string[];defense?:EchoDefenseSummary};
 export type EchoDefense=EchoDefenseSummary&{uid:string;name:string;rating:number;team:GoFighter[];npc?:boolean};
-export type EchoBattleMeta={defenderUid:string;snapshotId:string;savedAt:number;rating:number;delta?:number;rewarded?:boolean;npc?:boolean;normalized?:boolean};
+export type EchoBattleMeta={defenderUid:string;snapshotId:string;savedAt:number;rating:number;delta?:number;rewarded?:boolean;npc?:boolean;normalized?:boolean;policy?:EchoPolicy};
 export type EchoReward={dust:number;xp:number;delta:number;rewarded:boolean};
 
 export const COMPETITION_LEVELS={great:20,ultra:30,master:40} as const;
@@ -28,6 +29,11 @@ export function competitionTeamIssue(p:PlayerV2):string|null{
  if(!p.go||!Object.hasOwn(LEAGUES,p.go.league))return 'Kies eerst je strijdteam.';
  const copy=competitionPlayer(p);return teamIssue(copy,copy.go!.team,copy.go!.league,true);
 }
+// Daily challenges and legacy Echo keep their separate normalized rule above.
+export function echoTeamIssue(p:PlayerV2):string|null{
+ if(!p.go||!Object.hasOwn(LEAGUES,p.go.league))return 'Kies eerst je strijdteam.';
+ return teamIssue(p,p.go.team,p.go.league,true);
+}
 
 export function ensureEcho(p:PlayerV2,now:number):EchoProgress{
  check(p.go,'Je strijdprofiel ontbreekt.');
@@ -37,28 +43,34 @@ export function ensureEcho(p:PlayerV2,now:number):EchoProgress{
 }
 
 // Stable across saving again. Re-saving is no new reward opportunity within the same day.
-function snapshotKey(uid:string,league:League,team:GoFighter[]){
- const value=JSON.stringify([uid,league,team]);let a=2166136261,b=5381;
+function snapshotKey(uid:string,league:League,team:GoFighter[],policy?:EchoPolicy){
+ const value=JSON.stringify(policy?[uid,league,policy,team]:[uid,league,team]);let a=2166136261,b=5381;
  for(let i=0;i<value.length;i++){a=Math.imul(a^value.charCodeAt(i),16777619);b=Math.imul(b,33)^value.charCodeAt(i);}
  return 'echo-'+(a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0');
 }
 
 export function saveEchoDefense(p:PlayerV2,now:number):EchoDefense{
- check(p.go,'Je strijdprofiel ontbreekt.');const g=p.go,issue=competitionTeamIssue(p);check(!issue,issue??'Kies een geldig team.');
- const e=ensureEcho(p,now),team=g.team.map(id=>normalizeCompetitionFighter(fighterGo(p.specimens.find(s=>s.id===id)!),g.league));
- const defense={uid:p.uid,name:p.name,league:g.league,rating:e.rating,savedAt:now,snapshotId:snapshotKey(p.uid,g.league,team),team};
- e.defense={league:defense.league,savedAt:defense.savedAt,snapshotId:defense.snapshotId};return defense;
+ check(p.go,'Je strijdprofiel ontbreekt.');const g=p.go,issue=echoTeamIssue(p);check(!issue,issue??'Kies een geldig team.');
+ const e=ensureEcho(p,now),team=g.team.map(id=>fighterGo(p.specimens.find(s=>s.id===id)!)),policy='owned-1' as const;
+ const defense={uid:p.uid,name:p.name,league:g.league,rating:e.rating,savedAt:now,snapshotId:snapshotKey(p.uid,g.league,team,policy),team,policy};
+ e.defense={league:defense.league,savedAt:defense.savedAt,snapshotId:defense.snapshotId,policy};return defense;
 }
 
 function eligible(e:EchoProgress,defense:Pick<EchoDefense,'uid'|'snapshotId'>){return e.rewarded<ECHO_DAILY_LIMIT&&!e.defeated.includes(defense.uid)&&!e.snapshots.includes(defense.snapshotId);}
-function validDefense(d:EchoDefense){try{return !!d.uid&&!!d.snapshotId&&Object.hasOwn(LEAGUES,d.league)&&Number.isFinite(d.rating)&&d.team.length===3&&new Set(d.team.map(f=>f.species)).size===3&&d.team.every(f=>{return !!f.go&&knownMove(f.species,'fast',f.go.fast)&&Array.isArray(f.go.charged)&&f.go.charged.length>=1&&f.go.charged.length<=2&&f.go.charged.every(m=>knownMove(f.species,'charged',m))&&(f.go.item===null||Object.hasOwn(HELD,f.go.item))&&Number.isFinite(f.cp)&&f.cp>0&&f.cp<=LEAGUES[d.league].cap&&Number.isFinite(f.attack)&&f.attack>0&&Number.isFinite(f.defense)&&f.defense>0&&Number.isFinite(f.maxHP)&&f.maxHP>0;});}catch{return false;}}
+function validDefense(d:EchoDefense){try{return !!d.uid&&!!d.snapshotId&&(d.policy===undefined||d.policy==='normalized-1'||d.policy==='owned-1')&&Object.hasOwn(LEAGUES,d.league)&&Number.isFinite(d.rating)&&d.team.length===3&&new Set(d.team.map(f=>f.id)).size===3&&new Set(d.team.map(f=>f.species)).size===3&&d.team.every(f=>{
+  const valid=!!f.go&&knownMove(f.species,'fast',f.go.fast)&&Array.isArray(f.go.charged)&&f.go.charged.length>=1&&f.go.charged.length<=2&&f.go.charged.every(m=>knownMove(f.species,'charged',m))&&(f.go.item===null||Object.hasOwn(HELD,f.go.item))&&Number.isFinite(f.cp)&&f.cp>0&&f.cp<=LEAGUES[d.league].cap&&Number.isFinite(f.attack)&&f.attack>0&&Number.isFinite(f.defense)&&f.defense>0&&Number.isFinite(f.maxHP)&&f.maxHP>0;
+  if(!valid||d.policy!=='owned-1')return valid;
+  if(!Number.isInteger(f.go.level*2)||f.go.level<1||f.go.level>50||!Array.isArray(f.go.iv)||f.go.iv.length!==3||f.go.iv.some(n=>!Number.isInteger(n)||n<0||n>15))return false;
+  const actual=fighterGo({id:f.id,species:f.species,shiny:f.shiny,go:f.go} as Specimen);
+  return f.cp===actual.cp&&f.attack===actual.attack&&f.defense===actual.defense&&f.maxHP===actual.maxHP;
+ });}catch{return false;}}
 
 export function echoNPCDefenses(league:League,now:number):EchoDefense[]{
  const day=dayV2(now),teams=[['ant','beetle','moth'],['bee','mantis','hoverfly'],['moth','antlion','tortoisebeetle'],['beetle','bee','mantis'],['ant','hoverfly','hercules']],names=['Linde','Bram','Noor','Sem','Roos'];
- return teams.map((kinds,index)=>{const uid='echo-npc:'+league+':'+day+':'+index,team=kinds.map((kind,i)=>normalizeCompetitionFighter(fighterGo({id:uid+':'+i,species:kind,shiny:false,go:rollGoBug(kind,uid+':'+i)} as Specimen),league));return {uid,name:'Veldwachter '+names[index]+' · NPC',league,rating:1000,savedAt:Date.parse(day+'T00:00:00Z'),snapshotId:snapshotKey(uid,league,team),team,npc:true};});
+ return teams.map((kinds,index)=>{const uid='echo-npc:'+league+':'+day+':'+index,team=kinds.map((kind,i)=>normalizeCompetitionFighter(fighterGo({id:uid+':'+i,species:kind,shiny:false,go:rollGoBug(kind,uid+':'+i)} as Specimen),league)),policy='owned-1' as const;return {uid,name:'Veldwachter '+names[index]+' · NPC',league,rating:1000,savedAt:Date.parse(day+'T00:00:00Z'),snapshotId:snapshotKey(uid,league,team,policy),team,npc:true,policy};});
 }
 export function chooseEchoMatch(p:PlayerV2,defenses:EchoDefense[],now:number):EchoDefense{
- const e=ensureEcho(p,now),human=defenses.filter(d=>!d.npc&&d.uid!==p.uid&&d.league===p.go!.league&&validDefense(d)),candidates=[...human,...echoNPCDefenses(p.go!.league,now)];
+ const e=ensureEcho(p,now),human=defenses.filter(d=>d.policy==='owned-1'&&!d.npc&&d.uid!==p.uid&&d.league===p.go!.league&&validDefense(d)),candidates=[...human,...echoNPCDefenses(p.go!.league,now)];
  // Prefer a fresh reward opportunity; when exhausted the same opponents remain playable for practice.
  candidates.sort((a,b)=>Number(eligible(e,b))-Number(eligible(e,a))||Number(!!a.npc)-Number(!!b.npc)||Math.abs(a.rating-e.rating)-Math.abs(b.rating-e.rating)||a.uid.localeCompare(b.uid));
  return candidates[0];
@@ -70,10 +82,12 @@ export function makeEchoBattle(p:PlayerV2,defense:EchoDefense,id:string,now:numb
  const e=ensureEcho(p,now),opponent=structuredClone(p);opponent.uid=defense.uid;opponent.name=defense.name;
  opponent.specimens=defense.team.map(f=>({id:f.id,species:f.species,shiny:f.shiny,go:structuredClone(f.go),level:1,favorite:false,obtainedAt:defense.savedAt,source:'echo',hearts:0,item:null} satisfies Specimen));
  opponent.go!.team=opponent.specimens.map(s=>s.id);opponent.go!.league=defense.league;
- const issue=competitionTeamIssue(p);check(!issue,issue??'Kies een geldig team.');
- const b=makeGoBattle(competitionPlayer(p),competitionPlayer(opponent),id,now,false,true,true);
- b.teams[1]=defense.team.map(f=>normalizeCompetitionFighter(f,defense.league));
- b.ratings=[e.rating,defense.rating];b.echo={defenderUid:defense.uid,snapshotId:defense.snapshotId,savedAt:defense.savedAt,rating:defense.rating,npc:!!defense.npc,normalized:true};
+ const policy=defense.policy??'normalized-1',owned=policy==='owned-1',issue=owned?echoTeamIssue(p):competitionTeamIssue(p);check(!issue,issue??'Kies een geldig team.');
+ if(opponent.go!.gyms)opponent.go!.gyms.deployed=[];
+ const b=makeGoBattle(owned?structuredClone(p):competitionPlayer(p),owned?opponent:competitionPlayer(opponent),id,now,false,true,true);
+ b.teams[1]=defense.team.map(f=>owned?{...structuredClone(f),hp:f.maxHP,energy:0,readyAt:0}:normalizeCompetitionFighter(f,defense.league));
+ if(!owned)b.flow=2;
+ b.ratings=[e.rating,defense.rating];b.echo={defenderUid:defense.uid,snapshotId:defense.snapshotId,savedAt:defense.savedAt,rating:defense.rating,npc:!!defense.npc,normalized:!owned,policy};
  return b;
 }
 

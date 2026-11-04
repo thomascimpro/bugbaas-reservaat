@@ -13,16 +13,19 @@ export function apiHandler(service: GameService, resolveUid: (token: string) => 
     try {
       const url = new URL(req.url ?? '/', 'http://localhost');
       if (url.searchParams.has('route')) url.pathname = '/api/game/' + url.searchParams.get('route');
+      const maxBodyBytes=url.pathname==='/api/game/v2/command'?1048576:8192;
       let raw = '';
       const parsed = (req as IncomingMessage & { body?: unknown }).body;
       if (req.method === 'POST') {
         checkJson(req);
         if (parsed !== undefined) raw = typeof parsed === 'string' ? parsed : JSON.stringify(parsed);
-        else for await (const chunk of req) { raw += chunk.toString(); if (Buffer.byteLength(raw) > 8192) throw new GameError('Verzoek te groot.', 413); }
-        if (Buffer.byteLength(raw) > 8192) throw new GameError('Verzoek te groot.', 413);
+        else for await (const chunk of req) { raw += chunk.toString(); if (Buffer.byteLength(raw) > maxBodyBytes) throw new GameError('Verzoek te groot.', 413); }
+        if (Buffer.byteLength(raw) > maxBodyBytes) throw new GameError('Verzoek te groot.', 413);
       }
       const body: Record<string, unknown> = raw ? JSON.parse(raw) : {};
       if (!body || typeof body !== 'object' || Array.isArray(body)) throw new GameError('Een JSON-object is vereist.');
+      if(Buffer.byteLength(raw)>65536&&(body.type!=='arcadeSubmit'||body.format!=='original-2'))throw new GameError('Verzoek te groot.',413);
+      if(Buffer.byteLength(raw)>8192&&body.type!=='arcadeSubmit')throw new GameError('Verzoek te groot.',413);
       let result: unknown;
       if (url.pathname === '/api/game/v2/cron/advance-due' && req.method === 'GET') {
         const expected=process.env.CRON_SECRET, supplied=req.headers.authorization?.slice(7);

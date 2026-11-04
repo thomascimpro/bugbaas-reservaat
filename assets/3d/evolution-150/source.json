@@ -83,12 +83,12 @@
       "file": "antUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "6e3bee3957df0c6c22d3cdea69f0989565b72b0d111fe2c4dc02984cc66d8663",
-      "bytes": 93732,
+      "sha256": "47f8845530d6c8fc71d9c7bc666367d7ea63d7367d7a1f63f6cedfbffadb7c72",
+      "bytes": 138728,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -102,10 +102,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "df6b5bb1d12f15a98cdd015e094fbc8f15332c06246c22e9306c0bfac03ac05a",
+      "geometrySha256": "0c9f87db21cea6e929809c9be0c1286ff792bb7633dd927a9b11f7d66a020ec4",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: fire-ant warrior form: big head, giant mandibles, glowing crown, thorax spines, banded gaster, own palette. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "aphid_elite",
@@ -118,43 +119,8 @@
       "file": "aphidEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "bd0d987897d2b7a4bcea3b97f2a9e956919b2f0e9295f545e278aed98c40fd6b",
-      "bytes": 87988,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead",
-        "fly"
-      ],
-      "authoredFeatures": [
-        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "8a20a9ee4cb98e6d1777bc0dc8e63df988950b9498606ffd9768636de93ea662",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ]
-    },
-    {
-      "target_id": "aphid_ultimate",
-      "dex_number": 95,
-      "family": "aphid",
-      "stage": 3,
-      "asset_name": "aphidUltimate.glb",
-      "intent": "Append third evolution stage",
-      "status": "selected optimized runtime model",
-      "file": "aphidUltimate.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "68e9328d7ca9de0a8249ec4cd857e8a083fb4c54c3bcbaf90b448087e8c09fec",
-      "bytes": 128644,
+      "sha256": "391b65937b7502c49f90cc534b279011450f4a90dd809da79beef2926d403888",
+      "bytes": 91912,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -172,11 +138,48 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "c5a305c4fababd36d34ebddb0f23c0b8c1accf5f113d6dbb4a8e67dd76225df5",
+      "geometrySha256": "5c9ea558ab3c18b22fe352f24abf2ee596ab7137c4fa5d90a0a667c88793b849",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: three dorsal spikes. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "aphid_ultimate",
+      "dex_number": 95,
+      "family": "aphid",
+      "stage": 3,
+      "asset_name": "aphidUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "aphidUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "d1380d2719399afeea2de2fd040f763dc5bacc48a03883cfdb655cfd2be7ff48",
+      "bytes": 152368,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 7,
+      "drawCalls": 7,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "c127a991554e731f12a5de218fcd843ffb9cc78541212e2da3d80af656642625",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: big curved horns, glowing cornicle tips, wax crown, bulkier body. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "weevil_elite",
@@ -398,12 +401,12 @@
       "file": "lacewingEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "fb8d69b369d60a751b2d8443d76ec9cd21729f8278406e246869af7e8e922d86",
-      "bytes": 119124,
+      "sha256": "a0ce6a44e723790b307041fed1d4c557953cb36e942a08ca041aa56deb7ef01a",
+      "bytes": 126176,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -417,10 +420,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "02ad0e5e3ac41479d6fa508bf32d63b717dfc6ba8c83ab0926f60d295a1fbfab",
+      "geometrySha256": "624efca8084781492aa040e94b33dc5823ee49d4e9e40fae0a4e288402f6ebe4",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: hunting mandibles. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "lacewing_ultimate",
@@ -433,12 +437,12 @@
       "file": "lacewingUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "308d731e8a91e94978fda9eb34c6c1d46d77dff9e2986d0d5610c9e1f7cbc002",
-      "bytes": 141444,
+      "sha256": "3c66681fc5be3f66d8baf904846c026b6b4da1b0f9b905b385a5add2c5a4f9af",
+      "bytes": 199428,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 8,
+      "drawCalls": 8,
       "animations": [
         "idle",
         "walk",
@@ -452,11 +456,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "3e7c855470983ea339ae162bbc2a8dd5bf82444b25a09150bb3f64c0889f9091",
+      "geometrySha256": "fb1f43850ffe2fd8e67027d422c38e8a8cb0419de1fc5c4a8f0f25b787726796",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: armoured thorax and abdomen, glowing five-spike crown, back crest, glowing antenna tips, larger mandibles. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "dungbeetle_elite",
@@ -575,12 +580,12 @@
       "file": "butterflyUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "2a250d47c4609d3c580115e5d8eabd7ad750c5b9b270ae6657d66d24fd02483c",
-      "bytes": 203248,
+      "sha256": "9d3777fb5eac38137942628496a51a1293a5ab27de72a1e2bb64feea04a6f07a",
+      "bytes": 224148,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -594,10 +599,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "ed0c597755fbfb3c05c4f9424c4d84e81f81856955400946df06dbb2657c5dac",
+      "geometrySha256": "b1b532c48ff9000be42049e36ca6b051e0ddf50da57db45d37e96e96c1febf24",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: very large front wings and long-tailed hind wings, glowing antenna clubs and crown, own palette. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "divingbeetle_elite",
@@ -679,8 +685,8 @@
       "file": "waterstriderEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "d56ff105e5d24e4e505470bf0a24c0b5d2c35c5f2678456cb2a351639b7a1a15",
-      "bytes": 98932,
+      "sha256": "85c150bff2980664d68cea88eba9c06ba35e59580c12860535e25580e4d50326",
+      "bytes": 99272,
       "meshes": 1,
       "skins": 1,
       "materials": 3,
@@ -697,10 +703,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "4b1b5b251d45474dc05e085a33a07f8cb2c5f154e245e01c4f2888725e533fbb",
+      "geometrySha256": "8890a485dcbc051e4d92cd409a9b37f0282d7c24e31ec3af60cd2682981cb01e",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: oar-shaped middle feet. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "waterstrider_ultimate",
@@ -713,150 +720,8 @@
       "file": "waterstriderUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "01583fbecedf834943152ce2337d34f093c24173c62716dba4c3d6feffdafb24",
-      "bytes": 143240,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead",
-        "fly"
-      ],
-      "authoredFeatures": [
-        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "817aac3dfb598515baf68caee7e08d61696e8b6752e29f5c9fa24ccfd8101c40",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
-    },
-    {
-      "target_id": "hoverfly_elite",
-      "dex_number": 46,
-      "family": "hoverfly",
-      "stage": 2,
-      "asset_name": "hoverflyEliteUnique.glb",
-      "intent": "Replace shared-geometry Elite",
-      "status": "selected optimized runtime model",
-      "file": "hoverflyEliteUnique.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "70be968315c3e03eff24e743b7b54ec5629fdc3122c549b09ec9c62b5e19bdb7",
-      "bytes": 99788,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead",
-        "fly"
-      ],
-      "authoredFeatures": [
-        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "42d1818eaa480d79036661c4e28848abbab5d9d1d47e19abe27a3e2ce879c3c4",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ]
-    },
-    {
-      "target_id": "hoverfly_ultimate",
-      "dex_number": 105,
-      "family": "hoverfly",
-      "stage": 3,
-      "asset_name": "hoverflyUltimate.glb",
-      "intent": "Append third evolution stage",
-      "status": "selected optimized runtime model",
-      "file": "hoverflyUltimate.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "e9bbe5bdf6fb8d956ac1ad6ba9b0c156ab9abdcc280a9a892f0dccf3e0f6e9d4",
-      "bytes": 141256,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead",
-        "fly"
-      ],
-      "authoredFeatures": [
-        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "2cf1398eb9550dcacdaa5bcedb21206ea9389b668d5c4b0e228b3f3711fa66f4",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
-    },
-    {
-      "target_id": "leafhopper_elite",
-      "dex_number": 47,
-      "family": "leafhopper",
-      "stage": 2,
-      "asset_name": "leafhopperEliteUnique.glb",
-      "intent": "Replace shared-geometry Elite",
-      "status": "selected optimized runtime model",
-      "file": "leafhopperEliteUnique.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "720d0c9d81f2f555a9e9e4d9232628f45d4428c216d86c4a21d40b8c786233fe",
-      "bytes": 87692,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead",
-        "fly"
-      ],
-      "authoredFeatures": [
-        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "573ab28a74886e6ac038a36b7303a1b14f6b5d6ce0b00827400ab2be00aaef7b",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ]
-    },
-    {
-      "target_id": "leafhopper_ultimate",
-      "dex_number": 106,
-      "family": "leafhopper",
-      "stage": 3,
-      "asset_name": "leafhopperUltimate.glb",
-      "intent": "Append third evolution stage",
-      "status": "selected optimized runtime model",
-      "file": "leafhopperUltimate.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "fdfeeda4b415e28d7d8404afe0f118dd1786ec8e4cb0a0c0ac2039043b3e8d6f",
-      "bytes": 116308,
+      "sha256": "c62232413be72383632b24588856c40194af842cb2cf989c85fed75d344e9edb",
+      "bytes": 175152,
       "meshes": 1,
       "skins": 1,
       "materials": 7,
@@ -870,15 +735,162 @@
         "fly"
       ],
       "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "a049203b39bf833d563ab62dd072dc34449633c577c077919f734b9fb68a9486",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: tall back sail, forward rostrum horn, glowing feet. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "hoverfly_elite",
+      "dex_number": 46,
+      "family": "hoverfly",
+      "stage": 2,
+      "asset_name": "hoverflyEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "hoverflyEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "a50d33ceae7d589211f0b977a7277dbb904bdcac2cbd5496d3f098dde78c11b6",
+      "bytes": 119552,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "94cd4c35e291a9182cd0884d018e223b6034473dcdba80ff25669e61d76be32c",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: pair of short head horns. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "hoverfly_ultimate",
+      "dex_number": 105,
+      "family": "hoverfly",
+      "stage": 3,
+      "asset_name": "hoverflyUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "hoverflyUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "028f3a302bb87e439938b3a516248d664b32c6c6f219a7813a76b061c68cd391",
+      "bytes": 162720,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 7,
+      "drawCalls": 7,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "cde283c688239fd5df5fbc09c75bb7117eb5d6629f596330b2f6b4697f6699c7",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: long horns, golden armour plates, dorsal spikes, glowing antenna tips. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "leafhopper_elite",
+      "dex_number": 47,
+      "family": "leafhopper",
+      "stage": 2,
+      "asset_name": "leafhopperEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "leafhopperEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "49f0b4834d4dc86c8dba056ebc8b967c2083663504bf095186df6705418a0266",
+      "bytes": 88300,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 6,
+      "drawCalls": 6,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
         "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "753e11ed4fe4db18c58048f14c60491a9cd9fe8c4b236f8702945997bc166726",
+      "geometrySha256": "2fb223782349d14fdd163b474b3dddae8512b1ce29384a186c57d05e3e151ac3",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: sturdier, larger body (thorn helmet kept). Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "leafhopper_ultimate",
+      "dex_number": 106,
+      "family": "leafhopper",
+      "stage": 3,
+      "asset_name": "leafhopperUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "leafhopperUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "eedb6f32935ff7b41b39996bdb221b261cf1503ff0b607c54ed8c7333845fada",
+      "bytes": 129028,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 8,
+      "drawCalls": 8,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "piercing-mouth sap feeder with pear abdomen, cornicles, tymbals or pronotal crest"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "6843ba675806261ee59623dc33c28ba06df46335383d84f4abb5c073b716377b",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: glowing thorn tips and a back crest. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "cricket_elite",
@@ -891,8 +903,8 @@
       "file": "cricketEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "e60fcdc73682cf5cf7792539207953e8d42de0d8c92cdb15956cacc27f3617f5",
-      "bytes": 71612,
+      "sha256": "29bbd29d07b421421ddcc9b9448545992fa044592f7e18489c489ad2384db3f6",
+      "bytes": 75644,
       "meshes": 1,
       "skins": 1,
       "materials": 4,
@@ -909,10 +921,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "ae751e133a8e4959da6e05aa42556f52f5289505d16185db8eb6e79d4c97cbb5",
+      "geometrySha256": "ded31274ecfb44c6ab886854a058901c0f5471d482ad6a1fe4d0c10d21b2aa65",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: armoured pronotum. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "cricket_ultimate",
@@ -925,8 +938,8 @@
       "file": "cricketUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "6c8c13e1bcd7acdb4e15bbeb417c0c2aa9202fe070232a4d05b003e4dc20c66a",
-      "bytes": 104688,
+      "sha256": "ced16f7d0bec0bc43a24013855fc94b0c26145052128c0064b5a8fbef4024569",
+      "bytes": 129712,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -944,11 +957,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "f2327de109fd0001408bffbd8103779b6f6c60905c226d74c640979102cd0e75",
+      "geometrySha256": "264371f16b6ad0da59e58662f57af5ac6a37519594f887a4793b8cc38a404728",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: head horns and paired back spikes. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "stick_elite",
@@ -1031,8 +1045,8 @@
       "file": "leafEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "50370191959a781adfaca8cfda5c4b504b064513ad4063aa505f5a7061637b04",
-      "bytes": 73560,
+      "sha256": "93e8dd6a489ba6f7a87584ee772ca3b5674a02e2bc76a345b905f5274e28cdfc",
+      "bytes": 74440,
       "meshes": 1,
       "skins": 1,
       "materials": 4,
@@ -1049,10 +1063,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "b2d7fd24d0758b0c4f821faa3001db453edcedd0117abb40b207dc8bb8af08c6",
+      "geometrySha256": "631ea7f36c296797146d6ec03474fbbf5db1a6fdad116c21ef872959672589d7",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: leaf crest on the head. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "leaf_ultimate",
@@ -1065,29 +1080,31 @@
       "file": "leafUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "fbc72cb0876fb2fa6571565da9838a82c48441da60f827cdcc1d12981988803f",
-      "bytes": 87552,
+      "sha256": "6205e1033bf1275f92fc1afef659462f1202600847087b10ca29b6515679464f",
+      "bytes": 101684,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 8,
+      "drawCalls": 8,
       "animations": [
         "idle",
         "walk",
         "attack",
         "hit",
-        "dead"
+        "dead",
+        "fly"
       ],
       "authoredFeatures": [
         "jumping, raptorial, digging or leaf-adapted limbs and species-specific body proportions"
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "66782cdbc142d5da682f7dbac11980d430d779cc356eb69eb534e5e6659743c1",
+      "geometrySha256": "ed1a403a08fdc3ae3b531dbf41882837c2a0d5fee6bd9e10afabc79ba2ff2f3d",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: tall leaf crest with glowing tip and large leaf wings. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "silverfish_elite",
@@ -1100,8 +1117,8 @@
       "file": "silverfishEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "0d78b9d5c1add26219b425e242559206553737691409bbc888941522c5770b23",
-      "bytes": 102060,
+      "sha256": "41d66fc50514597275ff4d64198aad348ba2e308bcf9b7c30fd3a338b65d8f4d",
+      "bytes": 106892,
       "meshes": 1,
       "skins": 1,
       "materials": 4,
@@ -1118,10 +1135,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "c2002ccc79a8c4da297e3d16908b1d903446e3d7cc7817a1090606e62f952377",
+      "geometrySha256": "5666cea15040f1aa667166b5442eaa51c325402fb10f0af7c642240f93db8e55",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: row of small dorsal fins. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "silverfish_ultimate",
@@ -1134,12 +1152,12 @@
       "file": "silverfishUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "4f4d6d897a190dda2780de2e1b18ffdec751cb154a331c42d63e270611eae026",
-      "bytes": 148756,
+      "sha256": "bc5a4299c305b98b20f54771969ac73815ec40872f00da8614b3a49c4f035319",
+      "bytes": 186028,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -1152,11 +1170,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "e2b92bed8e7fda4884d29bfa1d0a087e858da04522093fbe3e5cb8b660c5a848",
+      "geometrySha256": "abd7bf78bf71f2f784bff1f35127f4b0814e8d28712b3bc4894430763b94a554",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: tall silver blade row, head horns, glowing tail filaments. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "moth_elite",
@@ -1271,12 +1290,12 @@
       "file": "cockroachEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "0777f9301cc67ba1c0bb51fa0fd221f7fce2dd2e78bc2683053081e29f8fd099",
-      "bytes": 91280,
+      "sha256": "633c95889bb1014db9d7770b860de6f6f2ff7f070f432324b3a429aff319cc9e",
+      "bytes": 103456,
       "meshes": 1,
       "skins": 1,
-      "materials": 3,
-      "drawCalls": 3,
+      "materials": 4,
+      "drawCalls": 4,
       "animations": [
         "idle",
         "walk",
@@ -1289,10 +1308,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "cebdcf3180d38747b5a46f84d7fc7cf466c980430e3a9a57e31e83e89f56ea84",
+      "geometrySha256": "b072788261d94cd6de33a0f6373483a2054b426be30ab4448ca802332af7f7dd",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: small pronotal horns. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "cockroach_ultimate",
@@ -1305,8 +1325,8 @@
       "file": "cockroachUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "f40668d2421b5afcff155f96d285db08ea7e418db5d96ab18c19a35a8900dac4",
-      "bytes": 138084,
+      "sha256": "edfb5a4a5262ea5d377c2f4734159b0d86b631769758d3eb1f3bfffd1120f6bf",
+      "bytes": 163320,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -1324,11 +1344,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "018e903cee3950fc3b9bbb54fb47fd5133b62c0c12fd2b4c9c3a70adeb826602",
+      "geometrySha256": "27f4a2e761675f38c8561cd2d5fc57255753d624138f6381437f2027289ed226",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: long head horns and paired wing spikes. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "cranefly_elite",
@@ -1341,12 +1362,12 @@
       "file": "craneflyEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "b3b25833ddb77838284f588004b84ffe2e7a4a67c5424f854aaf5c631f92b5b0",
-      "bytes": 110944,
+      "sha256": "662e9afda257391cb63c950b0ce89b1e15836d3dab88b7027f048692e0d0d5fa",
+      "bytes": 117636,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -1360,10 +1381,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "fabcf9e3d8eb43d8df6c309a01c0e2a973082c0288b0d9503f7d98fb565f9d57",
+      "geometrySha256": "b4dd30ff6aff775bbdc8dae4add47c7561ec6f460232636f16b60bae20ae7f4c",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: club halteres. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "cranefly_ultimate",
@@ -1376,12 +1398,12 @@
       "file": "craneflyUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "f482c571a35c3a875d7180a5175e1fc9ff6f8baa1a2d1bae13952376b3235e05",
-      "bytes": 149536,
+      "sha256": "8c14b123379ce1bc5ced92578daa1980779c34e7e063275c38406f667a923b55",
+      "bytes": 187016,
       "meshes": 1,
       "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -1395,11 +1417,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "2125ecbf1c35468c19515c34101d0a23d5b9f2c2e81157edd36d3e234ea0adf0",
+      "geometrySha256": "43720ef900191c30d6dc53ba9bb3f0f78b3ab4424f1d5f232f84dff1e7766ace",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: armoured thorax and abdomen, glowing crown, back crest. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "flea_elite",
@@ -1412,12 +1435,12 @@
       "file": "fleaEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "ca283355d8e9890517c12f7f6605ecf029d76bf949b656079c3003fd9664ac07",
-      "bytes": 61980,
+      "sha256": "ca84720ffd25949c642f28e81c24838d54fb12276d89d7b05d8d1a61ca16ef40",
+      "bytes": 65928,
       "meshes": 1,
       "skins": 1,
-      "materials": 3,
-      "drawCalls": 3,
+      "materials": 4,
+      "drawCalls": 4,
       "animations": [
         "idle",
         "walk",
@@ -1430,10 +1453,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "f95081419bb9728f42ce352e0056de0d6cf1a7b60eda5f501dabc9b5921e3922",
+      "geometrySha256": "bff7ffc6e589c2f9b1307d2235f249d00b02f15f0c16f1cf2c6967f2b19722fd",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: three dorsal spikes. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "flea_ultimate",
@@ -1446,8 +1470,8 @@
       "file": "fleaUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "97a2448c875cf87b0ebbe6b2a83111fc243e6c6aa26bd6738e3c67e199d4663a",
-      "bytes": 92836,
+      "sha256": "0ec005657e6ee2e9ec845e697d63468098711b06bf0025ac39761ea4e05d8c90",
+      "bytes": 115520,
       "meshes": 1,
       "skins": 1,
       "materials": 5,
@@ -1464,11 +1488,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "3e6f2e856e65a312f424802bc700cb707745cb09d1e07298465040661d13628f",
+      "geometrySha256": "f4c5c3f0ff4d5fcb5ca2dd92f87dd606b6b2e23fabd435f933dba1245c3bc90c",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: large dorsal spike crest, head horns, glowing eyes. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "giantwaterbug_elite",
@@ -1481,8 +1506,8 @@
       "file": "giantwaterbugEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "71e151a9fbc7cd9e6653fb6bfb1565c8fef4ab29b9d6d5ec8593f9bd01f1ee9c",
-      "bytes": 85636,
+      "sha256": "b1695c804c43235698c630b2b73de67ae30dd0a75aa6424898b3eb9a5d3380eb",
+      "bytes": 96792,
       "meshes": 1,
       "skins": 1,
       "materials": 4,
@@ -1499,10 +1524,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "6a2e8ffe6e95096da300304f047d3b52297ef224f8085279f880ba76c6541666",
+      "geometrySha256": "ad8fad13938e0b425dc8a5e650be60f5777f8488673705f455671690b6a8e2cf",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: hooked raptorial claws. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "giantwaterbug_ultimate",
@@ -1515,8 +1541,8 @@
       "file": "giantwaterbugUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "baa7bba7931b00074b0a895c373fd0a50599b7c9c9d9b71daf2a327d6c38e1bf",
-      "bytes": 199676,
+      "sha256": "00bc27ec9c921b72e295a3e9220ff7e046ec4f7583dd35fdaec7d94ea470301a",
+      "bytes": 217984,
       "meshes": 1,
       "skins": 1,
       "materials": 7,
@@ -1533,11 +1559,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "f11092ca0591269927e4108d2c2070f9032f4de27501f32bc71f1a95d9942f7c",
+      "geometrySha256": "d124d748ec8110ebd5bf3d56527213c81b1ec671f4bf97c33943a6b9f14a71c2",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: forward horn and spiked shell rim. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "mayfly_elite",
@@ -1550,8 +1577,8 @@
       "file": "mayflyEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "7ab7b0c884535c169989630774da0ba8cdf4d39ea6c04a960f63d580e249b745",
-      "bytes": 122780,
+      "sha256": "189c8c58124174abedf4b4f6effc2d5e5553097d1c104bbc3d5c7672832e9f4f",
+      "bytes": 130004,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -1569,10 +1596,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "36c2534770a339ebcfec0dfa4f21bc892772d5757aff1e6a042a259794c155db",
+      "geometrySha256": "cfe30193dc9493db6f794fdca71d402bcbcde2dafd73d88b26816ece670bf586",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: turbinate eyes. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "mayfly_ultimate",
@@ -1585,12 +1613,12 @@
       "file": "mayflyUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "e89966450fcbebc9969dbc3daf89de745fa904893008463fdba8db9d92d40036",
-      "bytes": 153056,
+      "sha256": "7509475ff544a35cbd70433c420a4bcde5855ed18dd26c4ff12ae8501a937f5b",
+      "bytes": 194340,
       "meshes": 1,
       "skins": 1,
-      "materials": 7,
-      "drawCalls": 7,
+      "materials": 9,
+      "drawCalls": 9,
       "animations": [
         "idle",
         "walk",
@@ -1604,11 +1632,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "85cf55816fbd4fa791dec21b34025aedda5402b1441beafa2ccceb5fed720fe2",
+      "geometrySha256": "c492092d93065e0958bbeef2ce2ec5ce0feba497c0417e3dfda8d336a0b0c8c0",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: armoured body, glowing crown, back crest, glowing tail tips. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "termite_elite",
@@ -1621,8 +1650,8 @@
       "file": "termiteEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "74eb1f18b5c91554f50918d3a5af34a12a3b28487699b8b5de8c4c28ce41ca64",
-      "bytes": 110932,
+      "sha256": "f12ef6a1344a2ea3ab32a68735037c88c60957384326ed09ee0a1ec7a405fbba",
+      "bytes": 111640,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -1640,10 +1669,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "6a3871711410d245e3e5459bde43703e56a8fa443721d5e7ba845ac18dcee39d",
+      "geometrySha256": "1919a657062d47c96512bc4ed884931e806172775bbcc5aa4958c0205be54c6f",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: sturdier, larger winged body. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "termite_ultimate",
@@ -1656,12 +1686,12 @@
       "file": "termiteUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "54485fc81c3f3a949a4791ee1276bfad85ca9de468b7e42d47d75c1046dbe2b0",
-      "bytes": 116040,
+      "sha256": "51bd5eedcf2a248826b33b7116a86603c6c216f5ba96d8daae1bf9a075040e6a",
+      "bytes": 167596,
       "meshes": 1,
       "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
+      "materials": 6,
+      "drawCalls": 6,
       "animations": [
         "idle",
         "walk",
@@ -1674,10 +1704,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "07979cdde473816cd3ca8c2da06c87e1a3b1a36b667d2485074aef598e960723",
+      "geometrySha256": "5bf8ff03d42ae7dc4c1021148175c19efca4090dc42793d5ed81440b7f6e958a",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: queen form: huge banded abdomen, glowing crown, giant mandibles, own palette. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "tigerbeetle_elite",
@@ -1690,8 +1721,8 @@
       "file": "tigerbeetleEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "bd179e820c80c296bb78739207d61c8f1ac90b404a79f697fa05e70b5098e2bb",
-      "bytes": 81700,
+      "sha256": "4f35f0a410d8275d63b420db51435a3ec0962b4fdd2c255aad3ed550a1d37649",
+      "bytes": 105920,
       "meshes": 1,
       "skins": 1,
       "materials": 4,
@@ -1708,10 +1739,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "4ec7b19c118962915422e16c08642edd64a7602045d897ffc82210d7456773e5",
+      "geometrySha256": "4bd3623ce141cdaefb3e8cece4b0e11f72227fd61cf99e8d2b0f838a5d7d8ee6",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: elytral spots and pronotal spikes. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "tigerbeetle_ultimate",
@@ -1724,77 +1756,8 @@
       "file": "tigerbeetleUltimate.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "fbd482c84aae23a5b1915569a14e91e31c17d1a081b9ca76c4bbd04f652d5db4",
-      "bytes": 139996,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead"
-      ],
-      "authoredFeatures": [
-        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "2243a1ec3ab70c5cbbdd35093446e06cfe9c54f914e979e02804936827865828",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
-    },
-    {
-      "target_id": "tortoisebeetle_elite",
-      "dex_number": 61,
-      "family": "tortoisebeetle",
-      "stage": 2,
-      "asset_name": "tortoisebeetleEliteUnique.glb",
-      "intent": "Replace shared-geometry Elite",
-      "status": "selected optimized runtime model",
-      "file": "tortoisebeetleEliteUnique.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "93678b07000716ea113d8f0d25829d6f47887992b02332872ef628b030cdcab4",
-      "bytes": 80064,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 4,
-      "drawCalls": 4,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead"
-      ],
-      "authoredFeatures": [
-        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "60da7b5d29dc9bb6ec1d95714a34c9fdf15bb894f5bc0d3748c497f675d7f91e",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ]
-    },
-    {
-      "target_id": "tortoisebeetle_ultimate",
-      "dex_number": 119,
-      "family": "tortoisebeetle",
-      "stage": 3,
-      "asset_name": "tortoisebeetleUltimate.glb",
-      "intent": "Append third evolution stage",
-      "status": "selected optimized runtime model",
-      "file": "tortoisebeetleUltimate.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "2520a0acf038efb2842b1444e558e51dd2dc2ba6852ccd252a65cc85c0ef1be0",
-      "bytes": 155160,
+      "sha256": "8bef51153b3f4c4817a9b78d7575316f8905b723304eb60e240b5921bb904c4c",
+      "bytes": 169084,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -1811,11 +1774,83 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "6ba3014c5d452185c07627172ca001d603e044e5748a6a496139e2d372af6d61",
+      "geometrySha256": "e36de6298387ec5a1093895ffd812e452daa00109d797c426adcb29398864139",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: giant mandibles, head horns, paired elytral spikes. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "tortoisebeetle_elite",
+      "dex_number": 61,
+      "family": "tortoisebeetle",
+      "stage": 2,
+      "asset_name": "tortoisebeetleEliteUnique.glb",
+      "intent": "Replace shared-geometry Elite",
+      "status": "selected optimized runtime model",
+      "file": "tortoisebeetleEliteUnique.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "4bed51bbab8b18df0813a1a3fc2b274c0da7683873eeb18bafab11989c86460f",
+      "bytes": 85800,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 4,
+      "drawCalls": 4,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "571b126951924f62a3ee7bb9beb09d5f7c42b7bb2c09c5b411928c7a6a16b19c",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: front shield spikes. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "tortoisebeetle_ultimate",
+      "dex_number": 119,
+      "family": "tortoisebeetle",
+      "stage": 3,
+      "asset_name": "tortoisebeetleUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "tortoisebeetleUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "c9e1c23ce4ae1de506cb298d5007f1f2c208fab776737e1538b2f0e341de6624",
+      "bytes": 180696,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 7,
+      "drawCalls": 7,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead"
+      ],
+      "authoredFeatures": [
+        "two hardened wing covers, sculpted pronotum and family-specific feeding anatomy"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "6c1daeb43730945b0e4b7ced56e0bb9246340ceb4cea0e04cb8d7418b0717c14",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: central spike crown with glowing gem and twin horns. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "hercules_elite",
@@ -1862,43 +1897,8 @@
       "file": "beeEliteUnique.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "811dcc42696421be7971dcafdda1403e0573bca0037db7c4d50134e3be0a14ab",
-      "bytes": 109120,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead",
-        "fly"
-      ],
-      "authoredFeatures": [
-        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "f4877eef573d11a7cc528c5f2a59bb3f08ce358a4ef96d642c7856208824f2f8",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ]
-    },
-    {
-      "target_id": "bee_ultimate",
-      "dex_number": 120,
-      "family": "bee",
-      "stage": 3,
-      "asset_name": "beeUltimate.glb",
-      "intent": "Append third evolution stage",
-      "status": "selected optimized runtime model",
-      "file": "beeUltimate.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "51ae55b6e815c24134e1d8addd930e8b0e5b7ffb65c0249211e1bc262d2d46b0",
-      "bytes": 172636,
+      "sha256": "388dd5a6063b89ae387d074f41d6a9406ba391fbc26df381569155ca50282a5b",
+      "bytes": 154864,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -1916,11 +1916,48 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "04969f76604f6b07f1ead2c651e389700bcd9cf3ff67a84ca1917fb1bc00d2a1",
+      "geometrySha256": "aa8b3f50051b608cebd583e4c859856cb4718df9a3f9fe07afdd8d721120308d",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: fuzzy collar. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "bee_ultimate",
+      "dex_number": 120,
+      "family": "bee",
+      "stage": 3,
+      "asset_name": "beeUltimate.glb",
+      "intent": "Append third evolution stage",
+      "status": "selected optimized runtime model",
+      "file": "beeUltimate.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "39c844f47e89c8e8cfc017c7050e8ffbbff5e0353dfac2dc4a273ff3d885b597",
+      "bytes": 208504,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 7,
+      "drawCalls": 7,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "b37dc9c69522f268f88c55a2e1af77105f0b03c24f2b6c004903e357a2df4c58",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: glowing queen crown, armour plates, larger stinger. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "spider_1",
@@ -2149,12 +2186,12 @@
       "file": "ArmabeeStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "1016ecb670042466a920cdc85b38bcb6f46e3ab546cd2efb4fb5c18739ef43b0",
-      "bytes": 126464,
+      "sha256": "72667d194ee0b23fe9ff74e3c79ea960413017f75fd70e774f703b71605a6794",
+      "bytes": 198728,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -2168,10 +2205,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "3be010363b0127a1eb81c5f0ce0fe97c5f152ff21c9979996587aa62cd364b93",
+      "geometrySha256": "ea86286846eee2a774b93f658b8304c84a263d9d692cf4e028b2ffb66b47a6a6",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: round armoured Armabee form: banded body, helmet with cartoon eyes, horns, armour plates, own palette. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "scorpion_1",
@@ -2552,43 +2590,8 @@
       "file": "DragonflyStage2.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "906e0f0407c1d9f5e860774da8b08034630f1c96fb19fd23a1c967378b3c34b0",
-      "bytes": 119132,
-      "meshes": 1,
-      "skins": 1,
-      "materials": 5,
-      "drawCalls": 5,
-      "animations": [
-        "idle",
-        "walk",
-        "attack",
-        "hit",
-        "dead",
-        "fly"
-      ],
-      "authoredFeatures": [
-        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
-      ],
-      "author": "BugBaas original authored geometry",
-      "license": "Original BugBaas asset",
-      "geometrySha256": "6a428abf25d547f386768eb49505c61138bc8f0cea9e35881208016de0dd9c51",
-      "materialFixes": [
-        "sRGB colors converted to linear glTF factors"
-      ]
-    },
-    {
-      "target_id": "dragonfly_3",
-      "dex_number": 138,
-      "family": "dragonfly",
-      "stage": 3,
-      "asset_name": "DragonflyStage3.glb",
-      "intent": "New three-stage family",
-      "status": "selected optimized runtime model",
-      "file": "DragonflyStage3.glb",
-      "source": "BugBaas original authored anatomy",
-      "sourceGeometryReused": false,
-      "sha256": "89fa3fc183fd8b8bad00e1315ca4a224331a848030383299c4227bfdcc603029",
-      "bytes": 147544,
+      "sha256": "4a4b741f5f5fd1a764fd8d7ca271f8faaf19c0567d23b0fbc19e044a667a1cff",
+      "bytes": 122324,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -2606,11 +2609,48 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "af39f2ef45d1b1b7ed3c2d3c1d3bd041cd5247a8d1569bc90ac9f570fe757693",
+      "geometrySha256": "c1a34912a4f82091f59936c5f8d09e4528392c8d46a0a3b38a9d65bd380bf8b8",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: tail claspers. Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
+    },
+    {
+      "target_id": "dragonfly_3",
+      "dex_number": 138,
+      "family": "dragonfly",
+      "stage": 3,
+      "asset_name": "DragonflyStage3.glb",
+      "intent": "New three-stage family",
+      "status": "selected optimized runtime model",
+      "file": "DragonflyStage3.glb",
+      "source": "BugBaas original authored anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "f9a2929fd3604f34dc057b8dbb4fa87df3e57adff01aeec0e3919d0ec5ca8869",
+      "bytes": 191224,
+      "meshes": 1,
+      "skins": 1,
+      "materials": 7,
+      "drawCalls": 7,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "hit",
+        "dead",
+        "fly"
+      ],
+      "authoredFeatures": [
+        "distinct narrow-waisted or long segmented aerial body with genuine wing plan"
+      ],
+      "author": "BugBaas original authored geometry",
+      "license": "Original BugBaas asset",
+      "geometrySha256": "267da510e6d3d23195ab5b16f65b467d48bdf9bf63d264f24380dfa7f61a5ef1",
+      "materialFixes": [
+        "sRGB colors converted to linear glTF factors"
+      ],
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: armoured body, horns, glowing forked tail, back crest. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "firefly_1",
@@ -2657,8 +2697,8 @@
       "file": "FireflyStage2.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "1ff578d9d4d7cd1033c7cb787737b54dbab5a00cd936228044df6c324404c816",
-      "bytes": 120840,
+      "sha256": "73a2c2a698777732efb465ea849d0ecb40f2b11db0e3745dbf7fb93d0dc133b5",
+      "bytes": 121600,
       "meshes": 1,
       "skins": 1,
       "materials": 6,
@@ -2676,11 +2716,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "6008b1267bf0b3317ffdf089629c6da89b2cb73e5ef2db6b4956fb2bd2e1f0b1",
+      "geometrySha256": "828cd66bb3a0596f14e9116a93daae0055cd42dca6fe9aa6619e19900dd6f6bd",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: sturdier, larger body (lantern and wing covers kept). Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "firefly_3",
@@ -2693,12 +2734,12 @@
       "file": "FireflyStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "d738ac5c4b46d70432d7dcb161dba075c382eb88ab4239320f567b17ed3a68d4",
-      "bytes": 153840,
+      "sha256": "60973ee50cf48183998ccf8a5b7e6004047418fa633828160eadd587d2575d2b",
+      "bytes": 182392,
       "meshes": 1,
       "skins": 1,
-      "materials": 8,
-      "drawCalls": 8,
+      "materials": 10,
+      "drawCalls": 10,
       "animations": [
         "idle",
         "walk",
@@ -2712,11 +2753,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "d2d02fde11e8c3489708062fc5218cc98a66dddee01a88b635da758ebb7ca0a7",
+      "geometrySha256": "49d740793be2048baca7fefd063ddc19f8028e829f5fafd0ac2e203341cb9933",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: glowing antenna orbs and horns. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "cicada_1",
@@ -2764,8 +2806,8 @@
       "file": "CicadaStage2.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "5b0e3e3b8a38c833ea7fb6692db7e16553bf97364c7068b6cf54d45932046d9e",
-      "bytes": 90596,
+      "sha256": "9ae161b4fed2c8c4b72df052acac530535d61e61fc9491c316a35718fa06fdea",
+      "bytes": 91204,
       "meshes": 1,
       "skins": 1,
       "materials": 5,
@@ -2783,11 +2825,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "0403c388553b71263f87459e63405ede5454458d5b766ee29b8a59258282e96a",
+      "geometrySha256": "38be7350990110575d8764dc710f54f12cb8028dcb501827eb1148c763c0b120",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: sturdier, larger body (tymbals kept). Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "cicada_3",
@@ -2800,12 +2843,12 @@
       "file": "CicadaStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "12c058ef5e8c1e88481668e04330921d3c64846cce5b445771fac7da4d8fc6b1",
-      "bytes": 115336,
+      "sha256": "2c7c2c5a53c176571718ca6284c6d0df5781fec0e2e49c591b4475336bf91080",
+      "bytes": 144788,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -2819,11 +2862,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "9a99be2b77b9ddadc24e3415d83d30842022c6931d973dd7a02e7e2d0c5bb27a",
+      "geometrySha256": "6c213b12b95150d509d0a170294df8b3482ac826a551004e653c5f10f400f10e",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: horns, dorsal spikes, glowing tymbals. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "mosquito_1",
@@ -2870,8 +2914,8 @@
       "file": "MosquitoStage2.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "89cfc272e3b2028a80d94872f053fd636e63b5288996775ce33ae5ca46e947ef",
-      "bytes": 120212,
+      "sha256": "717917e1f44e7478443f7a803b98d87c39ca2b4a43041d4137e7bfc152f86109",
+      "bytes": 120092,
       "meshes": 1,
       "skins": 1,
       "materials": 5,
@@ -2889,10 +2933,11 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "93d3c003ae926a884cf382f95778c08342722d4a9689080b0d225644c3e76879",
+      "geometrySha256": "e2d124f0330891de0257f4ff6d745462904c9bb9292358d61fccabdcda3493b6",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
-      ]
+      ],
+      "evolutionGrowth": "2026-11-01: stage 2 grows one new feature: sturdier, larger body (proboscis kept). Body widened/heightened under GrowthBulk (1.2x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "mosquito_3",
@@ -2905,12 +2950,12 @@
       "file": "MosquitoStage3.glb",
       "source": "BugBaas original authored anatomy",
       "sourceGeometryReused": false,
-      "sha256": "805c806e87bd00c42636876bb98575d824eac71f4dbd236880a31770e74d9a59",
-      "bytes": 207272,
+      "sha256": "a3f34d69af6f3260e69c548e39368de6f6d70d4c4e4b7cfeaa3951791c102ef0",
+      "bytes": 251948,
       "meshes": 1,
       "skins": 1,
-      "materials": 6,
-      "drawCalls": 6,
+      "materials": 7,
+      "drawCalls": 7,
       "animations": [
         "idle",
         "walk",
@@ -2924,11 +2969,12 @@
       ],
       "author": "BugBaas original authored geometry",
       "license": "Original BugBaas asset",
-      "geometrySha256": "94d0c76908b80b2b30ccb1d3d7e9ddcfc2661b717bbcbbe61a630353eb541bb2",
+      "geometrySha256": "e933e1dee0c8e06b9ddf7c799ac13fc53486322ee39b1026ad919786c116312d",
       "materialFixes": [
         "sRGB colors converted to linear glTF factors"
       ],
-      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source"
+      "evolutionUpgrade": "2026-10-29: stage made visibly distinct from its other stages (deterministic authoring in authoring/produce_candidates.py STAGE_PALETTES/evolve); original BugBaas geometry, no external source",
+      "evolutionGrowth": "2026-11-01: stage 3 dramatic final form: armoured body, horns, back crest, glowing proboscis tip. Body widened/heightened under GrowthBulk (1.55x), legs thicker; original BugBaas geometry from authoring/produce_candidates.py grow()."
     },
     {
       "target_id": "snail_1",
@@ -3035,14 +3081,15 @@
     }
   ],
   "count": 85,
-  "runtimeBytes": 19900848,
+  "runtimeBytes": 20860116,
   "pipeline": "One skinned mesh per animal; source rig preserved; animation aliasing; quantized positions and normals; embedded resources.",
   "notes": [
     "Original anatomy-specific geometry is distinct from the supplied 85 draft shapes.",
     "Third stages are game evolutions, not claims about biological life cycles.",
     "First 92 published IDs, stats and owned values are preserved; 58 entries append to the dex.",
     "Shiny body palettes use the same runtime shader as the 2D render pipeline.",
-    "2026-10-29 evolution-stage upgrade: stage-3 (and selected stage-1/2) authored models get stage palettes, polished plates, horns/armour/glow/wing patterns so each evolution is visibly distinct; regenerate with authoring/produce_candidates.py + skin-and-optimize.mjs."
+    "2026-10-29 evolution-stage upgrade: stage-3 (and selected stage-1/2) authored models get stage palettes, polished plates, horns/armour/glow/wing patterns so each evolution is visibly distinct; regenerate with authoring/produce_candidates.py + skin-and-optimize.mjs.",
+    "2026-11-01 growth pass (player: \"evoluties moeten er echt anders uitzien\"): 45 authored stage-2/3 models get silhouette growth steps (stage 2 one new feature, stage 3 horns/crown, spikes/crest, armour, glow) and a bulkier body; ant, termite, butterfly and armabee final forms got their own palettes. Third-party stage-1 and external models unchanged."
   ],
   "uniqueGeometryHashes": 85,
   "textures": [

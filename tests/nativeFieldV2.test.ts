@@ -51,7 +51,7 @@ test('native frame URL requires HTTPS outside development and allows only emulat
  for(const [url,development] of [['http://10.0.2.2:8088',false],['http://other.example',true],['javascript:alert(1)',false]] as const)assert.throws(()=>nativeFieldURL(url,development));
 });
 test('map Plaagbende, raid and own-route actions cross the native boundary without permitting account commands',()=>{
- for(const command of ['plaagFight','raidPass','raidJoin','raidInvite','raidFight','raidClaim','raidLeave','routeRecord','routeSave','routeDelete']){
+ for(const command of ['plaagArcadeStart','plaagFight','raidPass','raidJoin','raidInvite','raidFight','raidClaim','raidLeave','routeRecord','routeSave','routeDelete']){
   const m={kind:'command',id:'native-regression',command,params:{}};assert.deepEqual(parseNativeFieldRequest(JSON.stringify(m)),m,command);
  }
  for(const command of ['profile','settings','goTransfer','goTransferMany','friendRemove','unknown'])assert.equal(parseNativeFieldRequest(JSON.stringify({kind:'command',id:'native-regression',command,params:{}})),null,command);
@@ -82,6 +82,11 @@ test('native field menu opens the existing cocoon screen without permitting spec
  const message={kind:'navigate',name:'cocoons'};
  assert.deepEqual(parseNativeFieldRequest(JSON.stringify(message)),message);
  assert.equal(parseNativeFieldRequest(JSON.stringify({...message,specimenId:'owned-bug'})),null);
+});
+test('native shell focus and menu aliases are bounded presentation only',()=>{
+ for(const focus of ['catch',null])assert.deepEqual(parseNativeFieldRequest(JSON.stringify({kind:'presentation',focus})),{kind:'presentation',focus});
+ for(const name of ['bag','teamPicker','goals','arcade'])assert.deepEqual(parseNativeFieldRequest(JSON.stringify({kind:'navigate',name})),{kind:'navigate',name});
+ for(const message of [{kind:'presentation',focus:'battle'},{kind:'presentation',focus:'catch',command:'goTransfer'},{kind:'presentation'},{kind:'navigate',name:'bag',specimenId:'private'}])assert.equal(parseNativeFieldRequest(JSON.stringify(message)),null);
 });
 test('GPS bridge forwards exact native timestamps once, deduplicates Android delivery and changes permission only once',async()=>{
  const outgoing:unknown[]=[],window=new EventTarget() as EventTarget&Record<string,any>,document=new EventTarget() as EventTarget&Record<string,any>,navigator={} as Record<string,any>;

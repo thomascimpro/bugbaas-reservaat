@@ -1,0 +1,41 @@
+{
+  "source": "Existing BugBaas game assets copied without visual edits",
+  "files": [
+    {
+      "source": "CimPro BugBaas-3.0/assets/generated/web-runner-tunnel-v1.jpg",
+      "file": "web-runner-tunnel-v1.jpg",
+      "sha256": "f2408e145efae479dbd007d10d33ab9b53ab3a753f74da5db3639d3baf712d50",
+      "bytes": 228170
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/generated/duel_effect_shield_hd.png",
+      "file": "duel_effect_shield_hd.png",
+      "sha256": "6cf21fe5b5057ef4ee0e4d186e311eebd37d13fa2e19f00b2ae85b5441bef474",
+      "bytes": 228386
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/generated/duel_effect_lightning_hd.png",
+      "file": "duel_effect_lightning_hd.png",
+      "sha256": "1703499b782e21a8f1b193d062903a8092d79340c59848e0c0df5c3d0fd5f899",
+      "bytes": 173959
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/generated/duel_effect_goo_hd.png",
+      "file": "duel_effect_goo_hd.png",
+      "sha256": "56319b5d0849db85a1206016b81cbedb5d14b2897f619cacb2f2a4d9e7b5ad9a",
+      "bytes": 234123
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/extracted/web_coin.png",
+      "file": "web_coin.png",
+      "sha256": "526c8549abd18f7b7815b3945ad9b2c82b2a701f9415b6d8cbddd1f8d702bc65",
+      "bytes": 50446
+    },
+    {
+      "source": "CimPro BugBaas-3.0/assets/minigames/extracted/web_gem.png",
+      "file": "web_gem.png",
+      "sha256": "3bb8b00df27bbd1d95b9efedff7e5c134f03df6e3fdcd627be5652c8b74088b2",
+      "bytes": 50827
+    }
+  ]
+}
