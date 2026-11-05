@@ -1,5 +1,5 @@
 import {NetThrowV2} from './NetThrowV2';
-import {NET_FLIGHT_MS} from '../game/netThrowV2';
+import {NET_SWING_FLIGHT_MS as NET_FLIGHT_MS} from '../game/netThrowV2';
 import type {NetFlickTrace} from '../game/netThrowV2';
 import BugStage from './BugStageV2';
 import {WeatherEffects} from './EnvironmentV2';

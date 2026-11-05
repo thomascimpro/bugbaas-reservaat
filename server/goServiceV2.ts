@@ -288,7 +288,7 @@ export class GoServiceV2{
  /** A confirmed automatic catch with all normal catch rewards (dust, candy, XP, card, cocoon, journal). */
  private grantAutoCatch(p:PlayerV2,s:WildBug,now:number,secret:string,totals:{caught:number;missed:number}){
   const g=p.go!,a=g.auto,f=p.field!,w=p.walking!;a.lastAt=now;
-  catchWild(p,s.id,now);const bug=p.specimens.at(-1)!,priorDust=g.dust,priorXP=g.trainer!.xp;awardGoCatch(p,bug,w.seed+':go:'+s.id);weatherCatch(p,bug,s);f.total.catches++;f.daily.catches++;if(!f.daily.species.includes(s.species))f.daily.species.push(s.species);if(s.source==='lure'&&f.lure)f.lure.caught++;awardGoCatchCard(p,bug,s.id,now);awardCocoon(p,secret,now);w.lastCatch!.nectar=g.dust-priorDust;this.note(p,'catch','catch:'+s.id,bug,now,{method:'auto',dust:g.dust-priorDust,xp:g.trainer!.xp-priorXP});totals.caught++;
+  catchWild(p,s.id,now);const bug=p.specimens.at(-1)!,priorDust=g.dust,priorXP=g.trainer!.xp;awardGoCatch(p,bug,w.seed+':go:'+s.id);weatherCatch(p,bug,s);f.total.catches++;f.daily.catches++;if(!f.daily.species.includes(s.species))f.daily.species.push(s.species);if(s.source==='lure'&&f.lure)f.lure.caught++;awardGoCatchCard(p,bug,s.id,now);awardCocoon(p,secret,now);w.lastCatch!.nectar=g.dust-priorDust;bug.autoCaught=true;this.note(p,'catch','catch:'+s.id,bug,now,{method:'auto',dust:g.dust-priorDust,xp:g.trainer!.xp-priorXP});totals.caught++;
   a.last={species:s.species,caught:true,at:now};
  }
  /** Closed-app distance (Health Connect) feeds the same walk counter; bugs come at the next fresh GPS fix. */

@@ -1,4 +1,4 @@
-import React,{useRef} from 'react';
+import React,{useEffect,useRef} from 'react';
 import {Text,View} from 'react-native';
 import Svg,{Circle,Ellipse,Line} from 'react-native-svg';
 import {originalTapTargets,type OriginalTapDuelState} from '../../../game/arcade/original/tapDuel';
@@ -6,6 +6,7 @@ import type {OriginalSceneProps} from '../../../game/arcade/original/types';
 import {SpriteView} from '../../artV2';
 import {font} from '../../uiV2';
 import {ArcadeIcon} from '../ArcadeArtV3';
+import {playSound} from '../../audioV2';
 import {TAP_PORTRAITS} from './tapPortraits';
 
 // Presentation only (GM-01 / P13.1). Positions, hit areas, taps, points, combo and helper timing all come
@@ -21,8 +22,9 @@ export function OriginalTapDuelScene({state:s,ticket,scale:k,reducedMotion,onInp
  const spans=useRef<{ready:number;span:number}[]>([]);
  ticket.squad.forEach((_,i)=>{const ready=s.helperReadyAt[i]??0,prev=spans.current[i];if(!prev||ready>prev.ready)spans.current[i]={ready,span:Math.max(1,ready-now)};});
  const lastCatch=s.effects.filter(e=>e.kind==='catch').at(-1),comboAge=lastCatch?now-lastCatch.at:1e9,pulse=reducedMotion?1:1+.18*(1-clamp(comboAge/160));
+ const sounded=useRef('');useEffect(()=>{const e=s.effects.filter(e=>e.kind==='catch'&&e.helper<0).at(-1);if(!e)return;const key=e.at+':'+e.x+':'+e.y;if(key!==sounded.current){sounded.current=key;playSound('arcadeCatch');}},[now]);
  const assist=Math.round((s.assist.hitboxMultiplier-1)*100);
- return <View testID="original-tap-duel" accessibilityLabel="Tikduel: tik bugs tot hun balk leeg is" onStartShouldSetResponder={()=>true} onResponderGrant={e=>onInput({x:Math.round(e.nativeEvent.locationX/(360*k)*1000),y:Math.round(e.nativeEvent.locationY/(640*k)*1000),action:'down'})} style={{width:360*k,height:640*k,overflow:'hidden'}}>
+ return <View testID="original-tap-duel" accessibilityLabel="Tikduel: tik bugs tot hun balk leeg is" onStartShouldSetResponder={()=>true} onResponderGrant={e=>{playSound('arcadeTap');onInput({x:Math.round(e.nativeEvent.locationX/(360*k)*1000),y:Math.round(e.nativeEvent.locationY/(640*k)*1000),action:'down'});}} style={{width:360*k,height:640*k,overflow:'hidden'}}>
   {/* soft ground shadows and rarity glow, one batched layer */}
   <Svg pointerEvents="none" style={{position:'absolute',left:0,top:0}} width={360*k} height={640*k}>
    {targets.map(t=>{const cx=(t.motion.x*3.6+t.size/2)*k,cy=(t.motion.y*6.4+t.size*.86)*k;return <React.Fragment key={t.bugId}><Ellipse cx={cx} cy={cy} rx={t.size*.42*k} ry={t.size*.13*k} fill="#000" opacity={.35}/>{t.rarity!=='Gewoon'&&<Ellipse cx={cx} cy={cy-t.size*.32*k} rx={t.size*.5*k} ry={t.size*.42*k} fill={colors[t.rarity]} opacity={.16}/>}</React.Fragment>;})}

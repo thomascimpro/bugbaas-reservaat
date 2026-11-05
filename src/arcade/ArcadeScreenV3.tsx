@@ -1,11 +1,12 @@
-import React,{useEffect,useRef,useState} from 'react';
-import {AppState,Image,ImageBackground,Platform,Pressable,ScrollView,StyleSheet,Text,useWindowDimensions,View} from 'react-native';
+import React,{useCallback,useEffect,useRef,useState} from 'react';
+import {ActivityIndicator,AppState,Image,Platform,Pressable,ScrollView,StyleSheet,Text,useWindowDimensions,View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Asset} from 'expo-asset';
 import type {GameViewV2} from '../../game/typesV2';
 import type {ArcadeTap,ArcadeTicket} from '../../game/arcade/tapDuel';
 import {suggestedArcadeSquad,arcadeSquad} from '../../game/arcade/tapDuel';
 import {ARCADE_GAMES,arcadeHelp,type ArcadeGameId,type ArcadeState} from '../../game/arcade/games';
+import {isOriginalRules} from '../../game/arcade/original';
 import {crewName} from '../../game/arcade/crew';
 import {ARCADE_RANKED_DAILY_STARTS} from '../../game/arcade/ranked';
 import type {CrewEncounter} from '../../game/arcade/crew';
@@ -16,9 +17,9 @@ import type {RunV2} from '../ShopViewV2';
 import {SpriteView} from '../artV2';
 import {GoTypes} from '../GoTypeV2';
 import {font,useInfo,Wash} from '../uiV2';
-import {playSound,startMusic,unlockAudio} from '../audioV2';
+import {playSound,startMusic,unlockAudio,prepareArcadeAudio} from '../audioV2';
 import {ArcadeButton,ArcadeIcon,arcadeImages,enemyImages} from './ArcadeArtV3';
-import {ArcadeCarouselV3,gameBackdrops} from './ArcadeCarouselV3';
+import {ArcadeCarouselV3,gameBackdrops,gameHints} from './ArcadeCarouselV3';
 import {ArcadeMedalsV3} from './ArcadeMedalsV3';
 import {ArcadeReceiptAmountV3} from './ArcadeReceiptV3';
 import {ArcadeFieldV3} from './ArcadeFieldV3';
@@ -41,7 +42,7 @@ export function ArcadeScreenV3({view,run,busy,close,active,backRef,onFocusChange
  useEffect(()=>{onFocusChange?.(focused);return()=>onFocusChange?.(false);},[focused,onFocusChange]);
  const ranked=p.arcade?.ranked,rankedResult=receipt?.ranked,rankedToday=ranked?.day===new Date(view.now).toISOString().slice(0,10)?ranked.starts:0;
  useEffect(()=>{if(!active||phase!=='result'||!receipt||celebrated.current.has(receipt.runId))return;celebrated.current.add(receipt.runId);playSound(receipt.practice||!receipt.qualified?'click':receipt.ranked?.status==='waiting'?'grow':receipt.won?'win':'grow');},[active,phase,receipt?.runId]);
- const original=ticket?.rules.endsWith('-2'),survival=!!original&&!!currentGame.survival,seconds=survival?Math.floor(hud.tick/50):Math.max(0,Math.ceil(((hud.durationTicks??currentGame.durationSeconds*50)-hud.tick)/50)),clock=survival?Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0'):String(seconds);
+ const original=!!ticket&&isOriginalRules(ticket),survival=!!original&&!!currentGame.survival,seconds=survival?Math.floor(hud.tick/50):Math.max(0,Math.ceil(((hud.durationTicks??currentGame.durationSeconds*50)-hud.tick)/50)),clock=survival?Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0'):String(seconds);
  const target=phase==='playing'&&ticket?(ticket.mode==='practice'?'Oefenen':ticket.mode==='ranked'&&ticket.ranked?.side==='from'?'Eerste score':(ticket.crew?crewName(ticket.crew.faction):ticket.mode==='ranked'?ticket.target.name:'Eerdere')+' '+ticket.target.score):'';
  const scoreKey=mode+':'+p.uid+':'+new Date(view.now).toISOString().slice(0,10)+':'+league+':'+chosenGame;
  async function loadScores(force=false){if(!active||busy||scoreRequest.current.loading||!force&&scoreRequest.current.key===scoreKey)return;scoreRequest.current={key:scoreKey,loading:true};setScoreError('');try{await runRef.current('arcadeScores',mode==='ranked'?{ranked:true}:{game:chosenGame},message=>setScoreError(message));}finally{scoreRequest.current.loading=false;}}
@@ -64,7 +65,7 @@ export function ArcadeScreenV3({view,run,busy,close,active,backRef,onFocusChange
  useGoBack(active&&(picker||!!section||phase!=='home'),()=>{stopRef.current();return true;},30);
  async function submit(value:Draft){setError('');await runRef.current('arcadeSubmit',{run:value.run,inputs:value.inputs,...(value.format?{format:value.format}:{})},setError);}
  async function start(retryCrew=false){
-  if(busy||abandon||!squad.length&&!retryCrew||!activeRef.current||!appActive.current)return;const token=++attempt.current;setError('');setSection(null);setPhase('preparing');unlockAudio();
+  if(busy||abandon||!squad.length&&!retryCrew||!activeRef.current||!appActive.current)return;const token=++attempt.current;setError('');setSection(null);setPhase('preparing');unlockAudio();prepareArcadeAudio();
   try{await Asset.loadAsync(preload);if(!currentAttempt(token))return;
    if(activeTicket&&!await runRef.current('arcadeAbandon',{run:activeTicket.id},setError)){if(currentAttempt(token))setPhase('home');return;}if(!currentAttempt(token))return;
    const crew=retryCrew?(draft?.crew??ticketRef.current?.crew):undefined,params=crew?{target:crew.kind==='balloon'?'balloon':crew.postId,ids:draft?.ids??ticketRef.current!.squad.map(b=>b.id),league:draft?.league??ticketRef.current!.league}:{ids:selected,league,...(mode==='rotation'?{game:chosenGame}:{})};
@@ -72,24 +73,25 @@ export function ArcadeScreenV3({view,run,busy,close,active,backRef,onFocusChange
    if(!await runRef.current(crew?'plaagArcadeStart':mode==='ranked'?'arcadeRankedStart':'arcadeStart',params,setError)&&currentAttempt(token)){requested.current=null;setPhase('home');}
   }catch{if(!currentAttempt(token))return;requested.current=null;setPhase('home');setError('Beelden laden is niet gelukt. Tik nog eens op Speel.');}
  }
- async function finish(inputs:ArcadeTap[],state:ArcadeState){
-  const round=ticketRef.current!,value:Draft={run:round.id,inputs,score:state.score,game:state.game,mode:round.mode,...(round.rules.endsWith('-2')?{format:'original-2' as const}:{}),...(round.crew?{crew:round.crew,ids:round.squad.map(b=>b.id),league:round.league}:{})};setDraft(value);setPhase('result');startMusic('field');
+ const finish=useCallback(async(inputs:ArcadeTap[],state:ArcadeState)=>{
+  const round=ticketRef.current!,value:Draft={run:round.id,inputs,score:state.score,game:state.game,mode:round.mode,...(isOriginalRules(round)?{format:'original-2' as const}:{}),...(round.crew?{crew:round.crew,ids:round.squad.map(b=>b.id),league:round.league}:{})};setDraft(value);setPhase('result');startMusic('field');
   try{await AsyncStorage.setItem(storage,JSON.stringify(value));setStored(true);}catch{setStored(false);}
   if(mounted.current&&activeRef.current)await submit(value);
- }
+ },[storage]);
  async function stop(){if(picker){setPicker(false);return;}if(section){setSection(null);return;}if(requested.current||['preparing','waiting','playing','countdown'].includes(phaseRef.current)){cancelRound();return;}attempt.current++;close('map');}
  let helper={summary:'Kies je eigen squad',details:'',boost:''};try{helper=arcadeHelp(chosenGame,arcadeSquad(p,selected,league),league);}catch{}
  const help=()=>info.show({title:phase==='home'&&mode==='ranked'?'Ranked':phase==='home'?nextGame.name:currentGame.name,icon:'info',body:phase==='home'&&mode==='ranked'?'Je krijgt een willekeurige game tegen een speler van ongeveer jouw rang en dezelfde CP-klasse. Je speelt dezelfde baan of doelen. Is er nog geen tegenstander, dan laat je jouw score achter. Pas na beide scores veranderen de rangpunten.\n\nWinst geeft punten; bij een sterkere tegenstander win je meer. Je kunt 25 duels per dag starten. Stoppen tegen een bestaande score telt als verlies.\n\nDe eerste 3 geldige rondes geven stof en XP, samen met Spelen. Oefenen geeft geen beloning of rangpunten.':(phase==='home'?nextGame.help:currentGame.help)+'\n\n'+helper.details+'\n\nDe eerste 3 geldige Arcade-rondes per dag geven stof en XP; daarna verbeter je records en medailles. Bendes hebben een eigen dagbudget.'});
  const playAction=!squad.length?<ArcadeButton label="Vang bug" icon="camera" onPress={()=>close('map')}/>:<View style={{flexDirection:'row',alignItems:'center',gap:8}}><View style={{flex:1}}><ArcadeButton label={phase==='preparing'?'Laden…':phase==='waiting'?'Starten…':'Speel'} disabled={busy||phase!=='home'||!!draft&&!receipt||mode==='ranked'&&rankedToday>=ARCADE_RANKED_DAILY_STARTS} onPress={()=>void start()}/></View><Pressable accessibilityRole="button" accessibilityLabel={mode==='ranked'?'Rangrondes '+rankedToday+' van '+ARCADE_RANKED_DAILY_STARTS:'Dagbeloningen '+daily+' van 3'} onPress={help} style={[s.pill,{minHeight:56,paddingHorizontal:10,gap:4}]}><ArcadeIcon name="gift" size={26}/><Text style={[text,{fontWeight:'700'}]}>{mode==='ranked'?rankedToday+'/'+ARCADE_RANKED_DAILY_STARTS:Math.min(3,daily)+'/3'}</Text></Pressable></View>;
- return <ImageBackground source={phase==='playing'||phase==='countdown'?gameBackdrops[currentGame.id]:arcadeImages.arena} resizeMode="cover" style={{flex:1,minHeight:0,minWidth:0,overflow:Platform.OS==='web'?'clip' as any:'hidden',backgroundColor:'#071e1b'}}>
+ const loading=['preparing','waiting','countdown'].includes(phase),backdrop=phase==='preparing'||phase==='waiting'?nextGame:currentGame;
+ return <View style={{flex:1,minHeight:0,minWidth:0,overflow:Platform.OS==='web'?'clip' as any:'hidden',backgroundColor:'#071e1b'}}><View pointerEvents="none" style={StyleSheet.absoluteFillObject}><Image source={phase==='playing'||loading?gameBackdrops[backdrop.id]:arcadeImages.arena} resizeMode="cover" style={{width:'100%',height:'100%'}}/></View>
   <Wash from={phase==='playing'?'#08271c22':'#08271c55'} to={phase==='playing'?'#071e1b55':'#071e1bfa'}/>
   <View testID="arcade-header" style={{height:64,flexShrink:0,paddingHorizontal:12,flexDirection:'row',alignItems:'center',gap:8}}>
    <Pressable accessibilityRole="button" accessibilityLabel={focused?'Stop ronde':picker||section?'Terug':'Terug naar kaart'} onPress={()=>void stop()} style={s.circle}><ArcadeIcon atlas="controls" name={focused?'close':'back'} size={26}/></Pressable>
    {phase==='playing'?<><View pointerEvents="none" style={{flex:1,alignItems:'center'}}><View testID="arcade-clock" style={[s.pill,{minWidth:64}]}><Text style={[text,{fontWeight:'800',fontSize:20,fontVariant:['tabular-nums']}]}>{clock}</Text></View></View><View pointerEvents="none" testID="arcade-score" style={{maxWidth:120,alignItems:'flex-end',gap:2}}><View style={[s.pill,{minWidth:82,paddingVertical:3}]}><Text style={{fontSize:16}}>🏆</Text><Text style={[text,{fontWeight:'800',fontSize:20,fontVariant:['tabular-nums']}]}>{hud.score}</Text></View>{!!target&&<Text numberOfLines={1} style={[text,{fontSize:10,maxWidth:116}]}>{ticket?.mode==='practice'?'🎯':'👑'} {target}</Text>}</View></>:<><Text numberOfLines={1} accessibilityRole="header" style={[text,{flex:1,textAlign:'center',fontSize:23,fontWeight:'700'}]}>{picker?'Team':section==='scores'?'Scores':section==='medals'?'Medailles':'Arcade'}</Text><Pressable accessibilityRole="button" accessibilityLabel={mode==='ranked'?'Uitleg Ranked':'Uitleg '+nextGame.name} onPress={help} style={s.circle}><ArcadeIcon atlas="controls" name="info" size={26}/></Pressable></>}
   </View>
   {phase==='playing'&&ticket?<>
-   <ArcadeFieldV3 key={ticket.id} ticket={ticket} onHUD={setHUD} onComplete={(inputs,state)=>void finish(inputs,state)} reducedMotion={p.settings.reducedMotion}/>
-  </>:phase==='countdown'?<View style={{flex:1,alignItems:'center',justifyContent:'center',gap:14}}><Text style={[text,{fontSize:80,fontWeight:'900',textShadowColor:'#06271b',textShadowRadius:12}]}>{Math.max(1,count)}</Text><Text style={[text,{fontSize:19,fontWeight:'700'}]}>{currentGame.help}</Text></View>:section?<ScrollView contentContainerStyle={{padding:16,gap:10,paddingBottom:20}}>
+   <ArcadeFieldV3 key={ticket.id} ticket={ticket} onHUD={setHUD} onComplete={finish} reducedMotion={p.settings.reducedMotion||p.settings.graphics==='low'}/>
+  </>:loading?<View testID="arcade-loading" style={{flex:1,alignItems:'center',justifyContent:'center',padding:24,gap:18}}><Text style={[text,{fontSize:27,fontWeight:'800',textAlign:'center'}]}>{backdrop.name}</Text>{phase==='countdown'?<Text style={[text,{fontSize:80,fontWeight:'900',textShadowColor:'#06271b',textShadowRadius:12}]}>{Math.max(1,count)}</Text>:<ActivityIndicator size="large" color="#6BEFF2"/>}<Text style={[text,{fontSize:17,fontWeight:'700',textAlign:'center'}]}>{gameHints[backdrop.id]}</Text></View>:section?<ScrollView contentContainerStyle={{padding:16,gap:10,paddingBottom:20}}>
    {section==='scores'&&mode==='ranked'?<><Text style={[text,{fontSize:17,fontWeight:'800'}]}>Ranked · rangpunten</Text>{view.arcadeRankedLeaderboard?.length?view.arcadeRankedLeaderboard.map((row,index)=><View key={index} style={s.listRow}><Text style={[text,{width:24,fontWeight:'800'}]}>{index+1}</Text><Text style={[text,{flex:1,fontWeight:row.me?'800':'600'}]}>{row.name}</Text><Text style={[text,{fontSize:23,fontWeight:'800'}]}>{row.rating}</Text></View>):<Text style={text}>{scoreError||'Nog geen rangduels gespeeld.'}</Text>}</>:section==='scores'?<><Text style={[text,{fontSize:17,fontWeight:'800'}]}>{nextGame.name} · {LEAGUES[league].name}</Text>{view.arcadeScores?.length?view.arcadeScores.map((row,index)=><View key={index} style={s.listRow}><Text style={[text,{width:24,fontWeight:'800'}]}>{index+1}</Text><View style={{flex:1}}><Text style={[text,{fontWeight:row.me?'800':'600'}]}>{row.kind==='computer'?'Veldwachter':row.name}</Text><Text style={[text,{fontSize:11,color:'#bdd0c7'}]}>{row.kind==='computer'?'Veldwachter':row.kind==='personal'?'Jouw eerdere score':'Eerdere score'}</Text></View><Text style={[text,{fontSize:23,fontWeight:'800'}]}>{row.score}</Text></View>):<Text style={text}>{scoreError||'Nog geen eerdere scores.'}</Text>}</>:<ArcadeMedalsV3 view={view}/>}
   </ScrollView>:picker?<>
    <Text style={[text,{fontSize:20,textAlign:'center',fontWeight:'700',padding:12}]}>Jouw team · {selected.length}/3</Text>
@@ -121,6 +123,6 @@ export function ArcadeScreenV3({view,run,busy,close,active,backRef,onFocusChange
     <View style={{flexDirection:'row',gap:8}}>{([{id:'scores',icon:'profile',label:'Scores'},{id:'medals',icon:'gift',label:'Medailles'}] as const).map(item=><Pressable key={item.id} accessibilityRole="button" accessibilityLabel={item.label} onPress={()=>{setSection(item.id);if(item.id==='scores')void loadScores(true);}} style={{flex:1,minHeight:50,borderRadius:16,borderWidth:1,borderColor:'#bdd0c730',backgroundColor:'#10352fde',alignItems:'center',justifyContent:'center',gap:2}}><ArcadeIcon name={item.icon} size={27}/><Text style={[text,{fontSize:12,fontWeight:'700'}]}>{item.label}</Text></Pressable>)}</View>
    </View>
   </ScrollView><View testID="arcade-play-dock" style={{padding:12,paddingTop:8,backgroundColor:'#071E1BF5',borderTopWidth:1,borderColor:'#BFF3EC33'}}>{playAction}</View></View>}
- </ImageBackground>;
+ </View>;
 }
 const s=StyleSheet.create({circle:{width:48,height:48,borderRadius:24,backgroundColor:'#082824e8',borderWidth:1,borderColor:'#99c8b5a0',alignItems:'center',justifyContent:'center'},pill:{borderRadius:24,paddingVertical:5,paddingHorizontal:13,backgroundColor:'#082824ed',borderWidth:1,borderColor:'#79b59e80',flexDirection:'row',gap:6,alignItems:'center',justifyContent:'center'},listRow:{minHeight:64,padding:12,borderRadius:16,borderWidth:1,borderColor:'#bdd0c730',backgroundColor:'#10352fde',flexDirection:'row',gap:10,alignItems:'center'}});

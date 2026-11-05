@@ -61,7 +61,7 @@ import {Scene} from './artV2';
 
 import {OnboardingV2} from './OnboardingV2';
 import {LoadingScreenV2} from './LoadingScreenV2';
-import {AdventureSyncBannerV2,syncReport,type SyncReport} from './AdventureSyncBannerV2';
+
 
 import {isNewerV2} from './stateV2';
 
@@ -151,8 +151,7 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
   // The screen was a moment behind: fetch the newest state and send the same action once more.
   conflict.current=false;try{const next=await refreshV2();if(latest.current?.player.uid===next.player.uid)accept(next);}catch{return false;}const fresh=latest.current;if(!fresh||locked.current)return false;return perform({type,...params,commandId:newId(),expectedRevision:fresh.player.revision},onError);}
 
- const syncBefore=useRef<GameViewV2|null>(null),[syncShown,setSyncShown]=useState<SyncReport|null>(null);
- useAdventureSyncV2(view?.player.uid,run,()=>!locked.current&&!pending&&!changingAccount&&(!latest.current?.goBattle||latest.current.goBattle.phase==='finished')&&!latest.current?.player.go?.queue,done=>{if(!done){syncBefore.current=latest.current;return;}setTimeout(()=>{const r=syncReport(syncBefore.current,latest.current);if(r&&(r.catches||r.chests||r.candy))setSyncShown(r);},400);});
+ useAdventureSyncV2(view?.player.uid,run,()=>!locked.current&&!pending&&!changingAccount&&(!latest.current?.goBattle||latest.current.goBattle.phase==='finished')&&!latest.current?.player.go?.queue);
  useBackgroundAutoCatchV2(view,message=>reportError(message,'command','notice'),changingAccount,tab==='Safari'&&!overlay);
 
  useEffect(()=>{startMusic(tab==='Ranked'?'battle':'field');},[tab]);
@@ -228,7 +227,7 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
    </View>}
    {shellVisible&&<View style={{position:'absolute',left:0,right:0,bottom:0,zIndex:25}}><MainTabsV3 active={shellTabs[tab]} onChange={next=>changeTab(gameTabs[next])}/></View>}
    <RewardFeedbackV2 batch={rewards} visible={!inGame&&!mapFocus&&!arcadeFocus} onDismiss={dismissReward}/>
-   <UpdateGateV2 connected={!!view}/><AwaySummaryV2 view={view} visible={!!p?.onboarded&&!overlay&&!inGame&&!busy&&!mapFocus&&!arcadeFocus} open={open} run={run} busy={busy}/><AdventureSyncBannerV2 report={syncShown} onClose={()=>setSyncShown(null)}/><AdventureSyncPromptV2 uid={p?.uid} onboarded={!!p?.onboarded} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run}/>
+   <UpdateGateV2 connected={!!view}/><AwaySummaryV2 view={view} visible={!!p?.onboarded&&!overlay&&!inGame&&!mapFocus&&!arcadeFocus} open={open} run={run} busy={busy}/><AdventureSyncPromptV2 uid={p?.uid} onboarded={!!p?.onboarded} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run}/>
   </View></SafeAreaView></View>
  </InfoProvider></TextScale.Provider></MotionPrefs.Provider></GoBackProvider>;
 }

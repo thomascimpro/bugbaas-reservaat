@@ -1,5 +1,5 @@
 import type {PlayerV2,Specimen} from './typesV2';
-import {appraisal,family,stats} from './goV2';
+import {appraisal,family,stats,movePool,FAST,CHARGED} from './goV2';
 import {bugRarity} from './rarityDisplayV2';
 
 /** Select only; the existing protected server transfer and confirmation still decide deletion. */
@@ -33,3 +33,20 @@ export function transferSelectionV2(p:PlayerV2,options:TransferOptionsV2=DEFAULT
 }
 /** Nectar per family for a transfer: +1 per bug (transferGo in game/goV2.ts). */
 export function transferNectarV2(bugs:readonly Specimen[]){const out=new Map<string,number>();for(const s of bugs)out.set(family(s.species),(out.get(family(s.species))??0)+1);return [...out.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));}
+
+/** Return-screen cleanup: keep useful current fighters, breeding/build potential and investments. */
+export function smartTransferSelectionV2(p:PlayerV2,pool:readonly Specimen[]=p.specimens){
+ if(!pool.length)return [];
+ const all=p.specimens.filter(s=>s.go),keep=new Set<string>(),rated=all.map(s=>({s,st:stats(s),iv:s.go!.iv.reduce((n,v)=>n+v,0),types:movePool(s.species).types})),top=Math.max(0,...rated.map(r=>r.st.cp));
+ for(const r of rated){const g=r.s.go!;if(lockedBugV2(p,r.s)||g.item||g.charged.length>1||appraisal(r.s)>=3||r.st.cp>=top*.8||(g.iv[0]<=3&&g.iv[1]>=12&&g.iv[2]>=12))keep.add(r.s.id);}
+ const families=new Map<string,typeof rated>();for(const r of rated){const f=family(r.s.species);families.set(f,[...(families.get(f)??[]),r]);}
+ for(const group of families.values()){const best=[...group].sort((a,b)=>b.iv-a.iv||b.st.cp-a.st.cp||a.s.id.localeCompare(b.s.id))[0];if(best.iv>=30)keep.add(best.s.id);}
+ const types=new Set(rated.flatMap(r=>r.types));
+ for(const type of types)for(const cap of [1500,2500,Infinity]){
+  const group=rated.filter(r=>r.st.cp<=cap&&r.types.includes(type));
+  const bulk=[...group].sort((a,b)=>b.st.cp-a.st.cp||b.iv-a.iv||a.s.id.localeCompare(b.s.id))[0];if(bulk)keep.add(bulk.s.id);
+  const power=(r:typeof rated[number])=>r.st.attack*(FAST[r.s.go!.fast].type===type?FAST[r.s.go!.fast].power/(FAST[r.s.go!.fast].turns*.5):0)+r.st.attack*Math.max(0,...r.s.go!.charged.filter(m=>CHARGED[m].type===type).map(m=>CHARGED[m].power/CHARGED[m].energy));
+  const attack=[...group].sort((a,b)=>power(b)-power(a)||b.st.cp-a.st.cp||a.s.id.localeCompare(b.s.id))[0];if(attack)keep.add(attack.s.id);
+ }
+ return pool.filter(s=>s.go&&!keep.has(s.id)&&!lockedBugV2(p,s)).sort((a,b)=>score(a)-score(b)||a.id.localeCompare(b.id));
+}

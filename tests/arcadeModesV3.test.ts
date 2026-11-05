@@ -7,7 +7,7 @@ import {freshV2} from '../game/safariV2';
 import {ensureGo,rollGoBug,family} from '../game/goV2';
 import {ensureField} from '../game/fieldV2';
 import type {ArcadeTicket} from '../game/arcade/tapDuel';
-import {ARCADE_GAMES,replayArcade} from '../game/arcade/games';
+import {ARCADE_GAMES,replayArcade,gameRules} from '../game/arcade/games';
 import {arcadeRunKey} from '../server/arcadeServiceV3';
 import {playOriginalTap,playOriginalNest} from './originalArcadeDriver';
 
@@ -30,7 +30,7 @@ async function fixture(uids=[ALICE,BOB]){
 test('practice allows every game but only saves a private practice best, without resources, medals or rotation changes',async()=>{
  const f=await fixture();try{
   const before=(await f.state()).player;assert.equal((await f.state()).arcadeNext!.game,'tap_duel');
-  for(const game of ARCADE_GAMES){const t=await f.start(ALICE,'arcadePracticeStart',{game:game.id});assert.equal(t.mode,'practice');assert.equal(t.game,game.id);assert.equal(t.rules,game.id+'-2');await f.send(ALICE,'arcadeAbandon',{run:t.id});}
+  for(const game of ARCADE_GAMES){const t=await f.start(ALICE,'arcadePracticeStart',{game:game.id});assert.equal(t.mode,'practice');assert.equal(t.game,game.id);assert.equal(t.rules,gameRules(game.id));await f.send(ALICE,'arcadeAbandon',{run:t.id});}
   const ticket=await f.start(ALICE,'arcadePracticeStart',{game:'nest_defense'}),played=playOriginalNest(ticket);assert.equal(replayArcade(ticket,played.inputs).qualified,true);
   f.clock.now+=played.state.tick*20;const saved=await f.send(ALICE,'arcadeSubmit',{run:ticket.id,inputs:played.inputs,format:'original-2'}),receipt=saved.player.arcade!.last!;
   assert.equal(receipt.practice,true);assert.equal(receipt.score,played.state.score);assert.equal(receipt.qualified,true);assert.equal(receipt.personalBest,true);assert.equal(receipt.dust,0);assert.equal(receipt.xp,0);assert.equal(receipt.ranked,undefined);

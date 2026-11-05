@@ -1,0 +1,9 @@
+{
+  "sourceProject": "CimPro BugBaas-3.0",
+  "sourceDirectory": "assets/audio",
+  "provenance": "Reused from the user's existing BugBaas game; no new third-party or CC0 claim.",
+  "files": [
+    {"file":"arcade_tap.wav","sha256":"93cc11ad0f0740bb217618b38c38927097b9a0bb4e78a009e495244dd1f275c9"},
+    {"file":"bug_catch.wav","sha256":"bc10dd00044c3f7c0d9d9a2d719c306eabf09ce1b9fd8c57d489cdeee4f5ff16"}
+  ]
+}

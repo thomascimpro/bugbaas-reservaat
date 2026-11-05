@@ -16,7 +16,7 @@ import {OriginalArcadeFieldV3} from './original/OriginalArcadeFieldV3';
 
 const fx=(type:string,frame:number)=>type==='fire'?['fx','fire-'+(frame+1)]:type==='grass'?['fx','leaf-'+(frame+1)]:type==='flying'?['fx','air-'+(frame+1)]:[['water','bug','poison','normal'].includes(type)?'fx-extra':'fx-last',type+'-'+['anticipation','strike','impact','fade'][frame]];
 export type ArcadeFieldProps={ticket:ArcadeTicket;onComplete:(inputs:ArcadeTap[],state:ArcadeState)=>void;onHUD:(state:Pick<ArcadeState,'tick'|'score'|'durationTicks'>)=>void;reducedMotion?:boolean};
-export function ArcadeFieldV3(props:ArcadeFieldProps){return isOriginalRules(props.ticket)?<OriginalArcadeFieldV3 key={props.ticket.id} {...props}/>:<LegacyArcadeFieldV3 key={props.ticket.id} {...props}/>;}
+export const ArcadeFieldV3=React.memo(function ArcadeFieldV3(props:ArcadeFieldProps){return isOriginalRules(props.ticket)?<OriginalArcadeFieldV3 key={props.ticket.id} {...props}/>:<LegacyArcadeFieldV3 key={props.ticket.id} {...props}/>;});
 function LegacyArcadeFieldV3({ticket,onComplete,onHUD,reducedMotion=false}:ArcadeFieldProps){
  const [initial]=useState(()=>createArcadeState(ticket)),sim=useRef(initial),inputs=useRef<ArcadeTap[]>([]),[,draw]=useState(0),[box,setBox]=useState({width:360,height:640});
  const complete=useRef(onComplete),hud=useRef(onHUD);complete.current=onComplete;hud.current=onHUD;

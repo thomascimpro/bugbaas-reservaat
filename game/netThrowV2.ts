@@ -3,8 +3,34 @@ import {bugPose} from './netMotionV2';
 import type {NetMotion} from './netMotionV2';
 
 /** `start`: ms between the encounter appearing on screen and the finger going down; it places the moving bug. */
-export type NetFlickTrace={kind:'flick'|'sweep';points:NetPoint[];start?:number};
+export type NetFlickTrace={kind:'flick'|'sweep'|'swing';points:NetPoint[];start?:number};
 export const NET_FLIGHT_MS=400;
+export const NET_SWING_FLIGHT_MS=520;
+/** A real circle near the hand charges spin; a diagonal bend is not a spin. */
+export function netSpin(points:readonly NetPoint[]){
+ const hand=points.filter(p=>p.y>=.75);let best={turns:0,direction:1,ready:false};
+ // Keep a completed wind-up when the final upward swipe changes the bounding box.
+ for(let n=7;n<=hand.length;n++){const result=spinAroundHand(hand.slice(0,n));if(result.turns>best.turns)best=result;}
+ return best;
+}
+function spinAroundHand(hand:readonly NetPoint[]){
+ const xs=hand.map(p=>p.x),ys=hand.map(p=>p.y),w=Math.max(...xs)-Math.min(...xs),h=Math.max(...ys)-Math.min(...ys);
+ if(w<.07||h<.045)return {turns:0,direction:1,ready:false};
+ const cx=(Math.max(...xs)+Math.min(...xs))/2,cy=(Math.max(...ys)+Math.min(...ys))/2;let angle=0,last:number|undefined;
+ for(const p of hand){const x=(p.x-cx)/w,y=(p.y-cy)/h;if(Math.hypot(x,y)<.22)continue;const a=Math.atan2(y,x);if(last!==undefined){let d=a-last;while(d>Math.PI)d-=Math.PI*2;while(d< -Math.PI)d+=Math.PI*2;angle+=d;}last=a;}
+ const turns=Math.abs(angle)/(2*Math.PI);return {turns,direction:angle<0?-1:1,ready:turns>=.8};
+}
+/** New throws compress release speed: a short fast swipe cannot launch off-screen. Legacy tickets retain their old projection. */
+export function projectNetSwing(points:readonly NetPoint[]){
+ const first=points[0],last=points.at(-1)!,v=projectNetFlick(points),travel=first.y-last.y,spin=netSpin(points);
+ return {x:last.x+v.vx*.07,y:Math.max(.12,Math.min(1.05,.42+(.28-travel)*.75+Math.max(-2,Math.min(2,1.6+v.vy))*.025)),curved:spin.ready,vx:v.vx,vy:v.vy};
+}
+export function validNetSwing(points:readonly NetPoint[]){if(points.length<2)return false;const first=points[0],last=points.at(-1)!,v=projectNetFlick(points);return last.t>=80&&last.t<=5000&&first.y-last.y>=.12&&last.y>=.52&&v.vy<=-.55&&-v.vy>=Math.abs(v.vx)*.4;}
+export function netSwingLanding(points:readonly NetPoint[],motion?:NetMotion,bait:Bait|null=null){const p=projectNetSwing(points);return {...p,x:p.x+(motion?.wind??0)*(bait==='dew'?.5:1)*(p.curved?.35:1)};}
+export function netSwingGrade(points:readonly NetPoint[],bait:Bait|null,motion?:NetMotion,seed='',start=0){
+ const p=netSwingLanding(points,motion,bait),duration=points.at(-1)!.t,radius=netSweepRadius(duration,bait),bug=bugPose(motion,seed,start+duration+NET_SWING_FLIGHT_MS,bait),aim=Math.hypot(p.x-bug.x,p.y-bug.y)/(bait==='dew'?1.25:1),dodged=bug.dodge&&aim<=.26;
+ const grade:Grade=aim>.26||dodged?'miss':aim>radius?'hit':radius<=.075?'perfect':radius<=.125?'great':'nice';return {grade,curved:grade!=='miss'&&p.curved,duration,dodged,start};
+}
 /** Hold to shrink the net opening; release timing and landing accuracy both count. */
 export function netSweepRadius(ms:number,bait:Bait|null){return .19-.14*((Math.max(0,ms)%(bait==='dew'?2600:1800))/(bait==='dew'?2600:1800));}
 /** Where the net lands after wind: a curve throw cuts through the wind. */

@@ -1,6 +1,6 @@
 # BugBaas — één ontwerp, één uitvoering
 
-**Codex beheert de overdracht sinds 4 november.** De geteste release staat beschreven in [0.1.32](../releases/0.1.32.md); actuele grenzen en resterende polish staan in `progress.json` en `../POGO_WERKREGISTER.md`. De oorspronkelijke overdracht [CLAUDE_OVERDRACHT_AAN_CODEX.md](CLAUDE_OVERDRACHT_AAN_CODEX.md) en inbox blijven als historie bewaard. Claude schrijft momenteel niet; er is geen wacht-op-Claude-blokkade voor de ingebouwde assets.
+**Codex beheert de overdracht sinds 4 november.** De geteste release staat beschreven in [0.1.33](../releases/0.1.33.md); actuele grenzen en resterende polish staan in `progress.json` en `../POGO_WERKREGISTER.md`. De oorspronkelijke overdracht [CLAUDE_OVERDRACHT_AAN_CODEX.md](CLAUDE_OVERDRACHT_AAN_CODEX.md) en inbox blijven als historie bewaard. Claude schrijft momenteel niet; er is geen wacht-op-Claude-blokkade voor de ingebouwde assets.
 
 Leidend: [PLAN.md](PLAN.md). Dit voegt de TO/FO-previews, de bestaande kaartgame, de nieuwe Arcade en de animaties samen. De gebruiker wil geen losse oude kaartapp naast een nieuwe spelapp.
 

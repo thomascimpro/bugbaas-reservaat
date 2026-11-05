@@ -36,7 +36,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
  const affordable=(n:number)=>{const c=powerCost(go.level,n);return !!c&&g.dust>=c.dust&&candy>=c.candy&&xl>=c.xl;},maxAffordable=(()=>{let n=0;for(let i=1;i<=maxPowerSteps;i++)if(affordable(i))n=i;return n;})(),one=powerCost(go.level,1);
  const canPower=maxAffordable>0,canEvolve=!!evo&&candy>=evo.candy,deployed=!!g.gyms?.deployed.some(d=>d.specimen===s.id),second=secondCost(s.species),maxStats=stats(s,{...go,level:50});
  const trimmed=nickname.trim(),validNickname=Array.from(trimmed).length<=18&&/^[\p{L}\p{N} _'-]*$/u.test(trimmed);
- const estimate=300+(canEvolve?68:0)+(renaming?70:0),photoH=Math.round(Math.max(240,Math.min(box.h*.56,box.h-estimate))),artW=Math.min(300,box.w-96);
+ const estimate=380+(evo?68:0)+(renaming?70:0),photoH=Math.round(Math.max(240,Math.min(box.h*.56,box.h-estimate))),artW=Math.min(300,box.w-96);
 
  useGoBack(active&&(!!sheet||renaming||powerOpen),()=>{if(powerOpen)setPowerOpen(false);else if(sheet)setSheet(null);else setRenaming(false);return true;},20);
 
@@ -53,7 +53,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
  const choices:{id:Section;icon:GameIconName;label:string}[]=[{id:'moves',icon:'attack',label:'Aanvallen'},{id:'items',icon:'bag',label:'Item'},{id:'iv',icon:'info',label:'Beoordelen'},...(evo?[{id:'evolve' as const,icon:'power' as const,label:'Evolutie'}]:[])];
 
  return <View testID={'go-detail-'+s.id} onLayout={e=>{const {width,height}=e.nativeEvent.layout;if(Math.abs(height-box.h)>1||Math.abs(width-box.w)>1)setBox({w:width,h:height});}} style={{flex:1,backgroundColor:PO.surface}}>
-  <ScrollView style={{flex:1}} contentContainerStyle={{flexGrow:1}}>
+  <ScrollView style={{flex:1,marginBottom:80}} contentContainerStyle={{flexGrow:1}}>
    <View style={{height:photoH,overflow:'hidden',backgroundColor:'#5E8C4A'}}>
     <Scene index={0}/>
     {active&&s.shiny&&<View pointerEvents="none" style={{position:'absolute',inset:0,opacity:.5}}><ShinyBackdropV2/></View>}
@@ -71,7 +71,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
     {edge({right:14,bottom:42},<PoCircle size={44} label={mode==='2D'?'Bekijk 3D':'Bekijk 2D'} onPress={()=>setMode(mode==='2D'?'3D':'2D')}><Text style={t(14,'800',PO.tealText)}>{mode==='2D'?'3D':'2D'}</Text></PoCircle>)}
    </View>
 
-   <PoSheet style={{marginTop:-28,flexGrow:1,alignItems:'center',paddingBottom:96}}>
+   <PoSheet style={{marginTop:-28,flexGrow:1,alignItems:'center',paddingBottom:20}}>
     {renaming?<View style={{alignSelf:'stretch',gap:8}}>
      <TextInput placeholderTextColor={PO.muted} selectionColor={PO.teal} accessibilityLabel="Bijnaam" placeholder={name} autoCapitalize="words" autoCorrect={false} autoFocus value={nickname} editable={!busy} onChangeText={setNickname} onSubmitEditing={()=>{if(!busy&&trimmed!==(s.nickname??''))saveNickname();}} style={{fontFamily:font,height:50,borderRadius:25,paddingHorizontal:18,fontSize:18,color:PO.text,backgroundColor:PO.bg,borderWidth:2,borderColor:validNickname?PO.rim:PO.raid,textAlign:'center'}}/>
      <Text style={[t(12,'600',validNickname?PO.muted:PO.raid),{textAlign:'center'}]}>{validNickname?'Max. 18 tekens · leeg = soortnaam':'Max. 18 letters, cijfers, spaties, _ - of \''}</Text>
@@ -85,6 +85,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
      <View style={{flexDirection:'row',alignItems:'center',gap:8}}><CandyIconV2 family={key} size={34}/><Text style={t(20)}>{candy}</Text></View>
      {xl>0&&<View style={{flexDirection:'row',alignItems:'center',gap:8}}><CandyIconV2 family={key} size={30} xl/><Text style={t(20)}>{xl}</Text></View>}
     </View>
+    <View testID="bug-quick-actions" style={{alignSelf:'stretch',flexDirection:'row',gap:8}}>{([{id:'iv',icon:'info',label:'Beoordeel'},{id:'moves',icon:'attack',label:'Aanvallen'},{id:'items',icon:'bag',label:'Item'}] as const).map(c=><Pressable key={c.id} accessibilityRole="button" accessibilityLabel={c.id==='moves'?'Aanvallen en TM':c.label} onPress={()=>setSheet(c.id)} style={{flex:1,minHeight:64,alignItems:'center',justifyContent:'center',gap:4,borderRadius:16,borderWidth:1,borderColor:PO.rim,backgroundColor:PO.bg}}><Glyph name={c.icon} size={25}/><Text style={t(12)}>{c.label}</Text></Pressable>)}</View>
     <View testID="power-block" style={{alignSelf:'stretch',gap:8}}>
      <PoPill height={62} icon="power" label={one?'Sterker':'Max!'} accessibilityLabel="Sterker maken" disabled={busy||!canPower} onPress={power} right={one?<>
       <Glyph name="nectar" size={20}/><Text style={t(14,'800',PO.white)}>{short(one.dust)}</Text>
@@ -93,7 +94,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
      </>:undefined}/>
      {maxAffordable>1&&<Text style={[t(13,'600',PO.muted),{textAlign:'center'}]}>{'Tot '+maxAffordable+'× in één keer'}</Text>}
     </View>
-    {canEvolve&&<View style={{alignSelf:'stretch'}}><PoPill variant="ghost" height={54} icon="power" label="Evolueer" disabled={busy} onPress={()=>setSheet('evolve')} right={<><CandyIconV2 family={key} size={20}/><Text style={t(14,'800',PO.tealText)}>{evo!.candy}</Text></>}/></View>}
+    {evo&&<View style={{alignSelf:'stretch'}}><PoPill variant="ghost" height={54} icon="power" label="Evolueer" disabled={busy} onPress={()=>setSheet('evolve')} right={<><CandyIconV2 family={key} size={20}/><Text style={t(14,'800',canEvolve?PO.tealText:PO.muted)}>{candy+' / '+evo.candy}</Text></>}/></View>}
    </PoSheet>
   </ScrollView>
   <Modal transparent visible={active&&powerOpen} animationType="slide" onRequestClose={()=>setPowerOpen(false)}>

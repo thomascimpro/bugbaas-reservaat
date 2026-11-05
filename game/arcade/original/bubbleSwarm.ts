@@ -13,6 +13,7 @@ export type Point={x:number;y:number};
 type Shot={bubbleKind:BubbleKind};
 export type OriginalBubbleProjectile={path:Point[];shot:Shot;targetCell:{col:number;row:number};durationMs:number;startedAt:number;resolveAt:number};
 export type OriginalBubbleState=OriginalState&{
+ solid?:boolean;
  game:'bubble_swarm';board:GridBubble[];gridPhase:0|1;currentShot:Shot;nextShot:Shot;aim:Point;projectile:OriginalBubbleProjectile|null;
  shotCount:number;nextId:number;combo:number;maxCombo:number;misses:number;popped:number;level:number;nextPressureAt:number;freezeUntil:number;
  pressureAccumulator:number;simulatedPressureMs:number;impact:Point|null;help:{pressureMultiplier:number;freezeMultiplier:number;guidePct:number};
@@ -132,6 +133,28 @@ function pathToTarget(aim: Point, targetCell: { col: number; row: number }, phas
   return [...traced.slice(0, -1), target];
 }
 
+/** New rules: stop at the first sphere along the real ray, including wall banks. */
+export function solidBubblePlan(board:GridBubble[],aim:Point,phase:0|1){
+ const traced=traceShotPath(shooter,aim),occupied=new Set(board.map(cellKey)),radius=11.2,ys=600/360;
+ let hit:GridBubble|undefined,impact=traced.at(-1)!,prefix:Point[]=[traced[0]];
+ for(let i=1;i<traced.length;i++){
+  const a=traced[i-1],b=traced[i],dx=b.x-a.x,dy=(b.y-a.y)*ys,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len;let nearest=len+1;
+  for(const bubble of board){const c=gridPoint(bubble.row,bubble.col,phase),cx=c.x-a.x,cy=(c.y-a.y)*ys,along=cx*ux+cy*uy,perp=cx*cx+cy*cy-along*along;if(perp>radius*radius)continue;const t=along-Math.sqrt(Math.max(0,radius*radius-perp));if(t>=0&&t<=len&&t<nearest){nearest=t;hit=bubble;}}
+  if(hit){impact={x:a.x+ux*nearest,y:a.y+uy*nearest/ys};break;}prefix.push(b);
+ }
+ const candidates=hit?neighborCells(hit.row,hit.col,phase):Array.from({length:columns},(_,col)=>({row:0,col}));
+ const last=prefix.at(-1)!,center=hit?gridPoint(hit.row,hit.col,phase):null;
+ const clear=(cell:{row:number;col:number})=>{
+  if(cell.row<0||cell.row>=dangerRow||cell.col<0||cell.col>=columns||occupied.has(cellKey(cell)))return false;
+  const end=gridPoint(cell.row,cell.col,phase);
+  if(center&&(end.x-center.x)*(impact.x-center.x)+(end.y-center.y)*(impact.y-center.y)*ys*ys<0)return false;
+  const dx=end.x-last.x,dy=(end.y-last.y)*ys,l2=dx*dx+dy*dy;
+  return board.every(b=>{const c=gridPoint(b.row,b.col,phase),x=c.x-last.x,y=(c.y-last.y)*ys,t=Math.max(0,Math.min(1,(x*dx+y*dy)/Math.max(.001,l2)));return Math.hypot(x-dx*t,y-dy*t)>=radius-.25;});
+ };
+ const cell=candidates.filter(clear).sort((a,b)=>{const x=gridPoint(a.row,a.col,phase),y=gridPoint(b.row,b.col,phase);return Math.hypot(x.x-impact.x,(x.y-impact.y)*ys)-Math.hypot(y.x-impact.x,(y.y-impact.y)*ys)||a.col-b.col;})[0];
+ return cell?{targetCell:cell,path:[...prefix,gridPoint(cell.row,cell.col,phase)]}:null;
+}
+
 function connectedCluster(board: GridBubble[], start: GridBubble, include: (bubble: GridBubble) => boolean, phase: 0 | 1) {
   const byCell = new Map(board.map((bubble) => [cellKey(bubble), bubble]));
   const visited = new Set<string>();
@@ -219,7 +242,7 @@ function clamp(value: number, min: number, max: number) {
 function create(ticket:ArcadeTicket):OriginalBubbleState{
  const p=originalSquadPower(ticket.squad,ticket.league),seed=String(ticket.seed),board=buildInitialBoard(seed,1),active=activeKindsForBoard(board,levelKinds(1));
  const help={pressureMultiplier:1+.14*p.defense,freezeMultiplier:1+.14*p.hp,guidePct:Math.round(14*p.attack)};
- return {game:'bubble_swarm',elapsedMs:0,score:0,finished:false,reason:null,hearts:1,board,gridPhase:0,currentShot:nextShotKind(seed,0,active),nextShot:nextShotKind(seed,1,active),aim:{x:50,y:32},projectile:null,shotCount:0,nextId:100,combo:0,maxCombo:0,misses:0,popped:0,level:1,nextPressureAt:Math.round(pressureDelay(0)*help.pressureMultiplier),freezeUntil:0,pressureAccumulator:0,simulatedPressureMs:0,impact:null,help};
+ return {game:'bubble_swarm',solid:ticket.rules==='bubble_swarm-3',elapsedMs:0,score:0,finished:false,reason:null,hearts:1,board,gridPhase:0,currentShot:nextShotKind(seed,0,active),nextShot:nextShotKind(seed,1,active),aim:{x:50,y:32},projectile:null,shotCount:0,nextId:100,combo:0,maxCombo:0,misses:0,popped:0,level:1,nextPressureAt:Math.round(pressureDelay(0)*help.pressureMultiplier),freezeUntil:0,pressureAccumulator:0,simulatedPressureMs:0,impact:null,help};
 }
 function finish(s:OriginalBubbleState,reason='lower_bound'){if(s.finished)return;s.score=Math.max(1,Math.round(s.score+s.popped*4+s.maxCombo*30));s.finished=true;s.reason=reason;}
 function pushPressureRow(s:OriginalBubbleState,ticket:ArcadeTicket){
@@ -259,11 +282,11 @@ function input(s:OriginalBubbleState,_ticket:ArcadeTicket,i:OriginalInput){
  if(s.finished||s.projectile||(i.control??'field')!=='field')return false;const action=i.action??'down';
  if(action!=='up'){const aim={x:clamp(i.x/10,5,95),y:clamp(i.y/10,7,80)},changed=aim.x!==s.aim.x||aim.y!==s.aim.y;s.aim=aim;return changed;}
  // Original release shoots the last drag aim; it does not retarget from the release position.
- const targetCell=selectTargetCell(s.board,s.aim,s.gridPhase);if(!targetCell)return false;const target=gridPoint(targetCell.row,targetCell.col,s.gridPhase),traced=traceShotPath(shooter,s.aim,target.y),path=[...traced.slice(0,-1),target],flight=Math.max(320,Math.round(pathLength(path)*6.5));
+ const solid=s.solid?solidBubblePlan(s.board,s.aim,s.gridPhase):null;if(s.solid&&!solid)return false;const targetCell=solid?.targetCell??selectTargetCell(s.board,s.aim,s.gridPhase);if(!targetCell)return false;const target=gridPoint(targetCell.row,targetCell.col,s.gridPhase),traced=traceShotPath(shooter,s.aim,target.y),path=solid?.path??[...traced.slice(0,-1),target],flight=Math.max(320,Math.round(pathLength(path)*6.5));
  s.projectile={path,shot:{...s.currentShot},targetCell,durationMs:flight,startedAt:s.elapsedMs,resolveAt:s.elapsedMs+Math.ceil(flight/20)*20+120};return true;
 }
 export const bubbleGridPoint=gridPoint;
 export const bubblePathPosition=pointAtPathDistance;
 export const bubbleMissLimit=missLimit;
-export const bubblePreviewPath=(s:OriginalBubbleState)=>{const target=selectTargetCell(s.board,s.aim,s.gridPhase);return target?pathToTarget(s.aim,target,s.gridPhase):traceShotPath(shooter,s.aim);};
+export const bubblePreviewPath=(s:OriginalBubbleState)=>{if(s.solid)return solidBubblePlan(s.board,s.aim,s.gridPhase)?.path??[shooter];const target=selectTargetCell(s.board,s.aim,s.gridPhase);return target?pathToTarget(s.aim,target,s.gridPhase):traceShotPath(shooter,s.aim);};
 export const originalBubbleSwarm:OriginalPort<OriginalBubbleState>&{controls:readonly string[]}={game:'bubble_swarm',name:'Bubbelzwerm',help:'Sleep om te richten, laat los. Maak drie gelijke bugs; bom en ijs helpen tegen de zwerm.',durationMs,controls:BUBBLE_CONTROLS,create,step,input};

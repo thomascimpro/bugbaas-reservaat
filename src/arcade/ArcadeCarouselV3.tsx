@@ -3,6 +3,7 @@ import {ImageBackground,PanResponder,Platform,Pressable,ScrollView,Text,View} fr
 import type {ImageSourcePropType} from 'react-native';
 import {ARCADE_GAMES,type ArcadeGameId} from '../../game/arcade/games';
 import {font} from '../uiV2';
+import {ArcadePreviewV3} from './ArcadePreviewV3';
 import {ArcadeIcon} from './ArcadeArtV3';
 
 export const gameBackdrops:Record<ArcadeGameId,ImageSourcePropType>={
@@ -14,7 +15,7 @@ export const gameBackdrops:Record<ArcadeGameId,ImageSourcePropType>={
  bug_tower:require('../../assets/v3/original/tower/bug-tower-background.jpg'),
  bubble_swarm:require('../../assets/v3/original/bubble/bubble-swarm-background.jpg'),
 };
-const hints:Record<ArcadeGameId,string>={tap_duel:'Tik bugs · maak combo’s',nest_defense:'Bouw torens · bescherm het nest',web_runner:'Wissel baan · spring over webben',bug_glide:'Tik om te vliegen · ontwijk',butterfly_catch:'Volg de bug · zwaai je net',bug_tower:'Vasthouden · loslaten · landen',bubble_swarm:'Richt · maak drie dezelfde'};
+export const gameHints:Record<ArcadeGameId,string>={tap_duel:'Tik bugs · maak combo’s',nest_defense:'Bouw torens · bescherm het nest',web_runner:'Wissel baan · spring over webben',bug_glide:'Tik om te vliegen · ontwijk',butterfly_catch:'Volg de bug · zwaai je net',bug_tower:'Vasthouden · loslaten · landen',bubble_swarm:'Richt · maak drie dezelfde'};
 export function ArcadeCarouselV3({game,onChange,compact,reduced}:{game:ArcadeGameId;onChange:(id:ArcadeGameId)=>void;compact:boolean;reduced:boolean}){
  const scroll=useRef<ScrollView>(null),[width,setWidth]=useState(0),index=ARCADE_GAMES.findIndex(g=>g.id===game),dragging=useRef(false),webDragging=useRef(false);
  useEffect(()=>{if(width&&!dragging.current)scroll.current?.scrollTo({x:index*width,animated:!reduced});},[index,width,reduced]);
@@ -31,7 +32,7 @@ export function ArcadeCarouselV3({game,onChange,compact,reduced}:{game:ArcadeGam
   {!!width&&<ScrollView ref={scroll} horizontal pagingEnabled bounces={false} showsHorizontalScrollIndicator={false} onScrollBeginDrag={()=>{dragging.current=true;}} onMomentumScrollEnd={e=>{if(webDragging.current||!dragging.current)return;dragging.current=false;onChange(ARCADE_GAMES[Math.max(0,Math.min(ARCADE_GAMES.length-1,Math.round(e.nativeEvent.contentOffset.x/width)))].id);}} scrollEventThrottle={32}>
    {ARCADE_GAMES.map((g,i)=><View key={g.id} testID={'arcade-card-'+g.id} accessibilityElementsHidden={i!==index} importantForAccessibility={i!==index?'no-hide-descendants':'auto'} aria-hidden={i!==index} style={{width,height:compact?140:260,paddingHorizontal:12,...(Platform.OS==='web'?{scrollSnapAlign:'start'} as any:{})}}>
     <ImageBackground source={gameBackdrops[g.id]} resizeMode="cover" imageStyle={{borderRadius:22}} style={{flex:1,borderRadius:22,overflow:'hidden',justifyContent:'flex-end',borderWidth:1,borderColor:'#BFF3EC47'}}>
-     <View style={{backgroundColor:'#071E1BE6',paddingHorizontal:30,paddingVertical:8,gap:3}}><Text numberOfLines={1} style={{fontFamily:font,fontSize:compact?22:28,fontWeight:'800',color:'#EAF6F2',textAlign:'center'}}>{g.name}</Text><Text numberOfLines={2} style={{fontFamily:font,fontSize:12,color:'#C1D8D1',textAlign:'center'}}>{hints[g.id]}</Text></View>
+     <ArcadePreviewV3 game={g.id} compact={compact}/><View style={{backgroundColor:'#071E1BE6',paddingHorizontal:30,paddingVertical:8,gap:3}}><Text numberOfLines={1} style={{fontFamily:font,fontSize:compact?22:28,fontWeight:'800',color:'#EAF6F2',textAlign:'center'}}>{g.name}</Text><Text numberOfLines={2} style={{fontFamily:font,fontSize:12,color:'#C1D8D1',textAlign:'center'}}>{gameHints[g.id]}</Text></View>
     </ImageBackground>
    </View>)}
   </ScrollView>}

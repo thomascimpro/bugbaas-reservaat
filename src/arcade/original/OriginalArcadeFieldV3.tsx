@@ -62,8 +62,8 @@ export function OriginalArcadeFieldV3({ticket,onComplete,onHUD,reducedMotion=fal
   const render=(now:number)=>{
    if(disposed||runtime.done)return;advance(now);
    if(state.finished){complete();return;}
-   if(state.tick-runtime.lastHUD>=5){runtime.lastHUD=state.tick;callbacks.current.onHUD({tick:state.tick,score:state.score,durationTicks:state.durationTicks});}
-   if(now-runtime.lastDraw>=1000/30){runtime.lastDraw=now;draw(n=>n+1);}
+   if(state.tick-runtime.lastHUD>=10){runtime.lastHUD=state.tick;callbacks.current.onHUD({tick:state.tick,score:state.score,durationTicks:state.durationTicks});}
+   if(now-runtime.lastDraw>=(reducedMotion?1000/30:1000/60)-1){runtime.lastDraw=now;draw(n=>n+1);}
    frame=requestAnimationFrame(render);
   };
   frame=requestAnimationFrame(render);return()=>{disposed=true;cancelAnimationFrame(frame);};

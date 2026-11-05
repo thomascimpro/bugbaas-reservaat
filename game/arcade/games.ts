@@ -18,7 +18,7 @@ export const ARCADE_GAMES:readonly {id:ArcadeGameId;name:string;durationSeconds:
  {id:'bubble_swarm',name:'Bubbelzwerm',durationSeconds:600,gesture:'aimRelease',help:originalPorts['bubble_swarm'].help,survival:true},
 ];
 export const legacyGameRules=(id:ArcadeGameId)=>id==='tap_duel'?'tap-1':id+'-1';
-export const gameRules=(id:ArcadeGameId)=>id+'-2';
+export const gameRules=(id:ArcadeGameId)=>id+(id==='bubble_swarm'?'-3':'-2');
 export const supportsArcadeRules=(ticket:ArcadeTicket)=>isOriginalRules(ticket)||ticket.rules===legacyGameRules(ticket.game??'tap_duel');
 export const LEGACY_DURATIONS:Record<ArcadeGameId,number>={tap_duel:45,web_runner:45,nest_defense:60,bug_glide:45,butterfly_catch:45,bug_tower:60,bubble_swarm:60};
 export type ArcadeEndReason='time'|'hearts'|'squad_defeated'|'board_clear'|'lower_bound'|'target_score'|'original_end'|'input_limit'|null;
