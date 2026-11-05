@@ -195,5 +195,28 @@
   "Renders 768x768 PNG met transparante achtergrond; omzetten naar webp bij inbouw.",
   "Kaartmodellen hebben vlakke kleuren (geen textures) en zijn gedecimeerd; nog verkleinen met gltf-transform voor inbouw (doel <150 KB).",
   "Nog niet ingebouwd in de app."
+ ],
+ "files": [
+  {
+   "file": "medal-brons.webp",
+   "source": "medal-brons.png",
+   "use": "Arcade medals; compact transparent runtime image",
+   "bytes": 13746,
+   "sha256": "28caf140e3ce230033aaf5336c4cdb2da6bbc1106177bdf5181e68ecd2db31be"
+  },
+  {
+   "file": "medal-zilver.webp",
+   "source": "medal-zilver.png",
+   "use": "Arcade medals; compact transparent runtime image",
+   "bytes": 13902,
+   "sha256": "64a5244a3ad1b88a9b0279597e8a5df5eb89f4fcc8fd95767a4fce085af9bcfd"
+  },
+  {
+   "file": "medal-goud.webp",
+   "source": "medal-goud.png",
+   "use": "Arcade medals; compact transparent runtime image",
+   "bytes": 14668,
+   "sha256": "acf675f173df47882e5238a7614c7e440fa63dd8ef9b87dd47511f0898e3ce0d"
+  }
  ]
 }

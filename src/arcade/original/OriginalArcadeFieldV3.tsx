@@ -1,5 +1,6 @@
 import React,{useEffect,useRef,useState} from 'react';
-import {Platform,View} from 'react-native';
+import {Image,Platform,StyleSheet,View} from 'react-native';
+import {gameBackdrops} from '../ArcadeCarouselV3';
 import {applyArcadeInput,ARCADE_GAMES,createArcadeState,stepArcadeState} from '../../../game/arcade/games';
 import type {ArcadeGameId} from '../../../game/arcade/games';
 import {FIELD,TICK_MS} from '../../../game/arcade/tapDuel';
@@ -68,7 +69,8 @@ export function OriginalArcadeFieldV3({ticket,onComplete,onHUD,reducedMotion=fal
   frame=requestAnimationFrame(render);return()=>{disposed=true;cancelAnimationFrame(frame);};
  },[ticket.id]);
  const scale=Math.max(.01,Math.min(box.width/FIELD.width,box.height/FIELD.height)),left=(box.width-FIELD.width*scale)/2,top=(box.height-FIELD.height*scale)/2,Scene=scenes[state.game];
- return <View testID="arcade-playfield" accessibilityLabel={ARCADE_GAMES.find(g=>g.id===state.game)?.help} onLayout={e=>{const {width,height}=e.nativeEvent.layout;if(width>0&&height>0)setBox({width,height});}} style={{flex:1,minHeight:0,minWidth:0,overflow:'hidden',...(Platform.OS==='web'?{touchAction:'none',userSelect:'none'} as any:{})}}>
+ return <View testID="arcade-playfield" accessibilityLabel={ARCADE_GAMES.find(g=>g.id===state.game)?.help} onLayout={e=>{const {width,height}=e.nativeEvent.layout;if(width>0&&height>0)setBox({width,height});}} style={{flex:1,minHeight:0,minWidth:0,overflow:'hidden',...(Platform.OS==='web'?{touchAction:'none',userSelect:'none',overflow:'clip'} as any:{})}}>
+  <View pointerEvents="none" style={StyleSheet.absoluteFillObject}><Image source={gameBackdrops[state.game]} resizeMode="cover" style={[StyleSheet.absoluteFillObject,{opacity:.32}]}/></View>
   <View style={{position:'absolute',left,top,width:FIELD.width*scale,height:FIELD.height*scale,overflow:'hidden'}}><Scene state={state.original!} ticket={ticket} scale={scale} reducedMotion={reducedMotion} onInput={input}/></View>
  </View>;
 }

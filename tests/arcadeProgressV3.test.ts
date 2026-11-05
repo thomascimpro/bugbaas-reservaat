@@ -38,7 +38,7 @@ test('stored next game survives reopen, abandon, invalid rounds and day rollover
   await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));let view=await service.state(p.uid);
   const send=async(type:string,params:Record<string,unknown>={})=>view=await service.command(p.uid,{type,...params,expectedRevision:view.player.revision,commandId:randomUUID()});
   assert.equal(view.arcadeNext!.game,'tap_duel');assert.equal((await service.state(p.uid)).arcadeNext!.game,'tap_duel');
-  await assert.rejects(send('arcadeStart',{ids:p.go!.team,league:'great',game:'bug_tower'}),/server bepaalt/);
+  await assert.rejects(send('arcadeStart',{ids:p.go!.team,league:'great',game:'unknown'}),/bekend spel/);
   for(let i=0;i<3;i++){await send('arcadeStart',{ids:p.go!.team,league:'great'});await send('arcadeAbandon',{run:view.arcadeTicket!.id});assert.equal(view.arcadeNext!.game,'tap_duel');}
   await send('arcadeStart',{ids:p.go!.team,league:'great'});clock.now+=45000;await send('arcadeSubmit',{run:view.arcadeTicket!.id,inputs:[]});assert.equal(view.player.arcade!.completed,0);assert.equal(view.arcadeNext!.game,'tap_duel');
   clock.now+=DAY;view=await service.state(p.uid);assert.equal(view.arcadeNext!.game,'tap_duel');

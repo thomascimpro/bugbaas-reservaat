@@ -40,6 +40,25 @@ test('practice allows every game but only saves a private practice best, without
  }finally{f.store.close();}
 });
 
+test('a chosen normal game has its own scores and real bounded rewards; old rotation and random ranked remain intact',async()=>{
+ const f=await fixture();try{
+  await f.store.run([pk(ALICE)],d=>{const p=d.get(pk(ALICE)) as ReturnType<typeof player>;p.buddy=p.specimens[0].id;d.set(pk(ALICE),p);});
+  const before=(await f.state()).player;
+  await assert.rejects(f.start(ALICE,'arcadeStart',{game:'unknown'}),/bekend spel/);
+  await assert.rejects(f.start(ALICE,'arcadeRankedStart',{game:'nest_defense'}));
+  assert.equal((await f.state()).player.arcade?.active,undefined);
+  const t=await f.start(ALICE,'arcadeStart',{game:'nest_defense'});assert.equal(t.game,'nest_defense');assert.equal(t.mode,'rotation');assert.equal(t.rules,'nest_defense-2');
+  const played=playOriginalNest(t);assert.equal(replayArcade(t,played.inputs).qualified,true);f.clock.now+=played.state.tick*20;
+  const saved=await f.send(ALICE,'arcadeSubmit',{run:t.id,inputs:played.inputs,format:'original-2'}),r=saved.player.arcade!.last!;
+  assert.equal(r.game,'nest_defense');assert.equal(r.practice,undefined);assert.equal(r.dust,175);assert.equal(r.xp,20);assert.equal(saved.player.go!.dust,before.go!.dust+175);assert.equal(saved.player.arcade!.games!.nest_defense!.completed,1);assert.equal(saved.player.specimens[0].hearts,1);
+  const again=await f.send(ALICE,'arcadeSubmit',{run:t.id,inputs:[],format:'original-2'});assert.equal(again.player.go!.dust,saved.player.go!.dust);assert.equal(again.player.specimens[0].hearts,1);assert.equal(again.player.arcade!.games!.nest_defense!.completed,1);
+  const scores=await f.send(ALICE,'arcadeScores',{game:'nest_defense'});assert.equal(scores.arcadeScores!.find(s=>s.me)!.score,r.score);
+  const other=await f.send(ALICE,'arcadeScores',{game:'tap_duel'});assert.equal(other.arcadeScores!.some(s=>s.me),false);await assert.rejects(f.send(ALICE,'arcadeScores',{game:'unknown'}),/bekend spel/);
+  const legacy=await f.start(ALICE,'arcadeStart');assert.equal(legacy.game,(await f.state()).arcadeNext!.game);await f.send(ALICE,'arcadeAbandon',{run:legacy.id});
+  const next=await f.start(ALICE,'arcadeStart',{game:'bubble_swarm'});assert.equal(next.game,'bubble_swarm');assert.equal(next.mode,'rotation');
+ }finally{f.store.close();}
+});
+
 test('real command replays settle an offline ranked score once and preserve the new active game of the owner and upgraded bug',async()=>{
  const f=await fixture();try{
   // This account's first server-owned rotation is Tap; client command IDs remain random.

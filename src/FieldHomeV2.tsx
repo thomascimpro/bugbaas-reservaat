@@ -88,19 +88,18 @@ export function FieldHomeV2({view,run,busy,gpsReady,spawns,fix,open,onSelect,now
 
  const openMenu=()=>{setSheet('menu');guide?.markSeen();if(event)setEventSeen(event.name);};
 
- const tilted=mapControls?.current?.tilted()??true;
 
  const weather=environment?environmentInfo(environment):{title:'Weer',icon:'compass' as const,body:'Het weer en het leefgebied verschijnen zodra je GPS nauwkeurig is.'};
 
  return <>
 
+  {!sheet&&<>
   {mapVisible&&auto.enabled&&<AutoCatchToastV2 player={p}/>}
   {mapVisible&&auto.enabled&&<View pointerEvents="box-none" style={{position:'absolute',right:16,top:138,alignItems:'center',gap:4}}><PoCircle size={50} label="Autovangst" onPress={()=>setSheet('auto')} ring={PO.teal}>{auto.last&&now-auto.last.at<10000?<SpriteView id={auto.last.species} size={40}/>:<FieldArt id="basic" size={38}/>}</PoCircle><View pointerEvents="none" style={{paddingHorizontal:7,paddingVertical:1,borderRadius:9,backgroundColor:PO.surface}}><Text style={{fontFamily:font,fontSize:10,fontWeight:'800',color:PO.tealText}}>{auto.status==='too-fast'?'Te snel':auto.status==='gps'?'GPS':auto.status==='empty'?'Op':auto.last&&now-auto.last.at<10000?(auto.last.caught?'Raak!':'Weg'):'Auto'}</Text></View></View>}
 
   <View pointerEvents="box-none" style={{position:'absolute',right:16,top:78}}><PoCircle size={48} label="Kaartopties" onPress={()=>setSheet('options')}><Glyph name="settings" size={28}/></PoCircle></View>
-  {/* 2D/3D and zoom stay on the map as small glass buttons, top-left (the right column holds compass and Arcade). */}
-  <View pointerEvents="box-none" style={{position:'absolute',left:16,top:24,gap:10}}>
-   <PoCircle size={44} label={tilted?'Kaart van boven':'Kaart in 3D'} onPress={()=>mapControls?.current?.toggleTilt()}><Text style={{fontFamily:font,fontSize:14,fontWeight:'800',color:PO.tealText}}>{tilted?'2D':'3D'}</Text></PoCircle>
+  {/* Zoom below the GPS status row; the host already reserves space for navigation. */}
+  <View pointerEvents="box-none" style={{position:'absolute',left:16,top:78,gap:10}}>
    <PoCircle size={44} label="Zoom in" onPress={()=>mapControls?.current?.zoom(1)}><Text style={{fontFamily:font,fontSize:24,fontWeight:'700',color:PO.text}}>+</Text></PoCircle>
    <PoCircle size={44} label="Zoom uit" onPress={()=>mapControls?.current?.zoom(-1)}><Text style={{fontFamily:font,fontSize:24,fontWeight:'700',color:PO.text}}>−</Text></PoCircle>
   </View>
@@ -117,6 +116,7 @@ export function FieldHomeV2({view,run,busy,gpsReady,spawns,fix,open,onSelect,now
    <PoCircle size={68} label="In de buurt" onPress={()=>setSheet('nearby')}>{nearby.length?<View style={{opacity:g.dex?.includes(nearby[0].species)?1:.5}}><SpriteView id={nearby[0].species} size={54}/></View>:<Glyph name={gpsReady?'leaf':'compass'} size={40}/>}</PoCircle>
   </View>
 
+  </>}
   <FieldSheetHost menu={sheet==='menu'} visible={!!sheet} inset={bottomInset} reduced={reduced} onClose={()=>setSheet(null)}><View style={{flex:1,backgroundColor:LIGHT.includes(sheet)?'#0E2B2459':'#092C29A8',alignItems:'center',justifyContent:'flex-end'}}>
 
   {LIGHT.includes(sheet)?<PoSheet style={{...(sheet==='menu'?{flex:1,borderRadius:0}:{}),width:'100%',maxWidth:560,maxHeight:sheet==='menu'?'100%':'92%',paddingHorizontal:14,paddingTop:16,paddingBottom:16,gap:10}}>{sheet==='menu'&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',minHeight:48}}><Title>Menu</Title><IconButton name="close" label="Sluit menu" onPress={()=>setSheet(null)}/></View>}<ScrollView contentContainerStyle={{gap:10,paddingBottom:4}}>

@@ -2,13 +2,13 @@ import React from 'react';
 import {Image,Pressable,Text,View} from 'react-native';
 import type {ImageSourcePropType} from 'react-native';
 import {font} from '../uiV2';
-const metadata=require('../../assets/v3/arcade/source.json') as {files:{file:string;width?:number;height?:number;regions?:{name:string;rect:number[];anchor:number[]}[]}[]};
+const metadata=require('../../assets/v3/arcade/source.json') as {files:{file:string;width?:number;height?:number;regions?:{name:string;rect:number[];contentRect?:number[];anchor:number[]}[]}[]};
 const atlases={navigation:require('../../assets/v3/arcade/navigation.webp'),controls:require('../../assets/v3/arcade/controls.webp'),types:require('../../assets/v3/arcade/types.webp'),fx:require('../../assets/v3/arcade/fx.webp'),'fx-extra':require('../../assets/v3/arcade/fx-extra.webp'),'fx-last':require('../../assets/v3/arcade/fx-last.webp')};
 export const arcadeImages={arena:require('../../assets/v3/arcade/arena.webp'),trail:require('../../assets/v3/arcade/trail.webp'),logo:require('../../assets/v3/arcade/logo.webp'),dragonfly:require('../../assets/v3/arcade/dragonfly.webp'),beetle:require('../../assets/v3/arcade/stag-beetle.webp')};
 export const enemyImages:ImageSourcePropType[]=[require('../../assets/v2/illustrations/aphid.webp'),require('../../assets/v2/illustrations/leafbeetle.webp'),require('../../assets/v3/arcade/stag-beetle.webp'),require('../../assets/v3/arcade/firefly.webp')];
 export function ArcadeIcon({atlas='navigation',name,size=32}:{atlas?:keyof typeof atlases;name:string;size?:number}){
  const sheet=metadata.files.find(x=>x.file===atlas+'.webp')!,r=sheet.regions?.find(r=>r.name===name);if(!r)return null;
- const [x,y,w,h]=r.rect,scale=Math.min(size/w,size/h);
+ const [x,y,w,h]=r.contentRect??r.rect,scale=Math.min(size/w,size/h);
  return <View pointerEvents="none" accessible={false} style={{width:size,height:size,alignItems:'center',justifyContent:'center'}}><View style={{width:w*scale,height:h*scale,overflow:'hidden'}}><Image source={atlases[atlas]} resizeMode="stretch" style={{position:'absolute',width:sheet.width!*scale,height:sheet.height!*scale,left:-x*scale,top:-y*scale}}/></View></View>;
 }
 export function ArcadeButton({label,onPress,disabled=false,icon='play',compact=false}:{label:string;onPress:()=>void;disabled?:boolean;icon?:string;compact?:boolean}){

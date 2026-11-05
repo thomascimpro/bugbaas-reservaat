@@ -1,5 +1,7 @@
 # BugBaas Reservaat — werkafspraken
 
+**Actueel: bugbaas0.1.32/code33.** Zichtbare appnaam bugbaas; swipekeuze, medaillebeelden, kaartbediening en buddyactiviteiten.682 tests/TypeScript en getekende APK groen; Android15-update, bestaande vijf bugs/level21, heen/weer swipen, gekozen game/uitslag, menu, medailles, aaien/voeren en achtergrond/terug gecontroleerd. Backend https://bugbaas-reservaat-preview-5px9lht71-thomas-cim-pro.vercel.app; MIN_CLIENT0.1.29. Publicatiestatus op GitHub v0.1.32; bewijs/grenzen in `docs/releases/0.1.32.md`. Hieronder staat eerdere releasehistorie. Geen nieuwe fysieke wandel-/Health Connect-/accuproef; legacy-overdracht uitgesteld.
+
 1. Lees eerst `docs/POGO_WERKREGISTER.md` en `docs/creator-handoff/START_HIER.md` (leidend plan, taak- en bestandseigenaars). Bekijk alleen de relevante ontwerpdetails als ze nodig zijn. Bouw afgeronde onderdelen niet opnieuw.
 2. Voer de gevraagde wijziging direct uit: één concrete taak, kleinste werkende oplossing, daarna gericht controleren. Geen nieuwe plannen of extra toestemming voor gewone fixes.
 3. Werk in deze projectmap. De eigen Git-basis bestaat (`ab57e80`); niet opnieuw initialiseren en nooit Git-acties op de bovenliggende gebruikersrepository uitvoeren.

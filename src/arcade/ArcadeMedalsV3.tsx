@@ -1,0 +1,10 @@
+import React from 'react';
+import {Image,Text,View} from 'react-native';
+import {ARCADE_GAMES} from '../../game/arcade/games';
+import type {GameViewV2} from '../../game/typesV2';
+import {font} from '../uiV2';
+const medals=[{goal:3,art:require('../../assets/v2/props/medal-brons.webp'),name:'Brons'},{goal:10,art:require('../../assets/v2/props/medal-zilver.webp'),name:'Zilver'},{goal:30,art:require('../../assets/v2/props/medal-goud.webp'),name:'Goud'}];
+export function ArcadeMedalsV3({view}:{view:GameViewV2}){return <View style={{gap:10}}>{ARCADE_GAMES.map(game=>{const saved=view.arcadeProgress?.games[game.id]??view.player.arcade?.games?.[game.id],done=saved?.completed??0,next=medals.find(m=>!saved?.medals.includes(m.goal));return <View key={game.id} style={{borderRadius:20,borderWidth:1,borderColor:'#BFF3EC47',padding:12,backgroundColor:'#0E2828EB',gap:8}}>
+  <View style={{flexDirection:'row',alignItems:'center',gap:8}}><View style={{flex:1,minWidth:0,gap:4}}><Text style={{fontFamily:font,color:'#EAF6F2',fontWeight:'800',fontSize:16}}>{game.name}</Text><Text style={{fontFamily:font,color:'#BDD0C7',fontSize:12}}>{next?done+' / '+next.goal+' rondes':done+' rondes · compleet'}</Text></View><View style={{flexDirection:'row',gap:4}}>{medals.map(m=>{const earned=!!saved?.medals.includes(m.goal);return <View key={m.goal} accessibilityLabel={game.name+': '+m.name+(earned?' behaald':' na '+m.goal+' rondes')} style={{alignItems:'center',opacity:earned?1:.3}}><Image source={m.art} resizeMode="contain" style={{width:44,height:48}}/><Text style={{fontFamily:font,fontSize:10,color:'#EAF6F2'}}>{m.goal}</Text></View>;})}</View></View>
+  <View accessibilityRole="progressbar" accessibilityLabel={'Volgende medaille '+game.name} accessibilityValue={{min:0,max:next?.goal??30,now:Math.min(done,next?.goal??30)}} style={{height:5,borderRadius:3,backgroundColor:'#BDD0C722',overflow:'hidden'}}><View style={{height:5,width:`${Math.min(1,done/(next?.goal??30))*100}%`,backgroundColor:next?'#1FC3D3':'#F2C14E'}}/></View>
+ </View>;})}</View>;}

@@ -8,6 +8,7 @@ import {family} from '../game/goV2';
 import type {League} from '../game/goV2';
 import type {PlayerV2} from '../game/typesV2';
 import {grantXP} from '../game/trainerV2';
+import {creditBuddyPlay} from '../game/buddyV2';
 import {crewName,crewBudget,settleCrew} from '../game/arcade/crew';
 import type {CrewEncounter} from '../game/arcade/crew';
 import {checkV2 as check} from '../game/shopV2';
@@ -44,10 +45,10 @@ export function arcadeProgress(p:PlayerV2,now:number):ArcadeProgress{
 export function nextArcadeGame(p:PlayerV2,now:number):ArcadeGameId{return arcadeProgress(p,now).nextGame!;}
 export function arcadeNext(p:PlayerV2,now:number):ArcadeNext{const game=nextArcadeGame(p,now),info=ARCADE_GAMES.find(g=>g.id===game)!;return {game,name:info.name,durationSeconds:info.durationSeconds,gesture:info.gesture,help:info.help};}
 export function arcadeProgressView(p:PlayerV2,now:number):ArcadeProgressView{const a=arcadeProgress(p,now);return {completed:a.completed,games:structuredClone(a.games!),week:{key:a.week!.key,days:a.week!.days.length,required:5,claimed:a.week!.claimed},rewarded:a.rewarded,dailyDust:a.dailyDust,dailyXP:a.dailyXP};}
-export function issueArcade(p:PlayerV2,ids:unknown,league:unknown,id:string,now:number,target:ArcadeTicket['target'],game=nextArcadeGame(p,now),mode:'rotation'|'practice'='rotation'):ArcadeTicket{
+export function issueArcade(p:PlayerV2,ids:unknown,league:unknown,id:string,now:number,target:ArcadeTicket['target'],game=nextArcadeGame(p,now),mode:'rotation'|'practice'='rotation',chosen=false):ArcadeTicket{
  const squad=arcadeSquad(p,ids,league),challenge=arcadeChallengeFor(game,league as League,now);
  check(ARCADE_GAMES.some(g=>g.id===game),'Kies een bekend spel.');
- check(mode==='practice'||game===nextArcadeGame(p,now),'Je volgende ronde is veranderd. Probeer opnieuw.',409);
+ check(mode==='practice'||chosen||game===nextArcadeGame(p,now),'Je volgende ronde is veranderd. Probeer opnieuw.',409);
  const ticket:ArcadeTicket={id,owner:p.uid,mode,game,challenge,rules:gameRules(game),league:league as League,seed:arcadeSeed(challenge),squad,issuedAt:now,expiresAt:now+86400000,target,status:'started'};
  arcadeProgress(p,now).active=id;return ticket;
 }
@@ -69,6 +70,7 @@ export function submitArcade(d:Documents,p:PlayerV2,ticket:ArcadeTicket|undefine
  if(ticket.crew){
   check(ticket.crew.version==='crew-1'&&ticket.crew.game===game&&ticket.target.score===ticket.crew.targetScore,'Deze bende-uitdaging klopt niet.');
   const won=state.endReason==='target_score'&&state.score>=ticket.crew.targetScore,result=settleCrew(p,ticket.crew,won,ticket.id,now),a=arcadeProgress(p,now);
+  if(qualified&&!ticket.crew.practice)creditBuddyPlay(p,ticket.squad.map(b=>b.id),now);
   ticket.audit={inputDigest:createHash('sha256').update(JSON.stringify(raw)).digest('hex'),inputCount:Array.isArray(raw)?raw.length:0,endReason:state.endReason??'time',snapshotHash:createHash('sha256').update(JSON.stringify({game,rules:ticket.rules,seed:ticket.seed,league:ticket.league,squad:ticket.squad,crew:ticket.crew})).digest('hex')};
   ticket.status='accepted';ticket.receipt={acceptedAt:now,runId:ticket.id,score:state.score,dust:result.dust,xp:result.xp,qualified,won,personalBest:false,game,endReason:state.endReason??'time',crew:result.crew,feedback:won?result.crew.rewarded?'Bug gered!':'Doel gehaald · oefenen':'Probeer dezelfde bende opnieuw'};a.last=ticket.receipt;delete a.active;return ticket.receipt;
  }
@@ -83,6 +85,7 @@ export function submitArcade(d:Documents,p:PlayerV2,ticket:ArcadeTicket|undefine
  if(eligible){p.go!.dust+=dust;grantXP(p,xp);a.rewarded++;a.dailyDust+=dust;a.dailyXP+=xp;a.first=true;}
  const medals:number[]=[];let weekly:ArcadeWeeklyReward|undefined;
  if(qualified){
+  creditBuddyPlay(p,ticket.squad.map(b=>b.id),now);
   a.completed++;const progress=a.games![game]??={completed:0,medals:[]};progress.completed++;
   for(const threshold of MEDALS)if(progress.completed>=threshold&&!progress.medals.includes(threshold)){progress.medals.push(threshold);medals.push(threshold);}
   if(personalBest){a.best[ticket.challenge]=state.score;d.set(arcadeScoreKey(p.uid,ticket.challenge),{uid:p.uid,name:p.name,challenge:ticket.challenge,game,seed:ticket.seed,rules:ticket.rules,league:ticket.league,score:state.score,run:ticket.id,at:now} satisfies ArcadeScore);}
@@ -109,8 +112,8 @@ export async function arcadeTarget(store:Store,p:PlayerV2,league:League,now:numb
  const other=rows.filter(r=>r.uid!==p.uid).sort((a,b)=>Math.abs(a.score-(own||80))-Math.abs(b.score-(own||80))||a.at-b.at)[0];
  return other?{name:other.name,score:other.score,kind:'player'}:own?{name:'Jouw record',score:own,kind:'personal'}:{name:'Veldwachter',score:80,kind:'computer'};
 }
-export async function arcadeScores(store:Store,p:PlayerV2,now:number,ticket?:ArcadeTicket):Promise<ArcadeScoreView[]>{
- const game=ticket?.game??(ticket?'tap_duel':nextArcadeGame(p,now)),league=ticket?.league??p.go!.league,challenge=ticket?.challenge??arcadeChallengeFor(game,league,now),rows=await scoreRows(store,p,league,now,game,challenge,ticket?.seed??arcadeSeed(challenge));
+export async function arcadeScores(store:Store,p:PlayerV2,now:number,ticket?:ArcadeTicket,chosen?:ArcadeGameId):Promise<ArcadeScoreView[]>{
+ const game=ticket?.game??(ticket?'tap_duel':chosen??nextArcadeGame(p,now)),league=ticket?.league??p.go!.league,challenge=ticket?.challenge??arcadeChallengeFor(game,league,now),rows=await scoreRows(store,p,league,now,game,challenge,ticket?.seed??arcadeSeed(challenge));
  const result:ArcadeScoreView[]=rows.sort((a,b)=>b.score-a.score||a.at-b.at).slice(0,10).map(r=>({name:r.uid===p.uid?'Jouw record':r.name,score:r.score,kind:r.uid===p.uid?'personal':'player',me:r.uid===p.uid,at:r.at}));
  const own=p.arcade?.best[challenge]??0;if(own&&!result.some(r=>r.me)){if(result.length>=10)result.pop();result.push({name:'Jouw record',score:own,kind:'personal',me:true});}
  if(!result.length)result.push({name:'Veldwachter',score:80,kind:'computer',me:false});return result;

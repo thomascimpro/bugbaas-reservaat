@@ -1,4 +1,5 @@
 import {originalPorts,originalPort,isOriginalRules,validateOriginalInputs,ORIGINAL_MAX_INPUTS} from './original';
+import {originalSquadPower} from './original/types';
 import type {OriginalState} from './original/types';
 import {FAST} from '../goV2';
 import type {Element} from '../goV2';
@@ -50,6 +51,15 @@ export function squadHelpers(ticket:Pick<ArcadeTicket,'squad'|'league'>):SquadHe
  return {a,d,h,pickupPct:Math.min(14,Math.floor(12*h/1000)+(hasType(ticket,'flying')?2:0)),graceTicks:Math.floor(Math.floor(120*d/1000)/20),gateExtra:Math.floor(12*d/1000),netPct:Math.min(14,Math.floor(8*d/1000)+Math.floor(6*a/1000)),platformPct:Math.min(14,Math.floor(12*d/1000)+(hasType(ticket,'grass')?2:0)),coyoteTicks:Math.floor(Math.min(180,60+Math.floor(120*h/1000))/20),aimLength:90+Math.floor(60*a/1000),secondPreview:a>=600,poisonWarning:hasType(ticket,'poison')};
 }
 export function arcadeHelp(game:ArcadeGameId,squad:ArcadeTicket['squad'],league:ArcadeTicket['league']){
+ const p=originalSquadPower(squad,league),pct=(n:number)=>Math.round(n*100),boosts:Record<ArcadeGameId,string>={
+  tap_duel:'+'+pct(.14*p.defense)+'% tikruimte · helpers tikken mee',
+  nest_defense:'Torens +'+pct(.1*p.attack)+'% schade',
+  web_runner:squad.length===3&&p.defense>=.5?'Start met een schild':'Magneet +'+(Math.round(p.attack*12)/10)+'s',
+  bug_glide:squad.length===3&&p.hp>=.5?'+1 hart · hulp bij vliegen':'Extra pickupmarge +'+Math.round(p.hp*5),
+  butterfly_catch:'Vangzone +'+pct(.14*(p.defense+p.hp)/2)+'%',
+  bug_tower:'Landingsmarge +'+pct(Math.min(.14,p.defense*.12+(p.has('grass')?.02:0)))+'%',
+  bubble_swarm:'+'+pct(.14*p.defense)+'% denktijd',
+ };
  const normal='Hulp komt uit de echte aanval, verdediging, HP en types van je squad. De drie teamplekken tellen mee; één bug is minder hulp dan drie. CP bepaalt de klasse. Je krijgt geen gratis scorevermenigvuldiger.';
  const effects:Record<ArcadeGameId,[string,string]>={
  tap_duel:['Je squad tikt mee','Je bugs helpen met hun eigen aanvalstype. Verdediging maakt tikdoelen iets ruimer en HP geeft meer richttijd.'],
@@ -60,7 +70,7 @@ export function arcadeHelp(game:ArcadeGameId,squad:ArcadeTicket['squad'],league:
  bug_tower:['Je squad helpt je landen','Verdediging geeft extra landingsmarge; planttype helpt ook, samen maximaal14%. HP geeft maximaal60ms extra springmarge.'],
  bubble_swarm:['Je squad geeft meer denktijd','Verdediging vertraagt de druk, HP verlengt Freeze en aanval verlengt de richtlijn. Iedere hulp maximaal14%.']
  };
- return {summary:effects[game][0],details:effects[game][1]+'\n\n'+normal};
+ return {summary:effects[game][0],boost:boosts[game],details:effects[game][1]+'\n\n'+normal};
 }
 
 function finish(s:ArcadeState,reason:Exclude<ArcadeEndReason,null>){s.finished=true;s.endReason=reason;}

@@ -1,8 +1,15 @@
 # BugBaas — actuele voortgang
 
-Bijgewerkt: 4 november 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
+Bijgewerkt: 5 november 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
 
 ## ACTUELE CHECKPOINT
+
+**bugbaas0.1.32/code33 gecontroleerd voor publicatie (5 november).** Laatste Arcade/kaart/buddy-lijstje en zichtbare appnaam bugbaas.682/682 tests, TypeScript en nieuwe Vercel-web/API-build groen; vijf viewer/model-hashes en authdomein met behoud van eerdere domeinen geverifieerd. Definitieve APK als update over0.1.31 op Android15: bestaande vijf bugs/level21 behouden, swipen in beide richtingen, gekozen Webrenner/spel/uitslag, medailles, kaartmenu, collectie, aaien1/1, voeren1/3 met180min wachttijd en achtergrond/terug gecontroleerd. Geen nieuwe crash- of ReactNativeJS-fouten. APK94.577.428bytes, dezelfde v2-signer, SHA256 `c17a4917e19b9fdbb522cfe4cb2c241160ac83b7300be30eea9c25f0080be6b8`. Backend https://bugbaas-reservaat-preview-5px9lht71-thomas-cim-pro.vercel.app; geen productiealias of spelerdata gereset. Publicatiestatus op GitHub v0.1.32; bewijs/grenzen in `releases/0.1.32.md` en `.local/release0132/`. Geen nieuwe fysieke wandel-/Health Connect-/accu-/persoonlijke Google-loginproef. Legacy-overdracht blijft uitgesteld. De eerdere lokale checkpoint hieronder is historie.
+
+
+**Arcade/kaart/buddy afgerond (5 november, lokaal; geen nieuwe APK).** Swipe/sleep door zeven kaarten met vaste Speel-knop, eigen gekozen-game-scores en dezelfde begrensde rewards. Spellen/Oefen-ingang weg, oude tickets geldig; ranked blijft willekeurig. Echte medaillebeelden en gecentreerde bedieningsicons. Kaart reserveert werkelijk72px boven de navigatie; bij menu geen kaartinput/onderliggende toegankelijke knoppen,2D-knop weg. Buddy met echte aai-gesture, dagcategorieën, voerwachttijd en serverbevestigde loop-/samenhartjes; wisselen/herhalen verdubbelt niets. Zeven bestaande squadbonussen zichtbaar zonder physics te wijzigen. Webfocus kon verborgen Arcade-laag204px verschuiven; overflow-clip en correcte kaarthoogte houden timer/terug/spelveld binnen beeld.
+
+682/682 tests, TypeScript, API- en webbuild groen. Zeven games gestart/gestopt op320×568 en430×932; heen/weer swipen, zeven pijlenkeuzes, medailles, kaartmenu, aaihart en voerwachttijd bekeken. Eigen geheugenprofiel/synthetische GPS; geen volledige nieuwe menselijke game-/native-/wandelsessie of livepublicatie. Afgevinkte opdracht: `creator-handoff/ARCADE_BUDDY_AFVINKLIJST.md`; beelden `.local/arcade-buddy-20261105/`. De eerdere0.1.31 blijft de gepubliceerde release.
 
 
 **Release0.1.31/code32 gecontroleerd (4 november).** Originele zeven Arcadegames, willekeurige async-ranked binnen gelijke CP-klasse/seed/regels, serverreplay/eenmalige receipts, één HUD en korte reacties.286 goedgekeurde HD-portretten plus20 opnieuw gekaderde renders ingebouwd, samen306;153 materiaalmodellen,256px-thumbnails, betere bestaande illustraties behouden. Negen natuurmodellen via begrensde instancing, post96.672bytes; low/foutfallback blijft. Vangwiebels verkort, upgrade-effect en beschermde terugkomst-transfer aangesloten. Bron/licenties/hashes behouden; niet alle evolutionaire anatomie is uniek.
