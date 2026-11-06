@@ -1,3 +1,4 @@
+import {readLegacy,type AccountIdentity,type LegacyLookup} from './legacyV2';
 import { MIN_CLIENT_VERSION } from '../game/versionV2';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { GameError } from '../game/types';
@@ -6,7 +7,7 @@ import {GoServiceV2 as GameServiceV2} from './goServiceV2';
 import {getFieldEnvironment} from './environmentV2';
 import { timingSafeEqual } from 'node:crypto';
 
-export function apiHandler(service: GameService, resolveUid: (token: string) => Promise<string | {uid:string;linked:boolean}>, environment=getFieldEnvironment) {
+export function apiHandler(service: GameService, resolveUid: (token: string) => Promise<string | AccountIdentity>, environment=getFieldEnvironment, legacy:LegacyLookup=readLegacy) {
   const v2 = new GameServiceV2(service.store,service.mode,service.clock,environment);
   return async (req: IncomingMessage, res: ServerResponse) => {
     res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -37,8 +38,9 @@ export function apiHandler(service: GameService, resolveUid: (token: string) => 
       else {
         const bearer = req.headers.authorization;
         if (!bearer?.startsWith('Bearer ')) throw new GameError('Log in om je voortgang te openen.', 401);
-        let uid: string, linked=false; try { const identity=await resolveUid(bearer.slice(7));uid=typeof identity==='string'?identity:identity.uid;linked=typeof identity==='object'&&identity.linked; } catch { throw new GameError('Je sessie is verlopen. Log opnieuw in.', 401); }
-        if(url.pathname==='/api/game/v2/state'&&req.method==='GET')result=await v2.state(uid,linked);
+        let uid: string, linked=false,account:AccountIdentity|undefined; try { const identity=await resolveUid(bearer.slice(7));uid=typeof identity==='string'?identity:identity.uid;linked=typeof identity==='object'&&identity.linked;account=typeof identity==='object'?identity:undefined; } catch { throw new GameError('Je sessie is verlopen. Log opnieuw in.', 401); }
+        if(url.pathname==='/api/game/v2/legacy'&&req.method==='POST'){if(!account?.linked)throw new GameError('Koppel eerst je account.',403);if(Object.keys(body).some(k=>k!=='claim')||body.claim!==undefined&&typeof body.claim!=='boolean')throw new GameError('Ongeldig legacy-verzoek.');const current=await v2.state(uid,true);if(current.player.legacy)result=body.claim?{view:current}:{configured:true,offer:current.player.legacy};else{const offer=await legacy(account);result=body.claim&&offer.offer?{view:await v2.grantLegacy(uid,offer.offer)}:offer;}}
+        else if(url.pathname==='/api/game/v2/state'&&req.method==='GET')result=await v2.state(uid,linked);
         else if(url.pathname==='/api/game/v2/command'&&req.method==='POST')result=await v2.command(uid,body,linked);
         else if (/^\/api\/game\/(state|action|arena)(\/|$)/.test(url.pathname)) throw new GameError('Deze oude spelmodus is verwijderd. Vernieuw BugBaas.',410);
         else throw new GameError('Deze route bestaat niet.', 404);

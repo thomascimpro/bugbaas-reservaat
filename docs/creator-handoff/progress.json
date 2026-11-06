@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "planRevision": "5 november 2026 — release0.1.33 vangactie, terugkomst en Arcadefixes",
-  "updatedAt": "2026-11-05",
+  "planRevision": "6 november 2026 — releasebron0.1.34/code35; ImageGen-iconen en lokale fixes; gebruiker vraagt publicatie zonder APK-test",
+  "updatedAt": "2026-11-06",
   "sourceOfTruth": "PLAN.md",
   "statusMeaning": "Presence/design/clip names do not prove an integrated finished game. Only mark af with relevant evidence.",
   "delivery": {
     "destination": "Codex primary, after Claude handoff",
-    "status": "0.1.33 final signed APK verified; evolution opens without overlap, 3D Butterfly/focus/swipe/result and background/resume checked; publication is authoritative on GitHub",
+    "status": "0.1.34/code35 signed APK built and static verification passed;703 tests/typecheck/cloud build green; new icons viewed at375x812. APK runtime smoke explicitly skipped by user. GitHubv0.1.34 is authoritative for publication; see docs/releases/0.1.34.md. Legacy remains disabled because server identity cannot read old project.",
     "acknowledged": true,
     "prompt": "CLAUDE_INBOX.md",
     "reply": "CLAUDE_UITVOERING.md",
@@ -24,18 +24,18 @@
     "new2Dsets": 26,
     "new2Dcutouts": 16,
     "firstTikduelPrototype": true,
-    "unitTestsPassed": 688,
+    "unitTestsPassed": 703,
     "httpReplayTestPassed": 1,
-    "typecheck": "exit0; .local/release0133/types-final.log",
-    "webExport": "exit0; .local/release0133/deploy-ui-final.log and cloud-proof.json",
-    "browser": "0.1.33:320/390/430 widths; direct appraisal/TM/evolution, gyms, net spin and server-confirmed catch,120 return bugs and118 transfers from one click; full loading and Tap/Bubble/Butterfly. Earlier seven-game checks remain in0.1.32 evidence.",
+    "typecheck": "exit0; .local/release0134/types.log and types-icons.log after final icon changes",
+    "webExport": "exit0; .local/release0134/deploy-icons.log and cloud-proof.json; four new image hashes match source",
+    "browser": "6nov:32 UI views at320/390px, saved/reloaded trainer name with IDs/collection preserved, battle-to-Arcade; .local/polish-20261106/names/. Final cloud375x812 onboarding/profile/cards and four ImageGen icons,0console errors; .local/release0134/web-proof.json.",
     "unifiedNavigation": true,
     "otherSixGames": true,
     "newCombat": true,
     "nativeAnimationTest": "Android15: native 3D Butterfly scene and60s result; background/resume, map, collection and battle overview; no new crash log",
-    "nativeControlsTest": "0.1.33 final APK Android15:5bugs preserved, direct evolution0/25 opens; 3D Butterfly/focus31pct/swipe camera/full60s result, background/resume; no new crash or ReactNativeJS log",
-    "testsTotal": 688,
-    "tests": "688/688; .local/release0133/tests.log;10 targeted cleanup/replay tests after empty-pool performance guard; final UI typecheck green"
+    "nativeControlsTest": "0.1.34 APK runtime smoke explicitly skipped at user request; only package/signer/bundle/image/audio/module verification performed. Previous0.1.33 emulator evidence remains historical; no physical GPS/Health Connect/audio test.",
+    "testsTotal": 703,
+    "tests": "703/703; .local/release0134/tests.log; final icon-only changes checked with typecheck and cloud web UI"
   },
   "fileOwnership": {
     "integrator": "Codex: all handed-off files; subagents stopped on workspace-credit error; no active parallel writers",
@@ -126,24 +126,26 @@
       "owner": "Claude",
       "dependsOn": [],
       "spec": "sections/animations.md",
-      "status": "bezig",
-      "claimedBy": "Claude",
+      "status": "controleren",
+      "claimedBy": "Codex",
       "filesClaimed": [
         "scripts/upgrade-bug-materials.mjs",
         "scripts/render-bug-portraits-hd.py",
         "assets/3d/**"
       ],
       "assetsMade": true,
-      "integrated": false,
+      "integrated": true,
       "visuallyChecked": true,
       "functionalChecked": false,
       "evidence": [
         "assets/3d/README.md",
         ".local/portraits-hd/full-a (306 HD-portretten)",
-        ".local/bug-upgrade (153 materiaalupgrades, animaties ongewijzigd)"
+        ".local/bug-upgrade (153 materiaalupgrades, animaties ongewijzigd)",
+        ".local/polish-20261106/models.json",
+        ".local/polish-20261106/models-1.jpg t/m models-4.jpg"
       ],
       "blocker": null,
-      "note": "Nog niet naar public/models of assets/v2/portraits gepromoveerd; wacht op 08_ASSETREVIEW-akkoord."
+      "note": "153 actieve modellen en306 portretten zijn al geïntegreerd (geen wacht-op-Claude-blokkade). 6nov alle306 portretten in vier overzichten bekeken; GLBs technisch geldig, verschillende evolutiegeometrie. Beenslak gericht vervangen en opnieuw gerenderd. Volledige bewegende native modelkeuring blijft niet bewezen."
     },
     {
       "id": "GM-01",
@@ -318,15 +320,20 @@
         "AN-01"
       ],
       "spec": "sections/animations.md",
-      "status": "open",
-      "claimedBy": null,
+      "status": "controleren",
+      "claimedBy": "Codex",
       "filesClaimed": [],
       "assetsMade": false,
-      "integrated": false,
-      "visuallyChecked": false,
-      "functionalChecked": false,
-      "evidence": [],
-      "blocker": null
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": true,
+      "evidence": [
+        "game/goBattleV2.ts flow3; server/goServiceV2.ts prepareGoBattle(...,3)",
+        "tests: actieve-combat balans, invoer, dodge en service-settlement in volledige702-suite",
+        ".local/polish-20261106/07-direct-duel-home.png; 10-fast-input-progress.txt"
+      ],
+      "blocker": null,
+      "note": "Actief squadduel bestond al: echte CP/stats/types/items, richten +max15% schade, 1s charged, tweemaal ontwijken, 12s wisselen. Menu vereenvoudigd, directe tikfeedback en correcte flow3-uitleg. Browser: tikken geeft bevestigde schade en6/35 energie. Geen volledige menselijke duel-/latency-/native balansproef geclaimd."
     },
     {
       "id": "CR-01",
@@ -340,15 +347,19 @@
         "CB-01"
       ],
       "spec": "PLAN.md",
-      "status": "open",
-      "claimedBy": null,
+      "status": "controleren",
+      "claimedBy": "Codex",
       "filesClaimed": [],
       "assetsMade": false,
-      "integrated": false,
+      "integrated": true,
       "visuallyChecked": false,
-      "functionalChecked": false,
-      "evidence": [],
-      "blocker": null
+      "functionalChecked": true,
+      "evidence": [
+        "game/crewV3.ts; server/goServiceV2.ts; tests/crewArcadeV3.test.ts",
+        "Volledige702-testsuite groen6nov"
+      ],
+      "blocker": null,
+      "note": "Baretbende en andere factions met toegewezen combat/arcadegames, squad en serverbevestigde rescue zijn aanwezig. Niet opnieuw bouwen. Live online volledige routes en alle faction-animaties niet afgetekend."
     },
     {
       "id": "WR-01",
@@ -502,21 +513,160 @@
       ],
       "blocker": null,
       "note": "Gebruiker: ~10 bugs/km bij echte workout, minder bij gewone beweging, wilde kansen, melding = spel. Wandelvangst: 1 per 200 m normaal (5/km), workout (gemiddeld >=6,3 km/u) telt dubbel (10/km), gratis/altijd gevangen, elke 10e = zeldzaamste van de plek, max 120/dag, rijden >25 km/u telt niet. Melding en terugkomst tonen dezelfde regel walkTodayText. Open: native meldingsproef op toestel, terugkomstpopup visueel. Claude 4 nov: terugkomstpopup met tegels in zeldzaamheidskleur, sterren/shiny/♻-markering en knop \"♻ n weg\" (twee tikken, goTransferMany, zelfde beschermregels als opruimhulp). Werkt pas live als GameV2 run/busy doorgeeft (verzoek aan Sol in CLAUDE_UITVOERING). Toastpositie boven het net nog niet opnieuw bewezen. Codex wired run/busy into real GameV2 AwaySummary, so protected cleanup is enabled. New native notification proof remains open."
+    },
+    {
+      "id": "UX-01",
+      "title": "Beginnersopdracht eerste gevecht pas afronden na bewezen gevecht",
+      "owner": "Codex",
+      "dependsOn": [],
+      "spec": "game/beginnerGuideV2.ts; src/BeginnerGuideV2.tsx",
+      "status": "af",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": false,
+      "functionalChecked": true,
+      "evidence": [
+        "game/goV2.ts: optionele guideFirstBattle status in bestaande GoProfile",
+        "server/goServiceV2.ts: noteBattle zet status alleen bij afgerond niet-opgegeven gevecht in dezelfde transactie",
+        "game/beginnerGuideV2.ts: taak negeert lokale click en volgt alleen de serverstatus",
+        "tests/beginnerGuideV2.test.ts: 6/6 groen, inclusief echte service/in-memory store, opgeven, herhalen en serververwerking",
+        "npm run typecheck: groen op 5 november 2026"
+      ],
+      "blocker": null,
+      "note": "Gerepareerd en gericht getest; bestaande accounts blijven ongewijzigd. Voor reeds gespeelde oude gevechten zonder nieuwe marker is geen retrospectieve gok gedaan. Nog niet als nieuwe APK uitgebracht; visuele UI-proef niet uitgevoerd."
+    },
+    {
+      "id": "VIS-01",
+      "title": "Gerichte visuele eindkeuring van bestaande 3D-bugs en animaties",
+      "owner": "Codex controle; Claude alleen voor gerichte visuele correcties",
+      "dependsOn": [],
+      "spec": "docs/releases/0.1.33.md; assets/3d/README.md; sections/animations.md",
+      "status": "controleren",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": true,
+      "functionalChecked": false,
+      "evidence": [
+        "5 nov 2026: vier bestaande release0.1.33-webframes bekeken: .local/release0133/browser-tikduel.png, browser-bubble.png, browser-bug-actions.png; de vierde browser-spin.png blijft in de releasebewijzen en is niet als bewegende animatie getest",
+        "5 nov 2026: Android15-emulatorbeelden .local/release0133/native/final-butterfly-before.png, final-butterfly-after.png, final-evolution-open.png visueel bekeken",
+        "153 normale portret-thumbnails uit assets/v2/portraits/thumbs/ als tijdelijk contactoverzicht bekeken; dit zijn geen volledige GLB-animatietests",
+        "assets/3d/README.md beschrijft actieve materiaal-/portretkeuring en erkent dat geometrieverschillen niet altijd een duidelijk andere evolutieanatomie opleveren",
+        "5 nov 2026 live Playwright Chromium, preview0.1.33: onboarding zichtbaar op 320x568, 390x844 en 430x932; geen JavaScript-errors of horizontale overflow; Volgende op 320 pas na scroll maar wel bereikbaar. Bewijs .local/browser-live-readonly-20261105/results.json en screenshots.",
+        "6nov153GLBs gelezen;306 normale/shiny portretten bekeken als actuele contactoverzichten",
+        ".local/polish-20261106/models.json; models-1.jpg t/m models-4.jpg",
+        "Beenslak gericht verbeterd; vijf clips;2D en3D schermcontrole",
+        "6nov: .local/polish-20261106/names/27-buddy-final.png toont een erg lichte, zwart omlijnde3D-Bidsprinkhaan. Geen assetfout bewezen; materiaal/stijl tegenover groen2D-portret apart beoordelen, niet als volledige3D-kwaliteitsgoedkeuring gebruiken."
+      ],
+      "blocker": "Volledige bewegende153-modelkeuring op Android is niet bewezen; statische beelden/clipnamen vervangen die proef niet.",
+      "note": "Eerdere modelsteekproef uitgebreid naar alle153 actieve GLBs/306 portretten. Geen ontbrekende modellen of kleurloze standaardvariant; één slecht leesbare Beenslak vervangen zonder ID/stats/CP/economiewijziging. Schermfout gevonden: BugUpgradeFx had0x0 tijdens3D. Vaste animatiemaat hersteld. Overige native bewegingen blijven open bewijs."
+    },
+    {
+      "id": "QA-02",
+      "title": "Ontbrekende fysieke Android-praktijktests voor releasekwaliteit",
+      "owner": "Codex testregie; fysieke test op echte telefoon nodig",
+      "dependsOn": [],
+      "spec": "docs/releases/0.1.33.md",
+      "status": "geblokkeerd",
+      "claimedBy": null,
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": false,
+      "visuallyChecked": false,
+      "functionalChecked": false,
+      "evidence": [
+        "5 nov 2026: adb devices -l toont geen aangesloten emulator of fysiek toestel",
+        ".local/release0133/native-proof.json: bestaande Android15-emulatorproef over accountbehoud, evolutie, 3D-Vlinderjacht en hervatten is vastgelegd, geen fysieke telefoon",
+        ".local/release0133/apk-proof.json: bestaande APK0.1.33/code34 heeft dezelfde signer en 7 gebundelde Arcadegames",
+        "5 nov 2026: npm test 689/689 en npm run typecheck groen voor UX-01 en actuele werkmap; geen verse native APK gemaakt",
+        "docs/releases/0.1.33.md: fysieke GPS/Health Connect/accu en hoorbaar geluid niet bewezen",
+        "Playwright Chromium beschikbaar; live onboarding op drie mobiele viewports slaagt in .local/browser-live-readonly-20261105/results.json. Web-UI en gameplay hoeven niet op een Android-testtoestel te wachten."
+      ],
+      "blocker": "Alleen fysieke Android-proeven: geen verbonden telefoon bij ADB-controle; wandelen, batterij, echte Health Connect en native audio/FPS kunnen niet uit een browsertest worden afgetekend",
+      "note": "Bij beschikbaar toestel: APK-update over bestaande speler installeren; 10-20 minuten echte GPS-route inclusief achtergrond/hervatten en Health Connect vergelijken op afstand/dubbele rewards; hoorbare Tikduel/SFX, 3D-Vlinderjacht en Arcade controleren; grafische framecadans, accu en crashlog registreren. Noteer toesteltype, Androidversie, screenshots/meting en uitkomst. Geen Google-inlog of fysieke proef claimen zonder echte uitvoering."
+    },
+    {
+      "id": "BUG-01",
+      "title": "Autovangst-uitleg vermeldt verouderde kosten en limieten",
+      "owner": "Codex",
+      "dependsOn": [],
+      "spec": "src/FieldHomeV2.tsx; game/walkCatchV2.ts; server/goServiceV2.ts",
+      "status": "af",
+      "claimedBy": "Codex",
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": false,
+      "functionalChecked": true,
+      "evidence": [
+        "src/FieldHomeV2.tsx autovangst-help: 250 meter, 20/dag, standaardnet en 25 procent lagere vangkans",
+        "game/walkCatchV2.ts WALK_CATCH: 200 meter, maximaal 120/dag, gegarandeerd gevangen, zonder net",
+        "server/goServiceV2.ts walkCatch gebruikt grantAutoCatch rechtstreeks; de oude autoCatch-methode met netkosten wordt nergens aangeroepen",
+        "6 nov: concrete bronfix; TypeScript en 702 tests groen; zie ../UX_REVIEW_20261105.md, aanvulling 6 november."
+      ],
+      "blocker": null,
+      "note": "Uitleg sluit aan op WALK_CATCH: 5/km, 10/km workout, max120/dag, geen dubbele GPS/Health Connect-afstand. Geen wijziging aan toekenningsregels."
+    },
+    {
+      "id": "BUG-02",
+      "title": "Rode kaartmenubadge telt opeisbare dagelijkse onderzoekbeloningen dubbel",
+      "owner": "Codex",
+      "dependsOn": [],
+      "spec": "src/FieldHomeV2.tsx",
+      "status": "af",
+      "claimedBy": "Codex",
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": false,
+      "functionalChecked": true,
+      "evidence": [
+        "src/FieldHomeV2.tsx PLAY bevat Doelen met count: researchReady",
+        "src/FieldHomeV2.tsx const ready=PLAY.reduce(...)+researchReady+... telt dezelfde waarde voor de tweede keer",
+        "6 nov: concrete bronfix; TypeScript en 702 tests groen; zie ../UX_REVIEW_20261105.md, aanvulling 6 november."
+      ],
+      "blocker": null,
+      "note": "Dubbele researchReady-bijdrage verwijderd; Doelen telt al in PLAY."
+    },
+    {
+      "id": "BUG-03",
+      "title": "Autovangst-toast toont maximaal +3 terwijl een batch 4 of 5 vangsten bevat",
+      "owner": "Codex",
+      "dependsOn": [],
+      "spec": "src/AutoCatchToastV2.tsx; game/walkCatchV2.ts",
+      "status": "af",
+      "claimedBy": "Codex",
+      "filesClaimed": [],
+      "assetsMade": false,
+      "integrated": true,
+      "visuallyChecked": false,
+      "functionalChecked": true,
+      "evidence": [
+        "game/walkCatchV2.ts WALK_CATCH.perCall is 5",
+        "src/AutoCatchToastV2.tsx pakt maximaal drie ids met slice(-Math.min(gained,3))",
+        "src/AutoCatchToastV2.tsx toont +bugs.length in plaats van +gained; bij gained=5 wordt +3 weergegeven",
+        "6 nov: concrete bronfix; TypeScript en 702 tests groen; zie ../UX_REVIEW_20261105.md, aanvulling 6 november."
+      ],
+      "blocker": null,
+      "note": "Teller gebruikt gained, niet het aantal voorbeeldiconen; maximaal drie afbeeldingen, alleen autoCaught walking-specimens."
     }
   ],
   "trackerOwner": "Codex (overgedragen door Claude op 4 nov 2026)",
   "trackerNote": "Claude stopt (credits op). Alle open punten en bestanden: docs/creator-handoff/CLAUDE_OVERDRACHT_AAN_CODEX.md.",
-  "deferredUserRequest": "Legacy account transfer/first-login compensation and showable legacy cosmetic: explicitly deferred until current Claude handoff work is finished; not implemented.",
+  "deferredUserRequest": "Legacy-herkenning/compensatie/cosmetic lokaal geïmplementeerd en met7 tests gecontroleerd. Eén bestaande oude account read-only herkend in steekproef. Productieactivering/deployment en persoonlijke Google-login blijven open; oude en nieuwe voortgang blijven behouden.",
   "releaseCandidate": {
     "version": "0.1.31",
     "versionCode": 32,
-    "status": "verified; public publication follows source commit",
+    "status": "Historische0.1.31-bewijzen; actuele gepubliceerde versie0.1.33, zie docs/releases/0.1.33.md. Nieuwe werkmap niet gepubliceerd.",
     "assets": {
       "models": 153,
       "portraits": 306,
       "rerendered": 20
     },
-    "legacy": "explicitly deferred by user",
+    "legacy": "Nieuwe implementatie alleen lokaal; niet in deze historische APK.",
     "url": "https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.31",
     "apkSHA256": "4966bdb9713a14ec44990c23ff3ed4a40c770559d446904d991fcfa4146998cc",
     "apkBytes": 94524301,
@@ -531,6 +681,46 @@
     "backgroundResume": true,
     "newCrashLogEntries": 0,
     "physicalWalk": false,
-    "personalGoogleSignIn": false
+    "personalGoogleSignIn": false,
+    "evidenceScope": "Historische emulatorproef uit voorgaande release; niet uitgevoerd voor wijzigingen van6nov."
+  },
+  "localCompletion20261106": {
+    "tests": 703,
+    "typecheck": "passed",
+    "webBuild": "passed",
+    "published": false,
+    "apkBuilt": false,
+    "releaseHold": true,
+    "report": "../UX_REVIEW_20261105.md",
+    "remainingEvidence": [
+      "Fysiek Android: GPS, Health Connect, achtergrond/force-stop, accu, hoorbaar geluid",
+      "Persoonlijke Google-login en complete online multiplayer/raid/crew-routes",
+      "Legacy serverconfiguratie en gezamenlijke backend/APK-uitrol na opheffen releasepauze"
+    ],
+    "finalBrowserErrors": 0,
+    "battleToArcade": "passed locally after automatic goClose"
+  },
+  "textAndAccountPolish20261106": {
+    "status": "implemented locally; release held",
+    "publicName": "editable nickname on profile/account, friend code kept at Friends",
+    "preserves": [
+      "uid",
+      "friendCode",
+      "specimens",
+      "stats",
+      "inventory"
+    ],
+    "sourceEncodingScan": {
+      "files": 230,
+      "issues": 0
+    },
+    "tests": 703,
+    "evidence": ".local/polish-20261106/names/",
+    "report": "../UX_REVIEW_20261105.md",
+    "screenSamples": 32,
+    "finalBrowserErrors": 0,
+    "smallScreenCP": "one line,16px high; no text overflow",
+    "finalWebBuild": "passed",
+    "typecheck": "passed"
   }
 }

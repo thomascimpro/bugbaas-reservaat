@@ -35,7 +35,7 @@ export function PoChoice({icon,label,onPress,badge,size=70,testID}:{icon:GameIco
 
 /** Glass sheet with rounded top that sits over a big HD picture. */
 export function PoSheet({children,style}:{children:React.ReactNode;style?:StyleProp<ViewStyle>}){
- return <View style={[{backgroundColor:PO.surface,borderTopLeftRadius:26,borderTopRightRadius:26,borderWidth:1,borderBottomWidth:0,borderColor:PO.rim,paddingHorizontal:22,paddingTop:22,gap:14,boxShadow:'0px -6px 24px #00000055'},style]}>{children}</View>;
+ return <View style={[{backgroundColor:'#0F2D2D',borderTopLeftRadius:26,borderTopRightRadius:26,borderWidth:1,borderBottomWidth:0,borderColor:PO.rim,paddingHorizontal:22,paddingTop:22,gap:14,boxShadow:'0px -6px 24px #00000055'},style]}>{children}</View>;
 }
 
 /** Centered ✕ with a cyan ring. */

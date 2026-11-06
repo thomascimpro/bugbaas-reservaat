@@ -72,7 +72,7 @@ export function tryTowerLandingChain(s:BugTowerState){
 }
 export const towerFinalScore=(s:BugTowerState)=>Math.max(1,Math.round(s.rawScore+s.floor*14+s.maxCombo*45));
 export const bugTowerPort:OriginalPort<BugTowerState>&{controls:readonly string[]}={
- game:'bug_tower',name:'Bladtoren',help:'Houd links of rechts vast om te rennen en je sprong op te laden. Laat los om te springen. Tik binnen 360 ms na een salto-landing voor een extra flip. Pak munten, raketten en MEGA-veren; overleef tot je valt.',durationMs:600000,controls:['left','right'],
+ game:'bug_tower',name:'Bladtoren',help:'Houd links of rechts vast om te rennen en je sprong op te laden. Laat los om te springen. Tik meteen na een salto-landing voor een extra salto. Pak munten, raketten en superveren; overleef tot je valt.',durationMs:600000,controls:['left','right'],
  create(ticket){const seed=String(ticket.seed),platforms=buildInitialPlatforms(seed),pickups=platforms.map(p=>createTowerPickup(p,seed)).filter((p):p is TowerPickup=>Boolean(p)),p=originalSquadPower(ticket.squad,ticket.league);return {game:'bug_tower',elapsedMs:0,score:0,finished:false,reason:null,hearts:1,platforms,pickups,player:initialTowerPlayer(),nextFloor:platforms.length,floor:0,rawScore:0,combo:0,maxCombo:0,manualDirection:0,runDistance:0,landedAt:0,chainUntil:0,coinsCollected:0,rocketUntil:0,rocketCooldownUntil:0,springReady:false,assist:{landingMargin:playerHalfWidth*Math.min(.14,p.defense*.12+(p.has('grass')?.02:0)),coyoteBonusMs:Math.round(p.hp*60)}};},
  step(s,ticket,dt){
   if(s.finished)return;s.elapsedMs+=dt;

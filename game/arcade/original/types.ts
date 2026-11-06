@@ -11,7 +11,7 @@ export type OriginalPort<S extends OriginalState=OriginalState>={
  step:(state:S,ticket:ArcadeTicket,dt:number)=>void;
  input:(state:S,ticket:ArcadeTicket,input:OriginalInput)=>boolean;
 };
-export type OriginalSceneProps<S extends OriginalState=OriginalState>={state:S;ticket:ArcadeTicket;scale:number;reducedMotion:boolean;onInput:(input:Omit<OriginalInput,'tick'>)=>void};
+export type OriginalSceneProps<S extends OriginalState=OriginalState>={state:S;ticket:ArcadeTicket;scale:number;reducedMotion:boolean;onInput:(input:Omit<OriginalInput,'tick'>)=>void;onReady?:()=>void};
 
 /** Actual squad stats already include held items. Helpers never multiply the score. */
 export function originalSquadPower(squad:ArcadeBug[],league:ArcadeTicket['league']){

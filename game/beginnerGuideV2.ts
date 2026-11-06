@@ -16,7 +16,7 @@ export function beginnerSteps(p:PlayerV2,level:number,localDone:readonly string[
   {id:'spin-post',title:'Draai aan een post',hint:'Loop naar een post en draai voor netten.',icon:'compass',action:'posts',done:spun},
   {id:'see-bugs',title:'Bekijk je bugs',hint:'Kies je sterkste bug en maak hem sterker.',icon:'team',action:'team',done:localDone.includes('see-bugs'),markOnAction:true},
   {id:'bugdex',title:'Open je Bugdex',hint:'Zie welke bugs je nog kunt vinden.',icon:'book',action:'bugdex',done:localDone.includes('bugdex'),markOnAction:true},
-  {id:'first-battle',title:level>=5?'Speel je eerste gevecht':'Haal level 5 voor gevechten',hint:level>=5?'Tik op Strijd en start een duel.':'Je bent nu level '+level+'. Vang bugs om te groeien.',icon:'swords',action:level>=5?'battle':'nearby',done:localDone.includes('first-battle'),markOnAction:level>=5},
+  {id:'first-battle',title:level>=5?'Speel je eerste gevecht':'Haal level 5 voor gevechten',hint:level>=5?'Tik op Strijd en start een duel.':'Je bent nu level '+level+'. Vang bugs om te groeien.',icon:'swords',action:level>=5?'battle':'nearby',done:p.go?.guideFirstBattle===true},
  ];
 }
 /** A collapsed guide pops open for a few seconds only when a step the player has not seen yet starts. */

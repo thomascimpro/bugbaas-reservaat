@@ -14,7 +14,7 @@ export function cloudApp() {
   return getApps().find(a => a.name === 'reservaat') ?? initializeApp({ projectId: id, credential: serviceAccount ? cert(serviceAccount) : applicationDefault() }, 'reservaat');
 }
 export async function cloudUid(token: string) { const decoded = await getAuth(cloudApp()).verifyIdToken(token, true); return decoded.uid; }
-export async function cloudIdentity(token: string) { const decoded = await getAuth(cloudApp()).verifyIdToken(token,true);return {uid:decoded.uid,linked:decoded.firebase.sign_in_provider!=='anonymous'}; }
+export async function cloudIdentity(token: string) { const decoded = await getAuth(cloudApp()).verifyIdToken(token,true);return {uid:decoded.uid,linked:decoded.firebase.sign_in_provider!=='anonymous',email:decoded.email,emailVerified:decoded.email_verified===true,googleId:decoded.firebase.identities?.['google.com']?.[0]}; }
 export class FirestoreStore implements Store {
   private db = getFirestore(cloudApp());
   async run<T>(keys: string[], callback: (docs: Documents) => T): Promise<T> {

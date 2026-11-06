@@ -8,11 +8,11 @@ import type {Bait} from './fieldV2';
 export type MotionStyle='crawl'|'flutter'|'hop'|'dart'|'glide';
 export type NetMotion={style:MotionStyle;amp:number;wind:number};
 export const MOTION_INFO:Record<MotionStyle,{name:string;tip:string}>={
- crawl:{name:'Kruipt',tip:'Kruipt langzaam heen en weer. Mik een klein stukje vóór de bug.'},
- flutter:{name:'Fladdert',tip:'Fladdert in een golf. Gooi als hij naar het midden komt.'},
- hop:{name:'Springt',tip:'Springt weg als je een ! ziet. Gooi meteen nadat hij geland is.'},
- dart:{name:'Schiet weg',tip:'Staat even stil en schiet dan opzij. Gooi in de pauze.'},
- glide:{name:'Glijdt',tip:'Glijdt van links naar rechts. Mik waar hij straks is.'},
+ crawl:{name:'Kruipt',tip:'Kruipt langzaam heen en weer. Zwaai door de bug terwijl hij kruipt.'},
+ flutter:{name:'Fladdert',tip:'Fladdert in een golf. Zwaai zodra hij langs je net komt.'},
+ hop:{name:'Springt',tip:'Springt weg als je een ! ziet. Zwaai net nadat hij geland is.'},
+ dart:{name:'Schiet weg',tip:'Staat even stil en schiet dan opzij. Zwaai in de pauze.'},
+ glide:{name:'Glijdt',tip:'Glijdt van links naar rechts. Zwaai dwars door zijn vliegpad.'},
 };
 const HOPPERS=/hopper|cricket|flea|click|locust|katydid|springtail/;
 const DARTERS=/cockroach|silverfish|tigerbeetle/;

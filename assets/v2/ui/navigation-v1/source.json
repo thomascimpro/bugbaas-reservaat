@@ -1,0 +1,32 @@
+{
+  "tool": "image_gen (built-in)",
+  "date": "2026-11-06",
+  "purpose": "Transparent Bugbaas navigation icons; UI-optimized WebP variants, original generation preserved locally.",
+  "assets": [
+    {
+      "id": "trainer",
+      "file": "trainer.webp",
+      "sourceImage": "exec-bc107dae-4551-40c5-a01f-943a09602302.png",
+      "prompt": "Use case: stylized-concept. Asset type: one premium mobile bug-collecting game navigation icon, NOT a screenshot. Style: polished hand-painted 3D game inventory art, believable carved and brushed materials, sophisticated forest adventure aesthetic, warm brass highlights, deep emerald and turquoise accents, soft upper-left studio light. Readable bold silhouette at 28 pixels. Single isolated centered object fills 80% of a square canvas, generous clean margin, genuine transparent alpha background. No lettering, no words, no numbers, no watermark, no border, no tile or colored square, no fake checkerboard. Avoid emoji, flat clipart, childish toy styling, tiny clutter, loose sparkles, photoreal human faces. Subject: one adventurer profile bust emblem. A simple stylized adult forest ranger head and shoulders wearing a tan explorer hat with teal band and a green jacket. Calm recognizable silhouette, refined bronze and teal enamel details, professional fantasy-game UI quality."
+    },
+    {
+      "id": "goals",
+      "file": "goals.webp",
+      "sourceImage": "exec-d85015b9-adc3-45c5-a7ca-bfcb8754792b.png",
+      "prompt": "Use case: stylized-concept. Asset type: one premium mobile bug-collecting game navigation icon, NOT a screenshot. Style: polished hand-painted 3D game inventory art, believable carved and brushed materials, sophisticated forest adventure aesthetic, warm brass highlights, deep emerald and turquoise accents, soft upper-left studio light. Readable bold silhouette at 28 pixels. Single isolated centered object fills 80% of a square canvas, generous clean margin, genuine transparent alpha background. No lettering, no words, no numbers, no watermark, no border, no tile or colored square, no fake checkerboard. Avoid emoji, flat clipart, childish toy styling, tiny clutter, loose sparkles, photoreal human faces. Subject: one quest journal / goals icon. A compact ivory parchment mission sheet on a deep emerald leather backing with a bold raised golden completed checkmark and a simple circular teal progress medallion near the bottom. Big readable shapes, no handwriting or text, crisp sophisticated game prop."
+    },
+    {
+      "id": "friends",
+      "file": "friends.webp",
+      "sourceImage": "exec-a4e059b8-b851-4ef4-a0ae-9e5c0b92dbc1.png",
+      "refinementPrompt": "Use case: precise-object-edit. This is the Friends icon for the Bugbaas game. Keep the exact pair of adventurers, hats, clothing, pose, materials, emerald/teal/gold palette and transparent background. Finish BOTH blank faces with clear, softly sculpted friendly facial features: natural eyes, eyebrows, a simple nose and subtle confident smile. Faces must look like finished premium stylized game characters, not faceless mannequins. Do not add text, frame, background, glow or props. Preserve genuine transparent alpha and the existing icon silhouette.",
+      "prompt": "Use case: stylized-concept. Asset type: one premium mobile bug-collecting game navigation icon, NOT a screenshot. Style: polished hand-painted 3D game inventory art, believable carved and brushed materials, sophisticated forest adventure aesthetic, warm brass highlights, deep emerald and turquoise accents, soft upper-left studio light. Readable bold silhouette at 28 pixels. Single isolated centered object fills 80% of a square canvas, generous clean margin, genuine transparent alpha background. No lettering, no words, no numbers, no watermark, no border, no tile or colored square, no fake checkerboard. Avoid emoji, flat clipart, childish toy styling, tiny clutter, loose sparkles, photoreal human faces. Subject: one friendship icon formed by two overlapping stylized adventurer head-and-shoulder emblems, front in emerald jacket and tan ranger hat, rear in turquoise jacket and warm brass/tan explorer cap. Friendly confident adult silhouettes, distinct two-person composition, no tiny facial details. Same premium carved 3D game-prop style."
+    },
+    {
+      "id": "cards",
+      "file": "cards.webp",
+      "sourceImage": "exec-183ebe18-db9e-4865-836c-a21b72886ca2.png",
+      "prompt": "Use case: stylized-concept. Asset type: one premium mobile bug-collecting game navigation icon, NOT a screenshot. Style: polished hand-painted 3D game inventory art, believable carved and brushed materials, sophisticated forest adventure aesthetic, warm brass highlights, deep emerald and turquoise accents, soft upper-left studio light. Readable bold silhouette at 28 pixels. Single isolated centered object fills 80% of a square canvas, generous clean margin, genuine transparent alpha background. No lettering, no words, no numbers, no watermark, no border, no tile or colored square, no fake checkerboard. Avoid emoji, flat clipart, childish toy styling, tiny clutter, loose sparkles, photoreal human faces. Subject: one habitat postcard collection icon. A fan of three thick illustrated cream-bordered postcards, front card has a simple vivid green forest clearing and a golden butterfly seal, behind cards show teal water and warm sunset. Tactile paper edges, crisp readable three-card silhouette. No letters or stamps with writing."
+    }
+  ]
+}

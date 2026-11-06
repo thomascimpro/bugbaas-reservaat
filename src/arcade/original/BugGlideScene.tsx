@@ -18,7 +18,7 @@ export function BugGlideScene({state:s,scale,onInput,reducedMotion}:OriginalScen
  const [box,setBox]=useState({width:360,height:600}),emit=useRef(onInput),current=useRef(s);emit.current=onInput;current.current=s;
  useEffect(()=>{if(Platform.OS!=='web')return;const key=(e:KeyboardEvent)=>{if(e.repeat||!['ArrowLeft','ArrowRight','ArrowUp',' '].includes(e.key))return;e.preventDefault();emit.current({x:e.key==='ArrowLeft'?100:e.key==='ArrowRight'?900:Math.round(current.current.x*10),y:500,action:'down'});};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);},[]);
  const reactions=useRef({pickups:s.pickups,hits:s.hits,pickupAt:-1e9,hitAt:-1e9});if(s.pickups>reactions.current.pickups)reactions.current.pickupAt=s.elapsedMs;if(s.hits>reactions.current.hits)reactions.current.hitAt=s.elapsedMs;reactions.current.pickups=s.pickups;reactions.current.hits=s.hits;const pickupAge=s.elapsedMs-reactions.current.pickupAt,hitAge=s.elapsedMs-reactions.current.hitAt,flapAge=s.elapsedMs-(s.tapPulses.at(-1)?.at??-1e9),flap=reducedMotion?1:1+.12*Math.sin(Math.PI*Math.min(1,flapAge/140));
- const shield=s.elapsedMs<s.shieldUntil,tailwind=s.elapsedMs<s.windUntil,gameScale=.68*Math.max(.85,Math.min(1.5,scale)),beeFrame=reducedMotion?0:Math.floor(s.elapsedMs/100)%4,beeDirection:BeeDirection=s.vy<-.45?'up':s.vy>1.25?'down':'right';
+ const shield=s.elapsedMs<s.shieldUntil,tailwind=s.elapsedMs<s.windUntil,gameScale=.86*Math.max(.85,Math.min(1.5,scale)),beeFrame=reducedMotion?0:Math.floor(s.elapsedMs/100)%4,beeDirection:BeeDirection=s.vy<-.45?'up':s.vy>1.25?'down':'right';
  return <View testID="original-bug-glide" style={[styles.game,{width:360*scale,height:640*scale}]}>
   <View style={styles.hud}><HudChip active={shield} icon={shield?'🛡':'♥'} label={shield?'':`${s.hearts}`}/><HudChip active={tailwind} icon={tailwind?'↯':'🔥'} label={tailwind?'':`×${s.streak}`}/></View>
   <View style={styles.sky} onLayout={e=>setBox(e.nativeEvent.layout)}>
@@ -37,7 +37,7 @@ function BeeSprite({ direction, frame }: { direction: BeeDirection; frame: numbe
   const row = direction === "up" ? 2 : direction === "down" ? 3 : 0;
   return (
     <View style={styles.beeSpriteFrame}>
-      <Image accessibilityIgnoresInvertColors source={beeSpriteSheet} style={[styles.beeSpriteSheet, { left: -frame * 64, top: -row * 64 }]} />
+      <View style={{width:64,height:64,transform:[{scale:1.8}]}}><Image accessibilityIgnoresInvertColors source={beeSpriteSheet} style={[styles.beeSpriteSheet, { left: -frame * 64, top: -row * 64 }]} /></View>
     </View>
   );
 }
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   panel: { alignItems: "center", backgroundColor: "rgba(16,32,24,0.94)", borderColor: "#d7bd57", borderRadius: 10, borderWidth: 1, gap: 14, margin: 16, padding: 18 },
   panelTitle: { color: "#f9fbf7", fontSize: 26, fontWeight: "900", textAlign: "center" },
   pickup: { backgroundColor: "rgba(34,197,94,0.18)", borderColor: "#22c55e", borderRadius: 999, borderWidth: 3 },
-  player: { alignItems: "center", backgroundColor: "rgba(249,251,247,0.1)", borderColor: "#d7bd57", borderRadius: 18, borderWidth: 2, height: 78, justifyContent: "center", marginLeft: -39, marginTop: -39, position: "absolute", width: 78, zIndex: 6 },
+  player: { alignItems: "center", backgroundColor: "rgba(5,32,29,0.45)", borderRadius: 39, height: 78, justifyContent: "center", marginLeft: -39, marginTop: -39, position: "absolute", width: 78, zIndex: 6 },
   playerShield: { height: 92, opacity: 0.72, position: "absolute", width: 92, zIndex: 10 },
   primaryButton: { alignItems: "center", backgroundColor: "#168251", borderRadius: 8, justifyContent: "center", minHeight: 52, paddingHorizontal: 20, width: "100%" },
   primaryText: { color: "#fff", fontSize: 18, fontWeight: "900" },

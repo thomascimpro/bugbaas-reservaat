@@ -113,7 +113,7 @@ export type GoProfile={
  sites?:SiteProgress;trainer?:TrainerProgress;
  entries?:Record<string,{seenAt:number|null;caughtAt:number|null;shinyAt:number|null}>;dexVersion?:1;
  ratedDay?:string;ratedCount?:number;dex?:string[];version:1;dust:number;candy:Record<string,number>;xl:Record<string,number>;items:Record<Held,number>;fastTMs:number;chargedTMs:number;
- team:string[];league:League;rating:number;wins:number;losses:number;history:{id:string;opponent:string;result:string;delta:number;at:number}[];
+ team:string[];league:League;rating:number;wins:number;losses:number;history:{id:string;opponent:string;result:string;delta:number;at:number}[];guideFirstBattle?:boolean;
  battle:string|null;queue:{league:League;at:number;until:number}|null;
  auto:{enabled:boolean;lastAt:number;attempted:string[];credit?:number;awayDay?:string;awayCount?:number;awayCredit?:number;walk?:{day:string;caught:number;meters:number;workoutMeters:number;credit:number;pace?:number;workout?:boolean};last?:{species:string;caught:boolean;at:number};totals?:{caught:number;missed:number;dust:number;xp:number;spins?:number};status:'off'|'waiting'|'moving'|'too-fast'|'gps'|'empty';moving:number};
  motion?:{fix:Fix;at:number};buddyMeters:number;

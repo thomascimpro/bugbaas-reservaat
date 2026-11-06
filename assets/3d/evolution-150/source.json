@@ -3050,23 +3050,24 @@
       "dex_number": 150,
       "family": "snail",
       "stage": 3,
-      "asset_name": "SnailStage3.glb",
+      "asset_name": "SnailStage3Polished.glb",
       "intent": "New three-stage family",
       "status": "selected optimized runtime model",
-      "file": "SnailStage3.glb",
-      "source": "OssuarySnail",
-      "sourceGeometryReused": true,
-      "sha256": "2701fc8283077f3432ece121291492860d1a5270f9d7c6edcacb4f11cb632424",
-      "bytes": 262272,
+      "file": "SnailStage3Polished.glb",
+      "source": "BugBaas original authored bone-snail anatomy",
+      "sourceGeometryReused": false,
+      "sha256": "b02088d44c14717a8177e63d9185be2d19a37cc396674cd607a199f6eda5dad6",
+      "bytes": 14672,
       "meshes": 1,
       "skins": 1,
       "materials": 12,
       "drawCalls": 12,
       "animations": [
         "idle",
-        "move",
+        "walk",
         "attack",
-        "walk"
+        "hit",
+        "dead"
       ],
       "authoredFeatures": [
         "coiled continuous shell, muscular foot and long eye stalks"
@@ -3077,7 +3078,10 @@
       "downloadUrl": "https://gobkit.com/api/community/file/5qt3rbmwnh4u/model",
       "sourceSha256": "0cc3966fb3736f20112c2ac5310fcfeb92d923d8e3688ba62ca1354649187c1b",
       "geometrySha256": "1c9e08da169a5a7b305c0094c700f01e4fbff1d0fafb89cdef546fa5465223b3",
-      "materialFixes": []
+      "materialFixes": [],
+      "sourcePath": "assets/3d/evolution-150/sources/OriginalBoneSnail.glb",
+      "rebuild": "node assets/3d/evolution-150/authoring/polish-snail.mjs",
+      "note": "6 Nov: replaced the visually noisy OssuarySnail with the existing authored complete snail; account ID and stats unchanged."
     }
   ],
   "count": 85,

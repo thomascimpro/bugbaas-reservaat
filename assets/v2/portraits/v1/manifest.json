@@ -1792,16 +1792,18 @@
       "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
     },
     "snail_3": {
-      "model": "SnailStage3",
+      "model": "SnailStage3Polished",
       "palette": [
-        "#3D2D45",
-        "#C59AE1",
-        "#C6F0D7"
+        "#123D39",
+        "#35CFA4",
+        "#F4D078"
       ],
       "size": 768,
       "normal": "snail_3.png",
       "shiny": "snail_3-shiny.png",
-      "renderer": "Blender Cycles 64 samples; material upgrade 2026-11-04"
+      "renderer": "Blender Cycles 32 samples; complete authored bone snail 2026-11-06",
+      "normalSha256": "5f55b6addaf17dde0b25844d64469477d351296cc58954125ad85c4ac3fe6dbc",
+      "shinySha256": "b89d36794519393dbb84496f19a67cd317180c7d8af95fa692231c21aeb1643c"
     },
     "kristalkoning": {
       "model": "Kristalkoning",

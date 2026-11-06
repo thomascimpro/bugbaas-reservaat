@@ -3,9 +3,27 @@ import {bugPose} from './netMotionV2';
 import type {NetMotion} from './netMotionV2';
 
 /** `start`: ms between the encounter appearing on screen and the finger going down; it places the moving bug. */
-export type NetFlickTrace={kind:'flick'|'sweep'|'swing';points:NetPoint[];start?:number};
+export type NetFlickTrace={kind:'flick'|'sweep'|'swing'|'scoop';points:NetPoint[];start?:number};
 export const NET_FLIGHT_MS=400;
 export const NET_SWING_FLIGHT_MS=520;
+export const NET_SCOOP_SETTLE_MS=240;
+/** One clean netsweep across the bug: no spin, projectile speed or shrinking ring. */
+export function validNetScoop(points:readonly NetPoint[]){
+ if(points.length<2)return false;const first=points[0],last=points.at(-1)!,displacement=Math.hypot(last.x-first.x,last.y-first.y);
+ let length=0;for(let i=1;i<points.length;i++)length+=Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y);
+ return last.t>=130&&last.t<=1100&&displacement>=.18&&length<=displacement*1.8&&first.x>=-.1&&first.x<=1.1&&first.y>=0&&first.y<=1.3;
+}
+/** Evaluate the whole visible stroke against the same moving bug, not just the release point. */
+export function netScoopGrade(points:readonly NetPoint[],bait:Bait|null,motion?:NetMotion,seed='',start=0){
+ let closest=Infinity,dodged=false,at={x:.5,y:.42};
+ for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],steps=Math.max(1,Math.min(12,Math.ceil((b.t-a.t)/12)));
+  for(let n=0;n<=steps;n++){const u=n/steps,p={x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u},bug=bugPose(motion,seed,start+a.t+(b.t-a.t)*u,bait),d=Math.hypot(p.x-bug.x,(p.y-bug.y)*.9)/(bait==='dew'?1.2:1);
+   if(d<closest){closest=d;dodged=bug.dodge;at=p;}}
+ }
+ const duration=points.at(-1)!.t,first=points[0],last=points.at(-1)!,speed=Math.hypot(last.x-first.x,last.y-first.y)/(duration/1000),controlled=speed>=.5&&speed<=2.8;
+ const grade:Grade=closest>.14||dodged?'miss':!controlled?'hit':closest<=.025?'perfect':closest<=.065?'great':'nice';
+ return {grade,curved:false,duration,dodged,start,at};
+}
 /** A real circle near the hand charges spin; a diagonal bend is not a spin. */
 export function netSpin(points:readonly NetPoint[]){
  const hand=points.filter(p=>p.y>=.75);let best={turns:0,direction:1,ready:false};

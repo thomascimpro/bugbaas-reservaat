@@ -1,3 +1,4 @@
+import {normalizeTrainerName,validTrainerName} from '../game/trainerNameV2';
 import {startFieldLure,advanceFieldActivities,feedFieldBuddy} from '../game/fieldActivitiesV2';
 import {releaseDuplicates,metamorphose} from '../game/collectionActionsV2';
 import {recordWalk,startCocoon,hatchCocoon} from '../game/walkingRewardsV2';
@@ -84,7 +85,7 @@ export class GameServiceV2 {
     case 'adventureAct':{const r=x.adventure!.run;check(r,'Start eerst een gevecht.');resolveTurn(r,c.action);if(r.phase!=='fight')recordScore();break;}
     case 'adventureForfeit':{const r=x.adventure!.run;check(r?.phase==='fight','Er loopt geen gevecht.');r.phase='lost';r.score=0;recordScore();if(r.reward){x.nectar-=r.reward.nectar;x.adventure!.parts-=r.reward.parts;r.reward={nectar:0,parts:0};x.adventure!.daily.fights--;}break;}
     case 'adventureClose':check(x.adventure!.run&&x.adventure!.run.phase!=='fight','Rond eerst je gevecht af.');x.adventure!.run=null;break;
-    case 'profile':check(typeof c.name==='string'&&/^[\p{L}\p{N} _-]{2,18}$/u.test(c.name),'Gebruik 2 tot 18 letters of cijfers.');x.name=c.name;x.onboarded=true;break;
+    case 'profile':check(validTrainerName(c.name),'Gebruik 2 tot 18 letters of cijfers.');x.name=normalizeTrainerName(c.name);x.onboarded=true;break;
     case 'settings':for(const f of ['sound','reducedMotion','largeText'] as const){check(typeof c[f]==='boolean','Ongeldige instelling.');x.settings[f]=c[f] as boolean;}break;
     case 'team':idle();check(Array.isArray(c.ids)&&c.ids.every(i=>typeof i==='string'),'Kies je vijf bugs.');ownedTeam(x,c.ids as string[]);x.squad=c.ids as string[];break;
     case 'equip':{idle();const s=x.specimens.find(s=>s.id===c.id);check(s,'Kies een eigen bug.');check(c.item===null||(typeof c.item==='string'&&ITEMS.some(i=>i.id===c.item&&i.held)),'Ongeldig held item.');if(c.item){const available=x.items.filter(i=>i===c.item).length,used=x.specimens.filter(o=>o.id!==s.id&&o.item===c.item).length;check(available>used,'Dit voorwerp is al uitgerust of niet in je tas.');}s.item=c.item as string|null;break;}

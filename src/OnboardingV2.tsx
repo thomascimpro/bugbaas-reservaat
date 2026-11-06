@@ -1,3 +1,4 @@
+import {validTrainerName} from '../game/trainerNameV2';
 import React,{useState} from 'react';
 import {Pressable,Text,TextInput,View} from 'react-native';
 import {NAME_ENDINGS,NAME_IDEAS,OUTFITS,STARTER_INFO,STARTER_PARTNERS,trainerModel,trainerPalette,type OutfitId,type TrainerAvatar} from '../game/avatarV2';
@@ -9,13 +10,12 @@ import {GoTypes} from './GoTypeV2';
 import type {RunV2} from './ShopViewV2';
 import {Button,Label,Panel,V,v} from './uiV2';
 
-const VALID=/^[\p{L}\p{N} _-]{2,18}$/u;
 const suggestName=()=>{const a=NAME_IDEAS[Math.floor(Math.random()*NAME_IDEAS.length)],b=NAME_ENDINGS[Math.floor(Math.random()*NAME_ENDINGS.length)];return (a+b).slice(0,15)+(Math.random()<.5?String(Math.floor(Math.random()*90)+10):'');};
 
 /** Three short steps for a new player: who you are, your name, your first partner. Nothing is saved until the last step. */
 export function OnboardingV2({busy,run,cloud,onAccount}:{busy:boolean;run:RunV2;cloud:boolean;onAccount:()=>void}){
  const [step,setStep]=useState(0),[avatar,setAvatar]=useState<TrainerAvatar>('fern'),[outfit,setOutfit]=useState<OutfitId>('moss'),[name,setName]=useState(''),[starter,setStarter]=useState<typeof STARTER_PARTNERS[number]|null>(null);
- const trimmed=name.trim(),validName=VALID.test(trimmed),ring=trainerPalette(avatar,outfit).trim;
+ const trimmed=name.trim(),validName=validTrainerName(trimmed),ring=trainerPalette(avatar,outfit).trim;
  const dots=<View accessibilityLabel={'Stap '+(step+1)+' van 3'} style={{flexDirection:'row',justifyContent:'center',gap:6}}>{[0,1,2].map(i=><View key={i} style={{width:i===step?26:9,height:9,borderRadius:5,backgroundColor:i<=step?'#F2D16E':'#FFFFFF44'}}/>)}</View>;
  return <View testID={'onboarding-step-'+step} style={{gap:12}}>
   <View style={{alignItems:'center',gap:6}}><BrandMark width={step===0?200:150}/>{dots}</View>

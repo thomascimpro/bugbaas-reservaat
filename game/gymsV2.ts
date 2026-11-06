@@ -17,6 +17,8 @@ export type GymProgress={remoteDay?:string;won?:GymSite&{until:number};team:GymT
 export type GymDefender={npc?:true;uid:string;name:string;deployment:string;bug:Specimen;at:number;hearts:number;motivationAt:number};
 export type Gym=GymSite&{npcSeeded?:true;team:GymTeam|null;revision:number;defenders:GymDefender[];battle?:{id:string;uid:string;until:number}};
 export type GymView=GymSite&{team:GymTeam|null;revision:number;battling:boolean;defenders:{id:string;name:string;species:string;shiny:boolean;cp:number;hearts:number;at:number;me:boolean;npc?:boolean}[]};
+/** A neutral NPC gym can still contain defenders; only a won, actually empty gym is free. */
+export function gymBattleHint(gym:Pick<GymView,'team'|'defenders'>|undefined,won:boolean){return !won?'Verloren · probeer een andere opstelling':gym&&gym.team===null&&!gym.defenders.length?'Gym vrij · laat een bug achter':'Ronde gewonnen · versla de overige verdedigers';}
 export type GymBattleMeta={id:string;name:string;site?:GymSite;defenders:{uid:string;deployment:string;npc?:true}[]};
 const day=(now:number)=>new Date(now).toISOString().slice(0,10);
 const hash=(text:string)=>{let value=2166136261;for(const c of text)value=Math.imul(value^c.charCodeAt(0),16777619);return value>>>0;};

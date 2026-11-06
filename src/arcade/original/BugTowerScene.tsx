@@ -20,7 +20,7 @@ export function BugTowerScene({state:s,scale,onInput,reducedMotion}:OriginalScen
  const reaction=useRef({grounded:s.player.grounded,launchAt:-1e9,landAt:-1e9});if(reaction.current.grounded&&!s.player.grounded&&s.player.vy<0)reaction.current.launchAt=s.elapsedMs;if(!reaction.current.grounded&&s.player.grounded)reaction.current.landAt=s.elapsedMs;reaction.current.grounded=s.player.grounded;const landAge=s.elapsedMs-reaction.current.landAt,launchAge=s.elapsedMs-reaction.current.launchAt,squash=reducedMotion?0:landAge<120?.18*Math.sin(Math.PI*landAge/120):launchAge<100?-.14*Math.sin(Math.PI*launchAge/100):0;
  const charge=towerCharge(s),chain=s.chainUntil>s.elapsedMs,rocket=s.rocketUntil>s.elapsedMs;
  return <View testID="original-bug-tower" style={[styles.game,{width:360*scale,height:640*scale}]}>
-  <View style={styles.hud}><View accessibilityLabel={'Etage '+s.floor} style={styles.hudChip}><Text style={styles.hudText}>🍃 {s.floor}</Text></View><View accessibilityLabel={s.combo>0?'Combo '+s.combo:towerZone(s.floor)} style={[styles.hudChip,s.combo>0&&styles.hudChipActive]}><Text style={styles.hudText}>{s.combo>0?`×${s.combo}`:towerZone(s.floor)}</Text></View></View>
+  <View style={styles.hud}><View accessibilityLabel={'Etage '+s.floor} style={styles.hudChip}><Text style={styles.hudText}>🍃 {s.floor}</Text></View><View accessibilityLabel={s.combo>0?'Combo '+s.combo:['Kristalgrot','Bladerdak','Gloednest','Wolkenkruin','Sterrenbos'][Math.floor(s.floor/100)%5]} style={[styles.hudChip,s.combo>0&&styles.hudChipActive]}><Text style={styles.hudText}>{s.combo>0?`×${s.combo}`:['Kristalgrot','Bladerdak','Gloednest','Wolkenkruin','Sterrenbos'][Math.floor(s.floor/100)%5]}</Text></View></View>
   <View style={styles.playfield}><ImageBackground resizeMode="cover" source={towerBackgrounds[Math.floor(s.floor/100)%towerBackgrounds.length]} style={styles.background}>
    <View style={styles.backgroundShade}/>
    {s.elapsedMs<12000&&<View pointerEvents="none" style={styles.chainTutorial}><Text style={styles.chainTutorialText}>Land → tik → salto</Text></View>}
@@ -30,10 +30,10 @@ export function BugTowerScene({state:s,scale,onInput,reducedMotion}:OriginalScen
     <Pressable accessibilityLabel="Ren rechts en laat los om te springen" testID="bug-tower-right-control" style={[styles.controlHalf,webHoldStyle,s.manualDirection===1&&styles.controlHalfActive]} unstable_pressDelay={0} onPressIn={()=>begin(1)} onPressOut={RNPlatform.OS==='web'?undefined:release}><Text style={styles.controlArrow}>›</Text></Pressable>
    </View>
    {chain&&<View pointerEvents="none" style={[styles.chainPrompt,percentPosition(s.player.x,s.player.y)]}><View style={styles.chainRing}/><Text style={styles.chainText}>TIK!</Text></View>}
-   {chain&&<View pointerEvents="none" testID="bug-tower-chain-window" style={styles.chainTiming}><Text style={styles.chainTimingText}>TIK NU → EXTRA FLIP</Text><View style={styles.chainTimingTrack}><View style={[styles.chainTimingFill,{width:`${towerChainProgress(s)*100}%`}]}/></View></View>}
+   {chain&&<View pointerEvents="none" testID="bug-tower-chain-window" style={styles.chainTiming}><Text style={styles.chainTimingText}>TIK → EXTRA SALTO</Text><View style={styles.chainTimingTrack}><View style={[styles.chainTimingFill,{width:`${towerChainProgress(s)*100}%`}]}/></View></View>}
    <View pointerEvents="none" style={[styles.player,percentPosition(s.player.x,s.player.y),{transform:[{rotate:`${reducedMotion?0:s.player.spinAngle}deg`},{scaleX:1+squash},{scaleY:1-squash}]}]}><BugTowerSprite frame={towerAnimationFrame(s)}/>{rocket&&<View style={styles.rocketFlame}/>}</View>
    {landAge<120&&<View pointerEvents="none" testID="tower-landing-effect" style={{position:'absolute',...percentPosition(s.player.x,s.player.y+5),width:50,height:10,marginLeft:-25,borderRadius:25,borderWidth:2,borderColor:'#BFF3EC',opacity:1-landAge/120,transform:[{scaleX:reducedMotion?1:1+landAge/100}]}}/>}
-   <View pointerEvents="none" style={styles.controls}><View style={styles.chargeMeter}><Text style={styles.chargeLabel}>{s.springReady?'MEGA SPRONG KLAAR':s.player.spinning?'SALTO!':charge>=58?'SALTO KLAAR':'SPRONGKRACHT'}</Text><View style={styles.chargeTrack}><View style={[styles.chargeFill,{width:`${charge}%`}]}/></View><Text style={styles.chargeValue}>{charge}%</Text></View></View>
+   <View pointerEvents="none" style={styles.controls}><View style={styles.chargeMeter}><Text style={styles.chargeLabel}>{s.springReady?'SUPERSPRONG KLAAR':s.player.spinning?'SALTO!':charge>=58?'SALTO KLAAR':'SPRONGKRACHT'}</Text><View style={styles.chargeTrack}><View style={[styles.chargeFill,{width:`${charge}%`}]}/></View><Text style={styles.chargeValue}>{charge}%</Text></View></View>
   </ImageBackground></View>
  </View>;
 }
@@ -48,7 +48,7 @@ function TowerPlatform({ platform }: { platform: Platform }) {
       width: `${platform.width}%` as DimensionValue
     }]}>
       <View style={styles.platformShine} />
-      <Text numberOfLines={1} style={styles.floorNumber}>#{platform.floor}</Text>
+
     </View>
   );
 }
@@ -58,7 +58,7 @@ function TowerPickupView({ pickup }: { pickup: TowerPickup }) {
     <View pointerEvents="none" style={[styles.pickup, percentPosition(pickup.x, pickup.y)]}>
       {pickup.kind === "coin" && <View style={styles.coin}><View style={styles.coinInset} /></View>}
       {pickup.kind === "rocket" && <View style={styles.rocketPickup}><Text style={styles.rocketPickupText}>▲</Text></View>}
-      {pickup.kind === "spring" && <View style={styles.springPickup}><Text style={styles.springPickupText}>MEGA</Text></View>}
+      {pickup.kind === "spring" && <View style={styles.springPickup}><Text style={styles.springPickupText}>SUPER</Text></View>}
     </View>
   );
 }

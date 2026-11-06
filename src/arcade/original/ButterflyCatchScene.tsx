@@ -9,10 +9,16 @@ import {font} from '../../uiV2';
 import {createOriginalButterflyWorld} from './ButterflyWorld';
 import {ButterflyBackdrop} from './ButterflyBackdrop';
 
-export function OriginalButterflyCatchScene({state:s,ticket,scale:k,reducedMotion,onInput}:OriginalSceneProps<OriginalButterflyCatchState>){
+export function OriginalButterflyCatchScene({state:s,ticket,scale:k,reducedMotion,onInput,onReady}:OriginalSceneProps<OriginalButterflyCatchState>){
  const canvas=useRef<HTMLCanvasElement|null>(null),world=useRef<ReturnType<typeof createOriginalButterflyWorld>|null>(null),current=useRef(s);current.current=s;
  const [webGL,setWebGL]=useState(Platform.OS==='web'),[sensor,setSensor]=useState(''),sensorCleanup=useRef<(()=>void)|null>(null),send=useRef(onInput);send.current=onInput;
- useEffect(()=>{if(Platform.OS!=='web'||!canvas.current)return;try{world.current=createOriginalButterflyWorld(canvas.current);world.current!.draw(current.current,reducedMotion);}catch{setWebGL(false);}return()=>{world.current?.dispose();world.current=null;};},[ticket.id]);
+ useEffect(()=>{
+  if(Platform.OS!=='web'||!canvas.current)return;let frame=0,disposed=false;
+  const ready=()=>{frame=requestAnimationFrame(()=>{if(!disposed)onReady?.();});};
+  frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{if(disposed||!canvas.current)return;
+   try{const next=createOriginalButterflyWorld(canvas.current);world.current=next;void next.prepare().then(()=>{if(disposed)return;next.draw(current.current,reducedMotion);ready();}).catch(()=>{if(!disposed){setWebGL(false);ready();}});}catch{setWebGL(false);ready();}
+  });});return()=>{disposed=true;cancelAnimationFrame(frame);world.current?.dispose();world.current=null;};
+ },[ticket.id]);
  useEffect(()=>{world.current?.draw(s,reducedMotion);});
  useEffect(()=>()=>sensorCleanup.current?.(),[]);
  useEffect(()=>{if(Platform.OS!=='web')return;const key=(e:KeyboardEvent)=>{if(e.code==='Space'&&!e.repeat){e.preventDefault();send.current({x:500,y:500,action:'down',control:'catch'});}else if(e.key.startsWith('Arrow')){e.preventDefault();const c=current.current,yaw=c.yaw+(e.key==='ArrowLeft'?.12:e.key==='ArrowRight'?-.12:0),pitch=c.pitch+(e.key==='ArrowUp'?.07:e.key==='ArrowDown'?-.07:0);send.current({x:Math.round((((yaw+Math.PI)%(Math.PI*2)+Math.PI*2)%(Math.PI*2))/(Math.PI*2)*1000),y:Math.round(Math.max(0,Math.min(1000,(pitch/2.64+.5)*1000))),action:'move',control:'look'});}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);},[]);
@@ -31,7 +37,7 @@ export function OriginalButterflyCatchScene({state:s,ticket,scale:k,reducedMotio
  const aim=s.aimedBug===null?null:originalButterflyProjection(s,s.bugs[s.aimedBug]);
  return <View testID="original-butterfly-catch" accessibilityLabel="Vlinderjacht: sleep om 360 graden te kijken, volg tot 100 procent en tik voor een netslag" style={{width:360*k,height:640*k,overflow:'hidden',backgroundColor:'#78967c'}}>
   {Platform.OS==='web'&&webGL&&React.createElement('canvas',{ref:canvas,style:{position:'absolute',width:'100%',height:'100%',left:0,top:0,pointerEvents:'none'},'aria-hidden':true})}
-  {Platform.OS!=='web'&&<ButterflyBackdrop state={s} ticket={ticket.id} reduced={reducedMotion} onReady={()=>setWebGL(true)} onError={()=>setWebGL(false)}/>}
+  {Platform.OS!=='web'&&<ButterflyBackdrop state={s} ticket={ticket.id} reduced={reducedMotion} onReady={()=>{setWebGL(true);onReady?.();}} onError={()=>{setWebGL(false);onReady?.();}}/>}
   {!webGL&&<View pointerEvents="none" style={{position:'absolute',left:0,top:0,width:'100%',height:'100%'}}>{s.bugs.map(b=>{const p=originalButterflyProjection(s,b),spec=originalFlyingBugSpecs[b.index];if(!p.visible)return null;const size=Math.max(24,Math.min(145,500*spec.scale/p.distance));return <View key={b.index} style={{position:'absolute',left:((p.x*.5+.5)*360-size/2)*k,top:((-p.y*.5+.5)*640-size/2)*k}}><SpriteView id={spec.sprite} size={size*k}/></View>;})}</View>}
   <View testID="original-butterfly-look" onStartShouldSetResponder={()=>true} onMoveShouldSetResponder={()=>true} onResponderTerminationRequest={()=>false} onResponderGrant={e=>input(e,'down')} onResponderMove={e=>input(e,'move')} onResponderRelease={e=>input(e,'up')} onResponderTerminate={e=>input(e,'up')} style={{position:'absolute',left:0,top:0,width:'100%',height:'100%',...(Platform.OS==='web'?{touchAction:'none',userSelect:'none'} as any:{})}}/>
   <Svg pointerEvents="none" width={360*k} height={640*k} style={{position:'absolute',left:0,top:0}}>

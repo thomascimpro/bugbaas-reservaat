@@ -1,3 +1,4 @@
+import {LegacyWelcomeV2} from './LegacyWelcomeV2';
 import {UpdateGateV2} from './UpdateGateV2';
 import {ArcadeScreenV3} from './arcade/ArcadeScreenV3';
 import {MainTabsV3,type MainTabV3} from './arcade/MainTabsV3';
@@ -170,7 +171,7 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
 
  async function backToMap(){const current=latest.current;if(current?.player.go?.queue){await run('goCancel');return;}if(current?.goBattle){if(current.goBattle.phase!=='finished')return;if(!await run('goClose',{battle:current.goBattle.id}))return;}clearOverlays();setTab('Safari');}
 
- function changeTab(next:GameTab){if(next===tab)return;if(latest.current?.player.go?.queue||latest.current?.goBattle&&latest.current.goBattle.phase!=='finished')return;clearOverlays();setMapFocus(null);setArcadeFocus(false);setTab(next);}
+ async function changeTab(next:GameTab){if(next===tab){if(overlay)clearOverlays();return;}const battle=latest.current?.goBattle;if(latest.current?.player.go?.queue||battle&&battle.phase!=='finished')return;if(battle&&next!=='Ranked'&&!await run('goClose',{battle:battle.id}))return;clearOverlays();setMapFocus(null);setArcadeFocus(false);setTab(next);}
 
  function open(name:string,specimenId?:string){
   if(name==='map'){void backToMap();return;}
@@ -208,7 +209,7 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
    {!overlay&&feedback()}
    {!!overlay&&<View testID="secondary-page" style={[StyleSheet.absoluteFillObject,{bottom:bottomInset,zIndex:24,backgroundColor:'#071e1b'}]}>
     <Scene index={0}/><Wash from="#10352fee" to="#071e1bfa"/>{overlay!=='teamPicker'&&<PageHeader title={pageTitle} onBack={()=>setOverlay('')}/>}
-    {p&&view&&overlay==='profile'&&<View style={{paddingHorizontal:12,paddingTop:8}}><TabsV2 testID="profile-tabs" tab={profileTab} setTab={setProfileTab} tabs={[{id:'me',emoji:'🧑',name:'Ik',line:'Jouw trainer en level',badge:Number(trainerReward(p.go?.trainer??{xp:0,claimedLevel:1,catchDay:''}).to>(p.go?.trainer?.claimedLevel??1))},{id:'goals',emoji:'🎯',name:'Doelen',line:'Vangen, lopen en je cijfers'},{id:'friends',emoji:'👫',name:'Vrienden',line:'Cadeaus sturen en openen',badge:view.friends.filter(f=>{const gift=f.gifts[1-f.users.indexOf(p.uid)];return !f.accepted&&f.requestedBy!==p.uid||f.accepted&&!!gift&&!gift.opened;}).length},{id:'cards',emoji:'🃏',name:'Kaarten',line:'Elke dag 1 kaart door te vangen'}]}/></View>}
+    {p&&view&&overlay==='profile'&&<View style={{paddingHorizontal:12,paddingTop:8}}><TabsV2 testID="profile-tabs" tab={profileTab} setTab={setProfileTab} tabs={[{id:'me',icon:'profile',name:'Ik',line:'Jouw trainer en level',badge:Number(trainerReward(p.go?.trainer??{xp:0,claimedLevel:1,catchDay:''}).to>(p.go?.trainer?.claimedLevel??1))},{id:'goals',icon:'research',name:'Doelen',line:'Vangen, lopen en je cijfers'},{id:'friends',icon:'friends',name:'Vrienden',line:'Cadeaus sturen en openen',badge:view.friends.filter(f=>{const gift=f.gifts[1-f.users.indexOf(p.uid)];return !f.accepted&&f.requestedBy!==p.uid||f.accepted&&!!gift&&!gift.opened;}).length},{id:'cards',icon:'cards',name:'Kaarten',line:'Elke dag 1 kaart door te vangen'}]}/></View>}
     {feedback(true)}
     {view&&overlay==='cocoons'?<GoCocoonsV2 embedded view={view} {...{run,busy,now,open}}/>:p&&overlay==='teamPicker'?<GoTeamPickerV2 embedded player={p} {...{run,busy}} onClose={()=>setOverlay('')}/>:<ScrollView key={overlay==='profile'?profileTab:overlay} contentContainerStyle={{padding:16,gap:16,paddingBottom:20}}>
      {view&&overlay==='bag'&&<FieldBagV2 {...{view,run,busy,open}}/>}
@@ -222,12 +223,12 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
      {view&&overlay==='friends'&&<GoFriendsV2 {...{view,run,busy,open}}/>}
      {p&&overlay==='profile'&&<>{profileTab==='friends'||profileTab==='cards'?<GoFriendsV2 view={view!} tab={profileTab} {...{run,busy,open}}/>:profileTab==='goals'?goals:<><TrainerCardV2 player={p} {...{run,busy}}/><View style={[v.row,{justifyContent:'space-around'}]}>{([{icon:'profile',label:'Account',target:'account'},{icon:'heart',label:'Buddy',target:'buddy'},{icon:'research',label:'Dagboek',target:'journal'}] as const).map(x=><View key={x.target} style={{flex:1,alignItems:'center',gap:4}}><IconButton name={x.icon} label={x.target==='buddy'?'Open buddy':x.label} onPress={()=>setOverlay(x.target)}/><Label small>{x.label}</Label></View>)}</View></>}</>}
      {p&&overlay==='settings'&&<SettingsV2 player={p} {...{run,busy,open}}/>}
-     {view&&overlay==='account'&&<GoAccountV2 view={view} busy={busy} change={changeAccount}/>}
+     {view&&overlay==='account'&&<GoAccountV2 view={view} busy={busy} run={run} change={changeAccount}/>}
     </ScrollView>}
    </View>}
    {shellVisible&&<View style={{position:'absolute',left:0,right:0,bottom:0,zIndex:25}}><MainTabsV3 active={shellTabs[tab]} onChange={next=>changeTab(gameTabs[next])}/></View>}
    <RewardFeedbackV2 batch={rewards} visible={!inGame&&!mapFocus&&!arcadeFocus} onDismiss={dismissReward}/>
-   <UpdateGateV2 connected={!!view}/><AwaySummaryV2 view={view} visible={!!p?.onboarded&&!overlay&&!inGame&&!mapFocus&&!arcadeFocus} open={open} run={run} busy={busy}/><AdventureSyncPromptV2 uid={p?.uid} onboarded={!!p?.onboarded} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run}/>
+   <UpdateGateV2 connected={!!view}/>{view&&p?.onboarded&&<LegacyWelcomeV2 view={view} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run} busy={busy} onUpdate={next=>{if(next.player.uid===latest.current?.player.uid)accept(next);}}/>}<AwaySummaryV2 view={view} visible={!!p?.onboarded&&!overlay&&!inGame&&!mapFocus&&!arcadeFocus} open={open} run={run} busy={busy}/><AdventureSyncPromptV2 uid={p?.uid} onboarded={!!p?.onboarded} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run}/>
   </View></SafeAreaView></View>
  </InfoProvider></TextScale.Provider></MotionPrefs.Provider></GoBackProvider>;
 }

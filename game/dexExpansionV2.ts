@@ -63,7 +63,7 @@ export const EXPANDED_SPECIES:ExpandedSpecies[]=[
  {"id":"mosquito_3","number":147,"family":"mosquito","stage":3,"model":"MosquitoStage3","name":"Grote steekmug","attack":8,"health":5,"tier":5,"weight":0.12,"biome":"wetland","palette":["#253A54","#7EADEB","#F0DEB1"],"moveRole":"mosquito","flying":true,"evolveFrom":"mosquito_2","evolveCost":100},
  {"id":"snail_1","number":148,"family":"snail","stage":1,"model":"SnailStage1","name":"Jong huisjesslakje","attack":1,"health":6,"tier":2,"weight":5,"biome":"forest","palette":["#3A244A","#BE83DD","#E8F0BD"],"moveRole":"snail","flying":false},
  {"id":"snail_2","number":149,"family":"snail","stage":2,"model":"SnailStage2","name":"Tuinslak","attack":3,"health":8,"tier":4,"weight":0.6,"biome":"forest","palette":["#44243C","#E088BD","#C4E8F1"],"moveRole":"snail","flying":false,"evolveFrom":"snail_1","evolveCost":25},
- {"id":"snail_3","number":150,"family":"snail","stage":3,"model":"SnailStage3","name":"Beenslak","attack":4,"health":10,"tier":6,"weight":0.05,"biome":"forest","palette":["#3D2D45","#C59AE1","#C6F0D7"],"moveRole":"snail","flying":false,"evolveFrom":"snail_2","evolveCost":100},
+ {"id":"snail_3","number":150,"family":"snail","stage":3,"model":"SnailStage3Polished","name":"Beenslak","attack":4,"health":10,"tier":6,"weight":0.05,"biome":"forest","palette":["#123D39","#35CFA4","#F4D078"],"moveRole":"snail","flying":false,"evolveFrom":"snail_2","evolveCost":100},
 ];
 export const EXPANDED_BY_ID:Readonly<Record<string,ExpandedSpecies>>=Object.fromEntries(EXPANDED_SPECIES.map(s=>[s.id,s]));
 export const ULTIMATE_BASES:Readonly<Record<string,string>>=Object.fromEntries(EXPANDED_SPECIES.filter(s=>s.id.endsWith('_ultimate')).map(s=>[s.id,s.family]));

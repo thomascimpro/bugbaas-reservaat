@@ -1,5 +1,15 @@
 # BugBaas — één ontwerp, één uitvoering
 
+**Releasebron 0.1.34/code35 — 6 november.** De nieuwe releaseopdracht vervangt de eerdere publicatiepauze. Nieuwe ImageGen-navigatiebeelden, netslag, Arcade-/combat-/naam- en UI-fixes zitten in de ondertekende APK van94.567.801bytes. 703 tests, TypeScript en cloudwebbuild groen; definitieve iconen op375×812 bekeken zonder console-errors. APK-handtekening en inhoud gecontroleerd; op gebruikersverzoek geen APK-installatie-/emulatorproef. Legacy blijft uit: de server kan het oude project nog niet lezen. Zie [releasebewijs en grenzen](../releases/0.1.34.md); publicatiestatus is leidend op GitHub v0.1.34. Hieronder staan eerdere lokale checkpoints als historie.
+
+**Laatste naam-/UI-fix 6 november:** wijzigbare spelnaam bij profiel/Account, code alleen expliciet bij Vrienden/duel. HD-iconen, tasgrid/tellers en CP-regel op 320px hersteld. 703 tests/TypeScript/webbuild groen; 32 schermweergaven en 0 eindconsole-errors, bewijs onder `.local/polish-20261106/names/`. Releasepauze blijft geldig.
+
+**6 november — lokale afronding:** [UX-review, aanvulling6 nov](../UX_REVIEW_20261105.md) en `progress.json` zijn bijgewerkt. Combat/UI/gamevelden en legacy lokaal verbeterd;153 modellen/306 portretten gecontroleerd, één Beenslak vervangen.702 tests en TypeScript groen. Release blijft op verzoek gepauzeerd. Geen nieuwe APK; fysieke Android- en online accountproeven niet aftekenen met browserbewijs.
+
+**Actuele schermreview 5 november:** [UX_REVIEW_20261105.md](../UX_REVIEW_20261105.md) bevat de lokale netslag, zeven laadschermen, klok-/gymreparaties en voorstellen per scherm. Gebruiker heeft release uitgesteld; niets publiceren. Eerdere controles hieronder blijven als afzonderlijk bewijs staan.
+
+**Extra controle 5 november 2026:** volg de taakstatussen in `progress.json` voor `UX-01` (lokaal gerepareerd; 689/689 tests, TypeScript), `VIS-01` (gedeeltelijke beeldsteekproef, animaties nog niet afgetekend) en `QA-02` (ADB geen toestel; echte Android-praktijkproef vereist). Zie `../POGO_WERKREGISTER.md` voor onderbouwing. Dit zit nog **niet** in een nieuwe APK of release. Codex/Claude: geen dubbele implementatie of bulk-3D-vervanging starten.
+
 **Codex beheert de overdracht sinds 4 november.** De geteste release staat beschreven in [0.1.33](../releases/0.1.33.md); actuele grenzen en resterende polish staan in `progress.json` en `../POGO_WERKREGISTER.md`. De oorspronkelijke overdracht [CLAUDE_OVERDRACHT_AAN_CODEX.md](CLAUDE_OVERDRACHT_AAN_CODEX.md) en inbox blijven als historie bewaard. Claude schrijft momenteel niet; er is geen wacht-op-Claude-blokkade voor de ingebouwde assets.
 
 Leidend: [PLAN.md](PLAN.md). Dit voegt de TO/FO-previews, de bestaande kaartgame, de nieuwe Arcade en de animaties samen. De gebruiker wil geen losse oude kaartapp naast een nieuwe spelapp.

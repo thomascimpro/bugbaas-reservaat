@@ -68,3 +68,7 @@ Legenda: ✅ klaar · 🟡 deels/test · ⬜ nog te doen · ➡️ Codex
 - 2026-11-03: natuur, emblemen (gras/vliegend opnieuw), arena, medailles en personageportretten klaar en beschreven. 306 bugportretten renderen (hervatbaar: `.local/props/run-bugs.ps1`).
 - 2026-11-02 (avond): gebruiker koos: alles wat 3D is maken. Portretten met variant A (subdivisie + fijne chitinekorrel, alleen in de render; GLB's blijven licht). Alle renders in één reeks op lage prioriteit (`.local/props/run-all.ps1`). Echte anatomische detailmodellen (B3) volgen per familie, eerst een startbug ter keuring.
 - 2026-11-02: A1–A3 gebouwd (Cycles, fotomaterialen, bos-HDRI). Raid-ei vervangen door cocon op verzoek. B2-pipeline getest op 4 soorten (shiny-mapping gelijk aan de app); effect beperkt door eenvoudige modellen → B1 eerst.
+
+## 6 november 2026 — gerichte eindcontrole
+
+153 actieve modellen technisch gelezen; alle evolutie-overgangen hebben verschillende POSITION-geometrie. Alle 306 normale/shiny portretten als vier actuele overzichten bekeken. Geen ontbrekende GLB of kleurloze standaardvariant. Vergelijkbare verwante soorten blijven mogelijk; dit is geen bewijs van 153 unieke bewegende anatomieën op een telefoon. De Beenslak (snail_3) viel als onleesbare, drukke schelp uit de toon. Alleen die vervangen door de bestaande BugBaas-authoring: volledig lijf, schelp, voelsprieten en vijf clips (idle/walk/attack/hit/dead), plus twee opnieuw gerenderde 768px-portretten en 256px-thumbnails. bron/rebuild in evolution-150/source.json; bestaande ID, naam, CP, stats en evolutiekosten behouden.

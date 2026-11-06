@@ -88,3 +88,5 @@ export function withBackgroundSessionV2<T>(uid:string,work:(api:{state:()=>Promi
  return serializeCommands(async()=>{if(Platform.OS!=='android'||!base.startsWith('https://'))throw new ApiError('Achtergrondautovangst werkt in de online Android-app.',400);await ownBackgroundToken(uid);return work({state:()=>request<GameViewV2>('v2/state',undefined,false,uid),command:command=>{if(command.type!=='worldLocate')throw new ApiError('Alleen GPS-metingen zijn toegestaan voor achtergrondautovangst.',400);return request<GameViewV2>('v2/command',command,false,uid);}});});
 }
 export const loginV2=async(email:string,password:string,link:boolean)=>{if(mode!=='cloud')throw new ApiError('Accountkoppeling hoort bij de cloudversie.',400);if(link&&auth.currentUser?.isAnonymous)await linkWithCredential(auth.currentUser,EmailAuthProvider.credential(email.trim(),password));else await signInWithEmailAndPassword(auth,email.trim(),password);return refreshV2();};
+
+export const checkLegacyV2=(claim=false)=>request<{configured?:boolean;offer?:import('../game/legacyV2').LegacyReward|null;view?:GameViewV2}>('v2/legacy',{claim});
