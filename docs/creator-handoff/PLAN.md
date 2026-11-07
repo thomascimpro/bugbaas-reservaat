@@ -174,3 +174,46 @@ Onderzoek en toepasbare spelbesluiten staan in sections/gameplay.md en sections/
 
 
 Actuele aanvullende testdekking: elf gerichte tests en TypeScript groen, inclusief echte tweede spelersscore/+25, UTC-acceptatiedag, gewijzigde stats na ticket en een werkelijk weggevallen HTTP-response met command/run-herhaling. Zie sections/tester.md; dit vervangt oude beperkte testzinnen, geen native-/algemene releaseclaim.
+
+## Aanvulling 7 november 2026: Claude Code Game Studios en GitHub-werkwijze
+
+**Status:** plan en werkafspraak; nog geen nieuwe agents geïnstalleerd of gamecode aangepast.
+
+### Basis voor toekomstige gameontwikkeling
+
+- **Proces-/agentbasis:** [Donchitos/Claude-Code-Game-Studios](https://github.com/Donchitos/Claude-Code-Game-Studios). Gebruik deze repository als vaste inspiratie- en referentiebron voor game design, specialistische AI-agentrollen, gameplaybalans, UI/UX, technical art, performance, testbewijs en release-quality gates. Raadpleeg de relevante actuele GitHub-documentatie/skills wanneer een taak in zo'n gebied begint. Vertaal bruikbare werkwijzen naar BugBaas; geen blind kopiëren van alle 49 agents/74 skills of engine-afhankelijke scripts.
+- **Technische codebasis en projectwaarheid:** [thomascimpro/bugbaas-reservaat](https://github.com/thomascimpro/bugbaas-reservaat), bestaande Expo/React Native + TypeScript + Three.js game, server en opslag. Bestaande gameplay, TO/FO-previews, accounts, collectible IDs, rewards, GPS-contracten en assetbronnen blijven leidend. Er komt geen tweede engine en geen vervangende app.
+- **Actuele afspraken gaan voor:** AGENTS.md, dit PLAN.md, docs/POGO_WERKREGISTER.md, docs/creator-handoff/START_HIER.md, docs/creator-handoff/progress.json en docs/POGO_TESTMATRIX.md. Bij strijdigheid eerst bron/actuele gebruikersbesluiten controleren, niet zelfstandig overschrijven.
+- Game Studios is een **procesreferentie**, geen gekopieerde dependency of automatisch gesynchroniseerde codebase. Overnemen alleen wanneer concreet nuttig voor een bestaande BugBaas-taak.
+
+### GitHub verplicht voor Claude en Codex bij elk ontwikkelwerk
+
+1. **Voor iedere taak:** check repository, juiste branch, remote updates, werkboom, actuele taakstatus en toegewezen bestanden. Haal wijzigingen veilig binnen zonder lokale wijzigingen of andermans werk te overschrijven. Gebruik GitHub ook om eerdere commits/PR's te controleren tegen dubbel werk.
+2. **Tijdens ontwikkeling:** Codex bewaakt plan/integratie en game-/serverkwaliteit; Claude UI, 3D, animaties en art; Sol of andere gespecialiseerde rollen waar relevant. Eén schrijver per bestand. Gebruik een eigen taakbranch of afgesproken exclusieve bestandsclaim. Bestaande afspraken in dit plan over bestandsverdeling en de enkele schrijver van progress.json blijven gelden.
+3. **Na wijziging:** voer de relevante tests uit volgens de bestaande testmatrix, controleer het diff, commit logisch afgebakend met taak-ID en push naar GitHub wanneer het werk klaar is. Bij samenwerking: review/PR en gecontroleerde merge; leg commit/PR en testbewijs vast in de bestaande overdracht/werkregistratie. Geen tweede takenregister.
+4. **Bij nieuwe sessie:** Claude en Codex lezen opnieuw GitHub + actuele projectregistratie. Alleen een GitHub-branch, commit of PR betekent niet automatisch dat een feature geïntegreerd, getest of gereleased is.
+5. **Veiligheid:** nooit force-push of hard reset over andermans werk, geen secrets/.env, private QA-data, ruwe assetpacks of precieze persoonlijke GPS in de publieke repository. Geen APK-release, Firebase-/serverproductiemutatie, accountreset of onomkeerbare merge zonder afzonderlijk akkoord. Is GitHub niet bereikbaar, meld expliciet dat het werk niet is gesynchroniseerd.
+
+### Compacte Game Studio, afgestemd op BugBaas
+
+| Rol uit Game Studios | Praktische eigenaar | Toegevoegde controle |
+| --- | --- | --- |
+| Game Director | Codex | Scope, prioriteiten, samenhang, PR/integratie |
+| Gameplay Engineer | Sol/Codex | Bestaande simulatie en server-authoritative uitslag/rewards |
+| Game Designer / Economy | Gerichte specialistische review | XP, CP, zeldzaamheid, loot, PvP, progression en balans |
+| UX Designer | Claude | Bediening, HUD, onboarding en schermcompositie binnen TO/FO |
+| Technical Artist | Claude | 3D, rigs, VFX, animaties, geluid en beeldkwaliteit |
+| QA Engineer | Codex/reviewer | Gerichte code-/browsertests, screenshots en reproduceerbaar bewijs |
+| Performance / Security | Gerichte review | Android FPS/geheugen, replay, anti-cheat, privacy en autorisatie |
+
+Dit zijn inzetbare **rollen**, geen zeven permanent draaiende subagents. Start alleen wat nodig is. Gebruik waar passend de Game Studios-ideeën achter balance-check, ux-review, team-polish, test-evidence-review en story-done, maar vervang engine-specifieke Godot/Unity/Unreal-controles door de bestaande React Native/Expo/Three.js-tests.
+
+### Per feature: vaste korte kring
+
+Context en code lezen → één taak met eigenaar/acceptatiecriteria → zo nodig design/balansreview → kleinste gerichte implementatie → relevante tests en zichtbare schermcontrole → GitHub-commit/PR en taakoverdracht. De simulator/server bepaalt score, schade en rewards; de renderer speelt deze uitkomst af. Screenshots bewijzen een beeld, niet automatisch native FPS. Browsermock bewijst geen fysieke GPS of Health Connect; markeer ontbrekend bewijs als **niet getest**.
+
+### Eerste pilot: Tikduel (GM-01)
+
+Controleer de originele bestaande game, zonder remake: gewone/sterke/Oerbugs met identieke seeds en CP/squad-effect, bewegende hitboxes en taptiming, tap-/combo-audio, echte screenshots ten opzichte van P13, Android-performance waar meetbaar en eenmaal bevestigde serverreward met retry. Alleen aantoonbare tekortkomingen repareren. Registreer bevindingen, tests en commit in bestaande werkregister/tracker.
+
+Vervolg na bewezen pilot: overige zes Arcadegames → 3D/art/animatie → PvP/raids → kaart/verzamelen → progressie/rewards. Geen nieuwe reviewlagen zonder concreet voordeel; prioriteiten uit het actuele werkregister blijven voorgaan.
