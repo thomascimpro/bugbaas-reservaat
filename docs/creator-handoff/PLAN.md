@@ -175,62 +175,161 @@ Onderzoek en toepasbare spelbesluiten staan in sections/gameplay.md en sections/
 
 Actuele aanvullende testdekking: elf gerichte tests en TypeScript groen, inclusief echte tweede spelersscore/+25, UTC-acceptatiedag, gewijzigde stats na ticket en een werkelijk weggevallen HTTP-response met command/run-herhaling. Zie sections/tester.md; dit vervangt oude beperkte testzinnen, geen native-/algemene releaseclaim.
 
-## Aanvulling 7 november 2026: Claude Code Game Studios en GitHub-werkwijze
+## Integrale Game Studios-review en uitvoeringsplan — 7 november 2026
 
-**Status:** plan en werkafspraak; nog geen nieuwe agents geïnstalleerd of gamecode aangepast.
+**Status: review/plan, geen implementatie.** Dit hoofdstuk vervangt de eerdere losse Game Studios-aanvullingen, maar niet het oorspronkelijke TO/FO-spelontwerp, de bestaande taken of de bestandsclaims hierboven. De huidige hoofdbranch is BugBaas **0.1.35/code36**. Het project heeft **24 bestaande taken: 15 af, 3 bezig, 5 controleren, 1 geblokkeerd**. Historisch bewijs van de laatste release: 703/703 tests, TypeScript, cloudwebbuild en gerichte webbeelden geslaagd; APK ondertekend en statisch gecontroleerd. Voor 0.1.35 is geen runtime-installatieproef uitgevoerd; fysieke GPS, Health Connect, accu, hoorbaar geluid en Google-login blijven onbewezen.
 
-### Basis voor toekomstige gameontwikkeling
+**Geraadpleegde bronnen:** AGENTS.md; README.md; dit PLAN.md; START_HIER.md; progress.json; POGO_WERKREGISTER.md; POGO_TESTMATRIX.md; UX_REVIEW_20261105.md; releases/0.1.35.md; relevante secties onder creator-handoff/sections; de bestaande spel-, server-, UI- en testbronbestanden. Externe procesreferentie: [Donchitos/Claude-Code-Game-Studios](https://github.com/Donchitos/Claude-Code-Game-Studios), met name brownfield adopt, balance-check, ux-review, asset-audit, perf-profile, security-audit, test-evidence-review en gate-check. Deze **richtlijnen zijn als beoordelingskader gelezen, niet als geautomatiseerde skills op BugBaas uitgevoerd**.
 
-- **Proces-/agentbasis:** [Donchitos/Claude-Code-Game-Studios](https://github.com/Donchitos/Claude-Code-Game-Studios). Gebruik deze repository als vaste inspiratie- en referentiebron voor game design, specialistische AI-agentrollen, gameplaybalans, UI/UX, technical art, performance, testbewijs en release-quality gates. Raadpleeg de relevante actuele GitHub-documentatie/skills wanneer een taak in zo'n gebied begint. Vertaal bruikbare werkwijzen naar BugBaas; geen blind kopiëren van alle 49 agents/74 skills of engine-afhankelijke scripts.
-- **Technische codebasis en projectwaarheid:** [thomascimpro/bugbaas-reservaat](https://github.com/thomascimpro/bugbaas-reservaat), bestaande Expo/React Native + TypeScript + Three.js game, server en opslag. Bestaande gameplay, TO/FO-previews, accounts, collectible IDs, rewards, GPS-contracten en assetbronnen blijven leidend. Er komt geen tweede engine en geen vervangende app.
-- **Actuele afspraken gaan voor:** AGENTS.md, dit PLAN.md, docs/POGO_WERKREGISTER.md, docs/creator-handoff/START_HIER.md, docs/creator-handoff/progress.json en docs/POGO_TESTMATRIX.md. Bij strijdigheid eerst bron/actuele gebruikersbesluiten controleren, niet zelfstandig overschrijven.
-- Game Studios is een **procesreferentie**, geen gekopieerde dependency of automatisch gesynchroniseerde codebase. Overnemen alleen wanneer concreet nuttig voor een bestaande BugBaas-taak.
+**Bewijslabels:** AANWEZIG = broncode/functie bestaat; CODE-GECONTROLEERD = relevante logica gelezen; HISTORISCH-GETEST = eerdere test- of logclaim met verwijzing; DEELS = acceptatie nog open; NIET BEOORDEELD = ontbrekende uitvoerbare gegevens, toestel, visuele proef of onafhankelijke meting. Geen score of groen oordeel verzinnen als bewijs ontbreekt. Geen nieuwe npm-tests, echte APK-/GPS-runs, assetbinaire metingen of menselijke speeltests zijn voor deze planreview uitgevoerd.
 
-### GitHub verplicht voor Claude en Codex bij elk ontwikkelwerk
+### 1. Volledige systeeminventaris tegen Game Studios
 
-1. **Voor iedere taak:** check repository, juiste branch, remote updates, werkboom, actuele taakstatus en toegewezen bestanden. Haal wijzigingen veilig binnen zonder lokale wijzigingen of andermans werk te overschrijven. Gebruik GitHub ook om eerdere commits/PR's te controleren tegen dubbel werk.
-2. **Tijdens ontwikkeling:** Codex bewaakt plan/integratie en game-/serverkwaliteit; Claude UI, 3D, animaties en art; Sol of andere gespecialiseerde rollen waar relevant. Eén schrijver per bestand. Gebruik een eigen taakbranch of afgesproken exclusieve bestandsclaim. Bestaande afspraken in dit plan over bestandsverdeling en de enkele schrijver van progress.json blijven gelden.
-3. **Na wijziging:** voer de relevante tests uit volgens de bestaande testmatrix, controleer het diff, commit logisch afgebakend met taak-ID en push naar GitHub wanneer het werk klaar is. Bij samenwerking: review/PR en gecontroleerde merge; leg commit/PR en testbewijs vast in de bestaande overdracht/werkregistratie. Geen tweede takenregister.
-4. **Bij nieuwe sessie:** Claude en Codex lezen opnieuw GitHub + actuele projectregistratie. Alleen een GitHub-branch, commit of PR betekent niet automatisch dat een feature geïntegreerd, getest of gereleased is.
-5. **Veiligheid:** nooit force-push of hard reset over andermans werk, geen secrets/.env, private QA-data, ruwe assetpacks of precieze persoonlijke GPS in de publieke repository. Geen APK-release, Firebase-/serverproductiemutatie, accountreset of onomkeerbare merge zonder afzonderlijk akkoord. Is GitHub niet bereikbaar, meld expliciet dat het werk niet is gesynchroniseerd.
+| Systeem | Wat aantoonbaar bestaat | Oordeel / ontbrekende acceptatie | Bestaande eigenaar of taak |
+| --- | --- | --- | --- |
+| Game-shell, navigatie, onboarding | Eén Expo/React Native-app, gedeelde tabs, menu, terugnavigatie, beginnerspad/levels en naam/avatar. Kleine webschermen historisch gecontroleerd. | DEELS: nieuw én terugkerend account, offline herstart, accessibility en echte Android-shell in één speelroute controleren. | Codex integratie; VS-01 |
+| Google-login, account, legacy | Firebase Auth-verificatie, anoniem/gekoppeld account, naamwijziging zonder UID-wissel. Legacy-lees/claimpad voorbereid maar uitgeschakeld. | DEELS: persoonlijke Google-login en bestaande-account-upgrade niet live bewezen; legacy mag niet zonder bevoegde serverleestoegang/uitrol. | Codex/Sol; QA-02 |
+| Kaart, GPS, 2D/3D, bereik | MapLibre/Three, markerbediening, native WebView-bridge, GPS-age/accuracy- en catch-radiuscontroles. | DEELS: fysieke locatie, kaartinteractie tijdens overlays, route buiten en real-world GPS-fouten nodig. | WR-01, QA-02 |
+| Wilde spawns, biomen en weer | Gewichten, locaties, water/gebouw-scheiding en weather/biome-context in de spelcode. | DEELS: echt gebied, dataproviderrechten, veiligheid en onnauwkeurige GPS op buitenlocatie nog niet afgetekend. | WR-01 |
+| Netvangen | Serverbeoordeelde veeg/net-trace, bewegende doelen, zeldzaamheid, aas, vangstuitkomst en bevestigde rewards. | DEELS: 0.1.34-netbediening heeft browserbewijs; fysieke tap/veeg-haptiek, natief cameragedrag en volledige P03-vergelijking open. | WR-01 |
+| Wandelvangst/autovangst | 200 m per normale vangst, workoutroute met dubbel krediet, 120/dag, snelheidsgates, achtergrondcommandherstel; gerichte tests. | DEELS: echte route, Health Connect/GPS-ontdubbeling, force-stopgedrag, batterij en notificaties op fysiek toestel. | AF-01, QA-02 |
+| Posts, gyms op kaart, eigen routes | OSM-gebaseerde posts/routes, cooldowns, eigen routevalidatie, dagelijkse rechten en serveracties. | DEELS: live POI/route-end-to-end en locatie-/veiligheidsproef, zonder echte GPS of precieze locatie in Git. | WR-01, QA-02 |
+| Collectie, 153 vormen, Bugdex, shiny | 150 evolutiestadia plus 3 Oerbugs, bestaande IDs, IV/CP, shiny, detail, favorieten, filter en beschermde transfer. | DEELS: bestaande statische 153-GLB/306-portretchecks; live bewegend model, detail en evolutie-P04 op Android nog open. | PR-01, AN-01, VIS-01 |
+| Evolutie, power-up, TM, held items | Serverregels, nectar/stof, moves, acht items, type-effecten en 1-10 gerichte power-ups. | AANWEZIG/HISTORISCH-GETEST: prijs-/krachtgevoel in echte starterroute en evolutie-morph zijn niet bewezen. | PR-01, balansreview |
+| Cocons, buddy, terugkomst | 2/5/7/10km, maximaal negen cocons, incubators, buddy-harten, voer/cooldown en een beschermde terugkomst/transferroute. | DEELS: animaties, continue ontvangst, achtergrondkilometers en volledige P07/P08/P17-flow beoordelen. | PR-01, AF-01 |
+| Dag-/weekdoelen, level, onderzoek | Trainer-XP/levels, dagonderzoek, postonderzoek, wandelweektreden, streaks, medailles. | DEELS: volledige eerste sessie en de samenhang tussen dailys, level, upgrade en voorraad numeriek controleren. | Codex game design |
+| Economie en shop | Stof, familienectar, netten, TM, held items, gymmunten, daily/weekly rewards, servermatige grenzen. | NIET BEOORDEELD voor totale balans: productieopbrengst/uitgaven, sterke builds en vroege waardevolle upgrade niet door deze review gesimuleerd. | Balansreview |
+| Zeven Arcadegames | Oorspronkelijke deterministische spelkernen, één replay/score/rewardkringsysteem, tutorial/keuze/ranked en eigen scènes. | DEELS: gerichte servertests bestaan; alle zeven volledige menselijke rondes, mobiel feel, FPS en UI-vergelijking ontbreken als recente complete set. | GM-01 t/m GM-07 (historisch af) |
+| Tikduel | 30s/56 doelen, rarity-tikken, combo, squadhelpers, gerichte audio en serverreplay. | CODE-GECONTROLEERD: mogelijke zicht-/hitboxvolgordefout bij overlap; eerst regressie reproduceren. Helper-/CP-balans alleen historisch geïndiceerd. | GM-01 kwaliteits-pilot |
+| Actieve squadgevechten | Flow3, echte stats/typen/energy, doelrichten, charge/dodge/switch, snelle respons. | DEELS: bron en browserchecks aanwezig; volledige duelreeks, latency, leesbaarheid en native bediening open. | CB-01 |
+| Async ranked, Echo, dagstrijd, seizoen/cup | Bevroren challenge/seed/klasse, Elo/ratings, opgeslagen teams, NPC-fallback, dagpogingen en seizoensrewards. | DEELS: serverregels en deels tests; echte 2-account-match/retry en eerlijke speler-NPC-aanduiding opnieuw end-to-end controleren. | CB-01, Codex |
+| Gymverdediging en munten | Zes plekken, teams, NPC, serverrotatie, 10 min/munt, max 8u/48 per bug, gecombineerd 50/dag. | DEELS: volledige winst → claim/verdediger terug → coins en de UI bij verlies in echte sessie controleren. | WR-01 |
+| Raids en uitnodigingen | Timers, lobby voor maximaal zes, max vier remote, 1 gratis remote/dag, samen gedeelde schade en eenmalige claim; gerichte tests. | DEELS: live multiplayer/lobby, netwerkverlies, tijdvensters en duidelijke raidstatus nog geen volledige praktijkproef. | WR-01, CR-01 waar relevant |
+| Plaagbende/Baretbende/Olijfgarde | Locatie-/ballonontmoetingen, toegewezen game of combat, serverbevestigde rescue met dagbudget. | DEELS: lokale tests; volledige online winst/rescue en alle faction-animaties open. | CR-01 |
+| Vrienden, cadeaus, vriendschap | Vriendenparen, verzend-/openlimieten, verrassingen, niveaus en idempotente cadeauafhandeling. | AANWEZIG/HISTORISCH-GETEST: twee echte accounts en onbetrouwbaar netwerk nog praktisch doorlopen. | Codex/Sol |
+| Ruilen | Nabije ruil, twee bevestigingen, revisionchecks, stofkosten, eigendomstransactie, bijzondere-daglimiet, beschermde bugs. | AANWEZIG/HISTORISCH-GETEST: fysieke 2-toestelproef met locatie en onderbreking ontbreekt. | Codex/Sol; QA-02 |
+| 3D/visuele art/animatie | HD-portretten, GLB, shiny, VFX, zeven game-loadscreens, eigen UI-iconen en nieuwe branding 0.1.35. | DEELS: render-/parsercontrole ≠ kwalitatieve anatomie, consistente stijl of werkende clip; bewegende modelsampling en evolutie-morph open. | AN-01, VIS-01, VS-01 |
+| Audio en toegankelijkheid | Originele tap/catch-WAV, muziek, effecten, mute/volumeslider, reduced-motion en labels. | DEELS: hoorbare Android-proef, audiolag, mix, focus bij achtergrond en echte screenreader-/touchcontrole open. | Claude presentatie; QA-02 |
+| Performance en accu | Assetvoorbereiding, rendererlimieten en eerdere beperkte browser-/emulatorchecks. | NIET BEOORDEELD: geen actuele fysieke FPS/frame-time, GPU-/geheugentrend, koude start of accuproef. | Performance-review; QA-02 |
+| Server, Firestore, auth, replay en privacy | Firebase tokencheck, server-authoritative score/reward, commandId/revisie, transacties, replay/idempotentie, requestgrenzen, privacyfilters. | DEELS: belangrijke tests bestaan; volledige threat model, brute-force/rate-limiting, abuse, productieconfig en cloudrestore niet onafhankelijk afgetekend. Geen exploit geclaimd. | Codex/Sol security |
+| QA/testautomatisering | package.json heeft npm test/typecheck/web:build, historische 703 tests en gerichte browser- en integratiebewijzen. | DEELS: huidige runtime niet opnieuw getest; volledige fysieke matrix en cross-system human playtest ontbreken. Geen verplicht extra framework nodig. | Codex QA; QA-02 |
+| GitHub/AI-agentproces | AGENTS.md, één PLAN.md, progress.json, werkregister, testmatrix, GitHub-branch/PR-regels. | DEELS: Claude Code Game Studios is referentie; CLAUDE.md en specialistische .claude/agents nog niet op main aangetroffen. Geen geïntegreerde automatische CI aangetoond. | Codex governance |
+| Release/rollback | Gesigneerde 0.1.35 APK, versiecode36, webbuild/backend en statische bundle-/assetchecks. | CONCERNS: geen 0.1.35-installatie-/runtimecheck op verzoek; rollback, echte login/GPS/batterij en accountbehoud op toestel apart bewijzen. | Codex release/QA |
 
-### Compacte Game Studio, afgestemd op BugBaas
+### 2. Alle zeven Arcadegames: concrete kwaliteitstoets
 
-| Rol uit Game Studios | Praktische eigenaar | Toegevoegde controle |
+| Game | Bestaande kern behouden | Gerichte review en acceptatie |
 | --- | --- | --- |
-| Game Director | Codex | Scope, prioriteiten, samenhang, PR/integratie |
-| Gameplay Engineer | Sol/Codex | Bestaande simulatie en server-authoritative uitslag/rewards |
-| Game Designer / Economy | Gerichte specialistische review | XP, CP, zeldzaamheid, loot, PvP, progression en balans |
-| UX Designer | Claude | Bediening, HUD, onboarding en schermcompositie binnen TO/FO |
-| Technical Artist | Claude | 3D, rigs, VFX, animaties, geluid en beeldkwaliteit |
-| QA Engineer | Codex/reviewer | Gerichte code-/browsertests, screenshots en reproduceerbaar bewijs |
-| Performance / Security | Gerichte review | Android FPS/geheugen, replay, anti-cheat, privacy en autorisatie |
+| Tikduel (GM-01, P13-1) | Originele doelreeksen, rarity/hits, combo, helperregels. | Overlap: zichtbare voorste bug is dezelfde die input raakt. Swipe/tap en tempo testen; gewone/sterke/Oerbugs met dezelfde seeds; tap/catch-audio, damage/score/replay en eindreceipt. |
+| Webrenner (GM-04, P13-2) | Drie banen, sprongen, obstakels, pickups en score. | Volledige ronde met springen, botsing, verlies, pauze, verschillende FPS; speler en aankomend obstakel contrastrijk; geen vertekende hitboxes. |
+| Nestwacht (GM-02, P13-3) | Vijandgolven, torens, spray, upgrades, pathing. | Bouw/spray/uitkomst in volledige ronde, laag en hoog scherm, pad- en nestleesbaarheid, lage framerate en correcte eindscore/reward. |
+| Windvlucht (GM-05, P14-1) | Impuls, 2D-vlucht, obstakels, oorspronkelijke fysica. | Vergrootte speler daadwerkelijk herkenbaar in beweging; aanraking consistent, obstakel/waarschuwing duidelijk, geen nieuwe physics, volledige ronde en native meting. |
+| Vlinderjacht (GM-06, P14-2) | Bestaande native/web-variant, kijkbeweging, netactie en 60s resultaat. | Startklok pas na eerste speelbare frame; echte vangst en net, bewegingscamera, lifecycle en performance op Android; browser/portretfallback niet als volledig native bewijs. |
+| Bladtoren (GM-07, P14-3) | Oorspronkelijke spring-/hold-/combo-/platformregels. | Nederlandstalige veldstijl, duidelijke hoogte/landingshint, indrukken/loslaten, verlies/herstart, late frame/hitbox en native toets. |
+| Bubbelzwerm (GM-03, P15-1) | Oorspronkelijke kleurketens, ricochets, bom/vries, serverversie. | Richtlijn en eerste botsing exact overeenkomstig simulator; leeg bord direct eindigt, geen dubbele beloning; volledige ronde en lage FPS. |
 
-Dit zijn inzetbare **rollen**, geen zeven permanent draaiende subagents. Start alleen wat nodig is. Gebruik waar passend de Game Studios-ideeën achter balance-check, ux-review, team-polish, test-evidence-review en story-done, maar vervang engine-specifieke Godot/Unity/Unreal-controles door de bestaande React Native/Expo/Three.js-tests.
+**Gezamenlijke acceptatie Arcade:** één werkende start → input → verlies/winst/tijd → lokaal resultaat → één serverbevestigde receipt → volgende ronde. Verifieer ook stop, dubbele submit, offlinerespons, accountwisseling, oude regelsversies, low/reduced-motion. Een animatie-clip of unit-test alleen is onvoldoende.
 
-### Per feature: vaste korte kring
+### 3. Prioriteitsbevindingen, niet gelijkstellen aan bewezen bugs
 
-Context en code lezen → één taak met eigenaar/acceptatiecriteria → zo nodig design/balansreview → kleinste gerichte implementatie → relevante tests en zichtbare schermcontrole → GitHub-commit/PR en taakoverdracht. De simulator/server bepaalt score, schade en rewards; de renderer speelt deze uitkomst af. Screenshots bewijzen een beeld, niet automatisch native FPS. Browsermock bewijst geen fysieke GPS of Health Connect; markeer ontbrekend bewijs als **niet getest**.
+| Prioriteit | Vaststelling | Actie en bewijs |
+| --- | --- | --- |
+| P1 (code-aanwijzing) | Tikduel: originalTapTargets sorteert op prioriteit, de JSX-scène tekent de array in die volgorde, maar input kiest via find de **eerste** overlappende hitbox. Latere getekende targets liggen visueel hoger. | Eerst één deterministische overlap-regressietest op visuele z-volgorde; indien bevestigd inputselectie en rendering gelijk trekken, zonder bestaande scoring/helperprioriteit onbedoeld te veranderen. Relevante arcade-/replaytests plus screenshot. |
+| P1 (ontbrekend bewijs) | QA-02: 0.1.35 is statisch gecontroleerd, niet geïnstalleerd/uitgevoerd. Eerdere emulatorproef voor 0.1.33 is geen bewijs van 0.1.35. | Android release-apk updaten over bestaande testaccount, startup/game/collectie/back/3D/audio onderzoeken en daarna echte GPS/Health Connect/accu lopen wanneer toestel beschikbaar is. |
+| P1 (onvolledige spelersflow) | WR-01/PR-01/CR-01/CB-01: visuele en online integratie van kaart/vangst/evolutie/raid/Plaagbende/duel heeft bekende open eindproeven. | Per scherm/flow alleen de ontbrekende bewijsstap; geen remake. |
+| P2 (balanshypothese) | Historische Tikduel-run met 12 seeds/ideale invoer: gemiddeld 69 gewone starter, 71 bij 1500CP-upgrade en 123 voor 3 Oerbugs. Geen menselijke of algehele fairnessmeting. | Herhaal op vaste seeds, meerdere werkelijke legale teams en invoerstrategieën. Scheid helperzeldzaamheid van CP/IV/items. Balans pas aanpassen na vooraf gekozen criteria. |
+| P2 (economiehypothese) | Bestaand ontwerp wil dat eerste zinvolle upgrade snel haalbaar en voelbaar is; totale kaart-/buddy-/Arcadeopbrengst niet in deze review doorgerekend. | Simuleer eerste 10/30/60min en dag1/7 met verschillende echte spelpaden; registreer stof/nectar/cocons/XP en sinks. Eerst toon/intro verduidelijken, niet automatisch meer munten of geld introduceren. |
+| P2 (art/feel) | 153 GLBs/306 portretten statisch bekeken; evolutie-morph, alle clips en Android-stijlconsistentie niet volledig bevestigd. | Matrix per familie en stadium, geautomatiseerde assetvalidatie en representatieve bewegende 2D/3D-sample; gerichte correcties met exacte model-ID. |
+| P2 (documentkwaliteit) | README.md noemt bovenaan nog 0.1.25; POGO_TESTMATRIX.md noemt historische 183-teststatus en oude CI-parkeerkeuze. | Werk alleen het **actuele** voorblad en testbaseline bij; behoud oude releasehistorie expliciet als historie. Geen nieuw registratiesysteem. |
+| P2 (engineering) | Grote centrale game-/server-/kaartbestanden bevatten veel verantwoordelijkheden; geen algemene runtimefout daarmee bewezen. | Dependency map en gerichte contracttests; opsplitsen pas bij concrete wijziging/risico, zonder tweede spelregelsbron of spaghetti. |
+| P2 (security) | Serverauth, transactions en receipts bestaan, maar geen actuele complete externe aanvalstest of belastingsmeting. | Authz-matrix, concurrerende requests, forged inputs, GPS-spoofpogingen, rate-/payloadgrenzen, no-data exposure en veilige Firestore-backup/restore in testomgeving. |
+| P2 (studio-operatie) | Game Studios-richtlijnen in plan maar geen operationele Claude-agentset op main. | Minimale rolbriefing + validatie van Claude Code/connector; niet alle vendor-hooks of 49 agents installeren. |
+| P3 (bewijs/onderhoud) | Sommige oude documenten hebben tegenstrijdige release-/overdrachtszinnen en oude doelen. | Bovenaan huidige checkpoint gebruiken; oude historische regels dateren en laten staan, geen bulkdocs herschrijven. |
 
-### Eerste pilot: Tikduel (GM-01)
+### 4. Uitvoeringsvolgorde met eigenaars en harde klaarcriteria
 
-Controleer de originele bestaande game, zonder remake: gewone/sterke/Oerbugs met identieke seeds en CP/squad-effect, bewegende hitboxes en taptiming, tap-/combo-audio, echte screenshots ten opzichte van P13, Android-performance waar meetbaar en eenmaal bevestigde serverreward met retry. Alleen aantoonbare tekortkomingen repareren. Registreer bevindingen, tests en commit in bestaande werkregister/tracker.
+**Fase 0 — Studio operationeel maken (documenten en coördinatie, geen spelwijziging)**
 
-Vervolg na bewezen pilot: overige zes Arcadegames → 3D/art/animatie → PvP/raids → kaart/verzamelen → progressie/rewards. Geen nieuwe reviewlagen zonder concreet voordeel; prioriteiten uit het actuele werkregister blijven voorgaan.
+- Codex controleert GitHub main, open werkboom/branches/PR's, 0.1.35-release, bestaande taakclaims en synchroniseert veilig. Raadpleeg Game Studios als **procesbron**, niet als engine of vervanging van PLAN.
+- Maak een **minimale** CLAUDE.md met dezelfde bestaande bronleesvolgorde, bestandseigenaars, designbron en branch/testregels; voeg hooguit 4 korte Claude-specialisten toe voor Game Design/Economy, UX/Art, QA en Performance/Security. Gameplay Engineer blijft bestaande Sol/Codex-rol. Test of Claude deze instructies in de projectroot werkelijk laadt; anders is dit niet operationeel.
+- Codex gebruikt AGENTS.md; Claude en Codex gebruiken beiden GitHub bij **iedere** taak: remote updates controleren, taakclaim, één schrijver/file, gerichte test, kleine commit/push naar taakbranch en PR/review wanneer gedeelde code verandert. Geen force-push/hard reset/secrets/precisie-GPS.
+- **Klaar:** beide ontwikkelrollen kunnen op een schone taakbranch het actuele plan en de juiste file-eigenaar tonen; geen nieuwe duplicate tracker, database, shellhookdwang of ongeplande productieactie.
 
-### Broncontrole en concrete toepassing — 7 november
+**Fase 1 — Tikduel kwaliteits-pilot (hoogste codeprioriteit)**
 
-GitHub-aanvulling `fd1f447` is ingelezen en behouden. De branch `feature/game-studio-phase1-20261107` bevat bij deze controle dezelfde documentbasis, nog geen pilotwijziging. In deze checkout ontbreken `.claude/agents` en `.claude/skills`: het externe Game Studios-pakket is een referentie, geen geïnstalleerd of automatisch draaiend team. De actuele README en relevante `balance-check`/`ux-review`-bronnen zijn geraadpleegd; hun nuttige regel is bewijs vóór een groen oordeel. Ontbrekende native meetdata blijft **niet getest**, ook bij groene unit-tests.
+- Codex/Sol: deterministische overlap-fixture waarin 2 doelbugs gelijktijdig onder één tap liggen; toon werkelijke JSX-z-volgorde en door input gekozen doel. Fix alleen als de mismatch is bewezen.
+- Herhaal gerichte originele Arcade-replay/score-tests, een dubbele submit en twee visuele screenshots met overlap; check P13.1 en echte tapaudio/reduced-motion waar mogelijk.
+- Game Designer: leg 2–3 concrete balance-hypotheses vast en voer vaste-seed simulaties uit zonder bronmechanics te veranderen. User-facing feedback eerst, nerf/buff uitsluitend als cijfers én gamefeel dat ondersteunen.
+- **Klaar:** input raakt voorste zichtbare bug of een expliciet en visueel eerlijk vastgesteld doel; score/replay blijven deterministisch, identiteit/collectie intact, relevante tests slagen. Geen 'spel voelt beter'-claim zonder playtest.
 
-Daarnaast is het afzonderlijke browserpakket `game-studio` beschikbaar met richtlijnen voor UI, Three.js, sprites, GLB-optimalisatie en playtests. Dit is een ander pakket dan Donchitos' Claude Code Game Studios. De bestaande Expo/React Native/TypeScript/Three.js-stack en GLB-bronnen blijven behouden; `three` en glTF Transform zijn aanwezig. ImageGen en de bestaande Blender-koppelingen passen bij artwerk. Er zijn voor deze review geen engines of agentpakketten geïnstalleerd en geen parallelle agents gestart.
+**Fase 2 — Alle reeds bestaande zeven games één voor één volledig beoordelen**
 
-De rolverdeling hierboven blijft een verdeling van specialismen. **Actuele integratie en overgedragen bestanden worden sinds4 november door Codex beheerd**; Claude krijgt een concrete visuele taak met bestandsoverdracht als die weer aan het werk gaat. Oude zinnen dat alleen Claude de tracker mag schrijven zijn historie na die overdracht; één schrijver per bestand blijft verplicht.
+- Start per game met de tabel in §2 en gerichte echte browserbediening; plan geen hele port/herimplementatie. Pak echte regressies eerst, dan polish.
+- Claude mag alleen afgesproken scène-/presentatiebestanden bewerken. Game-engineer beheert state, timing, hitboxes, rewards en replay. Een eventadapter mag de score nooit van een animatie-afloop laten afhangen.
+- **Klaar:** per game screenshots van home/spel/uitslag, volledige ronde op relevante afmetingen, verlies/stop/offline/retry, serverreceipt, geen eerdere rules-versie gebroken; native claim alleen met native bewijs.
 
-Prioriteit binnen de bestaande pilot, zonder nieuw spelontwerp:
+**Fase 3 — Kernloop, starters en balans (data vóór beloning aanpassen)**
 
-1. **Tikduel compleet beoordelen:** bewegend doel en hitbox moeten overeenkomen; tap/combo geeft direct feedback en geluid; bestaande helper/squadsteun blijft aantoonbaar; stop/retry betaalt niet dubbel. Werk vanuit de originele simulator en events.
-2. **Upgrade voelbaar maken:** vergelijk zwakke en sterke legale squads bij gelijke seed/invoer/klasse. Laat de bestaande stat-/typebijdrage uitlegbaar zien. Verander geen rewards of kosten voordat de gecombineerde vroege vang-/loop-/spelopbrengst is doorgerekend. Het bestaande5–10minuten-doel voor een eerste nuttige upgrade is nog een te toetsen doel.
-3. **Eén beeldtaal en rustige HUD:** de0.1.35-iconen/branding zijn afgewerkt; uiteenlopende trainer-/bug-/Arcadestijlen en bewegende3D/evoluties blijven gerichte aandachtspunten. Gebruik bestaande art eerst, houd het speelveld vrij en pauzeer camera-input onder overlays.
-4. **Soepelheid bewijzen:** simulatie/timing buiten renderers houden, HUD-updates begrenzen, GLB-materialen/texturen/caches meten voordat optimalisatie of extra effecten worden toegevoegd. Browserbeelden bewijzen geen Android-FPS, accu of echte achtergrondkilometers.
+- Test met verse **synthetische** profielen: onboarding → kaart → vangst/wandelen → dex → team → nuttige upgrade/evolutie → gevecht/Arcade → echte reward → terugkomst. Doe ook het offline/herstartpad.
+- Bereken XP/stof/nectar/voorraad/cocons/munten als stromen per bron en sink; vergelijk zwakke/sterke teams op dezelfde seed/rules. Bij kleine spelerpopulatie blijven NPC en bewaarde score duidelijk onderscheiden van een echte live speler.
+- **Klaar:** elke kernactie leidt begrijpelijk naar een volgende stap, geen verborgen dubbele claims, upgradeverschil aantoonbaar, geen nieuwe valuta of verplichte nieuwe dagmissies.
 
-De huidige visuele release0.1.35 heeft703 groene tests, TypeScript/webbuild, gerichte320/430px-webbeelden en ondertekenings-/inhoudsbewijs. Op gebruikersverzoek geen APK-installatie-/emulatorproef. Dit sluit de pilot en de open3D-/fysieke QA-taken niet af. Gebruik `progress.json` en `POGO_WERKREGISTER.md`; maak geen nieuw takenregister of dubbele implementatie.
+**Fase 4 — UX, beeldconsistentie, 3D/animatie/audio (bestaande open taken)**
+
+- Werk VS-01, AN-01, VIS-01, WR-01 en PR-01 af volgens de gekozen P01–P24-previews. Controleer gym/volume-accent, net-/raidpresentatie, evolutie-morph, cocons, buddy en terugkomst. Behoud bestaande 0.1.35-art en alleen gerichte hertekeningen.
+- Audit alle 153 GLB-bestanden en 306 portretreferenties op geldigheid/koppeling; beoordeel representatieve familie-/shiny-/Oerbug-modellen **in beweging** en op echt Android. Een GLB-bestand of clipnaam ≠ bewezen animatiekwaliteit.
+- Voor elke zichtbare verandering: browserbediening bij **320×568, 390×844 en 430×932**, screenshot naast bijbehorende preview, geen overflow/console-error, knoppen voldoende groot (projectdoel minimaal 48px), reduced-motion zonder gameplayverschil.
+- **Klaar:** geen placeholder/kale knop in de gekozen route, consistente art/tekst/bediening, juiste feedback bij succes/misser, mobiele beeldprestatie onderbouwd waar geclaimd.
+
+**Fase 5 — Competitie, sociaal en multiplayer end-to-end**
+
+- Controleer CB-01/CR-01, Echo, ranked, cup, gym, raid en Plaagbende met **twee of meer testaccounts** in een veilige testomgeving. Test gelijke/ongelijke score, race/retry, raid-lobby voortijdig sluiten, gedeelde schade, één claim, cadeau/ruil met beide bevestigingen en accountwissel.
+- Test dat andere spelers geen privé-GPS/secret token in API-uitkomsten krijgen. Beperk mocks en houd testaccounts/data buiten productie.
+- **Klaar:** start → samen spelen → netwerkonderbreking → win/verlies → juiste receipt/terugkeer werkt en de spelmodus toont eerlijk NPC, eerder scoredoel of echt live contact.
+
+**Fase 6 — Native, performance en technische veiligheid**
+
+- QA-02 eerst op beschikbaar fysiek Android-toestel: update **over** bestaande installatie, behoud verzameling, 10–20min echte route, background/resume, Health Connect, werkelijke GPS/afstand, hoorbare SFX, native 3D, crashlogs en accu. Gebruik geen precieze persoonlijke coördinaten in Git.
+- Performance-specialist meet koude start, p50/p95 frametijd/FPS, geheugentrend, glTF/texturelaad, JS-stalls, netwerk/retries en batterij op realistische lage/gewone toestelinstelling. Geen verzonnen budgetoverschrijding; bestaande low-doel 30fps, pas extra targets na meting.
+- Security-review met server-owned score/rewards, replay/idempotentie, input-rate/size, sessieauthenticatie, concurrentie, privacy, GPS-spoof en Firestore-testrestore. Geen productiegegevens muteren.
+- **Klaar:** gedocumenteerd toestel/OS, uitvoerstappen, metingen, beperkingen en herstel; kritieke crashes, double-reward en dataverlies voorkomen door aantoonbare controles. Als ontbrekend: **NOT ASSESSED**, niet groen.
+
+**Fase 7 — Releasegate en nazorg (alleen na apart gebruikersakkoord)**
+
+- Gategraad per subsystem: PASS / CONCERNS / NOT ASSESSED / FAIL met bewijs. Integratie: npm test, npm run typecheck, webbuild, visuele hoofdkring, authentieke serverreplay, assets/licenties, signer/updatebehoud, Android-smoke, GPS/privacy/cloud-/multiplayerproeven waar relevant.
+- Geen release, backendmutatie, Firebase-sleutel/configwijziging of oude-accountmigratie zonder expliciete opdracht. Een eventueel expliciet geaccepteerde testuitzondering wordt per release genoteerd; eerdere 0.1.35-uitzondering geldt niet automatisch voor een volgende APK.
+- **Klaar:** commit/PR, release-notities en echte QA-bewijzen matchen de uit te leveren versie; rollback-/behoudroute bekend. Niet geteste onderdelen eerlijk gelabeld.
+
+### 5. Rollen en samenwerkingscontract, geen nieuwe administratie
+
+| Verantwoordelijkheid | Huidige praktische eigenaar | Bestandsgrens/overdracht |
+| --- | --- | --- |
+| Game Director / integratie | Codex | PLAN en integratie, actuele trackerclaims, GitHub-branches, PR en acceptatie. Sinds 4 november zijn overgedragen bestanden bij Codex; oude exclusieve Claude-trackerzinnen gelden niet onbeperkt. |
+| Gameplay Engineer | Sol/Codex | game/arcade, game/goBattleV2.ts, server, deterministic replay, rewards, tests; bestaande bestandsclaims en integrator voor GameV2 blijven voorgaan. |
+| UX Designer/Technical Artist | Claude wanneer daadwerkelijk ingezet | PogoUiV2, art/scene/GLB en toegewezen visuele bestanden volgens actuele claim. Geen wijzigingen aan server, rewards, physics, of dezelfde codefile naast Codex. |
+| Economy/Game Designer | Lees-/reviewtaak onder Codex | Data/simulaties, hypotheses en voorstellen. Verandert geen prijzen of PvP-statregels zonder bewijs en gebruikersbesluit. |
+| QA/Perf/Security Reviewer | Gerichte losse review | Tests/metingen/rapporteren; schrijft alleen na specifieke file-claim. Geen zelfstandige merge, release of wijziging aan spelerdata. |
+
+**Werkregels:** GitHub is de enige gedeelde codegeschiedenis en PR-overdracht; progress.json het bestaande taakoverzicht; POGO_WERKREGISTER.md de actuele checkpoint; PLAN.md de ontwerp- en uitvoeringsbron. Een taak heeft één eigenaar, één concreet resultaat, benodigde files, testbewijs en een expliciete status. Claims zonder tool-/runtimebewijs zijn niet af. Kleine documentwijzigingen vragen geen gamebuild; wijzigingen aan gameplay/server wel relevante regressie-/typechecks. Gebruik Game Studios-specialisten alleen wanneer de taak ze rechtvaardigt. **Geen oneindige reviewcyclus**.
+
+### 6. Tests en bewijs per domein
+
+| Verandering | Minimum nieuw bewijs | Niet verwarren met |
+| --- | --- | --- |
+| Pure mechanics/hitbox/balans | Deterministische fixtures, fout- en grensgevallen, client/server replay, TypeScript | 'Bestaat in code' of een oude score-run |
+| Serverreward/GPSpad/handel | Eigenaar/revisie, duplicate/retry, authz, limieten, geen partiële mutatie, bij merge volledige goedkope suite | Een clienttoast of database-object zonder echte settlement |
+| UI/aanraakbediening | Werkende browser of native interactie, voor/na screenshot op relevant formaat, navigatie/overlay terug, no console error | Alleen een designboard of afbeelding |
+| 3D/animatie/audio | GLB-/bron-/licentiecontrole, werkelijk afgespeelde beweging/geluid, load/unmount, reduced motion | Clipnamen, statische render en gebundelde WAV |
+| Native GPS/Health/batterij | Fysieke toestelproef met toestemming/afstand/accu en gecontroleerd accountbehoud | Emulator of webnavigator-mock |
+| PvP/raid/ruil | Meer-account e2e met netwerkverlies, identieke idempotente receipt, correcte zichtbaarheid en autorisatie | Enkel een geslaagde unit-test |
+| Release/rollback | Laatste sourcefingerprint, testlog, web/API/backend, echte APK-installatie, signer/versie/asset-/nativebewijs, rollback | Alleen checksum of compile |
+
+Metingen die niet in deze review beschikbaar waren: actuele native FPS, batterij, echte spelerretentie, echte Google-login, 0.1.35 APK-runtime, 2-account live raid/ruil, de volledige visuele TO/FO-vergelijking en elk fysiek model in beweging. Allemaal **NOT ASSESSED** tot een gerichte proef ze onderbouwt.
+
+### 7. Eerstvolgende concrete opdracht
+
+**Begin met fase 0 (minimale Claude/Codex-instructies) en fase 1 (Tikduel-overlap), op een eigen veilige GitHub-branch.** Controleer vooraf de actuele hoofdbranch en fileclaims; bestaande werkmappen en eerdere agentwerk niet overschrijven. Fase 0 kan zonder gamecode worden afgerond. In fase 1 gaat een rode deterministische overlaptest vóór de gerichte fix; daarna groene gerichte regressies en een echt screenshot. Leg de commit/PR en de uitkomst kort in het bestaande werkregister vast. Geen productie-merge of release zonder gebruikersopdracht.
+
+**Documentatiehygiëne bij eerstvolgende gewone docs-taak:** vervang het verouderde README-voorblad van 0.1.25 door een verwijzing naar de actuele GitHub-release; verduidelijk in POGO_TESTMATRIX.md dat 183 een historische testsuite is en dat actuele aantallen uit release/checkpoint komen. Laat de historische releasebeschrijvingen intact.
+
+**Eindconclusie van deze review:** de grote bouwstenen bestaan. De grootste kwaliteitskans zit in gecontroleerde gamefeel en hitboxfeedback, volledige end-to-end-speelrondes, levende 3D-/UI-afwerking en echte Android-/online testdekking. Niet in een tweede app, nieuwe engine, grote refactor of 49 extra agents.
