@@ -217,3 +217,20 @@ Context en code lezen → één taak met eigenaar/acceptatiecriteria → zo nodi
 Controleer de originele bestaande game, zonder remake: gewone/sterke/Oerbugs met identieke seeds en CP/squad-effect, bewegende hitboxes en taptiming, tap-/combo-audio, echte screenshots ten opzichte van P13, Android-performance waar meetbaar en eenmaal bevestigde serverreward met retry. Alleen aantoonbare tekortkomingen repareren. Registreer bevindingen, tests en commit in bestaande werkregister/tracker.
 
 Vervolg na bewezen pilot: overige zes Arcadegames → 3D/art/animatie → PvP/raids → kaart/verzamelen → progressie/rewards. Geen nieuwe reviewlagen zonder concreet voordeel; prioriteiten uit het actuele werkregister blijven voorgaan.
+
+### Broncontrole en concrete toepassing — 7 november
+
+GitHub-aanvulling `fd1f447` is ingelezen en behouden. De branch `feature/game-studio-phase1-20261107` bevat bij deze controle dezelfde documentbasis, nog geen pilotwijziging. In deze checkout ontbreken `.claude/agents` en `.claude/skills`: het externe Game Studios-pakket is een referentie, geen geïnstalleerd of automatisch draaiend team. De actuele README en relevante `balance-check`/`ux-review`-bronnen zijn geraadpleegd; hun nuttige regel is bewijs vóór een groen oordeel. Ontbrekende native meetdata blijft **niet getest**, ook bij groene unit-tests.
+
+Daarnaast is het afzonderlijke browserpakket `game-studio` beschikbaar met richtlijnen voor UI, Three.js, sprites, GLB-optimalisatie en playtests. Dit is een ander pakket dan Donchitos' Claude Code Game Studios. De bestaande Expo/React Native/TypeScript/Three.js-stack en GLB-bronnen blijven behouden; `three` en glTF Transform zijn aanwezig. ImageGen en de bestaande Blender-koppelingen passen bij artwerk. Er zijn voor deze review geen engines of agentpakketten geïnstalleerd en geen parallelle agents gestart.
+
+De rolverdeling hierboven blijft een verdeling van specialismen. **Actuele integratie en overgedragen bestanden worden sinds4 november door Codex beheerd**; Claude krijgt een concrete visuele taak met bestandsoverdracht als die weer aan het werk gaat. Oude zinnen dat alleen Claude de tracker mag schrijven zijn historie na die overdracht; één schrijver per bestand blijft verplicht.
+
+Prioriteit binnen de bestaande pilot, zonder nieuw spelontwerp:
+
+1. **Tikduel compleet beoordelen:** bewegend doel en hitbox moeten overeenkomen; tap/combo geeft direct feedback en geluid; bestaande helper/squadsteun blijft aantoonbaar; stop/retry betaalt niet dubbel. Werk vanuit de originele simulator en events.
+2. **Upgrade voelbaar maken:** vergelijk zwakke en sterke legale squads bij gelijke seed/invoer/klasse. Laat de bestaande stat-/typebijdrage uitlegbaar zien. Verander geen rewards of kosten voordat de gecombineerde vroege vang-/loop-/spelopbrengst is doorgerekend. Het bestaande5–10minuten-doel voor een eerste nuttige upgrade is nog een te toetsen doel.
+3. **Eén beeldtaal en rustige HUD:** de0.1.35-iconen/branding zijn afgewerkt; uiteenlopende trainer-/bug-/Arcadestijlen en bewegende3D/evoluties blijven gerichte aandachtspunten. Gebruik bestaande art eerst, houd het speelveld vrij en pauzeer camera-input onder overlays.
+4. **Soepelheid bewijzen:** simulatie/timing buiten renderers houden, HUD-updates begrenzen, GLB-materialen/texturen/caches meten voordat optimalisatie of extra effecten worden toegevoegd. Browserbeelden bewijzen geen Android-FPS, accu of echte achtergrondkilometers.
+
+De huidige visuele release0.1.35 heeft703 groene tests, TypeScript/webbuild, gerichte320/430px-webbeelden en ondertekenings-/inhoudsbewijs. Op gebruikersverzoek geen APK-installatie-/emulatorproef. Dit sluit de pilot en de open3D-/fysieke QA-taken niet af. Gebruik `progress.json` en `POGO_WERKREGISTER.md`; maak geen nieuw takenregister of dubbele implementatie.

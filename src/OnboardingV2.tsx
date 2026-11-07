@@ -8,7 +8,7 @@ import {AvatarChoices,OutfitChoices,TrainerPortrait} from './AvatarV2';
 import {BrandMark} from './gameUiArt';
 import {GoTypes} from './GoTypeV2';
 import type {RunV2} from './ShopViewV2';
-import {Button,Label,Panel,V,v} from './uiV2';
+import {Button,Glyph,Label,Panel,V,v} from './uiV2';
 
 const suggestName=()=>{const a=NAME_IDEAS[Math.floor(Math.random()*NAME_IDEAS.length)],b=NAME_ENDINGS[Math.floor(Math.random()*NAME_ENDINGS.length)];return (a+b).slice(0,15)+(Math.random()<.5?String(Math.floor(Math.random()*90)+10):'');};
 
@@ -26,7 +26,7 @@ export function OnboardingV2({busy,run,cloud,onAccount}:{busy:boolean;run:RunV2;
   {step===1&&<Panel>
    <View style={{alignItems:'center'}}><TrainerPortrait avatar={avatar} outfit={outfit} size={110}/></View>
    <Text style={{fontSize:20,fontWeight:'800',color:V.ink,textAlign:'center'}}>Hoe heet je?</Text>
-   <View style={{flexDirection:'row',gap:8,alignItems:'center'}}><TextInput accessibilityLabel="Spelnaam" placeholder="Jouw spelnaam" placeholderTextColor="#B7CAB6" selectionColor="#A5CE87" maxLength={18} value={name} onChangeText={setName} style={[v.input,{flex:1}]}/><Pressable accessibilityRole="button" accessibilityLabel="Verzin een naam" testID="name-dice" disabled={busy} onPress={()=>setName(suggestName())} style={{width:52,height:52,borderRadius:16,alignItems:'center',justifyContent:'center',backgroundColor:'#315B49',borderWidth:1,borderColor:'#E9D6A2'}}><Text style={{fontSize:26}}>🎲</Text></Pressable></View>
+   <View style={{flexDirection:'row',gap:8,alignItems:'center'}}><TextInput accessibilityLabel="Spelnaam" placeholder="Jouw spelnaam" placeholderTextColor="#B7CAB6" selectionColor="#A5CE87" maxLength={18} value={name} onChangeText={setName} style={[v.input,{flex:1}]}/><Pressable accessibilityRole="button" accessibilityLabel="Verzin een naam" testID="name-dice" disabled={busy} onPress={()=>setName(suggestName())} style={{width:52,height:52,borderRadius:16,alignItems:'center',justifyContent:'center',backgroundColor:'#315B49',borderWidth:1,borderColor:'#E9D6A2'}}><Glyph name="refresh" size={28}/></Pressable></View>
    <Label small color={!trimmed||validName?V.muted:'#FFB9A5'}>{!trimmed||validName?'2 tot 18 letters of cijfers. Geen echte achternaam nodig!':'Gebruik alleen letters, cijfers, spaties, _ of -.'}</Label>
    <View style={{flexDirection:'row',gap:8}}><View style={{flex:1}}><Button secondary disabled={busy} onPress={()=>setStep(0)}>Terug</Button></View><View style={{flex:1}}><Button disabled={busy||!validName} onPress={()=>setStep(2)}>Volgende</Button></View></View>
   </Panel>}
@@ -36,7 +36,7 @@ export function OnboardingV2({busy,run,cloud,onAccount}:{busy:boolean;run:RunV2;
    <View style={{gap:8}}>{STARTER_PARTNERS.map(id=>{const selected=starter===id;return <Pressable key={id} testID={'starter-'+id} accessibilityRole="button" accessibilityLabel={'Kies '+species(id).name} accessibilityState={{selected}} disabled={busy} onPress={()=>setStarter(id)} style={{flexDirection:'row',alignItems:'center',gap:10,padding:9,borderRadius:20,borderWidth:2,borderColor:selected?'#F2D16E':'#72927955',backgroundColor:selected?'#365D45':'#163D33'}}>
     <SpriteView id={id} size={78} animate={selected}/>
     <View style={{flex:1,gap:4}}><Label bold>{species(id).name}</Label><View pointerEvents="none"><GoTypes species={id} compact/></View><Label small>{STARTER_INFO[id]}</Label></View>
-    {selected&&<Text style={{fontSize:22}}>👍</Text>}
+    {selected&&<Glyph name="check" size={24}/>}
    </Pressable>;})}</View>
    <View style={{flexDirection:'row',gap:8}}><View style={{flex:1}}><Button secondary disabled={busy} onPress={()=>setStep(1)}>Terug</Button></View><View style={{flex:1}}><Button disabled={busy||!starter||!validName} onPress={()=>void run('profile',{name:trimmed,avatar,outfit,starter})}>Begin avontuur</Button></View></View>
   </Panel>}

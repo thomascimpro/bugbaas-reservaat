@@ -13,7 +13,7 @@ import {trainerLevel} from '../game/trainerV2';
 import {RARITY_TIERS} from '../game/rarityDisplayV2';
 import type {GameViewV2} from '../game/typesV2';
 import {SpriteView} from './artV2';
-import {TrainerPortrait} from './AvatarV2';
+import {TrainerPortrait} from './AvatarV2';import {FieldActivityArt} from './FieldArtV2';
 import {GoTeamPickerV2} from './GoTeamPickerV2';
 import {GO_TYPES,GoTypeBadge,GoTypes} from './GoTypeV2';
 import {PO,PoCircle,PoPill,poText} from './PogoUiV2';
@@ -33,7 +33,7 @@ function Stars({tier}:{tier:RaidTier}){return <View accessibilityLabel={tier+' s
 /** 👍 types that hit this boss hard, and how many own bugs the team picker marks with 👍. Types are read at runtime. */
 function Counters({kind,view,light=false}:{kind:string;view:GameViewV2;light?:boolean}){
  const enemy=movePool(kind).types,strong=(Object.keys(GO_TYPES) as Element[]).filter(t=>effectiveness(t,enemy)>1).slice(0,3),mine=view.player.specimens.filter(s=>s.go&&matchup(s,kind).recommended).length;if(!strong.length)return null;
- return <View testID="raid-counters" accessibilityLabel={'Sterk tegen deze baas: '+strong.map(t=>GO_TYPES[t].name).join(', ')} style={light?{...glass,flexWrap:'wrap',gap:4}:{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',flexWrap:'wrap',gap:4}}>{light?<Text style={st.small}>👍</Text>:<Label small bold>👍</Label>}{strong.map(t=><GoTypeBadge key={t} type={t} compact/>)}{mine>0&&(light?<Text style={st.small}>{'· '+mine+' van jou'}</Text>:<Label small>{'· '+mine+' van jou'}</Label>)}</View>;
+ return <View testID="raid-counters" accessibilityLabel={'Sterk tegen deze baas: '+strong.map(t=>GO_TYPES[t].name).join(', ')} style={light?{...glass,flexWrap:'wrap',gap:4}:{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',flexWrap:'wrap',gap:4}}>{light?<Glyph name="check" size={17}/>:<Label small bold>👍</Label>}{strong.map(t=><GoTypeBadge key={t} type={t} compact/>)}{mine>0&&(light?<Text style={st.small}>{'· '+mine+' van jou'}</Text>:<Label small>{'· '+mine+' van jou'}</Label>)}</View>;
 }
 /** Today's free remote raid first; once used, the Zwermfluit count (and the daily free Zwermfluit). `light` = white text on the raid photo. */
 function Pass({view,run,busy,now,light=false}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;light?:boolean}){
@@ -69,7 +69,7 @@ function BossGlow({kind,tier,egg,size}:{kind:string;tier:RaidTier;egg:boolean;si
  const id='bg'+useId().replace(/:/g,''),color=glowColor(tier,kind),box=size*1.45;
  return <View testID="raid-hero" style={{width:box,height:box*.86,alignSelf:'center',alignItems:'center',justifyContent:'center'}}>
   <View pointerEvents="none" style={StyleSheet.absoluteFill}><Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"><Defs><RadialGradient id={id}><Stop offset="0" stopColor="#FFE3B0" stopOpacity={.9}/><Stop offset=".42" stopColor={color} stopOpacity={.55}/><Stop offset="1" stopColor={color} stopOpacity={0}/></RadialGradient></Defs><Ellipse cx="50" cy="50" rx="50" ry="50" fill={`url(#${id})`}/></Svg></View>
-  {egg?<Text accessibilityLabel="Zwermei" style={{fontSize:size*.62}}>🥚</Text>:<SpriteView id={kind} size={size} animate/>}
+  {egg?<View accessibilityLabel="Zwermei"><FieldActivityArt id="cocoon" size={size*.72}/></View>:<SpriteView id={kind} size={size} animate/>}
  </View>;
 }
 /** Boss name, stars and (for Oerbugs) a gold OERBUG tag. */
@@ -89,8 +89,8 @@ export function RaidAtGymV2({view,raid,run,busy,now,ensureGPS}:{view:GameViewV2;
  async function join(){if(ensureGPS&&!await ensureGPS())return;await run('raidJoin',{raid:raid.id,remote:false});}
  if(inLobby)return null;const blocked=claimed?'✅ Vandaag verslagen':capped?'5 / 5 vandaag':low?'🔒 Level '+config.trainer:closing?'⏳ Vertrekt bijna':view.raidLobby?'Je zit al in een raid':'';
  return <RaidStage testID="raid-card" minHeight={egg?470:560}>
-  <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flex:1,alignItems:'flex-start'}}><View style={[glass,{alignSelf:'flex-start',maxWidth:'100%'}]}><Text numberOfLines={1} style={[st.small,{color:WHITE,flexShrink:1}]}>{config.name+' · '+(raid.local?'📍 ':'🌍 ')+raid.site.name}</Text></View></View><RaidHelpIcon/></View>
-  <View style={{alignItems:'center'}}><Text accessibilityLabel={(egg?'Komt uit over ':'Nog ')+mmss((egg?raid.hatchAt:raid.endsAt)-now)} style={st.timer}>{mmss((egg?raid.hatchAt:raid.endsAt)-now)}</Text><Text style={st.caption}>{egg?'🥚 KOMT UIT OVER':'⏱ RAID NOG'}</Text></View>
+  <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flex:1,alignItems:'flex-start'}}><View style={[glass,{alignSelf:'flex-start',maxWidth:'100%'}]}><Text numberOfLines={1} style={[st.small,{color:WHITE,flexShrink:1}]}>{config.name+' · '+(raid.local?'':'Op afstand · ')+raid.site.name}</Text></View></View><RaidHelpIcon/></View>
+  <View style={{alignItems:'center'}}><Text accessibilityLabel={(egg?'Komt uit over ':'Nog ')+mmss((egg?raid.hatchAt:raid.endsAt)-now)} style={st.timer}>{mmss((egg?raid.hatchAt:raid.endsAt)-now)}</Text><Text style={st.caption}>{egg?'KOMT UIT OVER':'RAID NOG'}</Text></View>
   <BossGlow kind={raid.species} tier={raid.tier} egg={egg} size={180}/>
   <View style={{gap:8}}><BossName kind={raid.species} tier={raid.tier} egg={egg}/>{!egg&&<View style={{alignItems:'center'}}><GoTypes species={raid.species} compact/></View>}</View>
   {egg?<Glass>⏳ Kom terug als de baas er is!</Glass>:<>
@@ -122,8 +122,8 @@ export function RaidLobbyV2({view,run,busy,now,onBattle}:{view:GameViewV2;run:Ru
   <View testID="raid-players" style={{flexDirection:'row',justifyContent:'center',gap:6}}>{Array.from({length:RAID_RULES.maxMembers},(_,i)=>{const m=l.members[i],size=46;return <View key={i} accessibilityLabel={m?m.name+(m.me?' (jij)':'')+', '+m.damage+' schade':'Vrije plek'} style={{width:48,alignItems:'center',gap:3}}>
    {m?<View style={{width:size,height:size,borderRadius:size/2,overflow:'hidden',borderWidth:3,borderColor:m.me?PO.gold:WHITE,backgroundColor:'#2C6A55',alignItems:'center',justifyContent:'center'}}>{m.me?<TrainerPortrait avatar={p.avatar} outfit={p.outfit} size={size+8}/>:<Text style={{...poText.onPhoto,fontSize:19,fontWeight:'800'}}>{(m.name.trim()[0]??'?').toUpperCase()}</Text>}</View>
     :<View style={{width:size,height:size,borderRadius:size/2,backgroundColor:'#FFFFFF2E',alignItems:'center',justifyContent:'center'}}><Text style={{color:WHITE,fontSize:22,fontWeight:'300'}}>+</Text></View>}
-   {m?.remote&&<View pointerEvents="none" style={{position:'absolute',right:-2,top:-3}}><Text style={{fontSize:13}}>🌍</Text></View>}
-   {m&&(fighting||ended)?<Text numberOfLines={1} style={[st.small,{fontSize:11}]}>💥 {m.damage}</Text>:null}</View>;})}</View>
+   {m?.remote&&<View pointerEvents="none" style={{position:'absolute',right:-2,top:-3}}><Glyph name="compass" size={17}/></View>}
+   {m&&(fighting||ended)?<Text numberOfLines={1} style={[st.small,{fontSize:11}]}>{m.damage}</Text>:null}</View>;})}</View>
   <View style={{gap:12}}>
    {ended?<PoPill variant="raid" icon={reward?'gift':'check'} accessibilityLabel={reward?'🎁 Beloning + vangen':'Sluiten'} label={reward?'Beloning + vangen':'Sluiten'} disabled={busy} onPress={()=>void run('raidClaim',{lobby:l.id})}/>
     :battle?<PoPill variant="raid" icon="swords" accessibilityLabel="⚔️ Naar het gevecht" label="Naar het gevecht" onPress={onBattle}/>
@@ -151,7 +151,7 @@ export function RaidListV2({view,run,busy,now,ensureGPS}:{view:GameViewV2;run:Ru
  if(!raids.length)return null;
  return <View testID="raid-list" style={{gap:8}}><View style={{flexDirection:'row',alignItems:'center',gap:7}}><Glyph name="swords" size={24}/><Label bold>{'Raids · '+raids.length}</Label><View style={{flex:1}}/><Pass {...{view,run,busy,now}}/></View>
   {raids.map(r=>{const egg=now<r.hatchAt,selected=open===r.id,color=glowColor(r.tier,r.species);return <View key={r.id} style={{gap:8}}><Pressable accessibilityRole="button" accessibilityLabel={(egg?'Zwermei':species(r.species).name)+', '+r.tier+' sterren, '+(r.local?'dichtbij':'op afstand')} testID={'raid-row-'+r.id} onPress={()=>setOpen(selected?'':r.id)} style={{flexDirection:'row',alignItems:'center',gap:9,padding:7,borderRadius:22,backgroundColor:selected?'#4A3470':'#1B4A3F',borderWidth:2,borderColor:selected?PO.gold:color+'88'}}>
-   <View style={{width:50,height:50,borderRadius:25,alignItems:'center',justifyContent:'center',backgroundColor:color+'33'}}>{egg?<Text style={{fontSize:28}}>🥚</Text>:<SpriteView id={r.species} size={46}/>}</View>
+   <View style={{width:50,height:50,borderRadius:25,alignItems:'center',justifyContent:'center',backgroundColor:color+'33'}}>{egg?<FieldActivityArt id="cocoon" size={32}/>:<SpriteView id={r.species} size={46}/>}</View>
    <View style={{flex:1,gap:2}}><Stars tier={r.tier}/><Label small bold>{egg?'Zwermei':species(r.species).name}</Label><Label small>{r.site.name}</Label></View>
    <View style={{alignItems:'flex-end'}}><Label small bold>{egg?'🥚 '+mmss(r.hatchAt-now):'⏱ '+mmss(r.endsAt-now)}</Label><Label small>{r.local?'📍 hier':'🌍 afstand'}</Label></View></Pressable>
    {selected&&<RaidAtGymV2 raid={r} {...{view,run,busy,now,ensureGPS}}/>}</View>;})}

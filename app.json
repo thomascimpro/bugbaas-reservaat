@@ -2,7 +2,7 @@
   "expo": {
     "name": "bugbaas",
     "slug": "bugbaas-reservaat",
-    "version": "0.1.34",
+    "version": "0.1.35",
     "orientation": "portrait",
     "scheme": "bugbaas-reservaat",
     "plugins": [
@@ -26,14 +26,14 @@
       "@react-native-google-signin/google-signin",
       "./plugins/withAdventureSync"
     ],
-    "icon": "./assets/v2/ui/app-icon-v2.png",
+    "icon": "./assets/v2/ui/polish-v1/app-icon.png",
     "backgroundColor": "#12382e",
     "userInterfaceStyle": "light",
     "android": {
       "package": "nl.cimpro.bugbaas.reservaat.preview",
-      "versionCode": 35,
+      "versionCode": 36,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/v2/ui/app-icon-foreground-v2.png",
+        "foregroundImage": "./assets/v2/ui/polish-v1/app-foreground.png",
         "backgroundColor": "#12382e"
       },
       "permissions": [
@@ -50,11 +50,11 @@
     "web": {
       "output": "single",
       "name": "bugbaas",
-      "favicon": "./assets/v2/ui/app-icon-v2.png"
+      "favicon": "./assets/v2/ui/polish-v1/app-icon.png"
     },
     "splash": {
       "backgroundColor": "#12382e",
-      "image": "./assets/v2/ui/app-icon-foreground-v2.png",
+      "image": "./assets/v2/ui/polish-v1/app-foreground.png",
       "resizeMode": "contain"
     }
   }

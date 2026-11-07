@@ -1,0 +1,308 @@
+{
+  "ui-main": {
+    "width": 1024,
+    "height": 1024,
+    "frames": {
+      "compass": {
+        "x": 22,
+        "y": 9,
+        "width": 215,
+        "height": 244
+      },
+      "team": {
+        "x": 273,
+        "y": 21,
+        "width": 226,
+        "height": 233
+      },
+      "swords": {
+        "x": 530,
+        "y": 28,
+        "width": 225,
+        "height": 225
+      },
+      "nectar": {
+        "x": 805,
+        "y": 27,
+        "width": 193,
+        "height": 227
+      },
+      "book": {
+        "x": 11,
+        "y": 281,
+        "width": 245,
+        "height": 218
+      },
+      "profile": {
+        "x": 256,
+        "y": 264,
+        "width": 247,
+        "height": 248
+      },
+      "friends": {
+        "x": 521,
+        "y": 267,
+        "width": 247,
+        "height": 234
+      },
+      "gear": {
+        "x": 783,
+        "y": 263,
+        "width": 229,
+        "height": 235
+      },
+      "heart": {
+        "x": 17,
+        "y": 525,
+        "width": 231,
+        "height": 243
+      },
+      "shield": {
+        "x": 274,
+        "y": 512,
+        "width": 232,
+        "height": 256
+      },
+      "leaf": {
+        "x": 543,
+        "y": 526,
+        "width": 206,
+        "height": 242
+      },
+      "star": {
+        "x": 792,
+        "y": 512,
+        "width": 206,
+        "height": 256
+      },
+      "cup": {
+        "x": 13,
+        "y": 768,
+        "width": 240,
+        "height": 227
+      },
+      "clock": {
+        "x": 301,
+        "y": 768,
+        "width": 183,
+        "height": 225
+      },
+      "gift": {
+        "x": 526,
+        "y": 768,
+        "width": 231,
+        "height": 229
+      },
+      "coin": {
+        "x": 782,
+        "y": 768,
+        "width": 226,
+        "height": 220
+      }
+    }
+  },
+  "ui-tools": {
+    "width": 1024,
+    "height": 1024,
+    "frames": {
+      "back": {
+        "x": 32,
+        "y": 47,
+        "width": 208,
+        "height": 202
+      },
+      "next": {
+        "x": 272,
+        "y": 47,
+        "width": 203,
+        "height": 202
+      },
+      "refresh": {
+        "x": 536,
+        "y": 34,
+        "width": 209,
+        "height": 220
+      },
+      "freeze": {
+        "x": 787,
+        "y": 31,
+        "width": 202,
+        "height": 225
+      },
+      "close": {
+        "x": 38,
+        "y": 287,
+        "width": 196,
+        "height": 203
+      },
+      "sound": {
+        "x": 280,
+        "y": 289,
+        "width": 221,
+        "height": 198
+      },
+      "eye": {
+        "x": 534,
+        "y": 282,
+        "width": 209,
+        "height": 215
+      },
+      "info": {
+        "x": 785,
+        "y": 287,
+        "width": 218,
+        "height": 208
+      },
+      "bag": {
+        "x": 25,
+        "y": 524,
+        "width": 230,
+        "height": 244
+      },
+      "level": {
+        "x": 284,
+        "y": 515,
+        "width": 226,
+        "height": 253
+      },
+      "power": {
+        "x": 542,
+        "y": 530,
+        "width": 209,
+        "height": 218
+      },
+      "research": {
+        "x": 787,
+        "y": 527,
+        "width": 218,
+        "height": 241
+      },
+      "settings": {
+        "x": 25,
+        "y": 768,
+        "width": 231,
+        "height": 218
+      },
+      "lock": {
+        "x": 305,
+        "y": 768,
+        "width": 181,
+        "height": 218
+      },
+      "check": {
+        "x": 528,
+        "y": 778,
+        "width": 240,
+        "height": 198
+      },
+      "expedition": {
+        "x": 768,
+        "y": 768,
+        "width": 235,
+        "height": 216
+      }
+    }
+  },
+  "ui-actions": {
+    "width": 1024,
+    "height": 1024,
+    "frames": {
+      "attack": {
+        "x": 20,
+        "y": 22,
+        "width": 217,
+        "height": 213
+      },
+      "sting": {
+        "x": 271,
+        "y": 39,
+        "width": 230,
+        "height": 213
+      },
+      "burst": {
+        "x": 522,
+        "y": 20,
+        "width": 240,
+        "height": 232
+      },
+      "venom": {
+        "x": 820,
+        "y": 24,
+        "width": 185,
+        "height": 225
+      },
+      "crush": {
+        "x": 19,
+        "y": 267,
+        "width": 228,
+        "height": 241
+      },
+      "heal": {
+        "x": 268,
+        "y": 269,
+        "width": 230,
+        "height": 233
+      },
+      "cleanse": {
+        "x": 521,
+        "y": 272,
+        "width": 242,
+        "height": 231
+      },
+      "fortify": {
+        "x": 784,
+        "y": 268,
+        "width": 225,
+        "height": 238
+      },
+      "itemLeaf": {
+        "x": 24,
+        "y": 518,
+        "width": 219,
+        "height": 241
+      },
+      "itemThorn": {
+        "x": 296,
+        "y": 517,
+        "width": 165,
+        "height": 240
+      },
+      "itemHoney": {
+        "x": 551,
+        "y": 513,
+        "width": 193,
+        "height": 247
+      },
+      "itemWing": {
+        "x": 782,
+        "y": 516,
+        "width": 216,
+        "height": 245
+      },
+      "itemDew": {
+        "x": 24,
+        "y": 774,
+        "width": 215,
+        "height": 226
+      },
+      "itemBark": {
+        "x": 278,
+        "y": 771,
+        "width": 222,
+        "height": 231
+      },
+      "itemMoon": {
+        "x": 535,
+        "y": 779,
+        "width": 214,
+        "height": 220
+      },
+      "itemSun": {
+        "x": 797,
+        "y": 768,
+        "width": 204,
+        "height": 238
+      }
+    }
+  }
+}

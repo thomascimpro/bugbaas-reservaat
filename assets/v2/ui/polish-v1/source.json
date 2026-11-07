@@ -1,0 +1,47 @@
+{
+  "tool": "image_gen built-in",
+  "date": "2026-11-06",
+  "assets": [
+    {
+      "id": "main",
+      "sourceImage": "exec-ace22852-b297-418c-acb2-7b1da98b4ec3.png",
+      "prompt": "Use case: precise-object-edit. Edit this existing Bugbaas game UI sprite sheet. Keep ALL SIXTEEN icon subjects, their meanings and order in the EXACT SAME four-column, four-row grid. Make a polished production-ready version in the same emerald, warm gold and natural material style. Remove ALL stray chroma-key red, lime green, yellow, cyan and magenta fringe pixels outside the objects. Remove stray floating dirt/sparks and uneven cutout halos. Redraw clean antialiased silhouettes with genuine transparent alpha background. Each icon must fit entirely within its own equal square grid cell with at least 6 percent empty padding around it. No object crosses cell edges. Keep strong simple readable shapes and finished material detail. No text, no labels, no white or black background, no checkerboard, no grid lines. Do not replace objects or reorder them. Row 1 compass, bug-team shield, crossed swords, nectar drop. Row 2 bugdex book, ranger portrait, friends, gear. Row 3 ruby heart, shield, leaf, star. Row 4 trophy, hourglass, wrapped gift, bug coin."
+    },
+    {
+      "id": "tools",
+      "sourceImage": "exec-e408cb15-63ba-46a3-a43d-863257a58f38.png",
+      "prompt": "Use case: precise-object-edit. Edit this existing Bugbaas game UI sprite sheet. Keep ALL SIXTEEN icon subjects, their meanings and order in the EXACT SAME four-column, four-row grid. Make a polished production-ready version in the same emerald, warm gold and natural material style. Remove ALL stray chroma-key red, lime green, yellow, cyan and magenta fringe pixels outside the objects. Remove stray floating dirt/sparks and uneven cutout halos. Redraw clean antialiased silhouettes with genuine transparent alpha background. Each icon must fit entirely within its own equal square grid cell with at least 6 percent empty padding around it. No object crosses cell edges. Keep strong simple readable shapes and finished material detail. No text, no labels, no white or black background, no checkerboard, no grid lines. Do not replace objects or reorder them. Row 1 back arrow, next arrow, refresh, ice crystal. Row 2 close X, speaker, eye, information i. Row 3 backpack, circular level badge, power-up arrow, research parchment. Row 4 settings gear, padlock, checkmark, walking boots and rolled map."
+    },
+    {
+      "id": "actions",
+      "sourceImage": "exec-d0050909-785d-46e5-9c44-cc876e2172d9.png",
+      "prompt": "Use case: precise-object-edit. Edit this existing Bugbaas game UI sprite sheet. Keep ALL SIXTEEN icon subjects, their meanings and order in the EXACT SAME four-column, four-row grid. Make a polished production-ready version in the same emerald, warm gold and natural material style. Remove ALL stray chroma-key red, lime green, yellow, cyan and magenta fringe pixels outside the objects. Remove stray floating dirt/sparks and uneven cutout halos. Redraw clean antialiased silhouettes with genuine transparent alpha background. Each icon must fit entirely within its own equal square grid cell with at least 6 percent empty padding around it. No object crosses cell edges. Keep strong simple readable shapes and finished material detail. No text, no labels, no white or black background, no checkerboard, no grid lines. Do not replace objects or reorder them. Keep every original attack and held-item subject in its current cell. In particular preserve the contrast between claw, sting, burst, venom, crush, heal, cleanse, fortify and the eight hanging leaf/thorn/honey/wing/dew/bark/moon/sun charms. No bright fringe beyond object silhouette; any inner colored magic remains inside a compact readable shape."
+    },
+    {
+      "id": "wordmark",
+      "sourceImage": "exec-c0be29da-8a8b-4b3d-8e0a-80830046f7f1.png",
+      "prompt": "Use case: stylized-concept. Asset type: one premium Bugbaas game UI asset. Sophisticated forest-adventure game art, sculpted brushed brass, emerald and turquoise enamel, crisp silhouette, restrained detail readable on a phone, soft upper-left studio lighting, transparent alpha background, no watermark, no stray colored cutout halos or floating sparkles. Create a wide horizontal game logo with EXACT text: \"Bugbaas\". One word, readable elegant bold beveled gold letters with dark emerald inset shadow, not a childish bubble font. To the left a dignified symmetrical emerald jewel beetle with six legs and a small simple golden crown. A restrained leaf detail ties emblem to lettering. Crown/beetle feels like a premium collector badge, no giant eyes, no smiling face, no white sticker border. Emblem about one quarter of logo width, text three quarters. Wide 3:1 composition filling canvas, isolated transparency, no backdrop."
+    },
+    {
+      "id": "emblem",
+      "sourceImage": "exec-f893fe27-dd4c-4847-9883-7a8a4f5472af.png",
+      "prompt": "Use case: stylized-concept. Asset type: one premium Bugbaas game UI asset. Sophisticated forest-adventure game art, sculpted brushed brass, emerald and turquoise enamel, crisp silhouette, restrained detail readable on a phone, soft upper-left studio lighting, transparent alpha background, no watermark, no stray colored cutout halos or floating sparkles. Create the matching app emblem: a dignified symmetrical emerald jewel beetle seen from above with six neatly arranged gold-edged legs, rich green/teal segmented shell and a small simple gold three-point crown above the head. Bold oval body and crown silhouette. No human features, no giant eyes, no smile, no text, no rim or enclosing shield, no background. Center the entire intact emblem within 76 percent of a square canvas, large clean safe margin for an Android adaptive app icon."
+    },
+    {
+      "id": "platinum",
+      "sourceImage": "exec-3954d5b4-9236-4ff7-a9c1-2434a4044ee9.png",
+      "prompt": "Use case: stylized-concept. Asset type: one premium Bugbaas game UI asset. Sophisticated forest-adventure game art, sculpted brushed brass, emerald and turquoise enamel, crisp silhouette, restrained detail readable on a phone, soft upper-left studio lighting, transparent alpha background, no watermark, no stray colored cutout halos or floating sparkles. One PLATINUM rank medal for the competitive mode. A cool silver circular medallion embossed with a jewel beetle and laurel relief. Small turquoise crystal at center; simple teal ribbon at the top. Mostly silver with clear bright turquoise accents. Centered entire medal, no words, no letters or numbers, no background. Readable at 34 pixels."
+    },
+    {
+      "id": "champion",
+      "sourceImage": "exec-13902729-10fc-4db6-857a-5f1d698f57cd.png",
+      "prompt": "Use case: stylized-concept. Asset type: one premium Bugbaas game UI asset. Sophisticated forest-adventure game art, sculpted brushed brass, emerald and turquoise enamel, crisp silhouette, restrained detail readable on a phone, soft upper-left studio lighting, transparent alpha background, no watermark, no stray colored cutout halos or floating sparkles. One CHAMPION rank medal for the competitive mode. Rich golden circular medallion embossed with a dignified beetle, small crown at its top and laurel relief. Amber crystal at center; short deep emerald ribbon. Golden amber silhouette with a clear crowned top, restrained detail, no words, no letters or numbers, no background. Readable at 34 pixels."
+    },
+    {
+      "id": "swipe",
+      "sourceImage": "exec-b51dab59-f52b-4f37-b3d0-72be1cb087bd.png",
+      "prompt": "Use case: stylized-concept. Asset type: one premium Bugbaas game UI asset. Sophisticated forest-adventure game art, sculpted brushed brass, emerald and turquoise enamel, crisp silhouette, restrained detail readable on a phone, soft upper-left studio lighting, transparent alpha background, no watermark, no stray colored cutout halos or floating sparkles. One clear gesture tutorial icon: a single ivory leather-gloved hand with index finger pointing upward, palm inward, with one short broad curved turquoise arrow sweeping from left to right beneath the fingertip. Clean simplified anatomy, refined game interface illustration, gold seam accents. Bold readable shape. No net, no text, no border or card. Whole hand and arrow isolated together, centered, transparent."
+    }
+  ],
+  "packing": "WebP optimization, sprite-frame bounds and Android safe-area sizing. Exact chroma-key residue connected to transparency is removed during alpha packing; source illustrations preserved locally."
+}

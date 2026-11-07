@@ -1,4 +1,4 @@
-import {FieldBossV2} from './FieldBossV2';
+import {FieldBossV2} from './FieldBossV2';import {FieldActivityArt} from './FieldArtV2';
 import {RaidAtGymV2,RaidInvitesV2,RaidListV2,RaidLobbyV2} from './GoRaidV2';
 import React,{useId,useState} from 'react';
 import {Pressable,Text,View} from 'react-native';
@@ -80,7 +80,7 @@ export function GoGymsV2({view,run,busy,now,initialId,onBattle,open,ensureGPS}:{
   {gym&&<Button small secondary icon="back" onPress={()=>{setSelected('');setTab('gym');}}>Alle gyms</Button>}
   <TabsV2 testID="gym-tab" tab={tab} setTab={setTab} tabs={TABS.map(t=>({...t,badge:badges[t.id]}))}/>
   {gym?<GymDetailV2 key={gym.id} {...{view,gym,tab,run,busy,now,onBattle,open,ensureGPS}}/>
-  :tab==='raid'?<View style={{gap:12}}>{view.raidLobby?<RaidLobbyV2 {...{view,run,busy,now,onBattle}}/>:<><RaidInvitesV2 {...{view,run,busy,now}}/><RaidListV2 {...{view,run,busy,now,ensureGPS}}/>{!raids.length&&!invites&&<Panel style={{alignItems:'center'}}><Text style={{fontSize:44}}>🥚</Text><Label bold center>Nu geen raid</Label><Button small secondary icon="shield" onPress={()=>setTab('fight')}>Bekijk gyms</Button></Panel>}</>}</View>
+  :tab==='raid'?<View style={{gap:12}}>{view.raidLobby?<RaidLobbyV2 {...{view,run,busy,now,onBattle}}/>:<><RaidInvitesV2 {...{view,run,busy,now}}/><RaidListV2 {...{view,run,busy,now,ensureGPS}}/>{!raids.length&&!invites&&<Panel style={{alignItems:'center'}}><FieldActivityArt id="cocoon" size={48}/><Label bold center>Nu geen raid</Label><Button small secondary icon="shield" onPress={()=>setTab('fight')}>Bekijk gyms</Button></Panel>}</>}</View>
   :tab==='gym'?<View style={{gap:12}}><TeamGateV2 {...{view,run,busy,open}}/>
     <Panel><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flexDirection:'row',alignItems:'center',gap:8}}><Counter icon="coin" value={progress?.coins??0} label="Munten"/><Help title="Munten" icon="coin" body={COIN_HELP}/></View><Button small secondary icon="bag" onPress={()=>open('coinShop')}>Shop</Button></View><Label small bold>🪙 {progress?.earned??0} / {GYM_RULES.dailyCoins} vandaag{myTeam?' · '+GYM_TEAMS[myTeam].name:''}</Label>
      <MyDefendersV2 view={view} now={now} onOpen={id=>openGym(id,'gym')}/></Panel>

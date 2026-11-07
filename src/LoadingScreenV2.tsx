@@ -2,7 +2,7 @@ import React,{useContext,useEffect,useMemo,useRef,useState} from 'react';
 import {Animated,Easing,Text,View,useWindowDimensions} from 'react-native';
 import {Scene,SpriteView} from './artV2';
 import {BrandMark} from './gameUiArt';
-import {Button,MotionPrefs,Wash} from './uiV2';
+import {Button,Glyph,MotionPrefs,Wash} from './uiV2';
 
 const TIPS=['🗺️ Kaart klaarzetten…','🐞 Bugs wakker maken…','🥚 Cocons warm houden…','🎁 Cadeaus inpakken…','🕸️ Netten knopen…','✨ Stof verzamelen…'];
 const FLYERS=['butterfly','firefly_1','bee','dragonfly_1','asianladybeetle'] as const;
@@ -30,7 +30,7 @@ export function LoadingScreenV2({busy,error,onRetry}:{busy:boolean;error?:string
   {!reduced&&bugs.map(b=><Animated.View key={b.id} pointerEvents="none" style={{position:'absolute',top:b.y*height,left:0,transform:[{translateX:b.value.interpolate({inputRange:[0,1],outputRange:b.flip?[width+60,-90]:[-90,width+60]})},{translateY:b.value.interpolate({inputRange:[0,.25,.5,.75,1],outputRange:[0,-22,6,-16,0]})},{scaleX:b.flip?-1:1}],opacity:b.value.interpolate({inputRange:[0,.05,.95,1],outputRange:[0,.9,.9,0]})}}><SpriteView id={b.id} size={58}/></Animated.View>)}
   <View style={{flex:1,alignItems:'center',justifyContent:'center',padding:24,gap:26}}>
    <Animated.View style={{transform:[{scale:logoScale},{translateY:logoY}]}}><BrandMark width={Math.min(320,width-60)}/></Animated.View>
-   {error?<View style={{alignItems:'center',gap:12,padding:16,borderRadius:22,backgroundColor:'#0B2A23CC',borderWidth:1,borderColor:'#F2D16E66'}}><Text style={{fontSize:40}}>🐛💤</Text><Text style={{color:'#FFF3D5',fontSize:16,fontWeight:'700',textAlign:'center'}}>{error}</Text>{!busy&&<Button onPress={onRetry}>Probeer opnieuw</Button>}</View>:
+   {error?<View style={{alignItems:'center',gap:12,padding:16,borderRadius:22,backgroundColor:'#0B2A23CC',borderWidth:1,borderColor:'#F2D16E66'}}><Glyph name="emblem" size={48}/><Text style={{color:'#FFF3D5',fontSize:16,fontWeight:'700',textAlign:'center'}}>{error}</Text>{!busy&&<Button onPress={onRetry}>Probeer opnieuw</Button>}</View>:
    <View style={{alignItems:'center',gap:12,width:260}}>
     <View accessibilityRole="progressbar" accessibilityLabel="Laden" style={{width:260,height:12,borderRadius:7,overflow:'hidden',backgroundColor:'#0B2A23AA',borderWidth:1,borderColor:'#F2D16E88'}}><Animated.View style={{position:'absolute',top:0,bottom:0,width:120,borderRadius:7,backgroundColor:'#8ECC6B',boxShadow:'0px 0px 10px #B8F08A',transform:[{translateX:reduced?70:barX}]}}/></View>
     <Text testID="loading-tip" style={{color:'#FFF3D5',fontSize:16,fontWeight:'700',textShadowColor:'#000A',textShadowRadius:4}}>{TIPS[tip]}</Text>

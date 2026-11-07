@@ -29,8 +29,8 @@ export function CatchResultV2({result,demo,newSpecies,onContinue,onCollection}:{
     {caught&&!!result.cp&&<Text style={t(16,PO.muted,'700')}>CP {result.cp}</Text>}
     {caught&&<GoTypes species={result.species} compact/>}
     {result.grade!=='hit'&&result.grade!=='miss'&&<Chip><Text style={t(12,PO.gold)}>{GRADES[result.grade].name}</Text></Chip>}
-    {result.curved&&<Chip><Text style={t(12,PO.gold)}>🌀</Text></Chip>}
-    {streakBonus(result.streak)>0&&<Chip testID="streak-bonus" bg="#F2A51A26"><Text style={t(12,'#FFD27A')}>{'🔥 '+result.streak+' · +'+streakBonus(result.streak)+' XP'}</Text></Chip>}
+    {result.curved&&<Chip><Glyph name="refresh" size={17}/></Chip>}
+    {streakBonus(result.streak)>0&&<Chip testID="streak-bonus" bg="#F2A51A26"><Text style={t(12,'#FFD27A')}>{'Reeks '+result.streak+' · +'+streakBonus(result.streak)+' XP'}</Text></Chip>}
     {caught&&result.shiny&&<Chip testID="shiny-catch" bg="#E9E4FF33"><ShinyMarkV2 size={16}/><Text style={t(12,'#F3EEFF')}>Shiny</Text></Chip>}
     {caught&&!demo&&newSpecies&&<Chip testID="new-dex-catch"><Glyph name="book" size={16}/><Text style={t(12,PO.tealText)}>Nieuw</Text></Chip>}
    </View>

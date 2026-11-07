@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "planRevision": "6 november 2026 — releasebron0.1.34/code35; ImageGen-iconen en lokale fixes; gebruiker vraagt publicatie zonder APK-test",
-  "updatedAt": "2026-11-06",
+  "planRevision": "7 november 2026 — releasebron0.1.35/code36 en nieuw Game Studios-plan beoordeeld; pilot blijft open",
+  "updatedAt": "2026-11-07",
   "sourceOfTruth": "PLAN.md",
   "statusMeaning": "Presence/design/clip names do not prove an integrated finished game. Only mark af with relevant evidence.",
   "delivery": {
     "destination": "Codex primary, after Claude handoff",
-    "status": "0.1.34/code35 signed APK built and static verification passed;703 tests/typecheck/cloud build green; new icons viewed at375x812. APK runtime smoke explicitly skipped by user. GitHubv0.1.34 is authoritative for publication; see docs/releases/0.1.34.md. Legacy remains disabled because server identity cannot read old project.",
+    "status": "0.1.35/code36 signed APK static verification passed;703 tests/typecheck/cloud build green; targeted web UI at320/430px without overflow/errors. APK runtime smoke explicitly skipped by user. GitHubv0.1.35 is authoritative for publication; see docs/releases/0.1.35.md. Game Studios main-doc update preserved; external agents absent and Tikduel pilot not completed. Legacy remains disabled.",
     "acknowledged": true,
     "prompt": "CLAUDE_INBOX.md",
     "reply": "CLAUDE_UITVOERING.md",
@@ -26,16 +26,16 @@
     "firstTikduelPrototype": true,
     "unitTestsPassed": 703,
     "httpReplayTestPassed": 1,
-    "typecheck": "exit0; .local/release0134/types.log and types-icons.log after final icon changes",
-    "webExport": "exit0; .local/release0134/deploy-icons.log and cloud-proof.json; four new image hashes match source",
-    "browser": "6nov:32 UI views at320/390px, saved/reloaded trainer name with IDs/collection preserved, battle-to-Arcade; .local/polish-20261106/names/. Final cloud375x812 onboarding/profile/cards and four ImageGen icons,0console errors; .local/release0134/web-proof.json.",
+    "typecheck": "exit0; .local/release0135/types-final.log",
+    "webExport": "exit0; .local/release0135/deploy.log and cloud-proof.json; eight new image hashes match source",
+    "browser": "0.1.35 web: onboarding/new wordmark, profile/image rank, daily goals and Arcade at320x568/430x932; no horizontal overflow or console errors; .local/release0135/web-proof.json. Prior name/ID/collection and battle-to-Arcade evidence remains historical.",
     "unifiedNavigation": true,
     "otherSixGames": true,
     "newCombat": true,
-    "nativeAnimationTest": "Android15: native 3D Butterfly scene and60s result; background/resume, map, collection and battle overview; no new crash log",
-    "nativeControlsTest": "0.1.34 APK runtime smoke explicitly skipped at user request; only package/signer/bundle/image/audio/module verification performed. Previous0.1.33 emulator evidence remains historical; no physical GPS/Health Connect/audio test.",
+    "nativeAnimationTest": "Historical0.1.33 Android15: native3D Butterfly60s/background/resume; no new runtime check in0.1.35",
+    "nativeControlsTest": "0.1.35 APK runtime smoke explicitly skipped at user request; package/signer/bundle/8new-art/3launcher/audio/module verification only.0.1.33 emulator evidence remains historical; physical GPS/Health Connect/audio/FPS not tested.",
     "testsTotal": 703,
-    "tests": "703/703; .local/release0134/tests.log; final icon-only changes checked with typecheck and cloud web UI"
+    "tests": "703/703; .local/release0135/tests.log; typecheck/cloud web UI passed for final visual source"
   },
   "fileOwnership": {
     "integrator": "Codex: all handed-off files; subagents stopped on workspace-credit error; no active parallel writers",
