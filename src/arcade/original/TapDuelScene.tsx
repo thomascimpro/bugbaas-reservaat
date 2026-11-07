@@ -8,6 +8,8 @@ import {font} from '../../uiV2';
 import {ArcadeIcon} from '../ArcadeArtV3';
 import {playSound} from '../../audioV2';
 import {TAP_PORTRAITS} from './tapPortraits';
+import {tapHitFeedback} from './tapFeedback';
+import {tapDrawOrder} from './tapDrawOrder';
 
 // Presentation only (GM-01 / P13.1). Positions, hit areas, taps, points, combo and helper timing all come
 // from the original state; nothing here changes the simulation. Durations follow sections/animations.md.
@@ -17,7 +19,8 @@ const trail={sticky:'#AAE085',shield:'#8CDFEE',splash:'#6FC8FF',zap:'#D5A8FF',bu
 const clamp=(n:number)=>Math.max(0,Math.min(1,n));
 
 export function OriginalTapDuelScene({state:s,ticket,scale:k,reducedMotion,onInput}:OriginalSceneProps<OriginalTapDuelState>){
- const targets=originalTapTargets(s,ticket),now=s.elapsedMs;
+ // Input hits the first overlapping target; draw it last so the bug on top is the bug you hit.
+ const targets=tapDrawOrder(originalTapTargets(s,ticket)),now=s.elapsedMs;
  // Cooldown span per helper, remembered from the moment its ready time jumps forward (display only).
  const spans=useRef<{ready:number;span:number}[]>([]);
  ticket.squad.forEach((_,i)=>{const ready=s.helperReadyAt[i]??0,prev=spans.current[i];if(!prev||ready>prev.ready)spans.current[i]={ready,span:Math.max(1,ready-now)};});
@@ -29,7 +32,7 @@ export function OriginalTapDuelScene({state:s,ticket,scale:k,reducedMotion,onInp
   <Svg pointerEvents="none" style={{position:'absolute',left:0,top:0}} width={360*k} height={640*k}>
    {targets.map(t=>{const cx=(t.motion.x*3.6+t.size/2)*k,cy=(t.motion.y*6.4+t.size*.86)*k;return <React.Fragment key={t.bugId}><Ellipse cx={cx} cy={cy} rx={t.size*.42*k} ry={t.size*.13*k} fill="#000" opacity={.35}/>{t.rarity!=='Gewoon'&&<Ellipse cx={cx} cy={cy-t.size*.32*k} rx={t.size*.5*k} ry={t.size*.42*k} fill={colors[t.rarity]} opacity={.16}/>}</React.Fragment>;})}
   </Svg>
-  {targets.map(t=>{const hit=s.effects.find(e=>e.kind==='hit'&&now-e.at<140&&Math.abs(e.x-(t.motion.x*3.6+t.size/2))<4&&Math.abs(e.y-(t.motion.y*6.4+t.size/2))<4),pop=hit&&!reducedMotion?1-.1*Math.sin(Math.PI*clamp((now-hit.at)/110)):1,left=t.required-t.hits;
+  {targets.map(t=>{const hit=tapHitFeedback(t,s.effects,now),pop=hit&&!reducedMotion?1-.1*Math.sin(Math.PI*clamp((now-hit.at)/110)):1,left=t.required-t.hits;
    return <View key={t.bugId} pointerEvents="none" testID={`original-tap-target-${t.index}`} style={{position:'absolute',left:t.motion.x*3.6*k,top:t.motion.y*6.4*k,width:t.size*k,height:t.size*k,alignItems:'center',justifyContent:'center',transform:[...(reducedMotion?[]:[{rotate:`${t.motion.rotate}deg`}]),{scale:pop}]}}>
     <SpriteView id={TAP_PORTRAITS.get(t.bugId)??'beetle'} size={t.size*1.08*k}/>
     {t.frozen&&<View style={{position:'absolute',left:-2*k,top:-2*k,right:-2*k,bottom:-2*k,borderRadius:t.size*k,borderWidth:2,borderColor:'#A0F8FF',backgroundColor:'#60CCF822'}}/>}
@@ -48,6 +51,8 @@ export function OriginalTapDuelScene({state:s,ticket,scale:k,reducedMotion,onInp
   <View pointerEvents="none" style={{position:'absolute',left:0,right:0,bottom:10*k,flexDirection:'row',justifyContent:'space-around',alignItems:'flex-end'}}>{ticket.squad.map((b,i)=>{const ready=s.helperReadyAt[i]??0,span=spans.current[i]?.span??1,f=ready>now?1-clamp((ready-now)/span):1,R=31*k,C=2*Math.PI*(R-3*k),on=f>=1;
    return <View key={b.id} accessibilityLabel={on?'Helper klaar':'Helper laadt'} style={{width:2*R,height:2*R,borderRadius:R,backgroundColor:'#0E2828CC',alignItems:'center',justifyContent:'center',boxShadow:on?'0px 0px 16px #1FC3D399':undefined}}>
     <SpriteView id={b.species} shiny={b.shiny} size={50*k}/>
+    {/* the helper's main type: it decides how this bug helps (sticky/shield/splash/zap/burst in the simulator) */}
+    {!!b.types?.[0]&&<View style={{position:'absolute',right:-4*k,bottom:-4*k,width:24*k,height:24*k,borderRadius:12*k,backgroundColor:'#0E2828',borderWidth:1,borderColor:'#BFF3EC66',alignItems:'center',justifyContent:'center'}}><ArcadeIcon atlas="types" name={b.types[0]} size={18*k}/></View>}
     <Svg style={{position:'absolute',left:0,top:0}} width={2*R} height={2*R}><Circle cx={R} cy={R} r={R-3*k} stroke="#FFFFFF22" strokeWidth={4*k} fill="none"/><Circle cx={R} cy={R} r={R-3*k} stroke={on?'#6BEFF2':'#1FC3D3'} strokeWidth={4*k} fill="none" strokeDasharray={`${C*f} ${C}`} strokeLinecap="round" transform={`rotate(-90 ${R} ${R})`}/></Svg>
    </View>;})}</View>
   {assist>0&&<View pointerEvents="none" style={{position:'absolute',bottom:80*k,alignSelf:'center',left:0,right:0,alignItems:'center'}}><View style={{flexDirection:'row',alignItems:'center',gap:4*k,paddingHorizontal:12*k,paddingVertical:4*k,borderRadius:18*k,backgroundColor:'#0E2828D9',borderWidth:1,borderColor:'#BFF3EC47'}}><ArcadeIcon atlas="types" name="bug" size={18*k}/><Text style={{fontFamily:font,fontWeight:'800',fontSize:14*k,color:'#EAF6F2'}}>+{assist}%</Text></View></View>}

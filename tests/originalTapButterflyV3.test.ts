@@ -6,6 +6,8 @@ import {originalTapCatalog} from '../game/arcade/original/tapCatalog';
 import {originalTapDuel,originalPickBugIds,originalPointsByRarity,originalTapsByRarity,originalTargetMotion,originalTapTargets} from '../game/arcade/original/tapDuel';
 import {originalButterflyCatch,originalButterflyWorldPosition,originalButterflyProjection,originalFlyingBugSpecs,type OriginalButterflyCatchState} from '../game/arcade/original/butterflyCatch';
 import {species} from '../game/catalogV2';
+import {tapHitFeedback} from '../src/arcade/original/tapFeedback';
+import {tapDrawOrder} from '../src/arcade/original/tapDrawOrder';
 
 test('every native Butterfly loading/fallback sprite resolves to a real catalogue species',()=>{
  for(const bug of originalFlyingBugSpecs)assert.equal(species(bug.sprite).id,bug.sprite);
@@ -32,6 +34,33 @@ test('original Tap trajectory matches golden outputs from old targetMotion acros
  ] as const;
  for(const [rarity,index,at,progress,x,y,rotate] of cases){const actual=originalTargetMotion(index,42,at,rarity,{speedMultiplier:1});assert.equal(actual.visible,true);for(const [got,want] of [[actual.progress,progress],[actual.x,x],[actual.y,y],[actual.rotate,rotate]])assert.ok(Math.abs(got-want)<1e-11);}
  assert.equal(originalTargetMotion(55,42,29349,'Gewoon',{speedMultiplier:1}).visible,false);
+});
+
+test('an overlap tap damages the bug painted in front, without changing server priority',()=>{
+ const t=ticket('tap_duel'),s=originalTapDuel.create(t);
+ for(let i=0;i<168;i++)originalTapDuel.step(s,t,20);
+ const targets=originalTapTargets(s,t),order=targets.map(v=>v.bugId),x=610*.36,y=789*.64;
+ const painted=tapDrawOrder(targets),overlap=painted.filter(v=>x>=v.motion.x*3.6&&x<=v.motion.x*3.6+v.size&&y>=v.motion.y*6.4&&y<=v.motion.y*6.4+v.size);
+ assert.ok(overlap.length>=2,'fixed seed must reproduce the overlapping bugs');
+ const front=overlap.at(-1)!,before=s.hitCounts[front.bugId]??0;
+ assert.equal(originalTapDuel.input(s,t,{tick:168,x:610,y:789,action:'down'}),true);
+ assert.equal(s.hitCounts[front.bugId],before+1,'the visible front bug must receive the tap');
+ assert.deepEqual(targets.map(v=>v.bugId),order,'painting must not mutate hit-test order');
+});
+
+test('hit feedback follows the same moving bug and expires after140ms',()=>{
+ const t=ticket('tap_duel'),s=originalTapDuel.create(t);
+ for(let i=0;i<60;i++)originalTapDuel.step(s,t,20);
+ const target=originalTapTargets(s,t).find(v=>v.motion.x>0&&v.motion.x<85)!;
+ assert.ok(target.required>1);
+ originalTapDuel.input(s,t,{tick:60,x:Math.round((target.motion.x*3.6+target.size/2)/.36),y:Math.round((target.motion.y*6.4+target.size/2)/.64)});
+ originalTapDuel.step(s,t,100);
+ const moved=originalTapTargets(s,t).find(v=>v.bugId===target.bugId)!;
+ assert.notEqual(moved.motion.x,target.motion.x);
+ assert.ok(tapHitFeedback(moved,s.effects,s.elapsedMs),'moving away from the impact coordinate must not hide feedback');
+ const other=originalTapTargets(s,t).find(v=>v.bugId!==target.bugId);
+ if(other)assert.equal(tapHitFeedback(other,s.effects,s.elapsedMs),undefined);
+ assert.equal(tapHitFeedback(moved,s.effects,1340),undefined);
 });
 
 test('Tap multiple hits, every-fifth combo, helpers and browser-style input log replay agree',()=>{

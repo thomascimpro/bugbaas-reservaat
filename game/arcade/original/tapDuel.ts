@@ -12,7 +12,7 @@ type Motion={visible:boolean;progress:number;x:number;y:number;rotate:number};
 type HelperKind='burst'|'sticky'|'shield'|'zap'|'splash';
 type Assist={speedMultiplier:number;hitboxMultiplier:number;comboGraceMs:number;comboBonusEvery:number;focusEasyHits:number};
 export type OriginalTapTarget={index:number;bugId:string;name:string;rarity:OriginalRarity;motion:Motion;size:number;hits:number;required:number;frozen:boolean};
-export type OriginalTapEffect={at:number;kind:HelperKind|'hit'|'catch';x:number;y:number;helper:number;points:number;targets:{x:number;y:number}[]};
+export type OriginalTapEffect={at:number;kind:HelperKind|'hit'|'catch';x:number;y:number;helper:number;points:number;targetId?:string;targets:{x:number;y:number}[]};
 export type OriginalTapDuelState=OriginalState&{game:'tap_duel';bugIds:string[];hitCounts:Record<string,number>;caughtBugIds:string[];combo:number;lastCatchAt:number;assist:Assist;frozenTargets:Record<string,{motion:Motion;until:number}>;targetTimeOffsets:Record<string,number>;helperReadyAt:number[];effects:OriginalTapEffect[];helperHits:number;tapHits:number};
 const byId=new Map(originalTapCatalog.map(e=>[e.id,e]));
 export function originalPickBugIds(seed:number){
@@ -52,7 +52,7 @@ function hit(s:OriginalTapDuelState,t:OriginalTapTarget,helper=-1){
  s.hitCounts[t.bugId]=(s.hitCounts[t.bugId]??0)+1;if(helper<0)s.tapHits++;else s.helperHits++;
  const caught=s.hitCounts[t.bugId]>=t.required;let points=0;
  if(caught){s.combo=s.elapsedMs-s.lastCatchAt<=s.assist.comboGraceMs?s.combo+1:1;s.lastCatchAt=s.elapsedMs;s.caughtBugIds.push(t.bugId);points=originalPointsByRarity[t.rarity]+(s.combo>0&&s.combo%Math.max(2,s.assist.comboBonusEvery)===0?1:0);s.score+=points;}
- s.effects.push({at:s.elapsedMs,kind:caught?'catch':'hit',x:t.motion.x*3.6+t.size/2,y:t.motion.y*6.4+t.size/2,helper,points,targets:[]});
+ s.effects.push({at:s.elapsedMs,kind:caught?'catch':'hit',x:t.motion.x*3.6+t.size/2,y:t.motion.y*6.4+t.size/2,helper,points,targetId:t.bugId,targets:[]});
 }
 const rank=(r:OriginalRarity)=>r==='Mythisch'?4:r==='Legendarisch'?3:r==='Episch'?2:r==='Zeldzaam'?1:0;
 const stableHash=(seed:string)=>seed.split('').reduce((hash,char)=>((hash<<5)-hash+char.charCodeAt(0))>>>0,0);

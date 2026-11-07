@@ -61,3 +61,11 @@ De gebruiker zegt letterlijk: "doe wel zoom knop, ik vroeg dat … pas plan aan 
 
 ## 2026-11-04 — Claude stopt, overdracht aan Codex
 Gebruiker: "zet alles klaar voor codex dat hij het af kan maken, ook visueel". Alle zeven games zijn qua HUD en labels in glasstijl gezet (GM-05/06 nog niet in de browser bekeken). Volledige lijst van gedaan, open en bestanden: `CLAUDE_OVERDRACHT_AAN_CODEX.md`. `progress.json` is overgedragen aan Codex. Niets gecommit of gereleased.
+
+## 2026-11-07 — GM-01 Tikduel-pilot (PLAN.md, aanvulling 7 nov): overlapfix, daarna overgedragen
+- **Bevestigd (plan P1):** tik-input kiest de *eerste* overlappende target in `originalTapTargets`, de scène tekende de lijst in volgorde (laatste bovenop) → zichtbare bovenste bug ≠ geraakte bug.
+- **Fix (alleen presentatie):** nieuw `src/arcade/original/tapDrawOrder.ts` (`tapDrawOrder` = omgekeerde tekenvolgorde, `topVisibleTarget`); `TapDuelScene.tsx` tekent via `tapDrawOrder`. Score/selectie/simulatie ongewijzigd.
+- **Regressie:** `tests/tapDrawOrderV3.test.ts` — seed 42, alle overlappen elke 100 ms: bovenste getekende bug == bug die `originalTapDuel.input` raakt; bewijst ook dat de oude volgorde in meerdere gevallen fout was. Groen.
+- **Extra:** type-icoon (hoofdtype) op elke squadhelper-cirkel, zodat zichtbaar is hoe die bug helpt (upgrade/squadbijdrage voelbaar, plan punt 2).
+- **Getest:** volledige suite 705/705, `tsc` groen; browser 390×844 Tikduel gespeeld (nav nu Arcade → Speel; Spellen/Oefen bestaat niet meer), screenshots `.local/tap-ui/play-390-*.png`. 320×568-run liep vast op het openen (scriptkwestie, niet onderzocht).
+- **Overdracht:** Codex bleek tegelijk in dezelfde bestanden te werken (`tapDuel.ts` targetId, `tapFeedback.ts`, `TapDuelScene.tsx`, `originalTapButterflyV3.test.ts`) en bouwt op `tapDrawOrder` voort. Om dubbele schrijvers te vermijden stopt Claude hier: **Codex is eigenaar van alle Tikduel-bestanden en commit/pusht de pilot samen.** Niets gecommit door Claude; checkout teruggezet op `codex/fix-native-plaag-0125` (zelfde commit 97223d0).
