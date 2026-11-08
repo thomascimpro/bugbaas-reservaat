@@ -1,6 +1,6 @@
 # BugBaas Reservaat — projectstart
 
-**Android 0.1.25 / build 26:** [APK downloaden](https://github.com/thomascimpro/bugbaas-reservaat/releases/download/v0.1.25/BugBaas-Reservaat-0.1.25.apk) · [release en testverslag](https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.25). Deze preview vereist 0.1.25 voor de gerepareerde Android-kaartkoppeling. Vanaf 0.1.14 toont de app zelf "Update nodig" als de server een nieuwere versie vraagt. Android 8.0+, dezelfde ondertekening voor updates met behoud van gegevens. Oudere releases blijven beschikbaar. Deze repository is openbaar.
+**Android0.1.36 / build37:** [APK downloaden](https://github.com/thomascimpro/bugbaas-reservaat/releases/download/v0.1.36/BugBaas-0.1.36.apk) · [release en controles](https://github.com/thomascimpro/bugbaas-reservaat/releases/tag/v0.1.36) · [webversie](https://bugbaas-reservaat-preview-1oefxg8rf-thomas-cim-pro.vercel.app). Vangskill, gesloten-appafstand, één wandeloverzicht en visuele polish. Update met behoud van accounts en voortgang, Android8+, dezelfde ondertekening.722 tests, TypeScript en webbuild groen; geen APK-installatieproef of fysieke Health Connect-vergelijking. Oudere releases blijven beschikbaar. Deze repository is openbaar.
 
 > **Voor iedere nieuwe ontwikkelchat:** lees eerst [AGENTS.md](AGENTS.md). Daar staan het korte werkafspraken en de grenzen voor data en releases.
 
@@ -12,7 +12,11 @@
 5. [Historisch uitvoeringsverslag](docs/POGO_UITVOERING.md) — bewijs van wat eerder al gebouwd en getest is.
 6. [Functioneel Ontwerp](docs/POGO_FO_20261019.md) · [Technisch Ontwerp](docs/POGO_TO_ASSETS_20261019.md) · [Schermschetsen](docs/POGO_SCHERMSCHETSEN_20261019.html).
 
-## Huidige stap
+## Huidige versie
+
+0.1.36: richten en loslaten met timingbonus; Health Connect-daggeschiedenis, volledige autovangstbatch en slim opruimen in één terugkomstoverzicht. Afgeronde Tikduel/Nestwacht- en visuele wijzigingen meegenomen. [Releasebewijs en grenzen](docs/releases/0.1.36.md).
+
+## Eerdere versies
 Release 0.1.25: Android-kaartcommando's voor Plaagbende, raids en eigen routes werken door; navigatie blijft werken bij zoom 15–20, min zoomt niet meer in en kaartmarkers onderscheppen de cameraknoppen niet. Heen-en-weerroutes behouden hun meters; herstel van een onzekere actie blijft zichtbaar. Plaagbende geeft de echte foutreden of vertrekstatus. Nieuwe Franse bendeleden met baret en baguette en blijvend zichtbare vechtknop. Webbuild wist verouderde versieconfig uit de bundelcache. Zie [de diagnose en het herstel](docs/BUGANALYSE_20261031.md).
 
 Release 0.1.24: Plaagbende gerepareerd (start met uitleg bij falen, 100 m, ~1 op 12 posts, 70% CP zonder schild, geredde bug in beeld), 1 gym per dag op afstand, ❓-kaartuitleg (gym/raid/Plaagbende), gyms op hun plek, bugbubbels en postlichtstraal, duidelijkere kaartkleuren, compacte meldingen.
