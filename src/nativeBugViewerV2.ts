@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {borrowBugModel,instanceBug,lightBugs,addShinyGlitter} from './bugModelV2';
+import {borrowBugModel,instanceBug,lightBugs,addShinyGlitter,outdoorEnvironment} from './bugModelV2';
 import type {BugModel} from './bugModelV2';
 import {WALK_MODELS} from '../game/walkingV2';
 
@@ -19,7 +19,7 @@ function resize(){if(!renderer||!camera||!group)return;const width=Math.max(1,ho
 async function start(){
  if(!Object.hasOwn(WALK_MODELS,id)){notify('error');return;}
  try{
-  scene=new THREE.Scene();lightBugs(scene);camera=new THREE.OrthographicCamera(-2.1,2.1,2.1,-2.1,.1,100);renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setClearColor(0x000000,0);renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;host.appendChild(renderer.domElement);renderer.domElement.addEventListener('webglcontextlost',contextLost);
+  scene=new THREE.Scene();lightBugs(scene);camera=new THREE.OrthographicCamera(-2.1,2.1,2.1,-2.1,.1,100);renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setClearColor(0x000000,0);renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;scene.environment=outdoorEnvironment(renderer);scene.environmentIntensity=.55;host.appendChild(renderer.domElement);renderer.domElement.addEventListener('webglcontextlost',contextLost);
   document.addEventListener('visibilitychange',visibility);window.addEventListener('pagehide',dispose);(window as unknown as {__bugbaasViewer?:{setActive:(value:boolean)=>void}}).__bugbaasViewer={setActive(value){active=value===true;visibility();}};
   lease=borrowBugModel(WALK_MODELS[id]);model=await lease.promise;if(stopped){disposeResources(model.root);return;}
   const made=instanceBug(model,3.3,id,shiny);group=made.group;mixer=made.mixer;scene.add(group);ready=true;resize();

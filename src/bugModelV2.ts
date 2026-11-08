@@ -48,7 +48,27 @@ for(const s of FIELD_FAMILY_SPECIES)SHINY_PALETTES[s.id]=s.palette;
 for(const s of EXPANDED_SPECIES)SHINY_PALETTES[s.id]=s.palette;
 for(const [id,s] of Object.entries(EVOLUTION_ASSETS))SHINY_PALETTES[id]=s.palette;
 for(const s of LEGENDARY_SPECIES)SHINY_PALETTES[s.id]=s.palette;
-export async function loadBugModel(name:string):Promise<BugModel>{const g=await new GLTFLoader().loadAsync('/models/'+name+'.glb');return {root:g.scene,clips:g.animations};}
+// Surface per body type (AN-01 realism). Every GLB left the pipeline with the same lacquer coat (clearcoat .6/.16),
+// so larvae, snails and furry bees looked like glossy toys. Shells keep a hard polished coat; soft bodies get a damp
+// low coat with sheen; furry bodies get a matte velvet sheen. Glass, crystal, wings (transparent) and metal stay as authored.
+const SOFT_BODY=/larva|grub|caterpillar|aphid|snailstage[12]|silverfish|termite|cicadastage1/i;
+const FURRY_BODY=/^bee(?!tle)|armabee|moth|spider|mosquito|hoverfly|cranefly|butterfly|swallowtail|monarch/i;
+const HARD_SHELL=/beetle|scarab|chafer|weevil|ladybird|firefly|manticora|minotaur|golofa|titan|hercules|atlas|caucasus|neptune|rosalia|tortoise|earwig|cockroach|scorpion|kristal|lavaklauw/i;
+export function bugSurface(name:string):'soft'|'fur'|'shell'|'default'{return SOFT_BODY.test(name)?'soft':FURRY_BODY.test(name)?'fur':HARD_SHELL.test(name)?'shell':'default';}
+function applyBugSurface(name:string,root:THREE.Object3D){
+ const kind=bugSurface(name),done=new Set<THREE.Material>();
+ root.traverse(o=>{if(!(o instanceof THREE.Mesh))return;for(const m of Array.isArray(o.material)?o.material:[o.material]){
+  if(done.has(m)||!(m instanceof THREE.MeshPhysicalMaterial))continue;done.add(m);
+  if(m.transparent||m.metalness>=.5||m.transmission>0||/glass|crystal|cobweb|wing/i.test(m.name))continue;
+  if(/eye|sensor/i.test(m.name)){m.clearcoat=1;m.clearcoatRoughness=.05;continue;}
+  if(kind==='soft'){m.clearcoat=.15;m.clearcoatRoughness=.45;m.roughness=Math.max(m.roughness,.58);m.sheen=.45;m.sheenRoughness=.55;m.sheenColor.copy(m.color).lerp(new THREE.Color(1,1,1),.5);}
+  else if(kind==='fur'){m.clearcoat=.06;m.clearcoatRoughness=.6;m.roughness=Math.max(m.roughness,.72);m.sheen=.85;m.sheenRoughness=.4;m.sheenColor.copy(m.color).lerp(new THREE.Color(1,.95,.85),.6);}
+  else if(kind==='shell'){m.clearcoat=.85;m.clearcoatRoughness=.1;}
+  else{m.clearcoat=.4;m.clearcoatRoughness=.24;}
+  m.needsUpdate=true;
+ }});
+}
+export async function loadBugModel(name:string):Promise<BugModel>{const g=await new GLTFLoader().loadAsync('/models/'+name+'.glb');applyBugSurface(name,g.scene);return {root:g.scene,clips:g.animations};}
 // A map and its encounter use the same decoded source. Only instances own their skeletons/variants.
 const liveModels=new Map<string,{promise:Promise<BugModel>;model?:BugModel;users:number;at:number}>();
 function trimModels(){const idle=[...liveModels].filter(([,entry])=>!entry.users&&entry.model).sort((a,b)=>a[1].at-b[1].at);while(idle.length>3){const [name,entry]=idle.shift()!,resources=new Set<{dispose:()=>void}>();entry.model!.root.traverse(o=>{if(o instanceof THREE.SkinnedMesh)resources.add(o.skeleton);if(o instanceof THREE.Mesh){resources.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){resources.add(m);for(const value of Object.values(m))if(value instanceof THREE.Texture)resources.add(value);}}});resources.forEach(resource=>resource.dispose());liveModels.delete(name);}}
@@ -79,7 +99,19 @@ export function instanceBug(model:BugModel,size:number,species?:string,shiny=fal
  let bounds=modelBounds.get(model);if(!bounds){root.updateMatrixWorld(true);root.traverse(o=>{if(o instanceof THREE.SkinnedMesh)o.computeBoundingBox();});const box=new THREE.Box3().setFromObject(root),dimensions=box.getSize(new THREE.Vector3());bounds={center:box.getCenter(new THREE.Vector3()),minY:box.min.y,edge:Math.max(dimensions.x,dimensions.y,dimensions.z)};modelBounds.set(model,bounds);}const scale=size*(elite?1.1:1)/bounds.edge;
  root.position.set(-bounds.center.x*scale,-bounds.minY*scale,-bounds.center.z*scale);root.scale.setScalar(scale);const group=new THREE.Group();group.add(root);const mixer=new THREE.AnimationMixer(root),idle=model.clips.find(c=>c.name.toLowerCase()==='idle')??model.clips[0];if(idle){mixer.clipAction(idle).play();mixer.update(0);}return {group,mixer};
 }
-export function lightBugs(scene:THREE.Scene){scene.add(new THREE.HemisphereLight(0xfff9df,0x53654b,2.7));const sun=new THREE.DirectionalLight(0xfff1c7,3.5);sun.position.set(-80,160,70);scene.add(sun);}
+// Outdoor light for bugs (WR-01/AN-01): a warm low sun as key, a softer sky/forest-floor fill and a cool rim,
+// instead of one flat bright hemisphere. Together with outdoorEnvironment() chitin reflects sky and moss, not a studio.
+export function lightBugs(scene:THREE.Scene){scene.add(new THREE.HemisphereLight(0xdcefff,0x4a5a32,1.55));const sun=new THREE.DirectionalLight(0xffe2b0,3.6);sun.position.set(-90,120,80);scene.add(sun);const rim=new THREE.DirectionalLight(0xbfe7ff,1.1);rim.position.set(70,60,-120);scene.add(rim);}
+/** Reflection environment of a sunny forest edge (sky gradient, bright horizon, mossy ground), built in code: no download, no studio boxes. */
+export function outdoorEnvironment(renderer:THREE.WebGLRenderer){
+ const env=new THREE.Scene(),geometry=new THREE.SphereGeometry(10,48,24),colors:number[]=[],sky=new THREE.Color(0x6fb2e6),horizon=new THREE.Color(0xf6eccf),ground=new THREE.Color(0x3d5a2c),c=new THREE.Color();
+ const pos=geometry.attributes.position;for(let i=0;i<pos.count;i++){const y=pos.getY(i)/10;if(y>=0)c.copy(horizon).lerp(sky,Math.pow(y,.6));else c.copy(horizon).lerp(ground,Math.min(1,-y*3));colors.push(c.r,c.g,c.b);}
+ geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+ env.add(new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.BackSide})));
+ const sun=new THREE.Mesh(new THREE.SphereGeometry(.9,16,8),new THREE.MeshBasicMaterial({color:new THREE.Color(0xfff1d0).multiplyScalar(6)}));sun.position.set(-5.5,6,4.5);env.add(sun);
+ const pmrem=new THREE.PMREMGenerator(renderer),texture=pmrem.fromScene(env,.03).texture;pmrem.dispose();geometry.dispose();
+ return texture;
+}
 
 // Kept outside instanceBug so baked portraits stay clean and source models stay reusable.
 export function addShinyGlitter(bug:THREE.Group,size:number){

@@ -15,7 +15,7 @@ import {Button,Counter,Glyph,Label,useInfo,V} from './uiV2';
 export function FieldBagV2({view,run,busy,open}:{view:GameViewV2;run:RunV2;busy:boolean;open:(name:string)=>void}){
  const [tab,setTab]=useState<'catch'|'gear'|'training'|'nectar'>('catch'),p=view.player,g=p.go!,f=p.field!,info=useInfo();
  const show=(title:string,body:string)=>info.show({title,body,icon:'bag'});
- const tile={width:'23%' as const,minWidth:0,flexGrow:0,paddingHorizontal:3,paddingVertical:8,borderRadius:16,borderWidth:1,borderColor:'#52755A',backgroundColor:'#214B40',alignItems:'center' as const,gap:3,minHeight:104};
+ const tile={width:'23%' as const,minWidth:0,flexGrow:0,paddingHorizontal:3,paddingVertical:8,borderRadius:16,borderWidth:1,borderColor:'#BFF3EC47',backgroundColor:'#0E2828',alignItems:'center' as const,gap:3,minHeight:104};
  const name=(text:string)=><Text numberOfLines={2} style={{fontSize:11,lineHeight:13,fontWeight:'700',color:V.ink,textAlign:'center'}}>{text}</Text>;
  const count=(n:number)=><View style={{position:'absolute',right:4,top:4,zIndex:1,paddingHorizontal:4,minHeight:20,borderRadius:9,justifyContent:'center',backgroundColor:'#102E29EF'}}><Label small bold>×{n}</Label></View>;
  const nectar=[...new Set([...Object.keys(g.candy),...Object.keys(g.xl)])].filter(k=>(g.candy[k]??0)>0||(g.xl[k]??0)>0).sort((a,b)=>(g.candy[b]??0)-(g.candy[a]??0)||(g.xl[b]??0)-(g.xl[a]??0)||familyName(a).localeCompare(familyName(b)));
