@@ -95,6 +95,26 @@ test('local player invites a friend, the friend joins remotely, pooled damage wi
  }finally{store.close();}
 });
 
+test('a fresh server sees pooled damage immediately and rejoining resumes the existing group and fight',async()=>{
+ const store=new SqliteStore(':memory:'),{post,site,now:start}=raidPost();let now=start;await store.run(['v2RaidSecret:global'],d=>d.set('v2RaidSecret:global',{key:KEY}));const first=new GoServiceV2(store,'local',()=>now);
+ try{
+  const A='cold-local',B='cold-friend';for(const uid of [A,B])await store.run(['v2Players:'+uid],d=>d.set('v2Players:'+uid,player(uid,now,FIX,[post])));
+  let a=await first.state(A),b=await first.state(B);const raid=a.raids!.find(r=>r.site.id===site.id)!;
+  const send=async(api:GoServiceV2,uid:string,v:GameViewV2,type:string,data:Record<string,unknown>={})=>api.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});
+  a=await send(first,A,a,'raidJoin',{raid:raid.id,remote:false});b=await send(first,B,b,'raidJoin',{raid:raid.id,remote:true});const lobby=a.raidLobby!.id,costs={passes:b.player.go!.raids!.passes,remote:b.player.go!.raids!.remote,freeRemote:b.player.go!.raids!.freeRemote};
+  now+=LOBBY_MS+1000;a=await send(first,A,a,'raidFight',{ids:['bug-0','bug-1','bug-2']});
+  const max=a.raidLobby!.maxHP;await store.run(['v2RaidDamage:'+lobby+':'+A],d=>d.set('v2RaidDamage:'+lobby+':'+A,{uid:A,damage:100}));
+  const fresh=new GoServiceV2(store,'local',()=>now);b=await fresh.state(B);
+  assert.equal(b.raidLobby!.hp,max-100,'the first cold read includes every member damage row');
+  b=await send(fresh,B,b,'raidJoin',{raid:raid.id,remote:true});assert.equal(b.raidLobby!.id,lobby,'a started group is resumed, not split into a new lobby');
+  b=await send(fresh,B,b,'raidFight',{ids:['bug-0','bug-1','bug-2']});const battle=b.goBattle!.id;
+  assert.equal(b.goBattle!.raid!.synced,max-100,'the fight starts at the shared HP already remaining');
+  b=await send(fresh,B,b,'raidFight',{ids:['bug-0','bug-1','bug-2']});assert.equal(b.goBattle!.id,battle,'a new request id still resumes the active fight');
+  b=await send(fresh,B,b,'raidJoin',{raid:raid.id,remote:true});assert.equal(b.goBattle!.id,battle);assert.equal(b.raidLobby!.id,lobby);assert.equal(b.player.go!.raids!.rewards,0);
+  assert.deepEqual({passes:b.player.go!.raids!.passes,remote:b.player.go!.raids!.remote,freeRemote:b.player.go!.raids!.freeRemote},costs,'resuming never charges another remote ticket or daily allowance');
+ }finally{store.close();}
+});
+
 test('a raid at a far gym on the map is visible, can be joined remotely without an invite, and the joiner can invite friends',async()=>{
  const store=new SqliteStore(':memory:'),{post,site,now:start}=raidPost();const now=start;await store.run(['v2RaidSecret:global'],d=>d.set('v2RaidSecret:global',{key:KEY}));const service=new GoServiceV2(store,'local',()=>now);
  try{

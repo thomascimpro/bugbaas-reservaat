@@ -1,5 +1,5 @@
 import React,{useId,useState} from 'react';
-import {Image,Pressable,StyleSheet,Text,View} from 'react-native';
+import {Image,Pressable,StyleSheet,Text,useWindowDimensions,View} from 'react-native';
 import Svg,{Defs,Ellipse,LinearGradient,RadialGradient,Rect,Stop} from 'react-native-svg';
 import {species} from '../game/catalogV2';
 import {effectiveness} from '../game/goBattleV2';
@@ -106,12 +106,15 @@ export function RaidAtGymV2({view,raid,run,busy,now,ensureGPS}:{view:GameViewV2;
 
 /** PoGO-style lobby: big thin timer, the boss very large, round player avatars, ONE red pill, small white round icons. */
 export function RaidLobbyV2({view,run,busy,now,onBattle}:{view:GameViewV2;run:RunV2;busy:boolean;now:number;onBattle:()=>void}){
- const l=view.raidLobby,[choosing,setChoosing]=useState(false),[inviting,setInviting]=useState(false);if(!l)return null;
+ const l=view.raidLobby,[choosing,setChoosing]=useState(false),[inviting,setInviting]=useState(false),height=useWindowDimensions().height;if(!l)return null;
  const fighting=l.status==='lobby'&&now>=l.lobbyUntil||l.status==='fighting',ended=l.status==='won'||l.status==='failed',waiting=!fighting&&!ended,me=l.members.find(m=>m.me),battle=view.goBattle?.raid?.lobbyId===l.id&&view.goBattle.phase!=='finished',share=Math.max(0,l.hp)/Math.max(1,l.maxHP),p=view.player;
  async function fight(ids:string[]){const ok=await run('raidFight',{ids});if(ok)onBattle();return ok;}
  const reward=l.status==='won'&&!l.claimed&&(me?.damage??0)>0;
  const big=ended?(l.status==='won'?'Verslagen!':'Ontsnapt'):mmss(fighting?(l.fightUntil??l.lobbyUntil+180000)-now:l.lobbyUntil-now);
  const caption=l.status==='won'?'🏆 SAMEN GEWONNEN':l.status==='failed'?'💨 DE BAAS IS WEG':fighting?'⚔️ NOG TE VECHTEN':'⏳ TOT DE START';
+ // Keep team selection in the gym page. Starting battle must not tear down
+ // an animated Android modal while mounting the battle screen.
+ if(choosing&&!ended&&!battle)return <View testID="raid-team-screen" style={{height:Math.max(380,Math.min(650,height-180))}}><GoTeamPickerV2 embedded raid against={l.species} title="Team voor de raid" player={view.player} {...{run,busy}} onClose={()=>setChoosing(false)} onConfirm={fight}/></View>;
  return <><RaidStage testID="raid-lobby" minHeight={640}>
   <Glass>{(l.remote?'🌍 ':'📍 ')+l.postName}</Glass>
   <View style={{alignItems:'center'}}><Text accessibilityLabel={caption+' '+big} style={[st.timer,ended&&{fontSize:46,lineHeight:56,fontWeight:'300'}]}>{big}</Text><Text style={st.caption}>{caption}</Text></View>
@@ -132,7 +135,7 @@ export function RaidLobbyV2({view,run,busy,now,onBattle}:{view:GameViewV2;run:Ru
    <View style={{flexDirection:'row',justifyContent:'center',gap:18}}>{waiting&&<RoundIcon icon="friends" label="Vrienden" active={inviting} onPress={busy?undefined:()=>setInviting(v=>!v)}/>}{waiting&&<RoundIcon icon="back" label="Verlaat" onPress={busy?undefined:()=>void run('raidLeave')}/>}<RaidHelpIcon/></View>
   </View>
   {inviting&&waiting&&<InviteFriends {...{view,run,busy}} raid={l.raidId} onDone={()=>setInviting(false)}/>}
- </RaidStage>{choosing&&<GoTeamPickerV2 raid against={l.species} title="Team voor de raid" player={view.player} {...{run,busy}} onClose={()=>setChoosing(false)} onConfirm={fight}/>}</>;
+ </RaidStage></>;
 }
 
 /** Invitations from friends: join remotely, once a day free, otherwise with a Zwermfluit. Shows the post name only. */

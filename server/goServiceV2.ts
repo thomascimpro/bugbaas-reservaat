@@ -22,7 +22,7 @@ import {claimGoDaily} from '../game/dailyResearchV2';
 import {ensurePostResearch,finishPostResearch} from '../game/postResearchV2';
 import {teamPreset} from '../game/teamPresetsV2';
 import {grantXP,claimTrainer,ensureTrainer,trainerLevel} from '../game/trainerV2';
-import {ACTIVE_MS,EGG_MS,RAID_RULES,RAID_TIERS,raidAt,raidJoinableUntil,ensureRaids,claimFreePass,openLobby,lobbyOpen,joinLobby,leaveLobby,startLobby,resolveLobby,claimRaid,inviteIssue,raidInvite,addInvite,publicRaid,makeRaidBattle,syncRaidBattle,lobbyView} from '../game/raidsV2';
+import {ACTIVE_MS,EGG_MS,FIGHT_MS,RAID_RULES,RAID_TIERS,raidAt,raidJoinableUntil,ensureRaids,claimFreePass,openLobby,lobbyOpen,joinLobby,leaveLobby,startLobby,resolveLobby,claimRaid,inviteIssue,raidInvite,addInvite,publicRaid,makeRaidBattle,syncRaidBattle,lobbyView} from '../game/raidsV2';
 import type {Raid,RaidLobby,RaidInvite,RaidLobbyView,RaidToken} from '../game/raidsV2';
 import {spinPost,POST_COOLDOWN,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute,cancelRoute,MAP_GYM_TEAM_LIMIT} from '../game/worldSitesV2';
 import {noteRouteCatches,recordRouteFix,routeRecord,saveOwnRoute,deleteOwnRoute} from '../game/routesV2';
@@ -167,7 +167,10 @@ export class GoServiceV2{
  private async raidDamage(lobbyId:string){
   let entry=this.raidDamageCache.get(lobbyId);
   if(!entry||entry.until<=this.clock()){
-   const members=this.raidMembers.get(lobbyId)??[],value=this.store.run([lk(lobbyId),...members.map(uid=>dk(lobbyId,uid))],d=>{const lobby=document<RaidLobby>(d,lk(lobbyId));return {lobby,damage:Object.fromEntries((lobby?.members??[]).map(m=>[m.uid,document<DamageDoc>(d,dk(lobbyId,m.uid))?.damage??0])) as Record<string,number>};});
+   const members=this.raidMembers.get(lobbyId)??[],read=(uids:readonly string[])=>this.store.run([lk(lobbyId),...uids.map(uid=>dk(lobbyId,uid))],d=>{const lobby=document<RaidLobby>(d,lk(lobbyId));return {lobby,damage:Object.fromEntries((lobby?.members??[]).map(m=>[m.uid,document<DamageDoc>(d,dk(lobbyId,m.uid))?.damage??0])) as Record<string,number>};});
+   // A cold server has no membership cache yet. Load the actual members' rows
+   // before returning shared HP; absent transaction keys are not zero damage.
+   const value=read(members).then(result=>result.lobby?.members.some(m=>!members.includes(m.uid))?read(result.lobby.members.map(m=>m.uid)):result);
    if(this.raidDamageCache.size>=1000){this.raidDamageCache.clear();this.raidMembers.clear();}
    const created={until:this.clock()+1500,value};entry=created;this.raidDamageCache.set(lobbyId,created);void value.then(r=>{if(r.lobby)this.raidMembers.set(lobbyId,r.lobby.members.map(m=>m.uid));},()=>{if(this.raidDamageCache.get(lobbyId)===created)this.raidDamageCache.delete(lobbyId);});
   }
@@ -421,8 +424,9 @@ export class GoServiceV2{
     case 'goJoin':{idle();const invite=document<{uid:string;league:League;until:number}>(d,'v2GoInvites:'+c.code);check(invite&&invite.uid===otherUid&&invite.until>now,'Deze uitnodiging is verlopen.');const other=this.get(d,otherUid!,now);check(!other.go!.battle&&!other.go!.queue,'Deze speler is al bezig.');teamGo(x,g.team,invite.league);teamGo(other,other.go!.team,invite.league);const b=makeGoBattle(other,x,id,now,false);d.set(bk(id),prepareGoBattle(b,3));g.battle=id;other.go!.battle=id;other.revision++;invite.until=0;break;}
     case 'buddyPlay':{const r=playBuddy(x,c.kind,now);if(r==='gift')x.revision++;break;}
     case 'raidPass':claimFreePass(ensureRaids(g,now),now);break;
-    case 'raidJoin':{idle();check(typeof c.remote==='boolean','Kies lokaal of op afstand.');const rg=ensureRaids(g,now),raidId=c.raid as string;
-     if(rg.lobby){const old=document<RaidLobby>(d,lk(rg.lobby));if(!old||old.status==='won'||old.status==='failed'||!old.members.some(m=>m.uid===uid))rg.lobby=null;}
+    case 'raidJoin':{check(typeof c.remote==='boolean','Kies lokaal of op afstand.');const rg=ensureRaids(g,now),raidId=c.raid as string;
+     if(rg.lobby){const old=document<RaidLobby>(d,lk(rg.lobby));if(old?.raidId===raidId&&old.members.some(m=>m.uid===uid)&&(old.status==='lobby'||old.status==='fighting')&&now<(old.fight?.until??old.lobbyUntil+FIGHT_MS)&&(!g.battle||document<GoBattle>(d,bk(g.battle))?.raid?.lobbyId===old.id))break;if(!old||old.status==='won'||old.status==='failed'||!old.members.some(m=>m.uid===uid))rg.lobby=null;}
+     idle();
      let doc=document<RaidDoc>(d,rk(raidId));
      if(c.remote){const invited=(document<{items:RaidInvite[]}>(d,ik(uid))?.items??[]).some(i=>i.raidId===raidId&&i.endsAt>now),seen=x.walking?this.visibleRaidSites(x.walking).find(s=>raidAt(s,now,raidToken!)?.id===raidId):undefined;check(invited||seen,'Deze zwerm is niet in de buurt. Vraag een vriend om een uitnodiging.');if(!doc&&seen){doc={raid:raidAt(seen,now,raidToken!)!,open:0,invited:{}};d.set(rk(raidId),doc);}check(doc,'Deze zwerm is niet gevonden.');}
      else{const site=this.localRaidSite(x,raidId,now,raidToken!);doc??={raid:raidAt(site,now,raidToken!)!,open:0,invited:{}};d.set(rk(raidId),doc);}
@@ -438,7 +442,7 @@ export class GoServiceV2{
      const issue=inviteIssue(rg,raidDoc.raid,inviteFriends,friends,raidDoc.invited[uid]??0,now);check(!issue,issue??'');
      const invite=raidInvite(raidDoc.raid,{uid,name:x.name},now);for(const f of inviteFriends){const inbox=document<{items:RaidInvite[]}>(d,ik(f))??{items:[]};inbox.items=addInvite(inbox.items,invite,now);d.set(ik(f),inbox);const friend=document<PlayerV2>(d,pk(f));if(friend?.go)ensureRaids(friend.go,now).invitedAt=now;}
      raidDoc.invited[uid]=(raidDoc.invited[uid]??0)+inviteFriends.length;rg.invites+=inviteFriends.length;this.inboxCache.clear();break;}
-    case 'raidFight':{idle();const rg=ensureRaids(g,now),l=document<RaidLobby>(d,lk(rg.lobby!));check(l,'Deze zwerm bestaat niet meer.');startLobby(l,now);check(l.status!=='lobby','De lobby wacht nog op spelers.');
+    case 'raidFight':{const rg=ensureRaids(g,now),current=g.battle?document<GoBattle>(d,bk(g.battle)):undefined;if(current?.raid&&current.raid.lobbyId===rg.lobby&&current.phase!=='finished')break;idle();const l=document<RaidLobby>(d,lk(rg.lobby!));check(l,'Deze zwerm bestaat niet meer.');startLobby(l,now);check(l.status!=='lobby','De lobby wacht nog op spelers.');
      const dealt=document<DamageDoc>(d,dk(l.id,uid))?.damage??0,b=makeRaidBattle(x,l,c.ids,dealt,raidOthers,id,now);d.set(bk(id),prepareGoBattle(b,3));d.set(dk(l.id,uid),{uid,damage:dealt});g.battle=id;break;}
     case 'raidClaim':{const l=document<RaidLobby>(d,lk(c.lobby as string))!,damage=Object.fromEntries(l.members.map(m=>[m.uid,document<DamageDoc>(d,dk(l.id,m.uid))?.damage??0])) as Record<string,number>;resolveLobby(l,damage,now);
      check(l.status==='won'||l.status==='failed','Het zwermgevecht loopt nog.');const rg=ensureRaids(g,now),reward=claimRaid(l,rg,uid,damage,raidFriends);if(rg.lobby===l.id)rg.lobby=null;
