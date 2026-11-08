@@ -79,7 +79,19 @@ export function instanceBug(model:BugModel,size:number,species?:string,shiny=fal
  let bounds=modelBounds.get(model);if(!bounds){root.updateMatrixWorld(true);root.traverse(o=>{if(o instanceof THREE.SkinnedMesh)o.computeBoundingBox();});const box=new THREE.Box3().setFromObject(root),dimensions=box.getSize(new THREE.Vector3());bounds={center:box.getCenter(new THREE.Vector3()),minY:box.min.y,edge:Math.max(dimensions.x,dimensions.y,dimensions.z)};modelBounds.set(model,bounds);}const scale=size*(elite?1.1:1)/bounds.edge;
  root.position.set(-bounds.center.x*scale,-bounds.minY*scale,-bounds.center.z*scale);root.scale.setScalar(scale);const group=new THREE.Group();group.add(root);const mixer=new THREE.AnimationMixer(root),idle=model.clips.find(c=>c.name.toLowerCase()==='idle')??model.clips[0];if(idle){mixer.clipAction(idle).play();mixer.update(0);}return {group,mixer};
 }
-export function lightBugs(scene:THREE.Scene){scene.add(new THREE.HemisphereLight(0xfff9df,0x53654b,2.7));const sun=new THREE.DirectionalLight(0xfff1c7,3.5);sun.position.set(-80,160,70);scene.add(sun);}
+// Outdoor light for bugs (WR-01/AN-01): a warm low sun as key, a softer sky/forest-floor fill and a cool rim,
+// instead of one flat bright hemisphere. Together with outdoorEnvironment() chitin reflects sky and moss, not a studio.
+export function lightBugs(scene:THREE.Scene){scene.add(new THREE.HemisphereLight(0xdcefff,0x4a5a32,1.55));const sun=new THREE.DirectionalLight(0xffe2b0,3.6);sun.position.set(-90,120,80);scene.add(sun);const rim=new THREE.DirectionalLight(0xbfe7ff,1.1);rim.position.set(70,60,-120);scene.add(rim);}
+/** Reflection environment of a sunny forest edge (sky gradient, bright horizon, mossy ground), built in code: no download, no studio boxes. */
+export function outdoorEnvironment(renderer:THREE.WebGLRenderer){
+ const env=new THREE.Scene(),geometry=new THREE.SphereGeometry(10,48,24),colors:number[]=[],sky=new THREE.Color(0x6fb2e6),horizon=new THREE.Color(0xf6eccf),ground=new THREE.Color(0x3d5a2c),c=new THREE.Color();
+ const pos=geometry.attributes.position;for(let i=0;i<pos.count;i++){const y=pos.getY(i)/10;if(y>=0)c.copy(horizon).lerp(sky,Math.pow(y,.6));else c.copy(horizon).lerp(ground,Math.min(1,-y*3));colors.push(c.r,c.g,c.b);}
+ geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+ env.add(new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.BackSide})));
+ const sun=new THREE.Mesh(new THREE.SphereGeometry(.9,16,8),new THREE.MeshBasicMaterial({color:new THREE.Color(0xfff1d0).multiplyScalar(6)}));sun.position.set(-5.5,6,4.5);env.add(sun);
+ const pmrem=new THREE.PMREMGenerator(renderer),texture=pmrem.fromScene(env,.03).texture;pmrem.dispose();geometry.dispose();
+ return texture;
+}
 
 // Kept outside instanceBug so baked portraits stay clean and source models stay reusable.
 export function addShinyGlitter(bug:THREE.Group,size:number){
