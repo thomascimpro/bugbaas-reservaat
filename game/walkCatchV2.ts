@@ -10,7 +10,7 @@ export type WalkDayV2={day:string;caught:number;meters:number;workoutMeters:numb
 
 export function walkDay(p:PlayerV2,now:number):WalkDayV2{
  const a=p.go!.auto,day=dayV2(now);
- if(!a.walk||a.walk.day!==day)a.walk={day,caught:0,meters:0,workoutMeters:0,credit:a.walk?.day===day?a.walk.credit:0};
+ if(!a.walk||a.walk.day!==day)a.walk={day,caught:0,meters:0,workoutMeters:0,credit:Math.min(WALK_CATCH.dailyCap*WALK_CATCH.step,Math.max(0,a.walk?.credit??0))};
  return a.walk;
 }
 /** Add plausible distance (m/s between fixes). Returns how many bugs may be granted now; the rest stays as credit. */

@@ -1,12 +1,12 @@
 import {NativeModules,Platform} from 'react-native';
 
-export type AdventureSyncSnapshot={dayUTC:string;capturedAt:number;steps:number;meters:number;source:'health-connect'};
-export type AdventureSyncResult={available:boolean;reason?:'unsupported'|'unavailable'|'permission'|'error';snapshot?:AdventureSyncSnapshot};
-type AdventureNative={readSnapshot:()=>Promise<AdventureSyncResult>;requestPermissions:()=>Promise<boolean>};
+export type AdventureSyncSnapshot=import('../game/adventureSyncV2').HealthSnapshot;
+export type AdventureSyncResult={available:boolean;reason?:'unsupported'|'unavailable'|'permission'|'error';snapshot?:AdventureSyncSnapshot;snapshots?:AdventureSyncSnapshot[]};
+type AdventureNative={readSnapshot:()=>Promise<AdventureSyncResult>;readSnapshots?:(since:number)=>Promise<AdventureSyncResult>;requestPermissions:()=>Promise<boolean>};
 const native=():AdventureNative|undefined=>Platform.OS==='android'?NativeModules.BugBaasAdventureSync:undefined;
-export async function readAdventureSync():Promise<AdventureSyncResult>{
+export async function readAdventureSync(since=0):Promise<AdventureSyncResult>{
  const bridge=native();if(!bridge)return {available:false,reason:'unsupported'};
- try{return await bridge.readSnapshot();}catch{return {available:false,reason:'error'};}
+ try{return bridge.readSnapshots?await bridge.readSnapshots(since):await bridge.readSnapshot();}catch{return {available:false,reason:'error'};}
 }
 /** Resolves only after the Android permission screen returns, including cancellation. */
 export async function requestAdventureSyncPermission():Promise<boolean>{

@@ -100,7 +100,7 @@ function PageHeader({title,onBack}:{title:string;onBack:()=>void}){return <View 
 
 function BattleBack({view,run,active}:{view:GameViewV2;run:(type:string,params?:Record<string,unknown>)=>Promise<boolean>;active:boolean}){const info=useInfo();useGoBack(active,()=>{if(view.player.go?.queue){void run('goCancel');return true;}const b=view.goBattle;if(!b||b.phase==='finished')return false;info.show({title:'Gevecht opgeven?',body:'Je tegenstander wint dit duel.',icon:'swords',action:{label:'Geef op',onPress:()=>{void run('goAct',{action:'forfeit',value:null}).then(ok=>{if(ok)info.hide();});}}});return true;},20);return null;}
 
-function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);const [view,setView]=useState<GameViewV2|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[tab,setTab]=useState<GameTab>('Safari'),[overlay,rawSetOverlay]=useState(''),[now,setNow]=useState(Date.now()),[pending,setPending]=useState<CommandV2|null>(null),[sysReduce,setSysReduce]=useState(false),[mapFocus,setMapFocus]=useState<'catch'|null>(null),[arcadeFocus,setArcadeFocus]=useState(false);
+function Game(){const [healthSyncPending,setHealthSyncPending]=useState(false);const [rewards,setRewards]=useState<RewardBatch|null>(null);const [view,setView]=useState<GameViewV2|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[tab,setTab]=useState<GameTab>('Safari'),[overlay,rawSetOverlay]=useState(''),[now,setNow]=useState(Date.now()),[pending,setPending]=useState<CommandV2|null>(null),[sysReduce,setSysReduce]=useState(false),[mapFocus,setMapFocus]=useState<'catch'|null>(null),[arcadeFocus,setArcadeFocus]=useState(false);
 
  const visibleScreen=useRef(tab),lastClock=useRef(0);visibleScreen.current=tab;
 
@@ -152,7 +152,7 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
   // The screen was a moment behind: fetch the newest state and send the same action once more.
   conflict.current=false;try{const next=await refreshV2();if(latest.current?.player.uid===next.player.uid)accept(next);}catch{return false;}const fresh=latest.current;if(!fresh||locked.current)return false;return perform({type,...params,commandId:newId(),expectedRevision:fresh.player.revision},onError);}
 
- useAdventureSyncV2(view?.player.uid,run,()=>!locked.current&&!pending&&!changingAccount&&(!latest.current?.goBattle||latest.current.goBattle.phase==='finished')&&!latest.current?.player.go?.queue);
+ useAdventureSyncV2(view?.player.uid,run,()=>!locked.current&&!pending&&!changingAccount&&!mapFocus&&!arcadeFocus&&(!latest.current?.goBattle||latest.current.goBattle.phase==='finished')&&!latest.current?.player.go?.queue,done=>setHealthSyncPending(!done),()=>latest.current?.player.field?.healthSync?.at??0);
  useBackgroundAutoCatchV2(view,message=>reportError(message,'command','notice'),changingAccount,tab==='Safari'&&!overlay);
 
  useEffect(()=>{startMusic(tab==='Ranked'?'battle':'field');},[tab]);
@@ -228,7 +228,7 @@ function Game(){const [rewards,setRewards]=useState<RewardBatch|null>(null);cons
    </View>}
    {shellVisible&&<View style={{position:'absolute',left:0,right:0,bottom:0,zIndex:25}}><MainTabsV3 active={shellTabs[tab]} onChange={next=>changeTab(gameTabs[next])}/></View>}
    <RewardFeedbackV2 batch={rewards} visible={!inGame&&!mapFocus&&!arcadeFocus} onDismiss={dismissReward}/>
-   <UpdateGateV2 connected={!!view}/>{view&&p?.onboarded&&<LegacyWelcomeV2 view={view} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run} busy={busy} onUpdate={next=>{if(next.player.uid===latest.current?.player.uid)accept(next);}}/>}<AwaySummaryV2 view={view} visible={!!p?.onboarded&&!overlay&&!inGame&&!mapFocus&&!arcadeFocus} open={open} run={run} busy={busy}/><AdventureSyncPromptV2 uid={p?.uid} onboarded={!!p?.onboarded} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run}/>
+   <UpdateGateV2 connected={!!view}/>{view&&p?.onboarded&&<LegacyWelcomeV2 view={view} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run} busy={busy} onUpdate={next=>{if(next.player.uid===latest.current?.player.uid)accept(next);}}/>}<AwaySummaryV2 syncPending={healthSyncPending} view={view} visible={!!p?.onboarded&&!overlay&&!inGame&&!mapFocus&&!arcadeFocus} open={open} run={run} busy={busy}/><AdventureSyncPromptV2 uid={p?.uid} onboarded={!!p?.onboarded} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run}/>
   </View></SafeAreaView></View>
  </InfoProvider></TextScale.Provider></MotionPrefs.Provider></GoBackProvider>;
 }

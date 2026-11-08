@@ -7,6 +7,7 @@ import {ensureField} from '../game/fieldV2';
 import {ensureGo} from '../game/goV2';
 import {locate} from '../game/walkingV2';
 import {WALK_CATCH,creditWalk,walkTodayText} from '../game/walkCatchV2';
+import {awayCursorV2,awaySummaryV2} from '../game/awaySummaryV2';
 import {bugRarity} from '../game/rarityDisplayV2';
 import {GoServiceV2} from '../server/goServiceV2';
 import {SqliteStore} from '../server/sqlite';
@@ -83,7 +84,7 @@ test('kilometres synced before the first fresh GPS fix are spent as soon as that
   now+=3600000;await send('adventureSync',{snapshot:snap(2600,2000)});
   assert.equal(v.player.go!.auto.walk?.caught??0,0,'no catch on an hour-old fix');assert.equal(v.player.go!.auto.walk!.credit,2000);
   now+=2000;await send('worldLocate',{fix:{...FIX,timestamp:now}});
-  assert.equal(v.player.go!.auto.walk!.caught,WALK_CATCH.perCall,'the fresh fix pays out pending walk bugs');assert.equal(v.player.go!.auto.walk!.credit,2000-WALK_CATCH.perCall*WALK_CATCH.step);
+  assert.equal(v.player.go!.auto.walk!.caught,10,'the fresh fix pays the complete 2km return batch');assert.equal(v.player.go!.auto.walk!.credit,0);
  }finally{store.close();}
 });
 
@@ -106,5 +107,27 @@ test('exactly200m saved with stale GPS pays one walk bug on the first fresh worl
   await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));const before=await live.state(p.uid),command={type:'worldLocate',fix:{...FIX,timestamp:late},commandId:randomUUID(),expectedRevision:before.player.revision};
   const result=await live.command(p.uid,command);assert.equal(result.player.go!.auto.walk!.caught,1);assert.equal(result.player.go!.auto.walk!.credit,0);assert.equal(result.player.specimens.length,p.specimens.length+1);assert.equal(result.player.field!.inventory.basic,p.field!.inventory.basic);
   const retry=await live.command(p.uid,command);assert.equal(retry.player.go!.auto.walk!.caught,1);assert.equal(retry.player.specimens.length,result.player.specimens.length);
+ }finally{store.close();}
+});
+
+
+test('a 2km closed-app walk across midnight gives one complete ten-bug return receipt and retries give nothing extra',async()=>{
+ const store=new SqliteStore(':memory:');let now=Date.UTC(2026,10,7,23);const api=new GoServiceV2(store,'local',()=>now),uid='overnight-return';try{
+  let v=await api.state(uid);const send=async(type:string,data:Record<string,unknown>={})=>v=await api.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});
+  const snap=(dayUTC:string,steps:number,meters:number)=>({dayUTC,capturedAt:now,steps,meters,source:'health-connect',distanceBasis:'measured'});
+  await send('worldLocate',{fix:{...FIX,timestamp:now}});await send('goAuto',{enabled:true});await send('adventureSync',{snapshot:snap('2026-11-07',0,0)});
+  const before=awayCursorV2(v.player,now),stock=v.player.field!.inventory.basic;now+=7200000;v=await api.state(uid);
+  await send('worldLocate',{fix:{...FIX,timestamp:now}});
+  const snapshot={source:'health-connect',capturedAt:now,days:[snap('2026-11-07',1500,1000),snap('2026-11-08',1500,1000)]};
+  const command={type:'adventureSync',snapshot,commandId:randomUUID(),expectedRevision:v.player.revision};v=await api.command(uid,command);
+  const report=awaySummaryV2(v.player,before);assert.equal(report.meters,2000);assert.equal(report.caught,10);assert.equal(report.bugs.length,10);assert.ok(report.dust>0&&report.xp>0);assert.equal(v.player.field!.walk!.dayMeters,1000);assert.equal(v.player.field!.inventory.basic,stock);
+  v=await api.command(uid,command);await send('adventureSync',{snapshot});assert.equal(awaySummaryV2(v.player,before).caught,10);assert.equal(v.player.field!.walk!.meters,2000);
+ }finally{store.close();}
+});
+test('closed-app distance is preserved even before the very first GPS seed, then settled once within the daily cap',()=>{
+ const {store,service,p}=setup();try{
+  service.awayCatch(p,30000,NOW,'no-gps',30000/1.3);assert.equal(p.walking,undefined);assert.equal(p.go!.auto.walk!.caught,0);assert.ok(p.go!.auto.walk!.credit>=WALK_CATCH.step*WALK_CATCH.dailyCap);
+  locate(p,{...FIX,timestamp:NOW},'new-seed',NOW);service.awayCatch(p,0,NOW,'first-gps');assert.equal(p.go!.auto.walk!.caught,120);assert.equal(p.specimens.filter(s=>s.autoCaught).length,120);
+  service.awayCatch(p,30000,NOW,'retry',30000/1.3);assert.equal(p.go!.auto.walk!.caught,120);assert.equal(p.specimens.filter(s=>s.autoCaught).length,120);
  }finally{store.close();}
 });

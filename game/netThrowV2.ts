@@ -3,7 +3,7 @@ import {bugPose} from './netMotionV2';
 import type {NetMotion} from './netMotionV2';
 
 /** `start`: ms between the encounter appearing on screen and the finger going down; it places the moving bug. */
-export type NetFlickTrace={kind:'flick'|'sweep'|'swing'|'scoop';points:NetPoint[];start?:number};
+export type NetFlickTrace={kind:'flick'|'sweep'|'swing'|'scoop'|'strike';points:NetPoint[];start?:number};
 export const NET_FLIGHT_MS=400;
 export const NET_SWING_FLIGHT_MS=520;
 export const NET_SCOOP_SETTLE_MS=240;

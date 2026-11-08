@@ -53,7 +53,7 @@ import type {League} from '../game/goV2';
 import {makeGoBattle,advanceGoBattle,actGoBattle,prepareGoBattle} from '../game/goBattleV2';
 import type {GoBattle,GoBattleView} from '../game/goBattleV2';
 import {rng} from '../game/catalogV2';
-import {WALK_CATCH,creditWalk,isJackpot,pendingWalk,walkDay} from '../game/walkCatchV2';
+import {WALK_CATCH,creditWalk,isJackpot,walkDay} from '../game/walkCatchV2';
 export const AUTO_STEP=40,AUTO_MAX_GAP=900,AWAY_STEP=WALK_CATCH.step,AWAY_PER_DAY=WALK_CATCH.dailyCap;
 import {bugRarity} from '../game/rarityDisplayV2';
 import {checkV2 as check} from '../game/shopV2';
@@ -298,8 +298,10 @@ export class GoServiceV2{
  }
  /** Closed-app distance (Health Connect) feeds the same walk counter; bugs come at the next fresh GPS fix. */
  private awayCatch(p:PlayerV2,meters:number,now:number,secret:string,seconds=0){
-  const g=p.go!,a=g.auto,w=p.walking;if(!a.enabled||!w?.seed||!(meters>=0))return;
-  const day=walkDay(p,now),count=meters>0?creditWalk(day,meters,seconds>0?meters/seconds:1.4):pendingWalk(day);
+  const g=p.go!,a=g.auto;if(!a.enabled||!(meters>=0))return;
+  const day=walkDay(p,now);if(meters>0)creditWalk(day,meters,seconds>0?meters/seconds:1.4);
+  // Settle the whole earned return batch, not five bugs every subsequent GPS refresh.
+  const count=Math.min(Math.floor(day.credit/WALK_CATCH.step),Math.max(0,WALK_CATCH.dailyCap-day.caught));
   a.awayDay=day.day;a.awayCount=day.caught;a.awayCredit=day.credit;
   const totals=a.totals??={caught:0,missed:0,dust:0,xp:0},before={dust:g.dust,xp:g.trainer!.xp};
   this.walkCatch(p,count,now,secret+':away',totals);totals.dust+=g.dust-before.dust;totals.xp+=g.trainer!.xp-before.xp;

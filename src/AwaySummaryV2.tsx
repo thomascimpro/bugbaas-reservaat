@@ -5,7 +5,6 @@ import type {GameViewV2} from '../game/typesV2';
 import {awayCursorV2,awaySummaryV2,validAwayCursorV2} from '../game/awaySummaryV2';
 import type {AwayCursorV2,AwaySummaryV2 as Report} from '../game/awaySummaryV2';
 import {species} from '../game/catalogV2';
-import {walkTodayText} from '../game/walkCatchV2';
 import {movePool} from '../game/goV2';
 import {SpriteView} from './artV2';
 import {GO_TYPES} from './GoTypeV2';
@@ -20,11 +19,13 @@ const weekTiers=(p:PlayerV2)=>awayCursorV2(p).tiers??0,healthAt=(p:PlayerV2)=>p.
 
 /** Only a notification: every catch, resource and distance comes from confirmed server state. */
 /** run/busy are optional: without them the cleanup button stays hidden (GameV2 passes them once wired). */
-export function AwaySummaryV2({view,visible,open,run,busy=false}:{view:GameViewV2|null;visible:boolean;open:(name:string,id?:string)=>void;run?:RunV2;busy?:boolean}){
+export function AwaySummaryV2({view,visible,open,run,busy=false,syncPending=false}:{view:GameViewV2|null;visible:boolean;open:(name:string,id?:string)=>void;run?:RunV2;busy?:boolean;syncPending?:boolean}){
  const current=useRef(view),uid=useRef(''),cursor=useRef<AwayCursorV2|null>(null),returning=useRef(false),ignore=useRef<GameViewV2|null>(null),late=useRef<{cursor:AwayCursorV2;until:number;away:number;tiers:number;health:number;meters:number;dismissed?:boolean}|null>(null),[report,setReport]=useState<Report|null>(null);current.current=view;
  const key=(id:string)=>'bugbaas-away-summary-v1:'+id;
  const pendingReport=useRef<ReturnType<typeof setTimeout>|null>(null),latestReport=useRef<Report|null>(null),awayAt=useRef(0),cleaning=useRef(false),[cleaningUI,setCleaningUI]=useState(false),[cleanupError,setCleanupError]=useState('');latestReport.current=report;
- const present=(found:Report)=>{if(late.current?.dismissed)return;if(latestReport.current){setReport(found);return;}if(pendingReport.current)clearTimeout(pendingReport.current);pendingReport.current=setTimeout(()=>{pendingReport.current=null;if(!late.current?.dismissed)setReport(found);},900);};
+ const syncing=useRef(syncPending),awaiting=useRef<Report|null>(null);syncing.current=syncPending;
+ const present=(found:Report)=>{if(late.current?.dismissed)return;if(syncing.current&&!latestReport.current){awaiting.current=found;return;}if(latestReport.current){setReport(found);return;}if(pendingReport.current)clearTimeout(pendingReport.current);pendingReport.current=setTimeout(()=>{pendingReport.current=null;if(late.current?.dismissed)return;if(syncing.current){awaiting.current=found;return;}setReport(found);},900);};
+ useEffect(()=>{if(!syncPending&&awaiting.current){const found=current.current&&late.current?awaySummaryV2(current.current.player,late.current.cursor):awaiting.current;awaiting.current=null;present(found);}},[syncPending]);
  function consider(next:GameViewV2){
   if(uid.current!==next.player.uid||!cursor.current||AppState.currentState!=='active'||next===ignore.current)return;
   const away=next.player.go?.auto.awayCount??0;
@@ -34,7 +35,7 @@ export function AwaySummaryV2({view,visible,open,run,busy=false}:{view:GameViewV
   cursor.current=awayCursorV2(next.player,next.now);void AsyncStorage.setItem(key(next.player.uid),JSON.stringify(cursor.current)).catch(()=>{});
  }
  useEffect(()=>{
-  const id=view?.player.uid;uid.current=id??'';cursor.current=null;late.current=null;if(pendingReport.current)clearTimeout(pendingReport.current);setReport(null);if(!id)return;let alive=true;
+  const id=view?.player.uid;uid.current=id??'';cursor.current=null;late.current=null;awaiting.current=null;if(pendingReport.current)clearTimeout(pendingReport.current);setReport(null);if(!id)return;let alive=true;
   void AsyncStorage.getItem(key(id)).then(raw=>{if(!alive||current.current?.player.uid!==id)return;let saved:unknown;try{saved=raw?JSON.parse(raw):null;}catch{}cursor.current=validAwayCursorV2(saved)?saved:awayCursorV2(current.current.player,current.current.now);returning.current=validAwayCursorV2(saved);ignore.current=null;consider(current.current);}).catch(()=>{if(alive&&current.current?.player.uid===id)cursor.current=awayCursorV2(current.current.player,current.current.now);});
   return()=>{alive=false;};
  },[view?.player.uid]);
@@ -42,15 +43,15 @@ export function AwaySummaryV2({view,visible,open,run,busy=false}:{view:GameViewV
  useEffect(()=>{const listener=AppState.addEventListener('change',state=>{if(state==='active'){if(!late.current||Date.now()>=late.current.until||Date.now()-awayAt.current>=15000){returning.current=true;ignore.current=current.current;}}else if(current.current?.player.uid===uid.current){awayAt.current=Date.now();cursor.current=awayCursorV2(current.current.player,current.current.now);void AsyncStorage.setItem(key(uid.current),JSON.stringify(cursor.current)).catch(()=>{});}});return()=>{listener.remove();if(pendingReport.current)clearTimeout(pendingReport.current);};},[]);
  const {height}=useWindowDimensions(),reduced=useContext(MotionPrefs),[page,setPage]=useState(0),[sent,setSent]=useState(0),perPage=height<700?6:9,pages=Math.max(1,Math.ceil((report?.bugs.length??0)/perPage)),shownPage=Math.min(page,pages-1);
  useEffect(()=>{setPage(0);setSent(0);setCleanupError('');},[!!report]);
- const close=()=>{if(cleaning.current)return;if(late.current)late.current.dismissed=true;if(pendingReport.current)clearTimeout(pendingReport.current);setReport(null);},show=visible&&!!report,player=view?.player;
+ const close=()=>{if(cleaning.current)return;if(late.current)late.current.dismissed=true;awaiting.current=null;if(pendingReport.current)clearTimeout(pendingReport.current);setReport(null);},show=visible&&!!report,player=view?.player;
  // The one-tap plan keeps good IVs/CP/type coverage and all protected investments.
  const caught=player&&report?report.bugs.map(b=>player.specimens.find(s=>s.id===b.specimenId)).filter((s):s is NonNullable<typeof s>=>!!s):[];
  const weak=player?smartTransferSelectionV2(player,caught):[],weakIds=new Set(weak.map(s=>s.id)),nectar=transferNectarV2(weak);
  const discard=()=>{if(!run||busy||cleaning.current||!weak.length)return;const plan=weak.map(s=>s.id);cleaning.current=true;setCleaningUI(true);setCleanupError('');void(async()=>{try{for(let i=0;i<plan.length;i+=TRANSFER_BATCH){const ids=plan.slice(i,i+TRANSFER_BATCH);if(!await run('goTransferMany',{ids},setCleanupError))break;setSent(n=>n+ids.length);}}finally{cleaning.current=false;setCleaningUI(false);}})();};
  const bugs=report?report.bugs.slice(shownPage*perPage,(shownPage+1)*perPage):[];
  return <Modal visible={show} transparent animationType={reduced?'none':'fade'} onRequestClose={close}><View style={{flex:1,backgroundColor:'#041416CC',justifyContent:'center',alignItems:'center',padding:16,paddingTop:height<700?56:84}}>{report&&<View testID="away-summary" style={{width:'100%',maxWidth:360,maxHeight:'100%',gap:10,padding:14,borderRadius:28,backgroundColor:'#0E2828',borderWidth:1.5,borderColor:PO.rim,boxShadow:'0px 10px 40px #00000099'}}>
-   <View style={{alignItems:'center',gap:2}}><Text testID="walk-today" style={{fontFamily:font,fontSize:22,fontWeight:'900',color:PO.text,textAlign:'center'}}>{view?walkTodayText(view.player,view.now):''}</Text>
-    <View style={{flexDirection:'row',gap:14}}><Text accessibilityLabel={'Afgelegd: '+report.meters+' meter'} style={{fontFamily:font,fontSize:13,fontWeight:'700',color:PO.muted}}>{'+'+(report.meters/1000).toLocaleString('nl-NL',{maximumFractionDigits:2})+' km'}</Text><Text accessibilityLabel={'Gevangen: '+report.caught} style={{fontFamily:font,fontSize:13,fontWeight:'700',color:PO.muted}}>{'+'+report.caught}</Text></View></View>
+   <View style={{alignItems:'center',gap:7}}><Text style={{fontFamily:font,fontSize:16,fontWeight:'700',color:PO.muted}}>Tijdens je wandeling</Text>
+    <View testID="walk-today" style={{flexDirection:'row',alignItems:'center',gap:14}}><View style={{flexDirection:'row',alignItems:'center',gap:5}}><Glyph name="expedition" size={25}/><Text accessibilityLabel={'Afgelegd sinds vertrek: '+report.meters+' meter'} style={{fontFamily:font,fontSize:23,fontWeight:'900',color:PO.text}}>{(report.meters/1000).toLocaleString('nl-NL',{maximumFractionDigits:2})+' km'}</Text></View><View style={{flexDirection:'row',alignItems:'center',gap:5}}><Glyph name="team" size={25}/><Text accessibilityLabel={'Gevangen: '+report.caught} style={{fontFamily:font,fontSize:23,fontWeight:'900',color:PO.text}}>{report.caught}</Text></View></View></View>
    {!!bugs.length&&<View testID="away-caught-bugs" style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:6}}>{bugs.map(b=>{const s=player?.specimens.find(x=>x.id===b.specimenId),gone=!s,tier=bugRarity(b.species!),color=RARITY_TIERS[tier].color,name=species(b.species!).name,types=movePool(b.species!).types,cp=b.cp===undefined?'CP —':'CP '+b.cp,isWeak=!!s&&weakIds.has(s.id);
     return <Pressable key={b.id} disabled={gone} accessibilityRole="button" accessibilityLabel={name+' · '+cp+' · '+RARITY_TIERS[tier].name+' · '+types.map(t=>GO_TYPES[t].name).join(' / ')+(b.shiny?' · shiny':'')+(isWeak?' · zwak':'')} accessibilityHint="Open deze bug" onPress={()=>{close();open('team',b.specimenId);}}
      style={{width:'31%',maxWidth:104,aspectRatio:.86,alignItems:'center',justifyContent:'center',borderRadius:16,overflow:'hidden',borderWidth:b.shiny?2:1.5,borderColor:b.shiny?PO.gold:color,backgroundColor:color+'55',backgroundImage:'radial-gradient(circle at 50% 38%, '+color+'CC 0%, '+color+'55 55%, #0E2828 100%)',opacity:gone?.45:1} as never}>
