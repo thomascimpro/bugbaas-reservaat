@@ -48,7 +48,27 @@ for(const s of FIELD_FAMILY_SPECIES)SHINY_PALETTES[s.id]=s.palette;
 for(const s of EXPANDED_SPECIES)SHINY_PALETTES[s.id]=s.palette;
 for(const [id,s] of Object.entries(EVOLUTION_ASSETS))SHINY_PALETTES[id]=s.palette;
 for(const s of LEGENDARY_SPECIES)SHINY_PALETTES[s.id]=s.palette;
-export async function loadBugModel(name:string):Promise<BugModel>{const g=await new GLTFLoader().loadAsync('/models/'+name+'.glb');return {root:g.scene,clips:g.animations};}
+// Surface per body type (AN-01 realism). Every GLB left the pipeline with the same lacquer coat (clearcoat .6/.16),
+// so larvae, snails and furry bees looked like glossy toys. Shells keep a hard polished coat; soft bodies get a damp
+// low coat with sheen; furry bodies get a matte velvet sheen. Glass, crystal, wings (transparent) and metal stay as authored.
+const SOFT_BODY=/larva|grub|caterpillar|aphid|snailstage[12]|silverfish|termite|cicadastage1/i;
+const FURRY_BODY=/^bee(?!tle)|armabee|moth|spider|mosquito|hoverfly|cranefly|butterfly|swallowtail|monarch/i;
+const HARD_SHELL=/beetle|scarab|chafer|weevil|ladybird|firefly|manticora|minotaur|golofa|titan|hercules|atlas|caucasus|neptune|rosalia|tortoise|earwig|cockroach|scorpion|kristal|lavaklauw/i;
+export function bugSurface(name:string):'soft'|'fur'|'shell'|'default'{return SOFT_BODY.test(name)?'soft':FURRY_BODY.test(name)?'fur':HARD_SHELL.test(name)?'shell':'default';}
+function applyBugSurface(name:string,root:THREE.Object3D){
+ const kind=bugSurface(name),done=new Set<THREE.Material>();
+ root.traverse(o=>{if(!(o instanceof THREE.Mesh))return;for(const m of Array.isArray(o.material)?o.material:[o.material]){
+  if(done.has(m)||!(m instanceof THREE.MeshPhysicalMaterial))continue;done.add(m);
+  if(m.transparent||m.metalness>=.5||m.transmission>0||/glass|crystal|cobweb|wing/i.test(m.name))continue;
+  if(/eye|sensor/i.test(m.name)){m.clearcoat=1;m.clearcoatRoughness=.05;continue;}
+  if(kind==='soft'){m.clearcoat=.15;m.clearcoatRoughness=.45;m.roughness=Math.max(m.roughness,.58);m.sheen=.45;m.sheenRoughness=.55;m.sheenColor.copy(m.color).lerp(new THREE.Color(1,1,1),.5);}
+  else if(kind==='fur'){m.clearcoat=.06;m.clearcoatRoughness=.6;m.roughness=Math.max(m.roughness,.72);m.sheen=.85;m.sheenRoughness=.4;m.sheenColor.copy(m.color).lerp(new THREE.Color(1,.95,.85),.6);}
+  else if(kind==='shell'){m.clearcoat=.85;m.clearcoatRoughness=.1;}
+  else{m.clearcoat=.4;m.clearcoatRoughness=.24;}
+  m.needsUpdate=true;
+ }});
+}
+export async function loadBugModel(name:string):Promise<BugModel>{const g=await new GLTFLoader().loadAsync('/models/'+name+'.glb');applyBugSurface(name,g.scene);return {root:g.scene,clips:g.animations};}
 // A map and its encounter use the same decoded source. Only instances own their skeletons/variants.
 const liveModels=new Map<string,{promise:Promise<BugModel>;model?:BugModel;users:number;at:number}>();
 function trimModels(){const idle=[...liveModels].filter(([,entry])=>!entry.users&&entry.model).sort((a,b)=>a[1].at-b[1].at);while(idle.length>3){const [name,entry]=idle.shift()!,resources=new Set<{dispose:()=>void}>();entry.model!.root.traverse(o=>{if(o instanceof THREE.SkinnedMesh)resources.add(o.skeleton);if(o instanceof THREE.Mesh){resources.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){resources.add(m);for(const value of Object.values(m))if(value instanceof THREE.Texture)resources.add(value);}}});resources.forEach(resource=>resource.dispose());liveModels.delete(name);}}
