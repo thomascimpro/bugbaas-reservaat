@@ -2,6 +2,7 @@ import type {PlayerV2} from './typesV2';
 import type {FieldItem,FieldState} from './fieldV2';
 import {grantField} from './fieldV2';
 import {COCOON_CAP,ensureCocoons} from './goCocoonsV2';
+import {COIN_SOURCES,grantCoins} from './coinsV3';
 
 /** Weekly distance goal like Pokémon GO: a week starts Monday 00:00 UTC (same UTC days as dayV2). */
 export type WeeklyWalkV2={week:string;meters:number;seen:number;claimed:number[];last?:{week:string;km:number;at:number;cocoon?:boolean}};
@@ -19,7 +20,7 @@ export function trackWeeklyWalk(p:PlayerV2,now:number,seed:string):number[]{
  const week=weekV2(now);let w=f.weekWalk;if(!w){f.weekWalk={week,meters:0,seen:total,claimed:[]};return [];}
  const delta=total-(Number.isFinite(w.seen)?w.seen:total);w.seen=total;if(w.week!==week){w.week=week;w.meters=0;w.claimed=[];}
  w.meters=Math.max(0,w.meters+delta);if(!p.go)return [];const reached:number[]=[];
- for(const t of WEEK_TIERS){if(w.meters<t.km*1000||w.claimed.includes(t.km))continue;w.claimed.push(t.km);reached.push(t.km);p.go.dust+=t.dust;grantField(p,t.items,now);let cocoon=false;
+ for(const t of WEEK_TIERS){if(w.meters<t.km*1000||w.claimed.includes(t.km))continue;w.claimed.push(t.km);reached.push(t.km);p.go.dust+=t.dust;grantCoins(p,COIN_SOURCES.week[t.km]??0);grantField(p,t.items,now);let cocoon=false;
   if(t.cocoon){const g=ensureCocoons(p,seed+':week-cocoons',now);if(g.items.length<COCOON_CAP){g.items.push({id:'cocoon-'+g.nextId++,km:t.cocoon,obtainedAt:now,hatchSeed:seed+':week-cocoon:'+week});cocoon=true;}}
   w.last={week,km:t.km,at:now,...(t.cocoon?{cocoon}:{})};}
  return reached;

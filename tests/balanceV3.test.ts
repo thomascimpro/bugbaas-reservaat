@@ -11,3 +11,11 @@ test('cocoon rewards per km and hatch XP grow with distance',()=>{
   assert.ok(COCOON_XP[b]>COCOON_XP[a],b+' km gives more XP than '+a+' km');}
  assert.ok(COCOON_REWARDS[7].dust/7>=COCOON_REWARDS[5].dust/5,'7 km not worse per km than 5 km');
 });
+
+import {COIN_SOURCES,grantCoins} from '../game/coinsV3';
+import type {PlayerV2} from '../game/typesV2';
+test('extra coin sources fill the same shop wallet and ignore invalid amounts',()=>{
+ const p={go:{}} as unknown as PlayerV2;grantCoins(p,COIN_SOURCES.daily);grantCoins(p,COIN_SOURCES.week[25]);grantCoins(p,-5);grantCoins(p,1.5);
+ assert.equal(p.go!.gyms!.coins,45);assert.equal(p.go!.gyms!.earned,0,'extra coins do not use the daily gym cap');
+ const fresh={} as unknown as PlayerV2;grantCoins(fresh,10);assert.equal(fresh.go,undefined);
+});
