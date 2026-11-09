@@ -22,12 +22,15 @@ const BITS=Array.from({length:18},(_,i)=>{const a=i/18*Math.PI*2+(i%3)*.17;retur
 
 export type CocoonHatch={id:string;species:string;shiny:boolean;dust?:number;candy?:number};
 
-export function CocoonHatchFxV3({hatch,cp,onClose,onView}:{hatch:CocoonHatch;cp?:number;onClose:()=>void;onView?:()=>void}){
+/** Raid cocoons reuse the same hatch with their own egg art, heading, tier and no rewards (the boss still has to be beaten). */
+export type HatchVariant={art:React.ReactNode;heading:string;tier:number;color:string;subtitle:string};
+
+export function CocoonHatchFxV3({hatch,cp,onClose,onView,variant}:{hatch:CocoonHatch;cp?:number;onClose:()=>void;onView?:()=>void;variant?:HatchVariant}){
  const reduced=useContext(MotionPrefs),t=useRef(new Animated.Value(reduced?1:0)).current,run=useRef<Animated.CompositeAnimation|null>(null),[done,setDone]=useState(reduced);
- const {height}=useWindowDimensions(),tier=bugRarity(hatch.species),color=hatch.shiny?'#F2C14E':RARITY_TIERS[tier].color,name=species(hatch.species).name,S=200,B=170;
+ const {height}=useWindowDimensions(),tier=variant?.tier??bugRarity(hatch.species),color=variant?.color??(hatch.shiny?'#F2C14E':RARITY_TIERS[tier as 1].color),name=species(hatch.species).name,S=200,B=170;
  useEffect(()=>{if(reduced){t.setValue(1);setDone(true);return;}
   t.setValue(0);const animation=Animated.timing(t,{toValue:1,duration:DURATION,easing:Easing.linear,useNativeDriver:native});run.current=animation;
-  const timers=[setTimeout(()=>playSound('grow'),DURATION*BURST),setTimeout(()=>playSound(hatch.shiny?'shiny':'reward'),DURATION*.7)];
+  const timers=[setTimeout(()=>playSound('grow'),DURATION*BURST),setTimeout(()=>playSound(variant?'summon':hatch.shiny?'shiny':'reward'),DURATION*.7)];
   animation.start(({finished})=>{if(finished)setDone(true);});return()=>{animation.stop();timers.forEach(clearTimeout);};
  },[hatch.id,reduced]);
  const skip=()=>{if(done)return;run.current?.stop();t.setValue(1);setDone(true);};
@@ -45,7 +48,7 @@ export function CocoonHatchFxV3({hatch,cp,onClose,onView}:{hatch:CocoonHatch;cp?
    </Animated.View>
    {/* Cocoon: drops in, swings around its thread (pivot = top) while light cracks through, then pops. */}
    <Animated.View pointerEvents="none" style={{position:'absolute',width:S,height:S,opacity:at([.56,.61],[1,0]),transform:[{translateY:at([0,.08,.1,.12],[-420,14,-4,0])},{scale:at([.54,.6],[1,1.3])},{translateY:-S/2},{rotate:swing},{translateY:S/2}]}}>
-    <FieldActivityArt id="cocoon" size={S}/>
+    {variant?.art??<FieldActivityArt id="cocoon" size={S}/>}
     {CRACKS.map((c,i)=><Animated.View key={i} style={{position:'absolute',left:S*c.x-S*c.len/2,top:S*c.y,width:S*c.len,height:3.5,borderRadius:2,backgroundColor:'#FFF7D6',boxShadow:'0px 0px 8px #FFF2C4',opacity:at([c.at,c.at+.015],[0,1]),transform:[{rotate:c.rot+'deg'}]}}/>)}
     <Animated.View style={{position:'absolute',left:S*.36,top:S*.38,width:S*.36,height:S*.46,borderRadius:S,backgroundColor:'#FFF7D6',opacity:at([.3,.55],[0,.45])}}/>
    </Animated.View>
@@ -60,12 +63,12 @@ export function CocoonHatchFxV3({hatch,cp,onClose,onView}:{hatch:CocoonHatch;cp?
    {hatch.shiny&&Array.from({length:8},(_,i)=><Animated.Text key={'s'+i} pointerEvents="none" style={{position:'absolute',fontSize:i%2?16:24,color:'#F2C14E',opacity:at([.7,.76,1],[0,1,.6]),transform:[{translateX:Math.cos(i/8*Math.PI*2)*B*.62},{translateY:Math.sin(i/8*Math.PI*2)*B*.55},{scale:at([.7,.8,.9,1],[.3,1.3,.9,1.1])}]}}>✦</Animated.Text>)}
    {/* Result text and rewards; buttons only after the animation so a fast tap only skips. */}
    <Animated.View style={{position:'absolute',bottom:'14%',left:16,right:16,alignItems:'center',gap:8,opacity:at([.74,.82],[0,1]),transform:[{translateY:at([.74,.82],[24,0])}]}}>
-    <Text style={{color:'#9DB8B2',fontSize:15,fontWeight:'800',letterSpacing:1}}>UITGEKOMEN!</Text>
+    <Text style={{color:'#9DB8B2',fontSize:15,fontWeight:'800',letterSpacing:1}}>{variant?.heading??'UITGEKOMEN!'}</Text>
     <Text style={{color:'#EAF6F2',fontSize:30,fontWeight:'900',textAlign:'center'}}>{name}{hatch.shiny?' ✦':''}</Text>
-    <View style={{flexDirection:'row',gap:6,alignItems:'center'}}><Text style={{color,fontSize:16,fontWeight:'900'}}>{'★'.repeat(tier)}</Text><Text style={{color:'#EAF6F2',fontSize:14,fontWeight:'800'}}>{hatch.shiny?'Shiny · ':''}{RARITY_TIERS[tier].name}</Text></View>
-    <Animated.View style={{flexDirection:'row',gap:10,marginTop:4,opacity:at([.82,.9],[0,1])}}>
+    <View style={{flexDirection:'row',gap:6,alignItems:'center'}}><Text style={{color,fontSize:16,fontWeight:'900'}}>{'★'.repeat(tier)}</Text><Text style={{color:'#EAF6F2',fontSize:14,fontWeight:'800'}}>{variant?variant.subtitle:(hatch.shiny?'Shiny · ':'')+RARITY_TIERS[tier as 1].name}</Text></View>
+    {!variant&&<Animated.View style={{flexDirection:'row',gap:10,marginTop:4,opacity:at([.82,.9],[0,1])}}>
      {cp!==undefined&&<Chip>CP {cp}</Chip>}<Chip>+{hatch.dust??100} ✨</Chip><Chip>+{hatch.candy??3} 🍯</Chip>
-    </Animated.View>
+    </Animated.View>}
     {done&&<View style={{flexDirection:'row',gap:10,marginTop:12}}>{onView&&<Button secondary small icon="book" onPress={onView}>Bekijk bug</Button>}<Button small onPress={onClose}>Verder</Button></View>}
    </Animated.View>
   </Pressable>

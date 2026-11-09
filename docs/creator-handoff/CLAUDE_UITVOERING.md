@@ -119,3 +119,20 @@ Gebruiker: "zet alles klaar voor codex dat hij het af kan maken, ook visueel". A
   8. Klank: buiten Arcade/vangen bijna geen geluid (`click`, `buy`, `sell`, `win`, `lose`, `summon` ongebruikt).
 
   Al aanwezig: vangen (net, wiebel, gevangen, shiny), post draaien, cadeau openen, evolutie/power-up, gevechtseffecten, Arcade-laden.
+
+## 2026-11-09 (2) — level-up, raidcocon, raid-aantrekkingskracht, gymbordje
+- **Level-up** (nieuw `src/LevelUpFxV3.tsx`, `src/TrainerV2.tsx`): na een door de server geaccepteerde "Levelbeloning"-claim gouden draaiende stralen, de trainer komt omhoog, "LEVEL n" slaat in met schok en flits (bij meerdere levels "+n levels"), confetti en beloningschips (✨, netten, TM), daarna "Verder". Tik = overslaan, reduced motion = resultaat. Bekeken 390×844 met echte claim (`.local/claude-cocoon/.local/fx-ui/level-sheet.jpg`).
+- **Raidcocon komt uit:**
+  - `CocoonHatchFxV3` heeft een raidvariant (eigen ei-art, "DE BAAS IS UIT!", tierkleur, geen beloningen). `src/GoRaidV2.tsx` speelt die alleen bij de live-overgang ei → baas terwijl de raidkaart open is.
+  - Op de kaart springt de baas met een flits-pop tevoorschijn (`bb-raid-pop`).
+  - Grens: de uitkomst-animatie op de raidkaart niet live in de browser gezien. Het gymscherm opende op de tab "Vechten" en de testklik op "Raids" pakte niet. Het component zelf is via de cocon bewezen.
+- **Raid trekt aandacht** (`src/ExploreV2.web.tsx`): een draaiende lichtkrans in tierkleur en een uitdijende ring rond elke raid op de kaart; sterker na uitkomen. Bekeken (★5- en ★1-raid).
+- **Gym toont wie hem bewaakt:**
+  - een bordje onder de gym met teamnaam in teamkleur (of "Vrij") en zes bezettingsbolletjes;
+  - "🛡 naam" van de eerste bewaker, "⭐ Jij" als jij erop staat (goudrand), "Claim hem!" bij een lege gym;
+  - tijdens een gevecht ⚔️ met botsanimatie en een flikkerende teambundel.
+
+  Bekeken: neutrale gym met "Wilde wachters". Het gevechtsbordje en "Jij" zijn niet live gezien (geen tweede speler).
+- **Testwerkwijze:** de QA-server-kopie (`.local/claude-cocoon/.local/visual-server.ts`, buiten Git) zet een klare cocon klaar (`QA_COCOON`) en kiest het lokale raidgeheim opnieuw tot een gym binnen N s uitkomt (`QA_RAID=N`). Klokverschuiving werkt niet: de server weigert dan de GPS-meting als verouderd.
+- **Tests:** 723/723 en `tsc` groen (een kaarttest verwachtte `data-near` direct na de klasse; de attribuutvolgorde is aangepast).
+- **Voor Codex (spelregel, niet visueel):** het gymscherm opent op "Vechten" terwijl er een raid op die gym is. Overweeg "Raids" als starttab zolang er een raid loopt.

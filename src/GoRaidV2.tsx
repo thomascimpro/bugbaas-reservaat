@@ -1,4 +1,4 @@
-import React,{useId,useState} from 'react';
+import React,{useEffect,useId,useRef,useState} from 'react';
 import {Image,Pressable,StyleSheet,Text,useWindowDimensions,View} from 'react-native';
 import Svg,{Defs,Ellipse,LinearGradient,RadialGradient,Rect,Stop} from 'react-native-svg';
 import {species} from '../game/catalogV2';
@@ -15,6 +15,8 @@ import type {GameViewV2} from '../game/typesV2';
 import {SpriteView} from './artV2';
 import {TrainerPortrait} from './AvatarV2';import {FieldActivityArt} from './FieldArtV2';
 import {GoTeamPickerV2} from './GoTeamPickerV2';
+import {CocoonHatchFxV3} from './CocoonHatchFxV3';
+import {RaidCocoonV2} from './MapPropsV2';
 import {GO_TYPES,GoTypeBadge,GoTypes} from './GoTypeV2';
 import {PO,PoCircle,PoPill,poText} from './PogoUiV2';
 import type {RunV2} from './ShopViewV2';
@@ -85,10 +87,14 @@ function RaidHelpIcon(){const info=useInfo();return <RoundIcon icon="info" label
 /** Raid card on a gym (before joining): photo, big timer, big boss, one red pill and the 👥 round button. */
 export function RaidAtGymV2({view,raid,run,busy,now,ensureGPS}:{view:GameViewV2;raid:RaidView;run:RunV2;busy:boolean;now:number;ensureGPS?:()=>Promise<boolean>}){
  const [inviting,setInviting]=useState(false),config=RAID_TIERS[raid.tier],egg=now<raid.hatchAt,g=view.player.go!.raids,claimed=!!g?.claimed.includes(raid.id),inLobby=!!view.raidLobby&&view.raidLobby.raidId===raid.id;
+ // The boss hatching while you watch gets the cocoon-hatch celebration (only on the live egg → boss switch, never on reopening).
+ const wasEgg=useRef(egg),[hatchFx,setHatchFx]=useState(false);
+ useEffect(()=>{if(wasEgg.current&&!egg)setHatchFx(true);wasEgg.current=egg;},[egg]);
  const low=trainerLevel(view.player.go!.trainer!.xp)<config.trainer,closing=now>=raid.joinableUntil,capped=(g?.rewards??0)>=RAID_RULES.rewardsPerDay,remoteOk=(g?.remote??0)<RAID_RULES.remotePerDay&&(freeRemoteLeft(g,now)||(g?.passes??0)>0);
  async function join(){if(ensureGPS&&!await ensureGPS())return;await run('raidJoin',{raid:raid.id,remote:false});}
  if(inLobby)return null;const blocked=claimed?'✅ Vandaag verslagen':capped?'5 / 5 vandaag':low?'🔒 Level '+config.trainer:closing?'⏳ Vertrekt bijna':view.raidLobby?'Je zit al in een raid':'';
  return <RaidStage testID="raid-card" minHeight={egg?470:560}>
+  {hatchFx&&<CocoonHatchFxV3 hatch={{id:raid.id,species:raid.species,shiny:false}} onClose={()=>setHatchFx(false)} variant={{art:<RaidCocoonV2 tier={raid.tier} size={200}/>,heading:'DE BAAS IS UIT!',tier:Math.min(5,raid.tier),color:RARITY_TIERS[raid.tier>=5?5:raid.tier>=4?4:raid.tier>=3?3:2].color,subtitle:config.name+' · versla hem samen'}}/>}
   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flex:1,alignItems:'flex-start'}}><View style={[glass,{alignSelf:'flex-start',maxWidth:'100%'}]}><Text numberOfLines={1} style={[st.small,{color:WHITE,flexShrink:1}]}>{config.name+' · '+(raid.local?'':'Op afstand · ')+raid.site.name}</Text></View></View><RaidHelpIcon/></View>
   <View style={{alignItems:'center'}}><Text accessibilityLabel={(egg?'Komt uit over ':'Nog ')+mmss((egg?raid.hatchAt:raid.endsAt)-now)} style={st.timer}>{mmss((egg?raid.hatchAt:raid.endsAt)-now)}</Text><Text style={st.caption}>{egg?'KOMT UIT OVER':'RAID NOG'}</Text></View>
   <BossGlow kind={raid.species} tier={raid.tier} egg={egg} size={180}/>
