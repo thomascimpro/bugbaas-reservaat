@@ -1,13 +1,15 @@
 import type {CommandV2,GameViewV2,PlayerV2} from '../game/typesV2';
 import type {Fix} from '../game/walkingV2';
 import {walkTodayText} from '../game/walkCatchV2';
+import type {HealthSnapshot,HealthBatch} from '../game/adventureSyncV2';
 
 export type AutoLocationV2={timestamp:number;coords:{latitude:number;longitude:number;accuracy:number|null}};
-export type AutoSessionV2={uid:string;pending?:CommandV2};
+export type AutoSessionV2={uid:string;pending?:CommandV2;healthAt?:number};
 export type AutoSessionIOV2={
  now:()=>number;newId:()=>string;current:()=>boolean;
  state:()=>Promise<GameViewV2>;command:(command:CommandV2)=>Promise<GameViewV2>;
  save:(session:AutoSessionV2)=>Promise<void>;
+ readHealth?:()=>Promise<HealthSnapshot|HealthBatch|null>;
 };
 /** The native map owns foreground GPS; the service owns background and paused-map GPS. */
 export const autoLocationOwnerV2=(appActive:boolean,fieldActive:boolean)=>!appActive||!fieldActive;
@@ -32,6 +34,20 @@ export async function backgroundAutoTickV2(session:AutoSessionV2,locations:AutoL
   delete session.pending;await io.save(session);
  }
  if(!io.current()||view.player.uid!==session.uid||!view.player.go?.auto.enabled||view.player.go.battle||view.player.go.queue)return view;
+ // The opted-in location task already wakes while walking. Reuse it for Health
+ // Connect instead of waiting for the next foreground entry or adding a service.
+ if(io.readHealth&&io.now()-(session.healthAt??0)>=60000){
+  session.healthAt=io.now();await io.save(session);
+  const snapshot=await io.readHealth().catch(()=>null);
+  if(!io.current())return view;
+  if(snapshot){
+   const command:CommandV2={type:'adventureSync',snapshot,commandId:io.newId(),expectedRevision:view.player.revision};session.pending=command;await io.save(session);
+   if(!io.current())return view;
+   try{view=await io.command(command);}catch(error){if(!knownRejection(error))throw error;delete session.pending;await io.save(session);return view;}
+   delete session.pending;await io.save(session);
+   if(!io.current()||view.player.uid!==session.uid||!view.player.go?.auto.enabled)return view;
+  }
+ }
  const fix=freshAutoLocationV2(locations,io.now(),view.player.walking?.fix.timestamp??0);if(!fix)return view;
  const command:CommandV2={type:'worldLocate',fix,commandId:io.newId(),expectedRevision:view.player.revision};session.pending=command;await io.save(session);
  if(!io.current())return view;

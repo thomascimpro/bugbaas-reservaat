@@ -7,13 +7,14 @@ import {withBackgroundSessionV2} from './client';
 import {autoLocationOwnerV2,autoNotificationTextV2,backgroundAutoTickV2,commandSerialV2} from './backgroundAutoSessionV2';
 import type {AutoLocationV2,AutoSessionV2} from './backgroundAutoSessionV2';
 import type {GameViewV2} from '../game/typesV2';
+import {readAdventureSync,adventureSyncStorageKey,adventureSyncPayload} from './AdventureSyncV2';
 
 const TASK='bugbaas-autocatch-location-v1',KEY='bugbaas-background-autocatch-v1';
 const controls=commandSerialV2();let generation=0,lastTickAt=0,foregroundFieldActive=true,running:Promise<void>|null=null,lastView:GameViewV2|null=null;
 const newId=()=>globalThis.crypto?.randomUUID?.()??`auto-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 async function updateNotification(view:GameViewV2){
- const update=NativeModules.BugBaasAdventureSync?.updateAutoCatchNotification as ((text:string)=>Promise<boolean>)|undefined;
- if(Platform.OS==='android'&&view.player.go?.auto.enabled&&update)await update(autoNotificationTextV2(view.player,view.now)).catch(()=>{});
+ const update=NativeModules.BugBaasAdventureSync?.updateAutoCatchNotification as ((text:string,at:number)=>Promise<boolean>)|undefined;
+ if(Platform.OS==='android'&&view.player.go?.auto.enabled&&update)await update(autoNotificationTextV2(view.player),view.now).catch(()=>{});
 }
 async function readSession():Promise<AutoSessionV2|null>{try{const raw=await AsyncStorage.getItem(KEY);if(!raw)return null;const session=JSON.parse(raw);return typeof session?.uid==='string'&&session.uid?session:null;}catch{return null;}}
 async function stopService(uid?:string){const session=await readSession();if(uid&&session&&session.uid!==uid)return;generation++;await AsyncStorage.removeItem(KEY);await running?.catch(()=>{});await AsyncStorage.removeItem(KEY);lastView=null;if(await Location.hasStartedLocationUpdatesAsync(TASK))await Location.stopLocationUpdatesAsync(TASK);}
@@ -35,7 +36,11 @@ async function receiveLocations(locations:AutoLocationV2[]){
   const foreground=await AsyncStorage.getItem('bugbaas-v2-pending');if(foreground){try{if(JSON.parse(foreground).uid===session.uid)return;}catch{return;}}
   const current=()=>mine===generation&&autoLocationOwnerV2(AppState.currentState==='active',foregroundFieldActive);
   try{
-   const view=await withBackgroundSessionV2(session.uid,api=>backgroundAutoTickV2(session,locations,{...api,current,now:Date.now,newId,save:async next=>{if(current())await AsyncStorage.setItem(KEY,JSON.stringify(next));}}));
+   const view=await withBackgroundSessionV2(session.uid,api=>backgroundAutoTickV2(session,locations,{...api,current,now:Date.now,newId,save:async next=>{if(current())await AsyncStorage.setItem(KEY,JSON.stringify(next));},readHealth:async()=>{
+    if(await AsyncStorage.getItem(adventureSyncStorageKey(session.uid))!=='on'||!current())return null;
+    // The live counter needs today only; foreground sync retains the full history recovery.
+    const result=await readAdventureSync();return result.available?adventureSyncPayload(result)??null:null;
+   }}));
    if(view&&mine===generation){lastView=view;if(!view.player.go?.auto.enabled)void stopBackgroundAutoCatchV2(session.uid);else await updateNotification(view);}
   }catch(error){if((error as {status?:number})?.status===401)void stopBackgroundAutoCatchV2(session.uid);/* Network failures retain the same pending receipt for the next GPS event. */}
  })();running=work;try{await work;}finally{if(running===work)running=null;}
@@ -74,5 +79,5 @@ export function useBackgroundAutoCatchV2(view:GameViewV2|null,onError:(message:s
  foregroundFieldActive=fieldActive;
  const report=useRef(onError),latest=useRef(view);report.current=onError;latest.current=view;const uid=view?.player.uid,enabled=!!view?.player.go?.auto.enabled,cloud=view?.mode==='cloud';
  useEffect(()=>{if(Platform.OS!=='android'||!uid)return;if(suspended){void stopBackgroundAutoCatchV2(uid).catch(()=>{});return;}let alive=true;const sync=()=>{if(!enabled||!cloud){void stopBackgroundAutoCatchV2().catch(()=>{});return;}if(AppState.currentState==='active'&&latest.current?.player.uid===uid)void controls(()=>{const current=latest.current;return current?.player.uid===uid&&current.player.go?.auto.enabled?startService(uid,current):Promise.resolve();}).catch(error=>{if(alive)report.current(error instanceof Error?error.message:'Autovangst kon niet hervatten.');});};sync();const listener=AppState.addEventListener('change',state=>{if(state==='active')sync();});return()=>{alive=false;listener.remove();};},[uid,enabled,cloud,suspended]);
- useEffect(()=>{if(view&&enabled&&cloud&&!suspended)void updateNotification(view);},[uid,enabled,cloud,suspended,view?.player.field?.walk?.dayMeters,view?.player.go?.auto.walk?.caught,view?.player.go?.auto.walk?.workout]);
+ useEffect(()=>{if(!enabled||!cloud||suspended)return;const update=()=>{const current=latest.current;if(current&&current.player.uid===uid)void updateNotification(current);};update();const timer=setInterval(update,60000);return()=>clearInterval(timer);},[uid,enabled,cloud,suspended,view?.player.field?.daily.day,view?.player.field?.walk?.dayMeters,view?.player.go?.auto.walk?.caught,view?.player.go?.auto.walk?.workout]);
 }

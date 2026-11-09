@@ -228,7 +228,7 @@ function Game(){const [healthSyncPending,setHealthSyncPending]=useState(false);c
    </View>}
    {shellVisible&&<View style={{position:'absolute',left:0,right:0,bottom:0,zIndex:25}}><MainTabsV3 active={shellTabs[tab]} onChange={next=>changeTab(gameTabs[next])}/></View>}
    <RewardFeedbackV2 batch={rewards} visible={!inGame&&!mapFocus&&!arcadeFocus} onDismiss={dismissReward}/>
-   <UpdateGateV2 connected={!!view}/>{view&&p?.onboarded&&<LegacyWelcomeV2 view={view} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run} busy={busy} onUpdate={next=>{if(next.player.uid===latest.current?.player.uid)accept(next);}}/>}<AwaySummaryV2 syncPending={healthSyncPending} view={view} visible={!!p?.onboarded&&!overlay&&!inGame&&!mapFocus&&!arcadeFocus} open={open} run={run} busy={busy}/><AdventureSyncPromptV2 uid={p?.uid} onboarded={!!p?.onboarded} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run}/>
+   <UpdateGateV2 connected={!!view} canPrompt={!view||!!p?.onboarded&&!overlay&&!inGame&&!mapFocus&&!arcadeFocus&&!healthSyncPending}/>{view&&p?.onboarded&&<LegacyWelcomeV2 view={view} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run} busy={busy} onUpdate={next=>{if(next.player.uid===latest.current?.player.uid)accept(next);}}/>}<AwaySummaryV2 syncPending={healthSyncPending} view={view} visible={!!p?.onboarded&&!overlay&&!inGame&&!mapFocus&&!arcadeFocus} open={open} run={run} busy={busy}/><AdventureSyncPromptV2 uid={p?.uid} onboarded={!!p?.onboarded} visible={!overlay&&!inGame&&!mapFocus&&!arcadeFocus} run={run}/>
   </View></SafeAreaView></View>
  </InfoProvider></TextScale.Provider></MotionPrefs.Provider></GoBackProvider>;
 }
