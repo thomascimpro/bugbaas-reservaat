@@ -1,0 +1,170 @@
+{
+ "set": "trainer-medals",
+ "created": "2026-11-09",
+ "tools": "Blender 5.1 (Cycles), own geometry; script assets/3d/world-props/authoring/build_medals.py + hd_lib.py; HDRI/materials CC0 Poly Haven (local, not in Git)",
+ "license": "Own work CC0",
+ "rebuild": "blender --background --factory-startup --python assets/3d/world-props/authoring/build_medals.py -- <repo-with-.local/polyhaven> <out-dir>; then crop to content and save 256px webp",
+ "use": "Profile medal case (display only, no rewards)",
+ "renders": [
+  {
+   "file": "medal-arcade-brons.webp",
+   "bytes": 13892,
+   "sha256": "56a8635a3e99d07ffef368a81f7dc03382132415006e8dedc8328cef73b02f60"
+  },
+  {
+   "file": "medal-arcade-goud.webp",
+   "bytes": 15678,
+   "sha256": "333e79e9237c4202c98d589d676c0f3b1ac918e4ae9f3d87b4d8223337706b3e"
+  },
+  {
+   "file": "medal-arcade-platina.webp",
+   "bytes": 16658,
+   "sha256": "68a4ced260e8ca24db90b47a6453472cdb16767ab33e40c6b449db8ec6840adc"
+  },
+  {
+   "file": "medal-arcade-zilver.webp",
+   "bytes": 14508,
+   "sha256": "8609842b92397d55ebd7d1a87caeb59c1c13a0f2b9ac63dde0cae1652097db72"
+  },
+  {
+   "file": "medal-broeder-brons.webp",
+   "bytes": 13108,
+   "sha256": "1cce08f6efa9400347f3934d338e7294466e0bdab28827dc439305c5b1d60e77"
+  },
+  {
+   "file": "medal-broeder-goud.webp",
+   "bytes": 14356,
+   "sha256": "c0f521cd7cf07fe762e532adb7d4f506ebd3c11bdc12b33c469b9bb5e5b14c3d"
+  },
+  {
+   "file": "medal-broeder-platina.webp",
+   "bytes": 15650,
+   "sha256": "e4845f02105bd3ec5e49879de354c017db9339bfbd6f51e184c227a005a3e465"
+  },
+  {
+   "file": "medal-broeder-zilver.webp",
+   "bytes": 13680,
+   "sha256": "03381f7948a758ef9801d337101db78bb080a14563ca3fd487713a319e4be915"
+  },
+  {
+   "file": "medal-jager-brons.webp",
+   "bytes": 14114,
+   "sha256": "e029820da7ab742d2d9e640946ae4d8c9ce6c67f7ac5dd04c12c186a4c3f68e8"
+  },
+  {
+   "file": "medal-jager-goud.webp",
+   "bytes": 15720,
+   "sha256": "e8d34a157697601b7537b6ff6d15534f2479576c20fb797797b140d683dfe364"
+  },
+  {
+   "file": "medal-jager-platina.webp",
+   "bytes": 16450,
+   "sha256": "b38c570ea0b24b1eb7423ac72858bd29f3419fce0d5ca73b81f06bab76d0dcde"
+  },
+  {
+   "file": "medal-jager-zilver.webp",
+   "bytes": 14696,
+   "sha256": "5a526389fdce02a2044ee209a0009c141d36b9e70e0527beb4a418d996f661a5"
+  },
+  {
+   "file": "medal-scherpschutter-brons.webp",
+   "bytes": 14948,
+   "sha256": "f957627d3ef8f3740113352d4095aced8f1b088da3a5e5f91bca214cf678966c"
+  },
+  {
+   "file": "medal-scherpschutter-goud.webp",
+   "bytes": 16662,
+   "sha256": "ef3f020f3b3ca76223176caff63ee24e79cd59ab764a7188e57e60369460fb31"
+  },
+  {
+   "file": "medal-scherpschutter-platina.webp",
+   "bytes": 17434,
+   "sha256": "0d58d1202ba356bb3074ff08669952a6d4a18ec9406d7a71a46df852315b3209"
+  },
+  {
+   "file": "medal-scherpschutter-zilver.webp",
+   "bytes": 15696,
+   "sha256": "6873ed59f15c935d48552feb999e96150188e02b06e10ca9690fa799ceb124b6"
+  },
+  {
+   "file": "medal-shinyjager-brons.webp",
+   "bytes": 14186,
+   "sha256": "fb2a4612663325ebc9ece6daa5c4b1c3f1133c5b4fb296c381d2740cf1fe0e84"
+  },
+  {
+   "file": "medal-shinyjager-goud.webp",
+   "bytes": 15958,
+   "sha256": "1ef0e658ed28987ef9c926819be732d7e27193519d2b3f7a32685f716155aa62"
+  },
+  {
+   "file": "medal-shinyjager-platina.webp",
+   "bytes": 16878,
+   "sha256": "0de9594cfd9e7bd3e29c47bbd2575bfd364ba1d5cca60b1511116cc2ad209265"
+  },
+  {
+   "file": "medal-shinyjager-zilver.webp",
+   "bytes": 14924,
+   "sha256": "33fe5ac78bff945d1fa79dc40bdb81ec9880c357b0094425060f3774add7596c"
+  },
+  {
+   "file": "medal-strijder-brons.webp",
+   "bytes": 14096,
+   "sha256": "077b3ebb9b101a6383ab2bb56f68cbf9fedcd6b30f34b0674b00f7095c40ef11"
+  },
+  {
+   "file": "medal-strijder-goud.webp",
+   "bytes": 15958,
+   "sha256": "9bfefff85df984349bf74626542427375ae0e0e6397d64b19ae516236c815b4e"
+  },
+  {
+   "file": "medal-strijder-platina.webp",
+   "bytes": 17248,
+   "sha256": "0e6450f2dcf1c102d66540d1d10cae4db7cca20c901688e69853d79386a9bc7a"
+  },
+  {
+   "file": "medal-strijder-zilver.webp",
+   "bytes": 15182,
+   "sha256": "fb35084153cf2c3936e1e40c8d029a1a208d4474602bf1db421b03ad2876125d"
+  },
+  {
+   "file": "medal-verzamelaar-brons.webp",
+   "bytes": 14148,
+   "sha256": "79e9c39573177ac296af0778f70a9e2223ded325b1c6d759eb7b2a77c74f459e"
+  },
+  {
+   "file": "medal-verzamelaar-goud.webp",
+   "bytes": 15822,
+   "sha256": "93eecf65bd15964dcdc3109ff4a94058c8dc1ea8141f36661194460d54b2603d"
+  },
+  {
+   "file": "medal-verzamelaar-platina.webp",
+   "bytes": 16572,
+   "sha256": "a000377016b65ccdc2f2ad1bb90a018b460456352f43fc00c3e1cf35ad98f70e"
+  },
+  {
+   "file": "medal-verzamelaar-zilver.webp",
+   "bytes": 14658,
+   "sha256": "0284380a307e9559e5035bdaa0248a26df65f11d04d0ee55c6082e6e9daf656f"
+  },
+  {
+   "file": "medal-wandelaar-brons.webp",
+   "bytes": 13790,
+   "sha256": "414f1c5b376a0e3efe95459aed2a4f324301050454c6396046d376f2a1b2f456"
+  },
+  {
+   "file": "medal-wandelaar-goud.webp",
+   "bytes": 15400,
+   "sha256": "9cebb888730bbb0de91c7131ccfa4538245307bc98935684b670600265e848dd"
+  },
+  {
+   "file": "medal-wandelaar-platina.webp",
+   "bytes": 16312,
+   "sha256": "df5a5e87650a1d58fd969742d770e4fcfd6b9d8911f2d968a90bc41592dcab7a"
+  },
+  {
+   "file": "medal-wandelaar-zilver.webp",
+   "bytes": 14514,
+   "sha256": "800004923a9cd69d71c1e33a4c4bacb30b02f013321013737f057fd303d3cdcf"
+  }
+ ]
+}

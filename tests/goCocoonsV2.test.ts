@@ -64,7 +64,7 @@ test('committed seeds keep hatch species, shiny, moves and IV stable across clai
  startCocoon(p,p.go!.cocoons!.items[0].id,NOW);setMeters(p,2000);const q=structuredClone(p),a=hatchCocoon(p,NOW),b=hatchCocoon(q,NOW+86400000);
  assert.equal(a.species,b.species);assert.equal(a.shiny,b.shiny);assert.deepEqual(a.go,b.go);assert.ok(COCOON_POOLS[2].includes(a.species));assert.ok(a.go!.iv.every(n=>n>=10&&n<=15));
  assert.deepEqual(p.specimens.find(s=>s.id===old.id),older);assert.equal(p.go!.dust,dust+500);assert.equal(p.go!.candy[a.species==='moth'?'caterpillar':a.species],10);assert.equal(p.go!.cocoons!.lastHatch!.dust,500);assert.equal(p.go!.cocoons!.lastHatch!.candy,10);
- assert.equal(trainer.xp,xp+600);assert.equal(trainer.catchDay,'2026-10-20');assert.deepEqual(trainer.catchStreak,{days:6,lastDay:'2026-10-20'});
+ assert.equal(trainer.xp,xp+1000);// 2 km hatch XP 500 (balance 9 Nov) + 500 new speciesassert.equal(trainer.catchDay,'2026-10-20');assert.deepEqual(trainer.catchStreak,{days:6,lastDay:'2026-10-20'});
  assert.equal(p.nectar,wallet);assert.equal(p.adventure!.parts,parts);assert.deepEqual(p.field!.inventory,inventory);assert.deepEqual(p.field!.daily,daily);
  assert.ok(p.discovered.includes(a.species));assert.ok(p.go!.dex!.includes(a.species));assert.equal(p.go!.entries![a.species].caughtAt,NOW);
 });

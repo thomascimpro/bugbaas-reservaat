@@ -2,6 +2,9 @@ import {rng} from './catalogV2';
 import {WALK_WEIGHTS} from './walkingV2';
 import {COCOON_SHINY_ODDS} from './shinyV2';
 import {awardGoCatch} from './goV2';
+import {grantXP} from './trainerV2';
+/** Hatch XP per distance (balance 9 Nov): walking 10 km used to give the same 100 XP as one catch. Includes the base 100 of awardGoCatch. */
+export const COCOON_XP={2:500,5:1000,7:1500,10:2000} as const;
 import {family} from './goV2';
 import type {Held} from './goV2';
 import {checkV2 as check} from './shopV2';
@@ -12,9 +15,9 @@ export type CocoonKm=2|5|7|10;
 export type GoCocoon={id:string;km:CocoonKm;obtainedAt:number;hatchSeed?:string};
 export type GoCocoonActive={id:string;startMeters:number;startedAt:number};
 export type GoCocoonIncubator={id:string;uses:number};
-export type GoCocoonsProgress={version:1;items:GoCocoon[];active:GoCocoonActive|null;parallel?:(GoCocoonActive&{incubatorId:string})[];incubators?:GoCocoonIncubator[];nextIncubatorId?:number;nextId:number;hatched:number;lastCatchId?:string;lastPostDrop?:string;lastHatch?:{id:string;species:string;shiny:boolean;at:number;held?:Held;dust?:number;candy?:number}};
+export type GoCocoonsProgress={version:1;items:GoCocoon[];active:GoCocoonActive|null;parallel?:(GoCocoonActive&{incubatorId:string})[];incubators?:GoCocoonIncubator[];nextIncubatorId?:number;nextId:number;hatched:number;lastCatchId?:string;lastPostDrop?:string;lastHatch?:{id:string;species:string;shiny:boolean;at:number;held?:Held;dust?:number;candy?:number;xp?:number}};
 export const COCOON_CAP=9,COCOON_CATCH_CHANCE=.1;
-export const COCOON_POST_CHANCE=.2,COCOON_REWARDS={2:{dust:500,candy:10},5:{dust:1500,candy:20},7:{dust:1000,candy:15},10:{dust:4000,candy:32}},COCOON_GIFT_CHANCE=.25;
+export const COCOON_POST_CHANCE=.2,COCOON_REWARDS={2:{dust:500,candy:10},5:{dust:1500,candy:20},7:{dust:2500,candy:25},10:{dust:4000,candy:32}},COCOON_GIFT_CHANCE=.25;
 // All thirty existing walking species are represented. Chances follow Pokémon GO-style rarity tiers (see cocoonTier).
 export const COCOON_POOLS:Record<CocoonKm,readonly string[]>={
  2:['beetle','ant','aphid','weevil','moth','earwig','grasshopper','lacewing','dungbeetle','hoverfly','leafhopper','cricket','silverfish','caterpillar','antlion','cockroach','cranefly','flea','mayfly','termite'],
@@ -96,10 +99,10 @@ export function hatchCocoon(p:PlayerV2,now:number,id?:unknown):Specimen{
  const s:Specimen={id:'hatched-'+item.id,species:kind,level:1,shiny:rng(seed+':shiny')()<1/COCOON_SHINY_ODDS,favorite:false,obtainedAt:now,source:'cocoon',hearts:0,item:null};
  check(!p.specimens.some(b=>b.id===s.id),'Deze cocon is al uitgekomen.');
  // Reuse collection, dust, nectar and dex accounting. Only this new specimen receives hatch IVs.
- let held=awardGoCatch(p,s,seed+':stats');const reward=COCOON_REWARDS[item.km];p.go!.dust+=reward.dust-100;p.go!.candy[family(kind)]+=reward.candy-3;
+ let held=awardGoCatch(p,s,seed+':stats');const reward=COCOON_REWARDS[item.km];grantXP(p,COCOON_XP[item.km]-100);p.go!.dust+=reward.dust-100;p.go!.candy[family(kind)]+=reward.candy-3;
  if(g.hatched===0&&!Object.values(p.go!.items).some(n=>n>0)){p.go!.items.leaf++;held='leaf';}const random=rng(seed+':iv');s.go!.iv=[10+Math.floor(random()*6),10+Math.floor(random()*6),10+Math.floor(random()*6)];
  p.specimens.push(s);if(!p.discovered.includes(kind))p.discovered.push(kind);if(s.shiny&&!p.shinies.includes(kind))p.shinies.push(kind);
  g.items=g.items.filter(c=>c.id!==item.id);if(g.active?.id===item.id)g.active=null;else g.parallel=g.parallel?.filter(c=>c.id!==item.id);
  if(incubator){incubator.uses--;g.incubators=g.incubators?.filter(i=>i.uses>0);}
- g.hatched++;g.lastHatch={id:s.id,species:kind,shiny:s.shiny,at:now,dust:reward.dust,candy:reward.candy,...(held?{held}:{})};return s;
+ g.hatched++;g.lastHatch={id:s.id,species:kind,shiny:s.shiny,at:now,dust:reward.dust,candy:reward.candy,xp:COCOON_XP[item.km],...(held?{held}:{})};return s;
 }

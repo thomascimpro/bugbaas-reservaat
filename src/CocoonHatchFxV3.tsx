@@ -20,7 +20,7 @@ const SWING_OUT=[0,-5,5,-4,0,0,-9,10,-8,0,0,-14,15,-16,17,-12,0];
 const CRACKS=[{at:.24,x:.52,y:.58,len:.2,rot:62},{at:.41,x:.6,y:.5,len:.16,rot:-48},{at:.47,x:.55,y:.7,len:.18,rot:-70},{at:.53,x:.48,y:.46,len:.13,rot:35}];
 const BITS=Array.from({length:18},(_,i)=>{const a=i/18*Math.PI*2+(i%3)*.17;return {a,d:.65+(i%4)*.14,leaf:i%3!==0,s:i%3?22:16,spin:(i%2?1:-1)*(180+i*25)};});
 
-export type CocoonHatch={id:string;species:string;shiny:boolean;dust?:number;candy?:number};
+export type CocoonHatch={id:string;species:string;shiny:boolean;dust?:number;candy?:number;xp?:number};
 
 /** Raid cocoons reuse the same hatch with their own egg art, heading, tier and no rewards (the boss still has to be beaten). */
 export type HatchVariant={art:React.ReactNode;heading:string;tier:number;color:string;subtitle:string};
@@ -66,8 +66,8 @@ export function CocoonHatchFxV3({hatch,cp,onClose,onView,variant}:{hatch:CocoonH
     <Text style={{color:'#9DB8B2',fontSize:15,fontWeight:'800',letterSpacing:1}}>{variant?.heading??'UITGEKOMEN!'}</Text>
     <Text style={{color:'#EAF6F2',fontSize:30,fontWeight:'900',textAlign:'center'}}>{name}{hatch.shiny?' ✦':''}</Text>
     <View style={{flexDirection:'row',gap:6,alignItems:'center'}}><Text style={{color,fontSize:16,fontWeight:'900'}}>{'★'.repeat(tier)}</Text><Text style={{color:'#EAF6F2',fontSize:14,fontWeight:'800'}}>{variant?variant.subtitle:(hatch.shiny?'Shiny · ':'')+RARITY_TIERS[tier as 1].name}</Text></View>
-    {!variant&&<Animated.View style={{flexDirection:'row',gap:10,marginTop:4,opacity:at([.82,.9],[0,1])}}>
-     {cp!==undefined&&<Chip>CP {cp}</Chip>}<Chip>+{hatch.dust??100} ✨</Chip><Chip>+{hatch.candy??3} 🍯</Chip>
+    {!variant&&<Animated.View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:8,marginTop:4,opacity:at([.82,.9],[0,1])}}>
+     {cp!==undefined&&<Chip>CP {cp}</Chip>}<Chip>+{hatch.dust??100} ✨</Chip><Chip>+{hatch.candy??3} 🍯</Chip>{!!hatch.xp&&<Chip>+{hatch.xp} XP</Chip>}
     </Animated.View>}
     {done&&<View style={{flexDirection:'row',gap:10,marginTop:12}}>{onView&&<Button secondary small icon="book" onPress={onView}>Bekijk bug</Button>}<Button small onPress={onClose}>Verder</Button></View>}
    </Animated.View>

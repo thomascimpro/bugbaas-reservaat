@@ -1,6 +1,7 @@
 import {FieldBossV2} from './FieldBossV2';import {FieldActivityArt} from './FieldArtV2';
 import {RaidAtGymV2,RaidInvitesV2,RaidListV2,RaidLobbyV2} from './GoRaidV2';
-import React,{useId,useState} from 'react';
+import React,{useEffect,useId,useRef,useState} from 'react';
+import {ResultFxV3} from './ResultFxV3';
 import {Pressable,Text,View} from 'react-native';
 import Svg,{Defs,LinearGradient,RadialGradient,Stop,Path,Ellipse,Circle,G} from 'react-native-svg';
 import {GYM_TEAMS,GYM_RULES,gymCoins,gymTimeLeft,defendingGym,recommendedGymTeam,gymAttackIssue,gymFightable,firstGymTab} from '../game/gymsV2';
@@ -96,11 +97,14 @@ function GymDetailV2({view,gym,tab,run,busy,now,onBattle,open,ensureGPS}:{view:G
  const p=view.player,progress=p.go?.gyms,myTeam=progress?.team??null,info=useInfo(),[defender,setDefender]=useState(''),[attack,setAttack]=useState<string[]>(()=>!gymAttackIssue(p,p.go!.team)?p.go!.team.slice():recommendedGymTeam(p)),[problem,setProblem]=useState(''),[editAttack,setEditAttack]=useState(false);
  const fix=p.walking?.fix,meters=fix?Math.round(distance(fix,gym)):Infinity,fresh=!!p.walking&&now-Math.min(p.walking.at,fix?.timestamp??p.walking.at)<GPS_MAX_AGE&&(fix?.accuracy??999)<=35&&(p.walking.blockedUntil??0)<=now,here=fresh&&meters<=GYM_RULES.range;
  const npc=gym.defenders.some(d=>d.npc),fight=gymFightable(gym,myTeam),mine=progress?.deployed.find(d=>d.id===gym.id),won=progress?.won&&progress.won.id===gym.id&&progress.won.until>now?progress.won:undefined,ticket=progress?.remoteDay!==today(now);
+ // Gym turns to your team while you look at it (you placed the first defender): short capture celebration.
+ const lastTeam=useRef({id:gym.id,team:gym.team}),[captured,setCaptured]=useState(false);
+ useEffect(()=>{const before=lastTeam.current;lastTeam.current={id:gym.id,team:gym.team};if(before.id===gym.id&&myTeam&&before.team!==myTeam&&gym.team===myTeam)setCaptured(true);},[gym.id,gym.team,myTeam]);
  const free=p.specimens.filter(s=>s.go&&!defendingGym(p,s.id)).sort((a,b)=>stats(b).cp-stats(a).cp),eligible=free.filter(s=>s.id!==p.buddy&&!gym.defenders.some(d=>d.species===s.species)),chosen=eligible.find(s=>s.id===defender),attackIds=attack.filter(id=>free.some(s=>s.id===id)),issue=gymAttackIssue(p,attackIds);
  const gymRaids=(view.raids??[]).filter(r=>r.site.id===gym.id&&r.endsAt>now),canPlace=!!myTeam&&!mine&&!gym.battling&&!npc&&(gym.team===null||gym.team===myTeam)&&gym.defenders.length<GYM_RULES.slots;
  async function act(type:'gymDefend'|'gymAttack',params:Record<string,unknown>,remote:boolean){setProblem('');if(!remote&&!(type==='gymDefend'&&won)&&ensureGPS&&!await ensureGPS())return false;let failure='';const ok=await run(type,remote?{...params,remote:true}:params,message=>{failure=message;setProblem(message);});if(ok&&type==='gymAttack')onBattle();if(!ok&&!failure)setProblem('Dat lukte niet. Probeer het nog eens.');return ok;}
  const walk=gym.far?<Label small bold center color={V.muted}>🎟️ Op afstand: morgen weer</Label>:<Button small secondary icon="compass" onPress={()=>{if(ensureGPS)void ensureGPS();else open('map');}}>{!fresh?'📍 Vernieuw GPS':'📍 Loop binnen '+GYM_RULES.range+' m'}</Button>;
- return <View style={{gap:10}}>
+ return <View style={{gap:10}}>{captured&&myTeam&&<ResultFxV3 modal kind="capture" title="Gym veroverd!" subtitle={'Team '+GYM_TEAMS[myTeam].name+' bewaakt '+gym.name} color={GYM_TEAMS[myTeam].color}/>}
   {!(tab==='raid'&&(gymRaids.length||view.raidLobby))&&<View testID="gym-hero" style={{flexDirection:'row',alignItems:'center',gap:12,padding:10,borderRadius:22,backgroundColor:'#0E2828',borderWidth:1,borderColor:gym.team?GYM_TEAMS[gym.team].color+'88':'#BFF3EC47'}}><GymArtV2 team={gym.team} occupied={gym.defenders.length} size={72}/><View style={{flex:1,gap:3}}><Text numberOfLines={2} style={{fontFamily:font,fontSize:19,lineHeight:23,fontWeight:'700',color:V.ink}}>{gym.name}</Text><Label small bold color={gym.team?GYM_TEAMS[gym.team].color:undefined}>{npc?'🐾 Wilde wachters':gym.team?'Ploeg '+GYM_TEAMS[gym.team].name:'Vrije gym'}</Label><Label small>🛡️ {gym.defenders.length}/6 · {away(meters)}{gym.far?' · 🎟️':''}{gym.battling?' · ⚔️ bezig':''}</Label></View></View>}
   {tab==='raid'?<View style={{gap:10}}>{view.raidLobby?<RaidLobbyV2 {...{view,run,busy,now,onBattle}}/>:<>{gymRaids.map(r=><RaidAtGymV2 key={r.id} raid={r} {...{view,run,busy,now,ensureGPS}}/>)}{!gymRaids.length&&!gym.far&&<FieldBossV2 player={p} post={gym.postId} {...{run,busy,now,ensureGPS,onBattle,fresh}} near={meters}/>}{!gymRaids.length&&<Label small center color={V.muted}>🥚 Nu geen raid hier</Label>}</>}</View>
   :tab==='gym'?<Panel>

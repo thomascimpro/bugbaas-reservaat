@@ -19,6 +19,7 @@ import {FieldActivityArt,FieldArt} from './FieldArtV2';
 import {WEEK_TIERS,weeklyWalkV2} from '../game/weeklyWalkV2';
 import {RankBadgeV2} from './PvpRankV2';
 import {LevelUpFxV3} from './LevelUpFxV3';
+import {MedalCaseV3} from './MedalCaseV3';
 import type {LevelUp} from './LevelUpFxV3';
 import {TabsV2} from './TabsV2';
 import type {WeekTierV2} from '../game/weeklyWalkV2';
@@ -45,12 +46,12 @@ export function TrainerCardV2({player:p,run,busy}:{player:PlayerV2;run:RunV2;bus
 }
 /** Profile 'Doelen': catch streak, weekly walk and six number tiles (gold edge = medal reached). */
 export function TrainerGoalsV2({player:p,status}:{player:PlayerV2;status:string}){
- return <View style={{gap:12}}><Panel><CatchStreakV2 player={p}/></Panel><Panel><WeekGoalV2 player={p}/></Panel><TrainerStatsV2 player={p} status={status}/></View>;
+ return <View style={{gap:12}}><Panel><CatchStreakV2 player={p}/></Panel><Panel><WeekGoalV2 player={p}/></Panel><MedalCaseV3 player={p}/><TrainerStatsV2 player={p} status={status}/></View>;
 }
 /** Six big number tiles (icon + number + one word); tap a tile for its explanation. Catches (50), species (all) and km (5) get a gold edge and 🏆 when their medal is reached. */
 export function TrainerStatsV2({player:p,status}:{player:PlayerV2;status:string}){
  const catches=p.field?.total.catches??0,km=(p.field?.walk?.meters??0)/1000,kinds=DEX_SPECIES.filter(s=>p.go?.dex?.includes(s.id)).length;
- const tiles:{icon:Parameters<typeof Counter>[0]['icon'];value:string|number;label:string;hint?:string;medal?:boolean}[]=[{icon:'leaf',value:catches,label:'Gevangen',hint:'Je echte kaartvangsten. Demo telt niet mee. 🏆 Medaille bij 50.',medal:catches>=50},{icon:'book',value:p.go?.dex?.length??0,label:'Bugdex',hint:'Soorten die je op de kaart hebt gevangen. 🏆 Medaille als je alle '+DEX_SPECIES.length+' soorten hebt.',medal:kinds>=DEX_SPECIES.length},{icon:'compass',value:km.toLocaleString('nl-NL',{maximumFractionDigits:1})+' km',label:'Gelopen',hint:'GPS en gekoppelde Health Connect-wandelingen. 🏆 Medaille bij 5 km.',medal:km>=5},{icon:'star',value:p.field?.total.perfect??0,label:'Perfect',hint:'Maak een korte, goed gerichte netzwaai voor een perfecte worp.'},{icon:'swords',value:p.go?.rating??1000,label:'PvP-rating'},{icon:'cup',value:p.go?.wins??0,label:'Gewonnen'}];
+ const tiles:{icon:Parameters<typeof Counter>[0]['icon'];value:string|number;label:string;hint?:string;medal?:boolean}[]=[{icon:'leaf',value:catches,label:'Gevangen',hint:'Je echte kaartvangsten. Demo telt niet mee. Medailles: zie Medailles hierboven.'},{icon:'book',value:p.go?.dex?.length??0,label:'Bugdex',hint:'Soorten die je op de kaart hebt gevangen. Alle '+DEX_SPECIES.length+' soorten = platina Verzamelaar.'},{icon:'compass',value:km.toLocaleString('nl-NL',{maximumFractionDigits:1})+' km',label:'Gelopen',hint:'GPS en gekoppelde Health Connect-wandelingen.'},{icon:'star',value:p.field?.total.perfect??0,label:'Perfect',hint:'Maak een korte, goed gerichte netzwaai voor een perfecte worp.'},{icon:'swords',value:p.go?.rating??1000,label:'PvP-rating'},{icon:'cup',value:p.go?.wins??0,label:'Gewonnen'}];
  return <Panel><Label bold>{trainerDisplayName(p)}</Label><View style={{flexDirection:'row',flexWrap:'wrap',gap:6}}>{tiles.map(x=><View key={x.label} style={{width:'31.5%',alignItems:'center',gap:2,paddingVertical:7,borderRadius:16,backgroundColor:'#1B4A3F',borderWidth:2,borderColor:x.medal?'#F2D16E':'transparent'}}><Counter icon={x.icon} value={x.value} label={x.label} hint={x.hint}/><View style={{flexDirection:'row',alignItems:'center',gap:3}}>{x.medal&&<Glyph name="cup" size={16}/>}<Label small>{x.label}</Label></View></View>)}</View></Panel>;
 }
 function ResearchStampBookV2({player}:{player:PlayerV2}){
