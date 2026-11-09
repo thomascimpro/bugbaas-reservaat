@@ -1,4 +1,6 @@
 import {LegacyWelcomeV2} from './LegacyWelcomeV2';
+import {BugsHomeV3,type BugsSectionV3} from './BugsHomeV3';
+import {BagHomeV3} from './BagHomeV3';
 import {UpdateGateV2} from './UpdateGateV2';
 import {ArcadeScreenV3} from './arcade/ArcadeScreenV3';
 import {MainTabsV3,type MainTabV3} from './arcade/MainTabsV3';
@@ -84,9 +86,9 @@ import {playSound,setAudioSettings,startMusic,stopAudio,unlockAudio} from './aud
 
 export default function GameV2(){return <SafeAreaProvider><Game/></SafeAreaProvider>;}
 
-type GameTab='Safari'|'Arcade'|'Team'|'Ranked';
-const shellTabs:Record<GameTab,MainTabV3>={Safari:'map',Arcade:'arcade',Team:'bugs',Ranked:'battle'};
-const gameTabs:Record<MainTabV3,GameTab>={map:'Safari',arcade:'Arcade',bugs:'Team',battle:'Ranked'};
+type GameTab='Safari'|'Arcade'|'Team'|'Ranked'|'Bag';
+const shellTabs:Record<GameTab,MainTabV3>={Safari:'map',Arcade:'arcade',Team:'bugs',Ranked:'arcade',Bag:'bag'};
+const gameTabs:Record<MainTabV3,GameTab>={map:'Safari',arcade:'Arcade',bugs:'Team',bag:'Bag'};
 
 /** Update once on leaving, so timers/back handlers stop, then retain the inactive tree. */
 function RetainedContent({active,children}:{active:boolean;children:React.ReactNode}){
@@ -119,6 +121,7 @@ function Game(){const [healthSyncPending,setHealthSyncPending]=useState(false);c
  function clearOverlays(){overlayStack.current=[];overlayRef.current='';rawSetOverlay('');}
 
  const [profileTab,setProfileTab]=useState<'me'|'goals'|'friends'|'cards'>('me');
+ const [bugsSection,setBugsSection]=useState<BugsSectionV3>('collection'),[bagSection,setBagSection]=useState<'items'|'cocoons'>('items');
  const [changingAccount,setChangingAccount]=useState(false);
 
  const mapCamera=useRef<MapCameraV2|null>(null),[collectionTarget,setCollectionTarget]=useState<string>(),[tradePair,setTradePair]=useState<string>();
@@ -177,7 +180,8 @@ function Game(){const [healthSyncPending,setHealthSyncPending]=useState(false);c
   if(name==='map'){void backToMap();return;}
   if(name==='arcade'){changeTab('Arcade');return;}
   if(name==='ranked'){clearOverlays();setTab('Ranked');return;}
-  if(name==='team'||name==='teamScore'){const target=latest.current?.player.specimens.find(s=>s.id===specimenId&&s.go)?.id;if(target)setCollectionTarget(target);clearOverlays();setMapFocus(null);setTab('Team');return;}
+  if(name==='team'||name==='teamScore'||name==='buddy'||name==='bugdex'){const target=latest.current?.player.specimens.find(s=>s.id===specimenId&&s.go)?.id;if(target)setCollectionTarget(target);setBugsSection(name==='buddy'?'buddy':name==='bugdex'?'dex':target?'collection':'team');clearOverlays();setMapFocus(null);setTab('Team');return;}
+  if(name==='bag'||name==='cocoons'){setBagSection(name==='cocoons'?'cocoons':'items');clearOverlays();setMapFocus(null);setTab('Bag');return;}
   if(name==='friends'){setProfileTab('friends');setOverlay('profile');return;}
   if(name==='profile')setProfileTab('me');
   if(name==='trade')setTradePair(specimenId);
@@ -202,8 +206,9 @@ function Game(){const [healthSyncPending,setHealthSyncPending]=useState(false);c
    {!view?<LoadingScreenV2 busy={busy} error={error||undefined} onRetry={()=>void boot()}/>:!p!.onboarded?<ScrollView contentContainerStyle={{flexGrow:1,padding:20,paddingTop:36,paddingBottom:36,justifyContent:'center',gap:12}}><Scene index={4}/><Wash from="#12382FB0" to="#12382FF5"/><OnboardingV2 busy={busy} run={run} cloud={view.mode==='cloud'} onAccount={()=>setOverlay('account')}/></ScrollView>:<View key={p!.uid} style={{flex:1}}>
     <View testID="retained-field-map" {...layer('Safari')} style={[StyleSheet.absoluteFillObject,{bottom:bottomInset,opacity:tab==='Safari'?1:0,overflow:'hidden'}]}><RetainedContent active={contentActive('Safari')}><GoBackScope active={contentActive('Safari')}><ExploreV2 key={p!.uid} paused={tab!=='Safari'||!!overlay} bottomInset={0} onFocusChange={setMapFocus} camera={mapCamera} view={effective!} run={run} busy={busy} now={now} open={open}/></GoBackScope></RetainedContent></View>
     {visitedTabs.current.tabs.has('Arcade')&&<View testID="retained-arcade-tab" {...layer('Arcade')} style={[StyleSheet.absoluteFillObject,{bottom:bottomInset,opacity:tab==='Arcade'?1:0,backgroundColor:'#071e1b',overflow:'hidden'}]}><RetainedContent active={contentActive('Arcade')}><GoBackScope active={contentActive('Arcade')}><ArcadeScreenV3 view={effective!} {...{run,busy}} active={contentActive('Arcade')} backRef={arcadeBack} onFocusChange={setArcadeFocus} close={destination=>open(destination??'map')}/></GoBackScope></RetainedContent></View>}
-    {visitedTabs.current.tabs.has('Team')&&<View testID="retained-bugs-tab" {...layer('Team')} style={[StyleSheet.absoluteFillObject,{bottom:bottomInset,opacity:tab==='Team'?1:0,backgroundColor:'#071e1b',overflow:'hidden'}]}><RetainedContent active={contentActive('Team')}><GoBackScope active={contentActive('Team')}><GoCollectionV2 view={effective!} {...{run,busy}} active={contentActive('Team')} initialSpecimenId={collectionTarget} onTargetConsumed={()=>setCollectionTarget(undefined)} open={open}/></GoBackScope></RetainedContent></View>}
-    {visitedTabs.current.tabs.has('Ranked')&&<View testID="retained-battle-tab" {...layer('Ranked')} style={[StyleSheet.absoluteFillObject,{bottom:bottomInset,opacity:tab==='Ranked'?1:0,backgroundColor:'#071e1b',overflow:'hidden'}]}><RetainedContent active={contentActive('Ranked')}><GoBackScope active={contentActive('Ranked')}><GoBattleV2 view={effective!} {...{run,busy,now,open}} active={contentActive('Ranked')}/></GoBackScope></RetainedContent></View>}
+    {visitedTabs.current.tabs.has('Team')&&<View testID="retained-bugs-tab" {...layer('Team')} style={[StyleSheet.absoluteFillObject,{bottom:bottomInset,opacity:tab==='Team'?1:0,backgroundColor:'#071e1b',overflow:'hidden'}]}><RetainedContent active={contentActive('Team')}><GoBackScope active={contentActive('Team')}><BugsHomeV3 view={effective!} {...{run,busy,now,open}} active={contentActive('Team')} section={bugsSection} onSection={setBugsSection} initialSpecimenId={collectionTarget} onTargetConsumed={()=>setCollectionTarget(undefined)}/></GoBackScope></RetainedContent></View>}
+    {visitedTabs.current.tabs.has('Ranked')&&<View testID="retained-battle-tab" {...layer('Ranked')} style={[StyleSheet.absoluteFillObject,{bottom:bottomInset,opacity:tab==='Ranked'?1:0,backgroundColor:'#071e1b',overflow:'hidden'}]}><RetainedContent active={contentActive('Ranked')}><GoBackScope active={contentActive('Ranked')}>{!inGame&&!view.goBattle&&<PageHeader title="Strijd" onBack={()=>void changeTab('Arcade')}/>}<GoBattleV2 view={effective!} {...{run,busy,now,open}} active={contentActive('Ranked')}/></GoBackScope></RetainedContent></View>}
+    {visitedTabs.current.tabs.has('Bag')&&<View testID="retained-bag-tab" {...layer('Bag')} style={[StyleSheet.absoluteFillObject,{bottom:bottomInset,opacity:tab==='Bag'?1:0,backgroundColor:'#071e1b',overflow:'hidden'}]}><RetainedContent active={contentActive('Bag')}><GoBackScope active={contentActive('Bag')}><BagHomeV3 view={effective!} {...{run,busy,now,open}} section={bagSection} onSection={setBagSection}/></GoBackScope></RetainedContent></View>}
     <BattleBack view={effective!} run={run} active={contentActive('Ranked')&&inGame}/>
    </View>}
    {!overlay&&feedback()}

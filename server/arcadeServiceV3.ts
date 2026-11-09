@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+import {ensureArcadeSeason} from './arcadeRankedV3';
 import {arcadeSeed,arcadeSquad,TICK_MS} from '../game/arcade/tapDuel';
 import {ARCADE_GAMES,gameRules,replayArcade,supportsArcadeRules} from '../game/arcade/games';
 import {isOriginalRules,ORIGINAL_MAX_BYTES} from '../game/arcade/original';
@@ -34,6 +35,7 @@ function chooseNext(p:PlayerV2,a:ArcadeProgress):ArcadeGameId{
 export function arcadeProgress(p:PlayerV2,now:number):ArcadeProgress{
  const day=utcDay(now);
  const a=p.arcade??={day,rewarded:0,dailyDust:0,dailyXP:0,first:false,best:{},completed:0};
+ if(a.ranked)ensureArcadeSeason(p,a.ranked,now);
  if(a.day!==day){a.day=day;a.rewarded=0;a.dailyDust=0;a.dailyXP=0;a.first=false;}
  // Old accounts only played Tikduel. Keep their totals and earned thresholds, then introduce the other two games.
  a.games??=a.completed?{tap_duel:{completed:a.completed,medals:MEDALS.filter(n=>a.completed>=n)}}:{};

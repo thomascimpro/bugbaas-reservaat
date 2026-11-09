@@ -9,8 +9,8 @@ import {SpriteView} from './artV2';
 import {FieldActivityArt,FieldArt} from './FieldArtV2';
 import {font,Glyph,Help,Label,Panel} from './uiV2';
 
-const RANK_ART=[require('../assets/v2/props/medal-brons.webp'),require('../assets/v2/props/medal-zilver.webp'),require('../assets/v2/props/medal-goud.webp'),require('../assets/v2/ui/polish-v1/platinum.webp'),require('../assets/v2/ui/polish-v1/champion.webp')];
-export function RankMedalV2({rank,size=56}:{rank:number;size?:number}){const r=RANKS[rank];return <View accessibilityLabel={'Rang '+r.name} style={{width:size,height:size,alignItems:'center',justifyContent:'center'}}><Image source={RANK_ART[rank]} resizeMode="contain" style={{width:size,height:size}}/></View>;}
+const RANK_ART=[require('../assets/v2/props/medal-brons.webp'),require('../assets/v2/props/medal-zilver.webp'),require('../assets/v2/props/medal-goud.webp'),require('../assets/v2/ui/polish-v1/platinum.webp'),require('../assets/v2/ui/polish-v1/platinum.webp'),require('../assets/v2/ui/polish-v1/champion.webp'),require('../assets/v2/ui/polish-v1/champion.webp'),require('../assets/v2/ui/polish-v1/champion.webp')];
+export function RankMedalV2({rank,size=56}:{rank:number;size?:number}){const r=RANKS[rank]??RANKS[0];return <View accessibilityLabel={'Rang '+r.name} style={{width:size,height:size,alignItems:'center',justifyContent:'center'}}><Image source={RANK_ART[rank]??RANK_ART[0]} resizeMode="contain" style={{width:size,height:size}}/>{rank>=4&&<View pointerEvents="none" style={{position:'absolute',width:size*.86,height:size*.86,borderRadius:size,borderWidth:Math.max(1,size*.025),borderColor:r.color}}/>}</View>;}
 
 /** Compact badge: medal + rank name (trainer card). */
 export function RankBadgeV2({player,now=Date.now(),size=34}:{player:PlayerV2;now?:number;size?:number}){const s=pvpView(player,now),r=RANKS[s.rank];return <View testID="rank-badge" style={{flexDirection:'row',alignItems:'center',gap:6,paddingHorizontal:8,paddingVertical:3,borderRadius:18,backgroundColor:'#00000033',borderWidth:1,borderColor:r.color}}><RankMedalV2 rank={s.rank} size={size}/><Label small bold color={r.color}>{r.name}</Label></View>;}
@@ -21,7 +21,7 @@ export function RankCardV2({player,now}:{player:PlayerV2;now:number}){
  return <Panel style={{flexDirection:'row',alignItems:'center',gap:12}}><RankMedalV2 rank={s.rank} size={56}/><View style={{flex:1,gap:4}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:6}}><Text style={{fontFamily:font,fontSize:22,fontWeight:'900',color:r.color}}>{r.name}</Text><View style={{flex:1}}/><View style={{flexDirection:'row',alignItems:'center',gap:4}}><Glyph name="cup" size={17}/><Label small>{s.points} · {s.daysLeft}d</Label></View></View>
   <View accessibilityLabel={s.next?'Op weg naar '+s.next.name:'Hoogste rang'} style={{flexDirection:'row',alignItems:'center',gap:6}}><View style={{flex:1,height:12,borderRadius:6,backgroundColor:'#345A49',overflow:'hidden'}}><View style={{height:12,width:(s.progress*100+'%') as `${number}%`,backgroundColor:r.color}}/></View><RankMedalV2 rank={s.next?s.rank+1:s.rank} size={22}/></View>
- </View><Help title="Rang" body={'Win duels om punten 🏅 te halen: '+RANKS.map(x=>x.name).join(' → ')+'.\n\nElke maand begint een nieuw seizoen. Dan krijg je een beloning voor je hoogste rang en zakken je punten half terug naar 1000.\n\n🥇 Goud en hoger: ook een 🥚 cocon. 💎 Platina en 👑 Kampioen: ook een zeldzame bug.'}/></Panel>;
+ </View><Help title="Rang" body={'Win duels om punten 🏅 te halen: '+RANKS.map(x=>x.name).join(' → ')+'.\n\nElke maand begint een nieuw seizoen. Dan krijg je een beloning voor je hoogste rang en zakken je punten half terug naar 1000.\n\nGoud en hoger: ook een cocon. Platina en hoger: ook een held item. Master heeft de hoogste beloning.'}/></Panel>;
 }
 
 /** Shown for three days after a season ended: what you won. */

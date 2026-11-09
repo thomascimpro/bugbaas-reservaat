@@ -9,8 +9,46 @@ import {ensureField} from '../game/fieldV2';
 import type {PlayerV2} from '../game/typesV2';
 import type {ArcadeTicket} from '../game/arcade/tapDuel';
 import {ARCADE_RANKED_PAIR_MS,ARCADE_RANKED_TTL_MS,arcadeRankedEloDelta,arcadeRankedRatingChange,freshArcadeRanked} from '../game/arcade/ranked';
-import {arcadeRankedDuelKey,arcadeRankedRankKey,completeRanked,expireRankedDuels,findRankedCandidate,rankedOwnDuelId,rankedStartKeys,rankedSubmitKeys,readRankedDuel,startRanked} from '../server/arcadeRankedV3';
+import {arcadeRankedDuelKey,arcadeRankedRankKey,completeRanked,expireRankedDuels,findRankedCandidate,rankedOwnDuelId,rankedStartKeys,rankedSubmitKeys,readRankedDuel,startRanked,ensureArcadeSeason} from '../server/arcadeRankedV3';
 import type {ArcadeRankedDuel} from '../server/arcadeRankedV3';
+import {RANKS,rankOf,rankStep,softReset} from '../game/ranksV3';
+import {rankedBot} from '../game/arcade/rankedBots';
+import {ARCADE_GAMES} from '../game/arcade/games';
+
+test('eight ranks have22 contiguous steps and capped monthly soft reset',()=>{
+ assert.equal(RANKS.length,8);assert.equal(rankStep(1370).name,'Goud II');assert.equal(rankStep(1370).next,1400);
+ assert.equal(rankOf(1149),0);assert.equal(rankOf(1150),1);assert.equal(rankOf(2049),6);assert.equal(rankOf(2050),7);assert.equal(rankStep(2050).next,null);
+ assert.equal(softReset(2050),1525);assert.equal(softReset(4000),1600);assert.equal(softReset(900),1000);
+ for(const game of ARCADE_GAMES){const low=rankedBot(game.id,1000,42),high=rankedBot(game.id,2050,42);assert.ok(low.name.startsWith('Bot '));assert.ok(low.score>0&&high.score>low.score);assert.ok(high.rating>low.rating);}
+});
+
+test('solo ranked alternates real saved scores with optional bots and caps bot starts at five',async()=>{
+ const f=await fixture(['alice']);try{
+  let bots=0,waiting=0;
+  for(let i=0;i<12;i++){const t=await f.start('alice',null,randomUUID(),true),d=(await readRankedDuel(f.store,t))!;f.now+=35000;
+   const result=await f.accept('alice',t.id,d.bot?d.bot.score+10:100);
+   if(d.bot){bots++;assert.equal(result.ranked!.status,'completed');assert.equal(result.ranked!.bot,true);assert.ok(result.ranked!.delta>0);}
+   else{waiting++;assert.equal(result.ranked!.status,'waiting');assert.equal(result.ranked!.delta,0);}
+  }
+  assert.equal(bots,5);assert.equal(waiting,7);const p=await f.get('alice');assert.equal(p.arcade!.ranked!.bots,5);assert.equal(p.arcade!.ranked!.season!.played,5);
+  const ranks=await f.store.query!<any>('v2ArcadeRanks',[]);assert.deepEqual(ranks.map(r=>r.uid),['alice']);
+ }finally{f.store.close();}
+});
+
+test('available player score takes priority on a would-be bot turn',async()=>{
+ const f=await fixture();try{
+  const a=await f.start('alice');f.now+=35000;await f.accept('alice',a.id,200);
+  await f.store.run([pk('bob')],d=>{const p=document<PlayerV2>(d,pk('bob'))!;p.arcade={day:'2026-11-04',rewarded:0,dailyDust:0,dailyXP:0,first:false,best:{},completed:0,ranked:{...freshArcadeRanked(f.now),starts:1}};});
+  const t=await f.start('bob',undefined,randomUUID(),true);assert.equal(t.ranked!.side,'to');assert.equal(t.target.kind,'player');assert.equal((await readRankedDuel(f.store,t))!.bot,undefined);assert.equal((await f.get('bob')).arcade!.ranked!.bots??0,0);
+ }finally{f.store.close();}
+});
+
+test('season rewards use highest rank, pay once, retain bugs and do not reward empty months',()=>{
+ const p=player('season'),r=freshArcadeRanked(NOW);ensureArcadeSeason(p,r,NOW);r.rating=2050;r.season!.best=2050;r.season!.played=5;r.season!.wins=1;
+ const bugs=structuredClone(p.specimens),before=p.go!.dust,items=p.go!.items.thorn,next=Date.UTC(2026,11,1);
+ ensureArcadeSeason(p,r,next);assert.equal(r.rating,1525);assert.equal(p.go!.dust-before,11000);assert.equal(p.go!.items.thorn-items,1);assert.equal(r.season!.history[0].fastTMs,2);assert.equal(r.season!.history[0].chargedTMs,2);assert.deepEqual(p.specimens,bugs);
+ const dust=p.go!.dust;ensureArcadeSeason(p,r,next);assert.equal(p.go!.dust,dust);ensureArcadeSeason(p,r,Date.UTC(2027,1,1));assert.equal(p.go!.dust,dust);assert.equal(r.season!.history.length,1);
+});
 
 const NOW=Date.UTC(2026,10,4,12),pk=(uid:string)=>'v2Players:'+uid,rk=(uid:string,id:string)=>'v2ArcadeRuns:'+uid+'-'+id;
 function player(uid:string){
@@ -22,9 +60,9 @@ async function fixture(uids=['alice','bob','charlie']){
  for(const uid of uids)await store.run([pk(uid)],d=>d.set(pk(uid),player(uid)));
  const get=(uid:string)=>store.run([pk(uid)],d=>document<PlayerV2>(d,pk(uid))!);
  const run=(uid:string,id:string)=>store.run([rk(uid,id)],d=>document<ArcadeTicket>(d,rk(uid,id))!);
- async function start(uid:string,forced?:ArcadeRankedDuel|null,runId:string=randomUUID()){
+ async function start(uid:string,forced?:ArcadeRankedDuel|null,runId:string=randomUUID(),bots=false){
   const p=await get(uid),candidate=forced===null?undefined:forced??await findRankedCandidate(store,p,'great',now);
-  return store.run(rankedStartKeys(uid,runId,candidate),d=>{const current=document<PlayerV2>(d,pk(uid))!,t=startRanked(d,current,current.go!.team,'great',runId,now,candidate);current.revision++;d.set(pk(uid),current);return t;});
+  return store.run(rankedStartKeys(uid,runId,candidate),d=>{const current=document<PlayerV2>(d,pk(uid))!,t=startRanked(d,current,current.go!.team,'great',runId,now,candidate,bots);current.revision++;d.set(pk(uid),current);return t;});
  }
  // These are trusted replay outputs; replay/command validation is covered by the integration tests.
  async function accept(uid:string,id:string,score:number,dust=75,forfeit=false){
@@ -37,10 +75,10 @@ async function fixture(uids=['alice','bob','charlie']){
  return {store,get,run,start,accept,get now(){return now;},set now(value:number){now=value;}};
 }
 
-test('ranked Elo uses the original400 expectation,40/32/24 factors and100 floor',()=>{
- const r=freshArcadeRanked(NOW);assert.equal(arcadeRankedRatingChange(r,1000,'win').delta,20);assert.equal(arcadeRankedRatingChange(r,1000,'loss').delta,-20);assert.equal(arcadeRankedRatingChange(r,1000,'draw').delta,0);
- assert.equal(arcadeRankedRatingChange({...r,wins:10},1000,'win').delta,16);assert.equal(arcadeRankedRatingChange({...r,rating:1500,wins:10},1500,'win').delta,12);
- assert.equal(arcadeRankedRatingChange({...r,rating:100},1000,'loss').rating,100);assert.ok(arcadeRankedEloDelta(900,1300,1,32)>arcadeRankedEloDelta(1300,900,1,32));
+test('ranked Elo uses the 400 expectation, fixed40 factor and1000 floor',()=>{
+ const r=freshArcadeRanked(NOW);assert.equal(arcadeRankedRatingChange(r,1000,'win').delta,20);assert.equal(arcadeRankedRatingChange(r,1000,'loss').delta,0);assert.equal(arcadeRankedRatingChange(r,1000,'draw').delta,0);
+ assert.equal(arcadeRankedRatingChange({...r,wins:10},1000,'win').delta,20);assert.equal(arcadeRankedRatingChange({...r,rating:1500,wins:10},1500,'win').delta,20);
+ assert.equal(arcadeRankedRatingChange({...r,rating:1000},1000,'loss').rating,1000);assert.ok(arcadeRankedEloDelta(900,1300,1,32)>arcadeRankedEloDelta(1300,900,1,32));
 });
 
 test('a lone player records a ready score, gets no invented opponent/Elo, and remains playable offline',async()=>{
@@ -55,7 +93,7 @@ test('a saved score becomes a real same-rules duel; both Elo changes and the win
  const f=await fixture();try{const a=await f.start('alice');f.now+=35000;await f.accept('alice',a.id,100);const b=await f.start('bob');
   assert.equal(b.ranked!.side,'to');assert.deepEqual([b.game,b.seed,b.rules,b.challenge,b.league],[a.game,a.seed,a.rules,a.challenge,a.league]);assert.equal(b.target.score,100);assert.equal(b.target.kind,'player');f.now+=35000;
   const receipt=await f.accept('bob',b.id,120);assert.equal(receipt.ranked!.status,'completed');assert.equal(receipt.ranked!.delta,20);assert.equal(receipt.ranked!.bonusDust,25);assert.equal(receipt.dust,100);
-  const one=await f.get('alice'),two=await f.get('bob');assert.equal(one.arcade!.ranked!.rating,980);assert.equal(two.arcade!.ranked!.rating,1020);assert.equal(one.arcade!.last!.ranked!.result,'loss');assert.equal(two.arcade!.ranked!.history.length,1);const dust=two.go!.dust;
+  const one=await f.get('alice'),two=await f.get('bob');assert.equal(one.arcade!.ranked!.rating,1000);assert.equal(two.arcade!.ranked!.rating,1020);assert.equal(one.arcade!.last!.ranked!.result,'loss');assert.equal(two.arcade!.ranked!.history.length,1);const dust=two.go!.dust;
   await f.accept('bob',b.id,99999);await f.accept('alice',a.id,99999);assert.equal((await f.get('bob')).go!.dust,dust);assert.equal((await f.get('bob')).arcade!.ranked!.history.length,1);assert.equal((await f.get('alice')).arcade!.ranked!.history.length,1);
  }finally{f.store.close();}
 });

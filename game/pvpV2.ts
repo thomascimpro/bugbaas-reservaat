@@ -15,28 +15,14 @@ import type {PlayerV2,Specimen} from './typesV2';
 import {WALK_WEIGHTS} from './walkingV2';
 
 /** PvP goals: season rank (Brons–Kampioen), a daily 5-win reward track and a weekly themed cup. All server-side. */
-export const RANKS=[
- {id:'bronze',name:'Brons',emoji:'🥉',color:'#C98A4B',min:0},
- {id:'silver',name:'Zilver',emoji:'🥈',color:'#C9D3DA',min:1100},
- {id:'gold',name:'Goud',emoji:'🥇',color:'#F2C94C',min:1250},
- {id:'platinum',name:'Platina',emoji:'💎',color:'#7FE0E6',min:1400},
- {id:'champion',name:'Kampioen',emoji:'👑',color:'#F2A33A',min:1600},
-] as const;
-export type RankIndex=0|1|2|3|4;
-export const rankOf=(points:number):RankIndex=>{let i=0;for(let r=0;r<RANKS.length;r++)if(points>=RANKS[r].min)i=r;return i as RankIndex;};
-export const seasonKey=(now:number)=>new Date(now).toISOString().slice(0,7);
+import {RANKS,rankOf,SEASON_REWARDS,seasonKey,softReset} from './ranksV3';
+import type {RankIndex} from './ranksV3';
+export {RANKS,rankOf,SEASON_REWARDS,seasonKey,softReset};
+export type {RankIndex};
 export function seasonDaysLeft(now:number){const d=new Date(now),end=Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1);return Math.max(1,Math.ceil((end-now)/86400000));}
 /** Soft reset at a new month: halfway back to 1000. */
-export const softReset=(points:number)=>Math.round(1000+(points-1000)/2);
 /** Points for a win against the computer (also the cup): big steps at the start, smaller near the top. Losses against the computer cost nothing. */
 export const npcWinPoints=(points:number,cup=false)=>Math.round(Math.max(3,16-(points-1000)/40)*(cup?1.25:1));
-export const SEASON_REWARDS=[
- {dust:500,nets:5,cocoon:false,bug:false},
- {dust:1000,nets:10,cocoon:false,bug:false},
- {dust:2000,nets:15,cocoon:true,bug:false},
- {dust:3000,nets:20,cocoon:true,bug:true},
- {dust:5000,nets:30,cocoon:true,bug:true},
-] as const;
 
 export type TrackSlot='dust'|'nets'|'tm'|'cocoon'|'bug';
 export const TRACK:readonly {kind:TrackSlot;emoji:string;name:string}[]=[
@@ -75,7 +61,7 @@ export function ensurePvp(p:PlayerV2,now:number):PvpProgress{
  const v=g.pvp??={version:1,season:seasonKey(now),points:start,best:start,seasonWins:0,day:dayV2(now),track:[],rewards:[],week:cupWeek(now),cupWins:[],cupClaimed:false,done:[]};
  if(v.season!==seasonKey(now)){
   // Lazy season end: reward by highest rank of the old season (only if you won at least once), then a soft reset.
-  if(v.seasonWins>0){const rank=rankOf(v.best),r=SEASON_REWARDS[rank],seed=p.uid+':season:'+v.season;g.dust+=r.dust;grantField(p,{blue:r.nets},now);const cocoon=r.cocoon?addRewardCocoon(p,seed,now):false;if(r.cocoon&&!cocoon)g.dust+=1000;const bug=r.bug?grantRewardBug(p,seed,now):null;v.lastSeason={season:v.season,rank,dust:r.dust+(r.cocoon&&!cocoon?1000:0),nets:r.nets,cocoon,...(bug?{species:bug.species}:{}),at:now};}
+  if(v.seasonWins>0){const rank=rankOf(v.best),r=SEASON_REWARDS[rank],seed=p.uid+':season:'+v.season;g.dust+=r.dust;grantField(p,{blue:r.nets},now);const fast=Math.floor(r.tms/2)+(r.tms%2&&rng(seed+':tm')()<.5?1:0);g.fastTMs+=fast;g.chargedTMs+=r.tms-fast;if(r.held)g.items.thorn++;const medal='arena-season:'+v.season+':'+RANKS[rank].id;if(!p.medals.includes(medal))p.medals.push(medal);const cocoon=r.cocoon?addRewardCocoon(p,seed,now):false;if(r.cocoon&&!cocoon)g.dust+=1000;const bug=r.bug?grantRewardBug(p,seed,now):null;v.lastSeason={season:v.season,rank,dust:r.dust+(r.cocoon&&!cocoon?1000:0),nets:r.nets,cocoon,...(bug?{species:bug.species}:{}),at:now};}
   v.season=seasonKey(now);v.points=softReset(v.points);v.best=v.points;v.seasonWins=0;p.revision++;
  }
  if(v.day!==dayV2(now)){v.day=dayV2(now);v.track=[];v.rewards=[];}
@@ -167,6 +153,6 @@ export function makeCupBattle(p:PlayerV2,ids:unknown,id:string,now:number):GoBat
 export const arenaName=(league:keyof typeof LEAGUES)=>LEAGUES[league].name;
 /** Read-only summary for the screen (never mutates; also correct just after midnight before the server rolled over). */
 export function pvpView(p:PlayerV2,now:number){
- const v=p.go?.pvp,points=v?.season===seasonKey(now)?v.points:v?softReset(v.points):Math.round(p.go?.rating??1000),rank=rankOf(points),next=rank<4?RANKS[rank+1]:null,from=RANKS[rank].min,today=v?.day===dayV2(now),week=v?.week===cupWeek(now);
+ const v=p.go?.pvp,points=v?.season===seasonKey(now)?v.points:v?softReset(v.points):Math.round(p.go?.rating??1000),rank=rankOf(points),next=rank<RANKS.length-1?RANKS[rank+1]:null,from=RANKS[rank].min,today=v?.day===dayV2(now),week=v?.week===cupWeek(now);
  return {points,rank,next,progress:next?Math.max(0,Math.min(1,(points-from)/(next.min-from))):1,daysLeft:seasonDaysLeft(now),track:today?v!.track:[],rewards:today?v!.rewards:[],cupWins:week?v!.cupWins.length:0,cupClaimed:!!(week&&v!.cupClaimed),last:v?.last,lastSeason:v?.lastSeason&&now-v.lastSeason.at<3*86400000?v.lastSeason:undefined};
 }

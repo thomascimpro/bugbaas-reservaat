@@ -2,6 +2,10 @@
 
 Versie 3 — 4 november 2026.
 
+**Uitvoering 9 november:** [0.1.38](../releases/0.1.38.md) bouwt de nieuwe onderbalk en één gedeelde Arcade-rang voor alle zeven games. Ranked wisselt zonder spelersscores score achterlaten en optionele botduels af; echte spelersscores krijgen voorrang. De concrete Arcade-regels in het releasebewijs vervangen hiervoor het eerdere voorstel voor uitsluitend Strijd. Claude's overgedragen animaties/materialen blijven behouden. Het onderstaande afzonderlijke Arena-ontwerp is niet volledig als nieuwe Arena-ladder geïmplementeerd.
+
+**Ontwerpaanvulling 9 november (voorstel, nog niet gebouwd):** [Strijd, acht rangen en seizoensbeloningen](STRIJD_RANGEN_SEIZOENEN_20261109.md). Sluit aan op de voorgestelde onderbalk Kaart/Bugs/Arcade/Tas, met Strijd binnen Arcade. Bevat expliciet de voorgestelde wijziging dat vaste computertrainers Arena-punten kunnen geven zodat de klim ook solo werkt. Geen gameplay-, belonings-, account- of databasewijziging door deze ontwerpaanvulling; de beschreven cijfers zijn startwaarden voor een speeltest.
+
 **Laatste gebruikersbesluit:** behoud de originele BugBaas-mechanics en kopieer de bestaande spelcode. Verbeter alleen gericht met squadsteun, betrouwbare invoer/rewards en duidelijke gamekeuze/ranked. De hieronder nog genoemde eerdere remakes zijn historische uitvoeringsdetails; de originele beweging, sprongen, towers, powerups, combo’s en levels gaan voor. Claude doet presentatie/3D/animaties.
 
  Opdracht: dezelfde professionele natuurwereld en bediening in kaart, verzamelen, upgraden, Arcade en gevecht. Codex bewaakt het geheel, spelmechanieken, balans, bronnenonderzoek en gerichte bug-/speltests. Claude verzorgt schermindeling, visuele uitvoering, 3D en animaties binnen de previews. Sol 6.1 op zeer hoog verzorgt technische modules en integratie. De gebruiker heeft deze verdeling en uitvoering gevraagd. Dit plan vervangt conflicterende taakverdelingen in oudere voorstellen; bestaande werkbestanden blijven behouden.
