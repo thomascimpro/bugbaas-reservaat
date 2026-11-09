@@ -5,7 +5,8 @@ import {dayV2} from './safariV2';
  * Normal moving: 1 bug per 200 m (5/km). A real workout (sustained brisk walking or running) counts double: 10/km.
  * Bugs are random wild spawns at your spot (same species/rarity/shiny odds as the map), always caught, no net used.
  * Every 10th bug of the day is a jackpot: the rarest bug of that spot. Daily cap keeps it fair. */
-export const WALK_CATCH={step:200,workoutPace:1.75,maxPace:7,dailyCap:120,jackpotEvery:10,perCall:5} as const;
+// workoutMaxPace (balance 9 Nov): double credit only at walking/running pace; cycling (> 12.6 km/h) counts once.
+export const WALK_CATCH={step:200,workoutPace:1.75,workoutMaxPace:3.5,maxPace:7,dailyCap:120,jackpotEvery:10,perCall:5} as const;
 export type WalkDayV2={day:string;caught:number;meters:number;workoutMeters:number;credit:number;pace?:number;workout?:boolean};
 
 export function walkDay(p:PlayerV2,now:number):WalkDayV2{
@@ -16,7 +17,7 @@ export function walkDay(p:PlayerV2,now:number):WalkDayV2{
 /** Add plausible distance (m/s between fixes). Returns how many bugs may be granted now; the rest stays as credit. */
 export function creditWalk(w:WalkDayV2,meters:number,speed:number):number{
  if(!(meters>0)||!(speed>0)||speed>WALK_CATCH.maxPace)return 0;
- w.pace=w.pace===undefined?speed:w.pace*.7+speed*.3;w.workout=w.pace>=WALK_CATCH.workoutPace;
+ w.pace=w.pace===undefined?speed:w.pace*.7+speed*.3;w.workout=w.pace>=WALK_CATCH.workoutPace&&w.pace<=WALK_CATCH.workoutMaxPace;
  w.meters+=meters;if(w.workout)w.workoutMeters+=meters;
  const left=Math.max(0,WALK_CATCH.dailyCap-w.caught);
  w.credit=Math.min(left*WALK_CATCH.step,w.credit+meters*(w.workout?2:1));

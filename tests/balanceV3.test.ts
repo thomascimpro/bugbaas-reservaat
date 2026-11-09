@@ -19,3 +19,9 @@ test('extra coin sources fill the same shop wallet and ignore invalid amounts',(
  assert.equal(p.go!.gyms!.coins,45);assert.equal(p.go!.gyms!.earned,0,'extra coins do not use the daily gym cap');
  const fresh={} as unknown as PlayerV2;grantCoins(fresh,10);assert.equal(fresh.go,undefined);
 });
+
+import {WALK_CATCH} from '../game/walkCatchV2';
+test('walk catch doubles only at walking/running pace, not on a bike',()=>{
+ assert.ok(WALK_CATCH.workoutPace<WALK_CATCH.workoutMaxPace&&WALK_CATCH.workoutMaxPace<WALK_CATCH.maxPace);
+ assert.ok(WALK_CATCH.workoutMaxPace*3.6<=13,'double credit stops at ~12.6 km/h');
+});

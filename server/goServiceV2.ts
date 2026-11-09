@@ -145,11 +145,11 @@ export class GoServiceV2{
    if(b.plaagbende.crew){if(b.phase!=='finished'||b.settled)return;b.settled=true;const result=settleCrew(p,b.plaagbende.crew,b.winner===0,b.id,now);b.plaagbende.rewarded=result.crew.rewarded;b.plaagbende.rescued=result.rescued?.species;reward=result;}else reward=settlePlaag(p,b,now);
    if(!reward)return;b.rewards=[{dust:reward.dust,xp:reward.xp,fastTMs:0,chargedTMs:0}];this.noteBattle(p,b,0,now);if(reward.rescued)this.note(p,'catch','plaag:'+b.id,reward.rescued,now);p.revision++;return;}
   if(b.phase!=='finished'||b.settled)return;b.settled=true;const players=b.players.slice(0,b.training?1:2).map(id=>this.get(d,id,now));
-  const expected=1/(1+10**((b.ratings[1]-b.ratings[0])/400));b.delta=b.ranked&&b.winner!==null?Math.round(24*((b.winner===0?1:0)-expected)):0;
+  /* Balance 9 Nov: a ranked battle that ends within 30 s (e.g. an instant forfeit) still counts for rating but pays no dust/XP; stops two-account farming. */const quick=now-b.createdAt<30000;const expected=1/(1+10**((b.ratings[1]-b.ratings[0])/400));b.delta=b.ranked&&b.winner!==null?Math.round(24*((b.winner===0?1:0)-expected)):0;
   b.rewards=[];
   for(let i=0;i<players.length;i++){
    const p=players[i],g=p.go!,won=b.winner===i,delta=i===0?b.delta:-b.delta,before={dust:g.dust,xp:g.trainer!.xp,fastTMs:g.fastTMs,chargedTMs:g.chargedTMs};
-   if(b.ranked){g.ratedCount=(g.ratedCount??0)+1;g.rating=Math.max(0,g.rating+delta);if(b.winner!==null)won?g.wins++:g.losses++;g.dust+=won?500:100;if(won)grantXP(p,250);if(g.ratedCount===1){const random=rng(b.id+p.uid);random()<.5?g.fastTMs++:g.chargedTMs++;}}
+   if(b.ranked){g.ratedCount=(g.ratedCount??0)+1;g.rating=Math.max(0,g.rating+delta);if(b.winner!==null)won?g.wins++:g.losses++;if(!quick){g.dust+=won?500:100;if(won)grantXP(p,250);}if(g.ratedCount===1){const random=rng(b.id+p.uid);random()<.5?g.fastTMs++:g.chargedTMs++;}}
    b.rewards.push({dust:g.dust-before.dust,xp:g.trainer!.xp-before.xp,fastTMs:g.fastTMs-before.fastTMs,chargedTMs:g.chargedTMs-before.chargedTMs});this.noteBattle(p,b,i as Side,now);settlePvp(p,b,now,i as Side);
    g.history.unshift({id:b.id,opponent:b.names[1-i],result:b.winner===null?'Gelijkspel':won?'Gewonnen':'Verloren',delta,at:now});g.history=g.history.slice(0,30);p.revision++;if(!b.training)d.set('v2GoRanks:'+p.uid,{uid:p.uid,name:p.name,rating:g.rating,wins:g.wins});
   }

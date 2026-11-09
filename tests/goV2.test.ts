@@ -59,9 +59,10 @@ test('ranked results report actual persisted rewards including capped XP and sur
  const store=new SqliteStore(':memory:');try{
   const a=player('a'),b=player('b');a.go!.trainer!.xp=levelXP(40)-80;
   for(const p of [a,b])await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));
-  const service=new GoServiceV2(store,'local',()=>NOW);let av=await service.state('a'),bv=await service.state('b');
+  let clock=NOW;const service=new GoServiceV2(store,'local',()=>clock);let av=await service.state('a'),bv=await service.state('b');
   av=await service.command('a',{type:'goQueue',commandId:randomUUID(),expectedRevision:av.player.revision});
   bv=await service.command('b',{type:'goQueue',commandId:randomUUID(),expectedRevision:bv.player.revision});
+  clock=NOW+31000;// a real fight of 31 s: quick forfeits pay no dust/XP since balance 9 Nov
   const command={type:'goAct',action:'forfeit',value:null,commandId:randomUUID(),expectedRevision:bv.player.revision};
   const lost=await service.command('b',command),again=await service.command('b',command);av=await service.state('a');
   const win=av.goBattle!.rewards![av.goBattle!.side],loss=lost.goBattle!.rewards![lost.goBattle!.side];
@@ -127,5 +128,17 @@ test('choosing the same buddy preserves partial distance and replay is inert; sw
   await store.run(['v2Players:buddy-progress'],d=>{(d.get('v2Players:buddy-progress') as PlayerV2).field!.walk!.meters=1475;});
   v=await service.command(p.uid,change);assert.equal(v.player.go!.buddyMeters,1350);assert.equal(v.player.field!.walk!.meters-v.player.go!.buddyMeters,125);
   v=await service.command(p.uid,select('caught-1'));assert.equal(v.player.go!.buddyMeters,1350);assert.deepEqual(v.player.go!.candy,candy);assert.equal(v.player.go!.trainer!.xp,xp);
+ }finally{store.close();}
+});
+
+test('an instant ranked forfeit counts for rating but pays no duel dust or XP (anti-farming, balance 9 Nov)',async()=>{
+ const store=new SqliteStore(':memory:');try{
+  const a=player('a'),b=player('b');for(const p of [a,b])await store.run(['v2Players:'+p.uid],d=>d.set('v2Players:'+p.uid,p));
+  const service=new GoServiceV2(store,'local',()=>NOW);let av=await service.state('a'),bv=await service.state('b');
+  av=await service.command('a',{type:'goQueue',commandId:randomUUID(),expectedRevision:av.player.revision});
+  bv=await service.command('b',{type:'goQueue',commandId:randomUUID(),expectedRevision:bv.player.revision});
+  const lost=await service.command('b',{type:'goAct',action:'forfeit',value:null,commandId:randomUUID(),expectedRevision:bv.player.revision});av=await service.state('a');
+  const win=av.goBattle!.rewards![av.goBattle!.side],loss=lost.goBattle!.rewards![lost.goBattle!.side];
+  assert.equal(win.xp,0);assert.equal(loss.dust,0);assert.ok(av.player.go!.rating>a.go!.rating,'rating still counts');
  }finally{store.close();}
 });
