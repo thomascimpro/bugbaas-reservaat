@@ -30,22 +30,22 @@ test('arenas have Dutch names everywhere and keep their internal ids',()=>{
 });
 
 test('rank thresholds go Brons → Zilver → Goud → Platina → Kampioen and Zilver takes about two days of computer wins',()=>{
- assert.deepEqual(RANKS.map(r=>r.name),['Brons','Zilver','Goud','Platina','Kampioen']);
- assert.equal(rankOf(0),0);assert.equal(rankOf(1099),0);assert.equal(rankOf(1100),1);assert.equal(rankOf(1250),2);assert.equal(rankOf(1400),3);assert.equal(rankOf(1600),4);assert.equal(rankOf(9999),4);
+ assert.deepEqual(RANKS.map(r=>r.name),['Brons','Zilver','Goud','Platina','Diamant','Elite','Kampioen','Master']);
+ assert.equal(rankOf(0),0);assert.equal(rankOf(1149),0);assert.equal(rankOf(1150),1);assert.equal(rankOf(1300),2);assert.equal(rankOf(1450),3);assert.equal(rankOf(1600),4);assert.equal(rankOf(9999),7);
  let points=1000,wins=0;while(rankOf(points)<1){points+=npcWinPoints(points);wins++;}
- assert.ok(wins>=5&&wins<=10,'Zilver after '+wins+' wins (5 count per day)');
+ assert.ok(wins>=5&&wins<=12,'Zilver after '+wins+' wins (5 count per day)');
  assert.ok(npcWinPoints(1600)<npcWinPoints(1000));assert.ok(npcWinPoints(1000,true)>npcWinPoints(1000));
- assert.equal(softReset(1400),1200);assert.equal(softReset(800),900);assert.equal(softReset(1000),1000);
+ assert.equal(softReset(1400),1200);assert.equal(softReset(800),1000);assert.equal(softReset(1000),1000);
 });
 
 test('a new month rewards the best rank of the old season once and moves points halfway back to 1000',()=>{
- const p=player(),v=ensurePvp(p,NOW);v.points=1400;v.best=1420;v.seasonWins=4;
+ const p=player(),v=ensurePvp(p,NOW);v.points=1500;v.best=1520;v.seasonWins=4;
  const dust=p.go!.dust,nets=p.field!.inventory.blue,bugs=p.specimens.length,cocoons=p.go!.cocoons!.items.length,next=Date.UTC(2026,10,1,8);
  ensurePvp(p,next);
- assert.equal(v.season,'2026-11');assert.equal(v.points,1200);assert.equal(v.best,1200);assert.equal(v.seasonWins,0);
+ assert.equal(v.season,'2026-11');assert.equal(v.points,1250);assert.equal(v.best,1250);assert.equal(v.seasonWins,0);
  assert.equal(v.lastSeason!.rank,3);assert.equal(v.lastSeason!.season,'2026-10');
- assert.ok(p.go!.dust>=dust+3000);assert.equal(p.field!.inventory.blue,nets+20);assert.equal(p.go!.cocoons!.items.length,cocoons+1);
- assert.equal(p.specimens.length,bugs+1);const bug=p.specimens.at(-1)!;assert.equal(bug.source,'pvp');assert.ok(bugRarity(bug.species)>=3);assert.equal(bug.go!.level,15);
+ assert.ok(p.go!.dust>=dust+3000);assert.equal(p.field!.inventory.blue,nets+15);assert.equal(p.go!.cocoons!.items.length,cocoons+1);
+ assert.equal(p.specimens.length,bugs);assert.equal(p.go!.items.thorn,1);assert.equal(p.go!.fastTMs+p.go!.chargedTMs,2);
  const after=structuredClone(p);ensurePvp(p,next+3600000);assert.deepEqual(p.go,after.go);assert.equal(p.specimens.length,after.specimens.length);
  // No wins in a season: soft reset only, no free reward.
  const q=player('q'),w=ensurePvp(q,NOW);w.points=1200;const qd=q.go!.dust;ensurePvp(q,next);assert.equal(w.points,1100);assert.equal(q.go!.dust,qd);assert.equal(w.lastSeason,undefined);

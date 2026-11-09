@@ -28,6 +28,6 @@ export const isJackpot=(n:number)=>n>0&&n%WALK_CATCH.jackpotEvery===0;
 
 /** One line for the Android notification and the in-game summary: the same numbers in both places. */
 export function walkTodayText(p:PlayerV2,now:number){
- const w=p.go?.auto.walk,today=w&&w.day===dayV2(now)?w:null,km=((p.field?.walk?.dayMeters??0)/1000).toLocaleString('nl-NL',{minimumFractionDigits:1,maximumFractionDigits:1});
+ const day=dayV2(now),w=p.go?.auto.walk,today=w&&w.day===day?w:null,km=((p.field?.daily.day===day?p.field.walk?.dayMeters??0:0)/1000).toLocaleString('nl-NL',{minimumFractionDigits:1,maximumFractionDigits:1});
  return (today?.workout?'🏃 ':'👟 ')+km+' km · 🐞 '+(today?.caught??0);
 }

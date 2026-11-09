@@ -3,9 +3,9 @@ import {Pressable,Text,View} from 'react-native';
 import {font} from '../uiV2';
 import {ArcadeIcon} from './ArcadeArtV3';
 
-export type MainTabV3='map'|'arcade'|'bugs'|'battle';
+export type MainTabV3='map'|'arcade'|'bugs'|'bag';
 export const MAIN_TAB_HEIGHT=72;
-const tabs=[{id:'map',label:'Kaart'},{id:'arcade',label:'Arcade'},{id:'bugs',label:'Bugs'},{id:'battle',label:'Strijd'}] as const;
+const tabs=[{id:'map',label:'Kaart'},{id:'bugs',label:'Bugs'},{id:'arcade',label:'Arcade'},{id:'bag',label:'Tas'}] as const;
 
 /** The host owns navigation and safe-area; atlas names come from assets/v3/arcade/source.json. */
 export function MainTabsV3({active,onChange}:{active:MainTabV3;onChange:(tab:MainTabV3)=>void}){

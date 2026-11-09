@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.DistanceRecord
@@ -63,11 +64,12 @@ class BugBaasAdventureSyncModule(private val context: ReactApplicationContext) :
     scope.cancel(); super.invalidate()
   }
   private fun available() = HealthConnectClient.getSdkStatus(context) == HealthConnectClient.SDK_AVAILABLE
+  private fun backgroundSupported(client: HealthConnectClient) = client.features.getFeatureStatus(HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND) == HealthConnectFeatures.FEATURE_STATUS_AVAILABLE
   private fun unavailable(reason: String): WritableMap = Arguments.createMap().apply { putBoolean("available", false); putString("reason", reason) }
 
   /** Update only our existing location notification; never start or restart GPS. */
   @ReactMethod
-  fun updateAutoCatchNotification(text: String, promise: Promise) {
+  fun updateAutoCatchNotification(text: String, at: Double, promise: Promise) {
     context.runOnUiQueueThread {
       try {
         val manager = context.getSystemService(NotificationManager::class.java)
@@ -80,11 +82,26 @@ class BugBaasAdventureSyncModule(private val context: ReactApplicationContext) :
         for (entry in active) {
           val updated = Notification.Builder.recoverBuilder(context, entry.notification)
             .setContentTitle(text.take(80)).setContentText(null).setStyle(null)
-            .setShowWhen(false).setOnlyAlertOnce(true).build()
+            .setWhen(if (at.isFinite()) at.toLong().coerceAtMost(System.currentTimeMillis()) else System.currentTimeMillis())
+            .setShowWhen(true).setOnlyAlertOnce(true).build()
           manager.notify(entry.tag, entry.id, updated)
         }
         promise.resolve(active.isNotEmpty())
       } catch (_: Exception) { promise.resolve(false) }
+    }
+  }
+
+  @ReactMethod
+  fun backgroundReadStatus(promise: Promise) {
+    if (!available()) { promise.resolve(Arguments.createMap().apply { putBoolean("supported", false); putBoolean("granted", false) }); return }
+    scope.launch {
+      try {
+        val client = HealthConnectClient.getOrCreate(context)
+        promise.resolve(Arguments.createMap().apply {
+          putBoolean("supported", backgroundSupported(client))
+          putBoolean("granted", client.permissionController.getGrantedPermissions().contains(HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND))
+        })
+      } catch (_: Exception) { promise.resolve(Arguments.createMap().apply { putBoolean("supported", false); putBoolean("granted", false) }) }
     }
   }
 
@@ -94,7 +111,8 @@ class BugBaasAdventureSyncModule(private val context: ReactApplicationContext) :
     scope.launch {
       try {
         val client = HealthConnectClient.getOrCreate(context)
-        if (client.permissionController.getGrantedPermissions().containsAll(permissions)) { promise.resolve(true); return@launch }
+        val requestedPermissions = if (backgroundSupported(client)) permissions + HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND else permissions
+        if (client.permissionController.getGrantedPermissions().containsAll(requestedPermissions)) { promise.resolve(true); return@launch }
         context.runOnUiQueueThread {
           val activity = context.currentActivity
           if (activity == null || permissionPromise != null) { promise.resolve(false); return@runOnUiQueueThread }
@@ -102,7 +120,7 @@ class BugBaasAdventureSyncModule(private val context: ReactApplicationContext) :
             permissionPromise = promise
             if (Build.VERSION.SDK_INT >= 34) {
               val permissionActivity = activity as? PermissionAwareActivity ?: throw IllegalStateException("Activity cannot request health permissions")
-              permissionActivity.requestPermissions(permissions.toTypedArray(), requestCode, PermissionListener { code, requested, grants ->
+              permissionActivity.requestPermissions(requestedPermissions.toTypedArray(), requestCode, PermissionListener { code, requested, grants ->
                 if (code != requestCode) false else {
                   val waiting = permissionPromise; permissionPromise = null
                   waiting?.resolve(permissions.all { permission ->
@@ -112,7 +130,7 @@ class BugBaasAdventureSyncModule(private val context: ReactApplicationContext) :
                   true
                 }
               })
-            } else activity.startActivityForResult(permissionContract.createIntent(context, permissions), requestCode)
+            } else activity.startActivityForResult(permissionContract.createIntent(context, requestedPermissions), requestCode)
           } catch (_: Exception) { permissionPromise = null; promise.resolve(false) }
         }
       } catch (_: Exception) { promise.resolve(false) }

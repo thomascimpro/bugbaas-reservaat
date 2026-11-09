@@ -9,8 +9,13 @@ import {ARCADE_RANKED_DAILY_STARTS,ARCADE_RANKED_PAIR_MS,ARCADE_RANKED_TTL_MS,ar
 import type {ArcadeRankedOutcome,ArcadeRankedProgress,ArcadeRankedRank,ArcadeRankedResult,ArcadeRankedTicket} from '../game/arcade/ranked';
 import {document} from './store';
 import type {Documents,Store} from './store';
+import {ARCADE_RANKED_BOTS_PER_DAY} from '../game/arcade/ranked';
+import {rankedBot} from '../game/arcade/rankedBots';
+import type {RankedBot} from '../game/arcade/rankedBots';
+import {rankOf,seasonKey,softReset} from '../game/ranksV3';
+import {paySeasonV3} from '../game/seasonRewardsV3';
 
-export type ArcadeRankedDuel={id:string;status:'recording'|'ready'|'claimed'|'completed'|'cancelled';game:ArcadeGameId;league:League;rules:string;seed:number;challenge:string;createdAt:number;updatedAt:number;expiresAt:number;fromUid:string;fromName:string;fromRun:string;fromRating:number;fromScore?:number;fromAcceptedAt?:number;toUid?:string;toName?:string;toRun?:string;toScore?:number;settledAt?:number;fromResult?:ArcadeRankedResult;toResult?:ArcadeRankedResult};
+export type ArcadeRankedDuel={id:string;status:'recording'|'ready'|'claimed'|'completed'|'cancelled';game:ArcadeGameId;league:League;rules:string;seed:number;challenge:string;createdAt:number;updatedAt:number;expiresAt:number;fromUid:string;fromName:string;fromRun:string;fromRating:number;fromScore?:number;fromAcceptedAt?:number;toUid?:string;toName?:string;toRun?:string;toScore?:number;settledAt?:number;fromResult?:ArcadeRankedResult;toResult?:ArcadeRankedResult;season?:string;bot?:RankedBot};
 type RankedRun=ArcadeTicket&{mode?:'rotation'|'practice'|'ranked';ranked?:ArcadeRankedTicket};
 type RankedProgress=ArcadeProgress&{ranked?:ArcadeRankedProgress};
 type RankedReceipt=ArcadeReceipt&{ranked?:ArcadeRankedResult};
@@ -24,13 +29,21 @@ const day=(now:number)=>new Date(now).toISOString().slice(0,10);
 const realUid=(uid:string)=>!!uid&&!['random','bugbot','computer'].includes(uid)&&!uid.startsWith('npc:');
 function progress(p:PlayerV2,now:number){
  const a:RankedProgress=p.arcade??={day:day(now),rewarded:0,dailyDust:0,dailyXP:0,first:false,best:{},completed:0};
- const r=a.ranked??=freshArcadeRanked(now);if(r.day!==day(now)){r.day=day(now);r.starts=0;}
+ const r=a.ranked??=freshArcadeRanked(now);if(r.day!==day(now)){r.day=day(now);r.starts=0;r.bots=0;}
+ ensureArcadeSeason(p,r,now);
  r.recent=Object.fromEntries(Object.entries(r.recent).filter(([,at])=>Number.isFinite(at)&&now-at<ARCADE_RANKED_PAIR_MS));r.history=r.history.slice(-20);r.waiting=r.waiting.slice(-20);return r;
 }
 function rankSnapshot(p:PlayerV2){return (p.arcade as RankedProgress|undefined)?.ranked??freshArcadeRanked(0);}
-function publishRank(d:Documents,p:PlayerV2,now:number){const r=progress(p,now);d.set(arcadeRankedRankKey(p.uid),{uid:p.uid,name:p.name,rating:r.rating,highest:r.highest,wins:r.wins,losses:r.losses,draws:r.draws,updatedAt:now} satisfies ArcadeRankedRank);}
+function publishRank(d:Documents,p:PlayerV2,now:number){const r=progress(p,now);d.set(arcadeRankedRankKey(p.uid),{uid:p.uid,name:p.name,rating:r.rating,highest:r.highest,wins:r.wins,losses:r.losses,draws:r.draws,updatedAt:now,season:seasonKey(now)} satisfies ArcadeRankedRank);}
+export function ensureArcadeSeason(p:PlayerV2,r:ArcadeRankedProgress,now:number){
+ const key=seasonKey(now);let s=r.season;
+ if(!s){r.rating=Math.max(1000,r.rating);r.season={key,played:0,wins:0,best:r.rating,promoted:rankOf(r.rating),history:[]};return;}
+ if(s.key===key)return;
+ const history=[...s.history];if(s.played>=5&&s.wins>0)history.unshift(paySeasonV3(p,s.key,rankOf(s.best),now));
+ r.rating=softReset(r.rating);r.season={key,played:0,wins:0,best:r.rating,promoted:rankOf(r.rating),history:history.slice(0,24)};p.revision++;
+}
 function sameRules(ticket:RankedRun,duel:ArcadeRankedDuel){return ticket.game===duel.game&&ticket.rules===duel.rules&&ticket.seed===duel.seed&&ticket.challenge===duel.challenge&&ticket.league===duel.league;}
-function validDuel(d:ArcadeRankedDuel,p:PlayerV2,league:League,now:number){return d.status==='ready'&&!d.toUid&&realUid(d.fromUid)&&d.fromUid!==p.uid&&d.league===league&&ARCADE_GAMES.some(g=>g.id===d.game)&&d.rules===gameRules(d.game)&&Number.isSafeInteger(d.seed)&&Number.isSafeInteger(d.fromScore)&&d.fromScore!>0&&Number.isFinite(d.expiresAt)&&d.expiresAt>now&&Number.isFinite(d.fromAcceptedAt)&&d.fromAcceptedAt!<=now&&now-d.fromAcceptedAt!<ARCADE_RANKED_TTL_MS&&!((rankSnapshot(p).recent[d.fromUid]??-Infinity)>now-ARCADE_RANKED_PAIR_MS);}
+function validDuel(d:ArcadeRankedDuel,p:PlayerV2,league:League,now:number){return d.status==='ready'&&!d.bot&&(d.season??seasonKey(d.createdAt))===seasonKey(now)&&!d.toUid&&realUid(d.fromUid)&&d.fromUid!==p.uid&&d.league===league&&ARCADE_GAMES.some(g=>g.id===d.game)&&d.rules===gameRules(d.game)&&Number.isSafeInteger(d.seed)&&Number.isSafeInteger(d.fromScore)&&d.fromScore!>0&&Number.isFinite(d.expiresAt)&&d.expiresAt>now&&Number.isFinite(d.fromAcceptedAt)&&d.fromAcceptedAt!<=now&&now-d.fromAcceptedAt!<ARCADE_RANKED_TTL_MS&&!((rankSnapshot(p).recent[d.fromUid]??-Infinity)>now-ARCADE_RANKED_PAIR_MS);}
 export async function findRankedCandidate(store:Store,p:PlayerV2,league:League,now:number):Promise<ArcadeRankedDuel|undefined>{
  if(!store.query)return undefined;const rows=await store.query<ArcadeRankedDuel>('v2ArcadeDuels',[{field:'status',op:'==',value:'ready'},{field:'league',op:'==',value:league},{field:'expiresAt',op:'>=',value:now}],undefined,100),rating=rankSnapshot(p).rating;
  const valid=rows.filter(d=>validDuel(d,p,league,now)),rankKeys=[...new Set(valid.map(d=>arcadeRankedRankKey(d.fromUid)))],ratings=rankKeys.length?await store.run(rankKeys,d=>Object.fromEntries(valid.map(v=>[v.fromUid,document<ArcadeRankedRank>(d,arcadeRankedRankKey(v.fromUid))?.rating??v.fromRating]))):{};
@@ -41,7 +54,7 @@ export function rankedStartKeys(uid:string,runId:string,candidate?:ArcadeRankedD
 }
 export function rankedSubmitKeys(ticket:ArcadeTicket,duel?:ArcadeRankedDuel){const ranked=(ticket as RankedRun).ranked;return [...new Set([pk(ticket.owner),runKey(ticket.owner,ticket.id),arcadeRankedRankKey(ticket.owner),...(ranked?[arcadeRankedDuelKey(ranked.duel)]:[]),...(duel?[pk(duel.fromUid),runKey(duel.fromUid,duel.fromRun),arcadeRankedRankKey(duel.fromUid),...(duel.toUid&&duel.toRun?[pk(duel.toUid),runKey(duel.toUid,duel.toRun),arcadeRankedRankKey(duel.toUid)]:[])]:[])])];}
 export async function readRankedDuel(store:Store,ticket:ArcadeTicket){const ranked=(ticket as RankedRun).ranked;return ranked?store.run([arcadeRankedDuelKey(ranked.duel)],d=>document<ArcadeRankedDuel>(d,arcadeRankedDuelKey(ranked.duel))):undefined;}
-export function startRanked(d:Documents,p:PlayerV2,ids:unknown,league:unknown,runId:string,now:number,candidate?:ArcadeRankedDuel):ArcadeTicket{
+export function startRanked(d:Documents,p:PlayerV2,ids:unknown,league:unknown,runId:string,now:number,candidate?:ArcadeRankedDuel,allowBots=false):ArcadeTicket{
  check(realUid(p.uid),'Alleen spelers doen mee aan de ranglijst.');check(typeof runId==='string'&&/^[\w-]{16,80}$/.test(runId),'Kies een geldige ronde.');
  const existing=document<RankedRun>(d,runKey(p.uid,runId));if(existing){check(existing.owner===p.uid&&existing.mode==='ranked','Deze ronde bestaat al.');return existing;}
  const squad=arcadeSquad(p,ids,league),r=progress(p,now);check(r.starts<ARCADE_RANKED_DAILY_STARTS,'Je hebt vandaag alle 25 rangrondes gespeeld.');
@@ -52,13 +65,23 @@ export function startRanked(d:Documents,p:PlayerV2,ids:unknown,league:unknown,ru
  let side:'from'|'to'='from';
  if(duel){side='to';duel.status='claimed';duel.toUid=p.uid;duel.toName=p.name;duel.toRun=runId;duel.updatedAt=now;r.recent[duel.fromUid]=now;progress(from!,now).recent[p.uid]=now;from!.revision++;d.set(pk(from!.uid),from);publishRank(d,from!,now);}
  else{const id=rankedOwnDuelId(p.uid,runId),old=document<ArcadeRankedDuel>(d,arcadeRankedDuelKey(id));check(!old,'Deze rangronde bestaat al.');const choice=p.uid+':'+r.day+':'+r.starts,game=ARCADE_GAMES[arcadeSeed('ranked-game:'+choice)%ARCADE_GAMES.length].id,rules=gameRules(game),challenge='ranked:'+id+':'+rules+':'+league;duel={id,status:'recording',game,league:league as League,rules,seed:arcadeSeed('ranked-seed:'+choice),challenge,createdAt:now,updatedAt:now,expiresAt:now+ARCADE_RANKED_TTL_MS,fromUid:p.uid,fromName:p.name,fromRun:runId,fromRating:r.rating};}
- const ticket:RankedRun={id:runId,owner:p.uid,mode:'ranked',ranked:{duel:duel.id,side},game:duel.game,challenge:duel.challenge,rules:duel.rules,league:duel.league,seed:duel.seed,squad,issuedAt:now,expiresAt:now+86400000,target:side==='to'?{name:duel.fromName,score:duel.fromScore!,kind:'player'}:{name:'Wacht op tegenstander',score:0,kind:'computer'},status:'started'};
+ duel.season??=seasonKey(now);
+ // Always seed real-player challenges. Only alternate unmatched starts may use a bot.
+ if(side==='from'&&allowBots&&r.starts%2===1&&(r.bots??0)<ARCADE_RANKED_BOTS_PER_DAY){duel.bot=rankedBot(duel.game,r.rating,duel.seed);r.bots=(r.bots??0)+1;}
+ const ticket:RankedRun={id:runId,owner:p.uid,mode:'ranked',ranked:{duel:duel.id,side},game:duel.game,challenge:duel.challenge,rules:duel.rules,league:duel.league,seed:duel.seed,squad,issuedAt:now,expiresAt:now+86400000,target:side==='to'?{name:duel.fromName,score:duel.fromScore!,kind:'player'}:duel.bot?{name:duel.bot.name,score:duel.bot.score,kind:'computer'}:{name:'Score achterlaten',score:0,kind:'computer'},status:'started'};
  r.starts++;p.arcade!.active=runId;d.set(runKey(p.uid,runId),ticket);d.set(arcadeRankedDuelKey(duel.id),duel);publishRank(d,p,now);return ticket;
 }
 function updateReceipt(p:PlayerV2,t:RankedRun,result:ArcadeRankedResult){check(t.receipt,'De bevestiging ontbreekt.');(t.receipt as RankedReceipt).ranked=result;t.receipt.won=result.result==='win';t.receipt.feedback=result.status==='waiting'?'Score staat klaar · wachten op tegenstander':result.status==='cancelled'?'Rangronde afgesloten':result.result==='draw'?'Gelijkspel':result.result==='win'?'Rangduel gewonnen!':'Rangduel verloren';if(p.arcade?.last?.runId===t.id)p.arcade.last=t.receipt;}
 function terminalReceipt(t:RankedRun):RankedReceipt{return {runId:t.id,score:0,dust:0,xp:0,qualified:false,won:false,personalBest:false,game:t.game,endReason:'time'};}
 function bonus(p:PlayerV2,t:RankedRun,now:number){const rt=t.ranked!;if(!rt.baseEligible||rt.bonusPaid||!t.receipt||t.receipt.dust<=0)return 0;rt.bonusPaid=true;p.go!.dust+=25;t.receipt.dust+=25;if(day(rt.acceptedAt!)===day(now)&&p.arcade?.day===day(now))p.arcade.dailyDust+=25;return 25;}
-function record(p:PlayerV2,t:RankedRun,opponent:PlayerV2,opponentScore:number,outcome:ArcadeRankedOutcome,opponentRating:number,now:number,duel:ArcadeRankedDuel){const r=progress(p,now),change=arcadeRankedRatingChange(r,opponentRating,outcome);r.rating=change.rating;r.highest=Math.max(r.highest,r.rating);if(outcome==='win')r.wins++;else if(outcome==='loss')r.losses++;else r.draws++;r.recent[opponent.uid]=now;r.waiting=r.waiting.filter(id=>id!==duel.id);r.history=[...r.history,{duel:duel.id,game:duel.game,opponent:opponent.name,result:outcome,score:t.receipt!.score,opponentScore,delta:change.delta,rating:r.rating,at:now}].slice(-20);const result:ArcadeRankedResult={duel:duel.id,status:'completed',result:outcome,opponent:opponent.name,opponentScore,rating:r.rating,delta:change.delta,bonusDust:outcome==='win'?bonus(p,t,now):0,at:now};updateReceipt(p,t,result);return result;}
+function record(p:PlayerV2,t:RankedRun,opponent:Pick<PlayerV2,'uid'|'name'>,opponentScore:number,outcome:ArcadeRankedOutcome,opponentRating:number,now:number,duel:ArcadeRankedDuel){
+ const r=progress(p,now),change=arcadeRankedRatingChange(r,opponentRating,outcome);r.rating=change.rating;r.highest=Math.max(r.highest,r.rating);
+ if(outcome==='win')r.wins++;else if(outcome==='loss')r.losses++;else r.draws++;
+ const s=r.season!;s.played++;if(outcome==='win')s.wins++;s.best=Math.max(s.best,r.rating);
+ const promoted=rankOf(r.rating),promotionDust=Math.max(0,promoted-s.promoted)*100;s.promoted=Math.max(s.promoted,promoted);p.go!.dust+=promotionDust;
+ r.recent[opponent.uid]=now;r.waiting=r.waiting.filter(id=>id!==duel.id);r.history=[...r.history,{duel:duel.id,game:duel.game,opponent:opponent.name,result:outcome,score:t.receipt!.score,opponentScore,delta:change.delta,rating:r.rating,at:now}].slice(-20);
+ const result:ArcadeRankedResult={duel:duel.id,status:'completed',result:outcome,opponent:opponent.name,opponentScore,rating:r.rating,delta:change.delta,bonusDust:outcome==='win'?bonus(p,t,now):0,at:now,...(duel.bot?{bot:true}:{}),...(promotionDust?{promotionDust}:{})};updateReceipt(p,t,result);return result;
+}
 
 /** Called only after submitArcade has server-replayed the input (or with explicit forfeit=true).
  * Receipt score/audit are trusted server outputs; this API accepts no client score.
@@ -72,6 +95,15 @@ export function completeRanked(d:Documents,p:PlayerV2,raw:ArcadeTicket,now:numbe
  else check(ticket.status==='accepted'&&ticket.receipt&&ticket.audit,'Speel de ronde eerst uit.');
  const receipt=ticket.receipt!;check(Number.isSafeInteger(receipt.score)&&receipt.score>=0,'Deze score klopt niet.');
  if(rt.acceptedAt===undefined){rt.acceptedAt=now;rt.baseEligible=!forfeit&&receipt.dust>0;rt.bonusPaid=false;}
+ if((duel.season??seasonKey(duel.createdAt))!==seasonKey(now)){
+  // A result from last month must never change the new ladder or earn a second season.
+  duel.status='cancelled';duel.updatedAt=now;const r=progress(p,now);r.waiting=r.waiting.filter(id=>id!==duel.id);updateReceipt(p,ticket,{duel:duel.id,status:'cancelled',rating:r.rating,delta:0,bonusDust:0,at:now});d.set(arcadeRankedDuelKey(duel.id),duel);d.set(runKey(p.uid,ticket.id),ticket);publishRank(d,p,now);return receipt;
+ }
+ if(duel.bot){
+  const outcome:ArcadeRankedOutcome=forfeit?'loss':receipt.score>duel.bot.score?'win':receipt.score<duel.bot.score?'loss':'draw';
+  duel.fromResult=record(p,ticket,{uid:'bot:'+duel.id,name:duel.bot.name},duel.bot.score,outcome,duel.bot.rating,now,duel);duel.fromScore=receipt.score;duel.toScore=duel.bot.score;duel.status='completed';duel.settledAt=now;duel.updatedAt=now;
+  d.set(arcadeRankedDuelKey(duel.id),duel);d.set(runKey(p.uid,ticket.id),ticket);publishRank(d,p,now);return receipt;
+ }
  if(rt.side==='from'){
   if(forfeit||receipt.score<=0||!ticket.audit?.inputCount){duel.status='cancelled';duel.updatedAt=now;updateReceipt(p,ticket,{duel:duel.id,status:'cancelled',rating:progress(p,now).rating,delta:0,bonusDust:0,at:now});}
   else{duel.status='ready';duel.fromScore=receipt.score;duel.fromAcceptedAt=now;duel.expiresAt=now+ARCADE_RANKED_TTL_MS;duel.updatedAt=now;const r=progress(p,now);duel.fromRating=r.rating;r.waiting=[...r.waiting.filter(id=>id!==duel.id),duel.id].slice(-20);updateReceipt(p,ticket,{duel:duel.id,status:'waiting',rating:r.rating,delta:0,bonusDust:0,at:now});}d.set(arcadeRankedDuelKey(duel.id),duel);d.set(runKey(p.uid,ticket.id),ticket);publishRank(d,p,now);return receipt;

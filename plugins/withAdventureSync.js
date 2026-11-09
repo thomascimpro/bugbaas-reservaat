@@ -12,7 +12,7 @@ module.exports=config=>{
  config=withAndroidManifest(config,mod=>{
   const manifest=mod.modResults.manifest;
   manifest['uses-permission']??=[];
-  for(const permission of ['android.permission.health.READ_STEPS','android.permission.health.READ_DISTANCE'])if(!manifest['uses-permission'].some(p=>p.$['android:name']===permission))manifest['uses-permission'].push({$:{'android:name':permission}});
+  for(const permission of ['android.permission.health.READ_STEPS','android.permission.health.READ_DISTANCE','android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND'])if(!manifest['uses-permission'].some(p=>p.$['android:name']===permission))manifest['uses-permission'].push({$:{'android:name':permission}});
   manifest.queries??=[{}];manifest.queries[0].package??=[];
   if(!manifest.queries[0].package.some(p=>p.$['android:name']==='com.google.android.apps.healthdata'))manifest.queries[0].package.push({$:{'android:name':'com.google.android.apps.healthdata'}});
   const app=manifest.application[0];app.activity??=[];app['activity-alias']??=[];

@@ -72,7 +72,7 @@ test('notification and in-game summary show the same line: today km and today wa
  const {store,service,p}=setup();try{
   walk(service,p,1,1.3);const line=walkTodayText(p,NOW+10*60000);
   assert.match(line,/^👟 /);assert.ok(line.endsWith('🐞 5'),line);
-  assert.equal(walkTodayText(p,NOW+2*86400000).endsWith('🐞 0'),true,'a new day starts at zero');assert.equal(p.go!.auto.walk!.day,dayV2(NOW));
+  assert.equal(walkTodayText(p,NOW+2*86400000),'👟 0,0 km · 🐞 0','a stale player snapshot must not show yesterday’s kilometres');assert.equal(p.go!.auto.walk!.day,dayV2(NOW));
  }finally{store.close();}
 });
 

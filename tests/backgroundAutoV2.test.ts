@@ -47,6 +47,32 @@ test('native command queue serializes foreground/background work and releases af
  const result=await Promise.allSettled([work('foreground'),work('background',true),work('foreground-next')]);assert.equal(max,1);assert.deepEqual(seen,['foreground','background','foreground-next']);assert.deepEqual(result.map(r=>r.status),['fulfilled','rejected','fulfilled']);
 });
 
+test('background health reads are throttled, unavailable health never stops GPS, and a lost health receipt is resumed first',async()=>{
+ const session:AutoSessionV2={uid:'owner'};let reads=0;const sent:import('../game/typesV2').CommandV2[]=[],snapshot={source:'health-connect' as const,dayUTC:'2026-10-26',capturedAt:NOW,steps:2800,meters:2000};
+ await assert.rejects(backgroundAutoTickV2(session,[location()],io({readHealth:async()=>{reads++;return snapshot;},command:async c=>{sent.push(structuredClone(c));throw {status:0};}})));
+ assert.equal(session.pending!.type,'adventureSync');const receipt=structuredClone(session.pending!);sent.length=0;
+ await backgroundAutoTickV2(session,[location()],io({readHealth:async()=>{reads++;return snapshot;},command:async c=>{sent.push(structuredClone(c));return view(8);}}));
+ assert.deepEqual(sent[0],receipt);assert.equal(sent[1].type,'worldLocate');assert.equal(sent[1].expectedRevision,8);assert.equal(reads,1);assert.equal(session.pending,undefined);
+ const gps:unknown[]=[];await backgroundAutoTickV2({uid:'owner'},[location()],io({readHealth:async()=>{throw new Error('permission revoked');},command:async c=>{gps.push(c.type);return view(2);}}));assert.deepEqual(gps,['worldLocate']);
+});
+
+test('Health Connect is credited and notified during background walking without reopening, with no double rewards',async()=>{
+ const store=new SqliteStore(':memory:');let now=NOW;try{
+  const service=new GoServiceV2(store,'local',()=>now),uid='background-health';let v=await service.state(uid);
+  const send=async(type:string,data:Record<string,unknown>={})=>v=await service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});
+  const snapshot=()=>({source:'health-connect' as const,dayUTC:'2026-10-26',capturedAt:now,steps:now===NOW?0:2800,meters:now===NOW?0:2000});
+  await send('worldLocate',{fix:{...FIX,timestamp:now}});await send('adventureSync',{snapshot:snapshot()});await send('goAuto',{enabled:true});
+  const session:AutoSessionV2={uid};let reads=0;now+=1800000;
+  const api=io({now:()=>now,state:()=>service.state(uid),command:c=>service.command(uid,c),readHealth:async()=>{reads++;return snapshot();}});
+  v=(await backgroundAutoTickV2(session,[location(now,FIX.lat+.0002)],api))!;
+  assert.equal(v.player.field!.walk!.dayMeters,2000);assert.equal(v.player.go!.auto.walk!.caught,10);
+  const {autoNotificationTextV2}=await import('../src/backgroundAutoSessionV2');assert.equal(autoNotificationTextV2(v.player,now),'👟 2,0 km · 🐞 10');
+  now+=15000;await backgroundAutoTickV2(session,[],api);assert.equal(reads,1,'not read on every GPS event');
+  now+=60000;v=(await backgroundAutoTickV2(session,[location(now,FIX.lat+.0002)],api))!;
+  assert.equal(reads,2);assert.equal(v.player.field!.walk!.dayMeters,2000);assert.equal(v.player.go!.auto.walk!.caught,10,'the same provider distance is never awarded twice');
+ }finally{store.close();}
+});
+
 test('foreground handoff resolves a committed in-flight receipt before disabling with the current server revision',async()=>{
  const store=new SqliteStore(':memory:');let now=NOW;try{
   const service=new GoServiceV2(store,'local',()=>now),uid='handoff-owner';let v=await service.state(uid);const send=async(type:string,data:Record<string,unknown>)=>v=await service.command(uid,{type,...data,commandId:randomUUID(),expectedRevision:v.player.revision});await send('worldLocate',{fix:{...FIX,timestamp:now}});await send('goAuto',{enabled:true});
