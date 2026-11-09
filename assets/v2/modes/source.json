@@ -1,0 +1,39 @@
+{
+ "set": "play-mode-illustrations",
+ "created": "2026-11-09",
+ "tools": "Blender 5.1 (Cycles), own geometry; assets/3d/world-props/authoring/build_modes.py + hd_lib.py; HDRI CC0 Poly Haven (local)",
+ "license": "Own work CC0",
+ "use": "Strijd/Arcade mode cards and explanations",
+ "renders": [
+  {
+   "file": "mode-duel.webp",
+   "bytes": 14800,
+   "sha256": "b7e59544281dcd19acbca5beb6bfb344decb9d7e8e13bc6d86244d4563020282"
+  },
+  {
+   "file": "mode-beker.webp",
+   "bytes": 20672,
+   "sha256": "d54a83a9f1750cd9e9d8269ff4e35c9f6bfeb805f3b057c078ca3357af089aef"
+  },
+  {
+   "file": "mode-dag.webp",
+   "bytes": 14612,
+   "sha256": "71f644158e77f186d8b8bf8d47971f60f0b78fe024a5e9bfae43f62cf5528703"
+  },
+  {
+   "file": "mode-live.webp",
+   "bytes": 13726,
+   "sha256": "c31c93d1baabd8c1926cff2c7845d7b97a81819cbff327da09c014047f44b956"
+  },
+  {
+   "file": "mode-arcade.webp",
+   "bytes": 9278,
+   "sha256": "8f5726ad7e76b8b3a833d4d4d312a223d7515ed94c87b184a54d7ca6b327f9c6"
+  },
+  {
+   "file": "mode-wedstrijd.webp",
+   "bytes": 12504,
+   "sha256": "3ce115ac126e7fdc1daf803bcd40d47bafb305d60fcee42ba316596381f05ce2"
+  }
+ ]
+}

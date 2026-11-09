@@ -1,7 +1,7 @@
 import {gymBattleHint} from '../game/gymsV2';
 import React,{useContext,useEffect,useRef,useState} from 'react';
 
-import {Pressable,ScrollView,Text,TextInput,useWindowDimensions,View} from 'react-native';
+import {Image,Pressable,ScrollView,Text,TextInput,useWindowDimensions,View} from 'react-native';
 
 import {CHARGED,FAST,HELD,LEAGUES,movePool,stats,teamIssue} from '../game/goV2';
 
@@ -20,6 +20,7 @@ import {cupTheme,pvpView,suggestTeam} from '../game/pvpV2';
 import {TabsV2} from './TabsV2';
 import {PvpGainV2,RankCardV2,RankMedalV2,RewardTrackV2,SeasonNewsV2} from './PvpRankV2';
 import {ResultFxV3} from './ResultFxV3';
+import {MODE_ART,StrijdGuideV3} from './StrijdGuideV3';
 import {CupPanelV2} from './CupV2';
 
 import {Button,Counter,font,Glyph,Help,IconButton,Label,MotionPrefs,Panel,Title,v,Wash,useInfo} from './uiV2';
@@ -113,7 +114,8 @@ export function GoBattleV2({view,run,busy,now,open,active=true}:{view:GameViewV2
   <View style={{paddingHorizontal:18,paddingBottom:14,gap:2}}><Text accessibilityRole="header" style={{fontFamily:font,fontSize:36,fontWeight:'800',color:PO.text,textShadowColor:'#000A',textShadowOffset:{width:0,height:2},textShadowRadius:8}}>Strijd</Text><Text style={{fontFamily:font,fontSize:17,fontWeight:'700',color:PO.text,textShadowColor:'#000A',textShadowRadius:6}}>Team · CP {teamCp}</Text></View>
  </View><View style={{padding:16,paddingTop:12,gap:14}}>
 
-  <View testID="battle-tab" accessibilityRole="tablist" style={{flexDirection:'row',gap:6}}>{([{id:'duel',emoji:'⚔️',name:'Duel'},{id:'cup',emoji:cupTheme(now).emoji,name:'Beker'},{id:'daily',emoji:'🎯',name:'Dag'},{id:'rank',emoji:'🏅',name:'Rang'}] as const).map(t=>{const on=(mode==='live'?'duel':mode==='boss'?'daily':mode)===t.id;return <Pressable key={t.id} testID={'battle-tab-'+t.id} accessibilityRole="tab" accessibilityLabel={t.name} accessibilityState={{selected:on}} onPress={()=>setMode(t.id)} style={{flex:1,height:44,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:5,borderRadius:14,backgroundColor:on?PO.teal+'2E':PO.surface,borderWidth:on?1.5:1,borderColor:on?PO.tealText:PO.rim,boxShadow:on?'0px 0px 12px '+PO.teal+'55':undefined}}><Glyph name={t.id==='duel'?'swords':t.id==='cup'||t.id==='rank'?'cup':'research'} size={22}/><Text style={{fontFamily:font,fontSize:13,fontWeight:'800',color:on?PO.tealText:PO.text}}>{t.name}</Text></Pressable>;})}</View>
+  <StrijdGuideV3 player={p} onOpen={m=>setMode(m)}/>
+  <View testID="battle-tab" accessibilityRole="tablist" style={{flexDirection:'row',gap:6}}>{([{id:'duel',emoji:'⚔️',name:'Duel'},{id:'cup',emoji:cupTheme(now).emoji,name:'Beker'},{id:'daily',emoji:'🎯',name:'Dag'},{id:'rank',emoji:'🏅',name:'Rang'}] as const).map(t=>{const on=(mode==='live'?'duel':mode==='boss'?'daily':mode)===t.id;return <Pressable key={t.id} testID={'battle-tab-'+t.id} accessibilityRole="tab" accessibilityLabel={t.name} accessibilityState={{selected:on}} onPress={()=>setMode(t.id)} style={{flex:1,height:44,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:5,borderRadius:14,backgroundColor:on?PO.teal+'2E':PO.surface,borderWidth:on?1.5:1,borderColor:on?PO.tealText:PO.rim,boxShadow:on?'0px 0px 12px '+PO.teal+'55':undefined}}><Image source={MODE_ART[t.id]} style={{width:26,height:26}} accessibilityIgnoresInvertColors/><Text style={{fontFamily:font,fontSize:13,fontWeight:'800',color:on?PO.tealText:PO.text}}>{t.name}</Text></Pressable>;})}</View>
   {(mode==='daily'||mode==='boss')&&<View accessibilityRole="tablist" style={{flexDirection:'row',gap:8}}>{([{id:'daily',emoji:'🎯',name:'Dagstrijd'},{id:'boss',emoji:'👹',name:'Dagbaas'}] as const).map(tab=><Pressable key={tab.id} testID={'mode-'+tab.id} accessibilityRole="tab" accessibilityLabel={tab.name} accessibilityState={{selected:mode===tab.id}} onPress={()=>setMode(tab.id)} style={{flex:1,minHeight:40,flexDirection:'row',gap:6,alignItems:'center',justifyContent:'center',borderRadius:20,backgroundColor:mode===tab.id?'#FFFFFF1A':'transparent',borderWidth:1,borderColor:mode===tab.id?PO.rim:'transparent'}}><Glyph name={tab.id==='daily'?'research':'shield'} size={21}/><Text style={{fontFamily:font,fontSize:13,fontWeight:'700',color:mode===tab.id?PO.text:PO.muted}}>{tab.name}</Text></Pressable>)}</View>}
   {mode==='rank'&&<><RankCardV2 player={p} now={now}/><SeasonNewsV2 player={p} now={now}/><RewardTrackV2 player={p} now={now}/></>}
 

@@ -136,3 +136,13 @@ Gebruiker: "zet alles klaar voor codex dat hij het af kan maken, ook visueel". A
 - **Testwerkwijze:** de QA-server-kopie (`.local/claude-cocoon/.local/visual-server.ts`, buiten Git) zet een klare cocon klaar (`QA_COCOON`) en kiest het lokale raidgeheim opnieuw tot een gym binnen N s uitkomt (`QA_RAID=N`). Klokverschuiving werkt niet: de server weigert dan de GPS-meting als verouderd.
 - **Tests:** 723/723 en `tsc` groen (een kaarttest verwachtte `data-near` direct na de klasse; de attribuutvolgorde is aangepast).
 - **Voor Codex (spelregel, niet visueel):** het gymscherm opent op "Vechten" terwijl er een raid op die gym is. Overweeg "Raids" als starttab zolang er een raid loopt.
+
+## 2026-11-09 (3) — medailles, uitslag/gym-moment, munten, Strijd-uitleg, voorstel Arcade
+- **Medaillekast:** `game/medalsV3.ts`, `src/MedalCaseV3.tsx` in Doelen; 32 Blender-medailles (`assets/v2/medals/`, `build_medals.py`). Alleen weergave, uit bestaande tellers; de oude gouden rand op statistiektegels is weggehaald (één systeem).
+- **Uitslag:** `src/ResultFxV3.tsx` over het gevechtsresultaat (winst, verlies, gelijk) en "Gym veroverd!" in `GoGymsV2`. Duel tot verlies in de browser bekeken.
+- **Balans en munten:** zie `docs/design/arcade-strijd-20261109/VOORSTEL.md` §5 (7 km-cocon, cocon-XP, levelbeloning, extra muntbronnen + winkeluitleg).
+- **Strijd-uitleg:** `src/StrijdGuideV3.tsx` + tab-illustraties (`assets/v2/modes/`, `build_modes.py`), bekeken 390×844 en 320×568.
+- **Voor Codex:**
+  - het Arcade-voorstel §4 (jouw bestanden);
+  - de balans-/exploitpunten §5 (ranked-farming, NPC-rangsnelheid, dagelijkse ★3-bug, fietsvangst, arcade-XP, routes).
+- **Tests:** 728/728 en `tsc` groen.
