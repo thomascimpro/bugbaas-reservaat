@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
 import {Pressable,ScrollView,Text,View} from 'react-native';
 import {COCOON_CAP,COCOON_POOLS,COCOON_REWARDS,cocoonActive,cocoonChance,cocoonTier,cocoonWalked} from '../game/goCocoonsV2';
 import {RARITY_TIERS} from '../game/rarityDisplayV2';
@@ -11,6 +11,7 @@ import type {RunV2} from './ShopViewV2';
 import {SpriteView} from './artV2';
 import {FieldActivityArt} from './FieldArtV2';
 import {RevealV2} from './WorldEffectsV2';
+import {CocoonHatchFxV3} from './CocoonHatchFxV3';
 import {TabsV2} from './TabsV2';
 import {Button,Glyph,Help,Label,Panel,Title,useInfo,V} from './uiV2';
 
@@ -22,8 +23,12 @@ export function GoCocoonsV2({view,run,busy,now,embedded=false,open}:{view:GameVi
  const p=view.player,g=p.go?.cocoons,[selected,setSelected]=useState(''),[tab,setTab]=useState<CocoonTab>('cocoons'),[machine,setMachine]=useState('basic'),info=useInfo(),chosen=g?.items.find(c=>c.id===selected)??g?.items.find(c=>c.id===g.active?.id)??g?.items[0],active=chosen&&cocoonActive(p,chosen.id),walked=cocoonWalked(p,chosen?.id),ready=!!chosen&&!!active&&walked>=chosen.km*1000,blocked=!!p.go?.battle||!!p.go?.queue;
  const machines=[...(!g?.active?[{id:'basic',name:'Gratis'}]:[]),...(g?.incubators??[]).filter(i=>!g?.parallel?.some(a=>a.incubatorId===i.id)).map(i=>({id:i.id,name:'Extra · '+i.uses+'×'}))],selectedMachine=machines.find(i=>i.id===machine)??machines[0],activeCount=(g?.active?1:0)+(g?.parallel?.length??0);
  const last=g?.lastHatch,hatched=p.specimens.find(s=>s.id===last?.id),km=(n:number)=>(n/1000).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2}),pool=chosen?[...COCOON_POOLS[chosen.km]].sort((x,y)=>cocoonTier(x,chosen.km)-cocoonTier(y,chosen.km)||species(x).name.localeCompare(species(y).name)):[],freshHatch=!!last&&now>=last.at&&now-last.at<15000&&!g?.items.some(c=>c.id===selected);
+ // Celebrate a hatch that the server confirmed while this screen is open; reopening never replays an older one.
+ const seenHatch=useRef(last?.id),[celebrate,setCelebrate]=useState('');
+ useEffect(()=>{if(!last||last.id===seenHatch.current)return;seenHatch.current=last.id;if(Date.now()-last.at<15000)setCelebrate(last.id);},[last?.id]);
  const readyCount=(g?.items??[]).filter(c=>cocoonActive(p,c.id)&&cocoonWalked(p,c.id)>=c.km*1000).length,hasLast=!!last&&!freshHatch&&now>=last.at,shown:CocoonTab=tab==='pool'&&!chosen||tab==='last'&&!hasLast?'cocoons':tab;
  return <ScrollView contentContainerStyle={{padding:15,paddingTop:embedded?12:87,gap:12,paddingBottom:embedded?32:100}}>
+  {!!celebrate&&last?.id===celebrate&&<CocoonHatchFxV3 hatch={last} cp={hatched?.go?stats(hatched).cp:undefined} onClose={()=>setCelebrate('')} onView={hatched&&open?()=>{setCelebrate('');open('team',hatched.id);}:undefined}/>}
   {!embedded&&<Title>Cocons</Title>}
   <TabsV2 testID="cocoon-tabs" tab={shown} setTab={setTab} tabs={[{id:'cocoons',emoji:'🐣',name:'Cocons',line:'👟 Loop om te laten uitkomen',badge:readyCount},...(chosen?[{id:'pool' as const,emoji:'🎲',name:'Inhoud',line:'🎲 Wat zit in de '+chosen.km+' km-cocon?'}]:[]),{id:'machines',emoji:'🔥',name:'Machines',line:'🔥 Eén cocon per machine'},...(hasLast?[{id:'last' as const,emoji:'⭐',name:'Laatste',line:'⭐ Laatst uitgekomen'}]:[])]}/>
   {shown==='cocoons'&&<>

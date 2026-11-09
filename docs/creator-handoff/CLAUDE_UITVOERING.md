@@ -95,3 +95,27 @@ Gebruiker: "zet alles klaar voor codex dat hij het af kan maken, ook visueel". A
 - **Post-/natuur-GLB in vangscène:** bewust niet gedaan. De vangscène heeft een geschilderde HD-achtergrond; losse 3D-planten ervoor botsen met perspectief en licht. `Post.glb` is al 96 KB en natuur-GLB's zijn < 130 KB; ze blijven op de kaart.
 - **Naar Codex (niet headless te bewijzen):** autovangst-toast boven het net en vangstkaart P03-3 vragen een echte worp met precieze GPS. Headless blijft "GPS zoeken" staan. Het vangen/net/wandelen is Codex' lopende werk (`codex/catch-skill-walk-sync`). Daarom hier niet aangeraakt; graag bekijken op toestel of met jouw GPS-mock.
 - Claude-lijst hiermee af. Open voor een volgende ronde: nieuwe lowpoly-loopmodellen (geometrie) zijn de grootste resterende realisme-winst; materiaal alleen helpt beperkt.
+
+## 2026-11-09 — PR-01 cocon-uitkomstanimatie + voorstel ontbrekende animaties
+- **Gebouwd** (branch `claude/cocoon-hatch`, vanaf `main` 0.1.37, eigen worktree; gedeelde checkout en Codex-bron niet aangeraakt): nieuw `src/CocoonHatchFxV3.tsx`, ingehaakt in `src/GoCocoonsV2.tsx`. Speelt alleen na een door de server bevestigde `lastHatch` terwijl het scherm open is; heropenen speelt niets opnieuw. Beloningen zijn al geboekt; de animatie toont ze alleen.
+- **Verloop (~3,4 s):**
+  - cocon valt in en slingert aan zijn draad;
+  - steeds harder wiebelen in stoten, met lichtscheuren door de zijde;
+  - flits met stralen, blaadjes en sprankels;
+  - bug springt eruit en landt op een schaduw;
+  - "UITGEKOMEN!", naam, sterren en zeldzaamheid in tierkleur (shiny goud met extra ✦);
+  - CP, ✨ en snoep, daarna "Bekijk bug" / "Verder".
+
+  Tik = overslaan naar het resultaat; reduced motion = direct het resultaat; klank `grow` bij de flits, `reward`/`shiny` bij de bug.
+- **Getest:** `tsc` groen, 723/723 tests. Browser 390×844 en 320×568: echte server-claim van een 5 km-cocon, reeks in beeld, sluiten werkt, geen consolefouten (`.local/claude-cocoon/.local/hatch-ui/`). Op korte schermen staat het podium hoger, zodat de tekst de bug niet raakt. Native en reduced motion niet in de browser bekeken.
+- **Voorstel ontbrekende animaties/transities (code-inventaris, niet live doorgespeeld):**
+  1. Raidcocon komt uit: op kaart/raidscherm wisselt cocon → boss nu hard. Hergebruik dit uitkomstpatroon met raid-ei-art.
+  2. Trainer level-up: alleen een badge. Volledig scherm met level, beloningen en klank `reward`.
+  3. Gevechtsuitslag (gym/raid/ranked/bende): statische titel; klanken `win`/`lose` bestaan maar worden niet gebruikt. Overwinnings-/verliesanimatie.
+  4. Gym veroveren / verdediger plaatsen: geen teamkleur-flits.
+  5. Ruilen: geen ruilanimatie (twee bugs wisselen).
+  6. Buddy aaien/voeren: geen hartjes.
+  7. Schermovergangen: menupagina's wisselen hard. Korte slide/fade van 150–200 ms voor secundaire pagina's; tabs direct laten.
+  8. Klank: buiten Arcade/vangen bijna geen geluid (`click`, `buy`, `sell`, `win`, `lose`, `summon` ongebruikt).
+
+  Al aanwezig: vangen (net, wiebel, gevangen, shiny), post draaien, cadeau openen, evolutie/power-up, gevechtseffecten, Arcade-laden.
