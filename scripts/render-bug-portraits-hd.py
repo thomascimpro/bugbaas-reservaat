@@ -1,4 +1,5 @@
 """HD bug portraits in Blender (Cycles, forest HDRI, warm key + cool rim, soft contact shadow).
+Optional env: BB_DETAIL=subsurf|bevel (smoother forms), BB_SURFACE=1 (body-type materials as in-game), BB_SHADOW=1 (shadow catcher).
 Same framing as scripts/render-bug-portraits.mjs (orthographic, view dir from scripts/portrait-views.json, 85 % fill)
 and the same shiny recolour as src/bugModelV2.ts (luminance -> shadow/body/accent palette).
 Input: .local/portraits-hd/species.json (npx tsx .local/portraits-hd/export-species.mts), CC0 HDRI in .local/polyhaven/.
@@ -81,6 +82,27 @@ def add_detail(mode):
         nt.links.new(tc.outputs['Object'],nz.inputs['Vector']);bp=nt.nodes.new('ShaderNodeBump');bp.inputs['Strength'].default_value=.12;bp.inputs['Distance'].default_value=.002
         nt.links.new(nz.outputs['Fac'],bp.inputs['Height']);nt.links.new(bp.outputs['Normal'],b.inputs['Normal'])
 
+import re
+SOFT=re.compile(r'larva|grub|caterpillar|aphid|snailstage[12]|silverfish|termite|cicadastage1',re.I)
+FUR=re.compile(r'^bee(?!tle)|armabee|moth|spider|mosquito|hoverfly|cranefly|butterfly|swallowtail|monarch',re.I)
+SHELL=re.compile(r'beetle|scarab|chafer|weevil|ladybird|firefly|manticora|minotaur|golofa|titan|hercules|atlas|caucasus|neptune|rosalia|tortoise|earwig|cockroach|scorpion|kristal|lavaklauw',re.I)
+def apply_surface(model):
+    """Same body-type surfaces as the game (src/bugModelV2.ts bugSurface): soft bodies damp with sheen, furry bodies
+    velvet, hard shells polished. Glass, crystal, wings (transparent), metal and eyes stay as authored. BB_SURFACE=1."""
+    kind='soft' if SOFT.search(model) else 'fur' if FUR.search(model) else 'shell' if SHELL.search(model) else 'default'
+    def put(b,name,v):
+        if name in b.inputs:b.inputs[name].default_value=v
+    for mat in {m for o in bpy.data.objects if o.type=='MESH' for m in o.data.materials if m}:
+        nt=mat.node_tree;b=next((n for n in nt.nodes if n.type=='BSDF_PRINCIPLED'),None) if nt else None
+        if not b or getattr(mat,'blend_method','OPAQUE')=='BLEND' or b.inputs['Metallic'].default_value>=.5 or re.search(r'glass|crystal|cobweb|wing',mat.name,re.I):continue
+        if re.search(r'eye|sensor',mat.name,re.I):put(b,'Coat Weight',1.);put(b,'Coat Roughness',.05);continue
+        r=b.inputs['Roughness'].default_value
+        if kind=='soft':put(b,'Coat Weight',.2);put(b,'Coat Roughness',.4);put(b,'Roughness',max(r,.5));put(b,'Sheen Weight',.2);put(b,'Sheen Roughness',.55)
+        elif kind=='fur':put(b,'Coat Weight',.1);put(b,'Coat Roughness',.5);put(b,'Roughness',max(r,.6));put(b,'Sheen Weight',.25);put(b,'Sheen Roughness',.5)
+        elif kind=='shell':put(b,'Coat Weight',.85);put(b,'Coat Roughness',.1)
+        else:put(b,'Coat Weight',.4);put(b,'Coat Roughness',.24)
+    return kind
+
 def pose_idle():
     for arm in [o for o in bpy.data.objects if o.type=='ARMATURE']:
         acts=[ac for ac in bpy.data.actions if 'idle' in ac.name.lower()] or list(bpy.data.actions)
@@ -150,10 +172,12 @@ for s in SPECIES:
             try:o.data.set_sharp_from_angle(angle=math.radians(50))
             except Exception:pass
     if os.environ.get('BB_DETAIL'):add_detail(os.environ['BB_DETAIL'])
+    if os.environ.get('BB_SURFACE')=='1':apply_surface(s['model'])
     pose_idle();pts=world_points()
     if not pts:print('SKIP',s['id']);continue
     lo=Vector((min(p.x for p in pts),min(p.y for p in pts),min(p.z for p in pts)));hi=Vector((max(p.x for p in pts),max(p.y for p in pts),max(p.z for p in pts)));ctr=(lo+hi)/2
     ground.location.z=lo.z
+    if os.environ.get('BB_SHADOW')=='1':ground.hide_render=False;ground.is_shadow_catcher=True;ground.scale=((hi-lo).length*3,)*3;ground.location.x,ground.location.y=ctr.x,ctr.y
     d3=(s.get('view') or {}).get('dir') or [4,3.7,6];d=Vector((d3[0],-d3[2],d3[1])).normalized()   # three.js Y-up -> Blender Z-up
     cam.location=ctr+d*max(20,(hi-lo).length*4);cam.rotation_euler=(-d).to_track_quat('-Z','Y').to_euler();bpy.context.view_layer.update()
     inv=cam.matrix_world.inverted();ext=max(max(abs((inv@p).x),abs((inv@p).y)) for p in pts)
