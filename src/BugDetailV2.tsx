@@ -15,6 +15,7 @@ import {CollectionEvolutionV2,CollectionStatsV2,InfoDot} from './CollectionPrese
 import {BugStrengthV2} from './BugStrengthV2';
 import {GoTypes,GO_TYPES} from './GoTypeV2';
 import {RarityBadgeV2} from './RarityBadgeV2';
+import {CpArcV3,DetailBackdropV3} from './BugDetailArtV3';
 import {Scene} from './artV2';
 import {ShinyBackdropV2,ShinyMarkV2} from './WorldEffectsV2';
 import {useGoBack} from './GoBackV2';
@@ -55,7 +56,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
  return <View testID={'go-detail-'+s.id} onLayout={e=>{const {width,height}=e.nativeEvent.layout;if(Math.abs(height-box.h)>1||Math.abs(width-box.w)>1)setBox({w:width,h:height});}} style={{flex:1,backgroundColor:PO.surface}}>
   <ScrollView style={{flex:1,marginBottom:80}} contentContainerStyle={{flexGrow:1}}>
    <View style={{height:photoH,overflow:'hidden',backgroundColor:'#5E8C4A'}}>
-    <Scene index={0}/>
+    <DetailBackdropV3 specimen={s}/><CpArcV3 level={go.level} width={Math.min(box.w-40,artW*1.05)} top={66}/>
     {active&&s.shiny&&<View pointerEvents="none" style={{position:'absolute',inset:0,opacity:.5}}><ShinyBackdropV2/></View>}
     <View pointerEvents="none" style={{position:'absolute',left:0,right:0,top:14,alignItems:'center'}}><View accessibilityLabel={'CP '+st.cp} style={{flexDirection:'row',alignItems:'baseline',gap:6}}><Text style={[poText.onPhoto,{fontSize:18,fontWeight:'600'}]}>CP</Text><Text style={[poText.onPhoto,{fontSize:46,fontWeight:'300',letterSpacing:.5}]}>{st.cp}</Text>{s.shiny&&<ShinyMarkV2 size={26}/>}</View></View>
     <View pointerEvents="none" style={{position:'absolute',left:'50%',bottom:52,width:artW*.62,height:30,marginLeft:-artW*.31,borderRadius:artW,backgroundColor:'#1A2A1238',boxShadow:'0px 0px 18px 10px #1A2A1230'}}/>
@@ -80,7 +81,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
      <Text numberOfLines={1} style={[poText.title,{maxWidth:box.w-60}]}>{s.nickname||name}</Text>{!!s.nickname&&<Text style={t(13,'600',PO.muted)}>{name}</Text>}
     </Pressable>}
     <View testID="bug-identity" style={{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'center',gap:6}}><GoTypes species={s.species} compact/><RarityBadgeV2 species={s.species} compact/></View>
-    <View accessibilityLabel={'HP buiten gevecht: '+st.hp} style={{width:'68%',alignItems:'center',gap:5}}><PoBar value={st.hp} max={st.hp}/><Text style={t(13,'600',PO.muted)}>{st.hp+' / '+st.hp+' HP'}</Text></View>
+    <View accessibilityLabel={'HP buiten gevecht: '+st.hp} style={{width:'68%',alignItems:'center',gap:5}}><PoBar value={st.hp} max={st.hp} color="#8FD1A6"/><Text style={t(13,'600',PO.muted)}>{st.hp+' / '+st.hp+' HP'}</Text></View>
     <View testID="bug-resources" accessibilityLabel={g.dust+' stof, '+candy+' '+familyName(key)+'-nectar'+(xl>0?', '+xl+' XL-nectar':'')} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:34}}>
      <View style={{flexDirection:'row',alignItems:'center',gap:8}}><Glyph name="nectar" size={34}/><Text style={t(20)}>{g.dust.toLocaleString('nl-NL')}</Text></View>
      <View style={{flexDirection:'row',alignItems:'center',gap:8}}><CandyIconV2 family={key} size={34}/><Text style={t(20)}>{candy}</Text></View>
