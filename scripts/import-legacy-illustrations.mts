@@ -12,13 +12,20 @@ const slug=(value:string)=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
 // Explicit species matches only: do not use an adult illustration for a larva,
 // reuse the same picture for several evolution stages, or recolour a normal into a shiny.
 const aliases:Record<string,string>={
- ant:'rode-bosmier',aphid:'groene-bladluis',moth:'nachtvlinder',butterfly:'koninginnenpage',
- leafhopper:'helmcicade',caterpillar:'rups',
+ ant:'rode-bosmier',aphid:'groene-bladluis',moth:'ligusterpijlstaart',butterfly:'koninginnenpage',
+ leafhopper:'helmcicade',caterpillar:'pijlstaartrups',
  asianladybeetle:'aziatisch-lieveheersbeestje',rosechafer:'gouden-tor',
  rainbowscarab:'regenboogmestkever',leafbeetle:'bladkever',sacredscarab:'heilige-scarabee',
  ant_elite:'zwarte-wegmier',butterfly_elite:'monarchvlinder',
  mosquito_2:'gewone-steekmug',mosquito_3:'grote-steekmug',dragonfly_3:'grote-keizerlibel',
  spider_3:'vogelspin',snail_2:'tuinslak',snail_3:'wijngaardslak',
+ // 10 Nov: further exact real-species matches from the same source (one picture per species/stage).
+ beetle:'kniptor',tigerbeetle:'groene-zandloopkever',tigerbeetle_elite:'bastaardzandloopkever',beetle_elite:'neushoornkever',
+ dungbeetle_elite:'driehoornmestkever',dungbeetle_ultimate:'bosmestkever',divingbeetle_elite:'geelgerande-waterroofkever',
+ hercules_elite:'zwarte-herculeskever',antlion:'mierenleeuw',flowerchafer:'gouden-bloemkever',aphid_ultimate:'wollige-beukenbladluis',
+ grasshopper_ultimate:'groene-sabelsprinkhaan',cockroach_ultimate:'reuzenkakkerlak',cranefly_ultimate:'tijgerlangpootmug',
+ centipede_2:'duizendpoot',centipede_3:'reuzen-duizendpoot',spider_2:'zuidelijke-jachtspin',dragonfly_2:'bloedrode-heidelibel',
+ hoverfly_ultimate:'bosbandzweefvlieg',earwig_ultimate:'gewone-oorworm',mantis_elite:'dorbladbidsprinkhaan',
 };
 // Source art that is unusable as a sprite; these species use their model-matched 3D portrait instead.
 const rejected:Record<string,string>={
