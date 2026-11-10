@@ -1,0 +1,17 @@
+{
+ "source": "bugbaas_17_afbeeldingen.zip supplied by the project owner on 2026-11-10 (AI-generated)",
+ "processing": "white background removed, largest island kept, 768 px WebP + 256 px thumb",
+ "note": "Supplier marked these as upscaled; used only where no other usable picture exists",
+ "files": [
+  {
+   "id": "weevil",
+   "file": "bug-snuitkever.png",
+   "sha256": "f2cc2801ab21ed1e99555a4d5813c107b3a071735e834ab7c369c989c101628f"
+  },
+  {
+   "id": "beetlegrub",
+   "file": "bug-herculeslarve.png",
+   "sha256": "27ab8443a45dd78b4b8ccc7075d718fbd95afab146c22bf258d0b146a9716ecd"
+  }
+ ]
+}

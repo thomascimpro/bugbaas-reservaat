@@ -33,6 +33,16 @@
    "file": "habitat-vuur.webp",
    "bytes": 189924,
    "sha256": "c951affc597526a5c33700c21ab1e744690b7cb166ca9952fe8932226d2d0463"
+  },
+  {
+   "file": "habitat-raid.webp",
+   "bytes": 151476,
+   "sha256": "97173ebab0dbd8d8dbd435caaedf3a19552c805f82b7f39038f2176bb65ac6f3"
+  },
+  {
+   "file": "habitat-cocon.webp",
+   "bytes": 97874,
+   "sha256": "235d5f2d3fd6448aa51ac28bda8d20ff7c841465a200a0872cece3d043ebdd0e"
   }
  ]
 }

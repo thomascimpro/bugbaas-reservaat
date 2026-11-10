@@ -10,12 +10,13 @@ const ART={
  water:require('../assets/v2/habitats/habitat-water.webp'),lucht:require('../assets/v2/habitats/habitat-lucht.webp'),
  grond:require('../assets/v2/habitats/habitat-grond.webp'),weide:require('../assets/v2/habitats/habitat-weide.webp'),
  donker:require('../assets/v2/habitats/habitat-donker.webp'),vuur:require('../assets/v2/habitats/habitat-vuur.webp'),
- arena:require('../assets/v3/arcade/arena.webp'),
+ raid:require('../assets/v2/habitats/habitat-raid.webp'),cocon:require('../assets/v2/habitats/habitat-cocon.webp'),
 } as const;
 // Habitat photos: assets/v2/habitats (source.json). New ones only need an entry here and a rule in bugHabitat.
 type Habitat=keyof typeof ART;
 export function bugHabitat(s:Specimen):Habitat{
- if(s.source==='raid'||s.catchLocation?.boss)return 'arena';
+ if(s.source==='raid'||s.catchLocation?.boss)return 'raid';
+ if(s.source==='cocoon')return 'cocon';
  const t=movePool(s.species).types;
  if(t.includes('water'))return 'water';
  if(t.includes('fire'))return 'vuur';
