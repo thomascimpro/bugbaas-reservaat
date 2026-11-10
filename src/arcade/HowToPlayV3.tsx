@@ -47,7 +47,7 @@ export function HowToPlayV3({game,onClose,onStart}:{game:ArcadeGameId;onClose:()
       <View style={{padding:16,gap:12}}>
        <View style={{flexDirection:'row',gap:8,flexWrap:'wrap'}}><Chip>🎯 {info.goal}</Chip><Chip>⏱ {def.survival?'tot je valt · max '+minutes:minutes}</Chip></View>
        {info.steps.map((s,k)=><View key={k} style={{flexDirection:'row',alignItems:'center',gap:12}}><Text style={{fontFamily:font,color:'#6BEFF2',fontSize:22,fontWeight:'900',width:18}}>{k+1}</Text><GestureBubble step={s} delay={k*300}/><Text style={{flex:1,fontFamily:font,color:'#EAF6F2',fontSize:15,lineHeight:20,fontWeight:'700'}}>{s.text}</Text></View>)}
-       <Text style={{fontFamily:font,color:'#F2C14E',fontSize:13,fontWeight:'800'}}>🎁 De eerste 3 rondes per dag geven stof en XP. Daarna speel je voor je record en medailles.</Text>
+       <Text style={{fontFamily:font,color:'#F2C14E',fontSize:13,fontWeight:'800'}}>🎁 De eerste 3 rondes per dag geven stof en XP. Daarna speel je voor je record.</Text>
        <View style={{flexDirection:'row',gap:10,marginTop:4}}>
         <Pressable accessibilityRole="button" onPress={onClose} style={{flex:1,minHeight:50,borderRadius:18,alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'#BFF3EC66'}}><Text style={{fontFamily:font,color:'#EAF6F2',fontWeight:'800',fontSize:16}}>{onStart?'Later':'Sluiten'}</Text></Pressable>
         {onStart&&<Pressable testID="how-to-start" accessibilityRole="button" onPress={onStart} style={{flex:1.4,minHeight:50,borderRadius:18,alignItems:'center',justifyContent:'center',backgroundColor:'#32DCE7'}}><Text style={{fontFamily:font,color:'#052825',fontWeight:'900',fontSize:17}}>▶ Start!</Text></Pressable>}

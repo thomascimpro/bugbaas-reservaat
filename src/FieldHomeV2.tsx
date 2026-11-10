@@ -106,7 +106,7 @@ export function FieldHomeV2({view,run,busy,gpsReady,spawns,fix,open,onSelect,now
   </View>
   <View pointerEvents="box-none" style={{position:'absolute',left:16,right:16,bottom:22+bottomInset,flexDirection:'row',justifyContent:'space-between',alignItems:'flex-end'}}>
    <View style={{width:72,height:72,justifyContent:'flex-end'}}>
-    <PoCircle size={68} label="Open profiel" onPress={()=>open('profile')}><TrainerPortrait legacy={!!p.legacy} avatar={p.avatar} outfit={p.outfit} size={62}/></PoCircle>
+    <PoCircle size={68} label="Open profiel" onPress={()=>open('profile')}><TrainerPortrait round legacy={!!p.legacy} avatar={p.avatar} outfit={p.outfit} size={62}/></PoCircle>
     <View pointerEvents="none" style={{position:'absolute',left:-2,bottom:-2,minWidth:24,height:24,paddingHorizontal:5,borderRadius:12,backgroundColor:PO.teal,borderWidth:2,borderColor:PO.white,alignItems:'center',justifyContent:'center'}}><Text style={{fontFamily:font,fontSize:11,fontWeight:'800',color:PO.white}}>{level}</Text></View>
     {g.trainer&&level>g.trainer.claimedLevel&&<RedBadge count={1}/>}
    </View>
