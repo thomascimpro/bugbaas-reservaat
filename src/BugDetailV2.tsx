@@ -79,6 +79,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
     </View>:<Pressable accessibilityRole="button" accessibilityLabel="Bijnaam wijzigen" disabled={busy} onPress={startRename} style={{alignItems:'center',minHeight:40,justifyContent:'center'}}>
      <Text numberOfLines={1} style={[poText.title,{maxWidth:box.w-60}]}>{s.nickname||name}</Text>{!!s.nickname&&<Text style={t(13,'600',PO.muted)}>{name}</Text>}
     </Pressable>}
+    <View testID="bug-identity" style={{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'center',gap:6}}><GoTypes species={s.species} compact/><RarityBadgeV2 species={s.species} compact/></View>
     <View accessibilityLabel={'HP buiten gevecht: '+st.hp} style={{width:'68%',alignItems:'center',gap:5}}><PoBar value={st.hp} max={st.hp}/><Text style={t(13,'600',PO.muted)}>{st.hp+' / '+st.hp+' HP'}</Text></View>
     <View testID="bug-resources" accessibilityLabel={g.dust+' stof, '+candy+' '+familyName(key)+'-nectar'+(xl>0?', '+xl+' XL-nectar':'')} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:34}}>
      <View style={{flexDirection:'row',alignItems:'center',gap:8}}><Glyph name="nectar" size={34}/><Text style={t(20)}>{g.dust.toLocaleString('nl-NL')}</Text></View>
