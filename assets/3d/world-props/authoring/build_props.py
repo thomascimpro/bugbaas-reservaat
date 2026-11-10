@@ -2,7 +2,7 @@
 Run low priority: blender --background --factory-startup --python build_props.py -- <repo> [egg|gym|post ...]
 Outputs: assets/v2/props/*.png (HD UI renders) and public/models/props/*.glb (map; flat colours, runtime recolour of
 'EggShell' / 'TeamColor' / 'PostDisc')."""
-import bpy,math,sys,os,random
+import bpy,math,sys,os,random,re
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from hd_lib import HD,lin
 from mathutils import Vector
@@ -107,26 +107,48 @@ if 'gym' in ONLY:
         hd.render(os.path.join(REPO,'.local','props','preview-gym.png') if PREVIEW else os.path.join(ART,'gym-'+team+'.png'))
     if not PREVIEW:hd.recolor('TeamColor','#C6B98C');hd.recolor('Crystal','#E8F4FF',.4);hd.export_glb(os.path.join(GLB,'Gym.glb'))
 
-if 'post' in ONLY:
+if 'post' in ONLY:  # Insect post (PoGO stop), 11 Nov: glass medallion blue (ready) / purple (spun) like the map, gold butterfly emblem
+    import bmesh
     hd.reset()
-    rock=hd.pbr('Rock','mossy_rock',1.6);bark=hd.pbr('Wood','bark_willow_02',3.0,tint='#B08A64');gold=hd.solid('Gold','#E8B84A',.25,metal=1.)
-    disc=hd.solid('PostDisc','#43D7C0',.25,emit=.6,coat=1.);mark=hd.solid('LeafMark','#FFF4CF',.4,emit=.4);leafm=hd.leaf_mat('Leaf','#5DAA3A')
-    hd.blob('Foot',(0,0,.14),(.95,.9,.32),rock,seg=32,sub=1,disp=.12,disp_scale=.6)
-    hd.branch('Pole',[(0,0,.3),(.03,0,1.4),(0,0,2.1)],.15,bark,.7)
-    bpy.ops.mesh.primitive_cylinder_add(vertices=72,radius=.8,depth=.16,location=(0,0,2.85),rotation=(math.radians(90),0,0));hd.finish(bpy.context.object,disc,bevel=.05)
-    hd.ring('DiscRim',.8,.07,2.85,gold,rot=(math.radians(90),0,0))
-    bpy.ops.mesh.primitive_torus_add(major_radius=.52,minor_radius=.03,major_segments=64,minor_segments=10,location=(0,-.09,2.85),rotation=(math.radians(90),0,0));hd.finish(bpy.context.object,gold)
-    hd.blob('Knob',(0,0,3.72),(.13,.13,.13),gold);hd.cyl('Neck',.06,.25,3.6,gold,16)
-    for s,y in ((1,-.1),(-1,.1)):hd.leaf('Mark%d'%s,(-.34*s,y,2.78),.68,0 if s>0 else math.pi,math.radians(-35*s) if s>0 else math.radians(35),mark,curl=.0,roll=math.radians(90))
+    rock=hd.pbr('Rock','mossy_rock',1.6);bark=hd.pbr('Wood','bark_willow_02',3.0,tint='#9C7550');gold=hd.solid('Gold','#E8B84A',.22,metal=1.)
+    disc=hd.solid('PostDisc','#1E6FE8',.18,emit=.45,coat=1.);glass=hd.solid('Glass','#DDF3FF',.03,transmission=.9,coat=1.);leafm=hd.leaf_mat('Leaf','#5DAA3A')
+    glow=hd.solid('Firefly','#FFE27A',.3,emit=6.);egold=hd.solid('Emblem','#FFD15C',.15,metal=1.,emit=.35);cap=hd.solid('Cap','#C8553D',.45);stem=hd.solid('Stem','#F1E7D2',.6);petal=hd.solid('Petal','#F4F0FF',.5);heart=hd.solid('Heart','#F2C14E',.4)
+    hd.blob('Foot',(0,0,.16),(1.05,.98,.36),rock,seg=32,sub=1,disp=.12,disp_scale=.6)
+    hd.branch('Pole',[(0,0,.3),(.08,.02,1.0),(-.05,0,1.7),(0,0,2.1)],.16,bark,.65)
+    for k in range(3):hd.leaf('Ivy%d'%k,(.13*(-1)**k,-.05,.8+k*.42),.34,(k*2.1),math.radians(-25),leafm,roll=math.radians(60))
+    Y=0.;Z=2.95
+    bpy.ops.mesh.primitive_cylinder_add(vertices=72,radius=.84,depth=.2,location=(0,Y,Z),rotation=(math.radians(90),0,0));hd.finish(bpy.context.object,disc,bevel=.06)
+    hd.ring('InnerRim',.6,.025,Z,gold,rot=(math.radians(90),0,0))
+    hd.ring('DiscRim',.86,.075,Z,gold,rot=(math.radians(90),0,0))
+    for k in range(8):a=k/8*math.tau;hd.blob('Stud%d'%k,(math.cos(a)*.86,-.06,Z+math.sin(a)*.86),(.055,.055,.055),gold)
+    def prism(name,pts,mat,y=-.12,depth=.05):
+        me=bpy.data.meshes.new(name);bm=bmesh.new();f=bm.faces.new([bm.verts.new((x,y,z)) for x,z in pts]);r=bmesh.ops.extrude_face_region(bm,geom=[f])
+        bmesh.ops.translate(bm,vec=(0,-depth,0),verts=[e for e in r['geom'] if isinstance(e,bmesh.types.BMVert)]);bmesh.ops.recalc_face_normals(bm,faces=bm.faces);bm.to_mesh(me);bm.free()
+        o=bpy.data.objects.new(name,me);bpy.context.collection.objects.link(o);return hd.finish(o,mat,bevel=.01,smooth=False)
+    def wing(cx,cz,rx,rz,tilt,n=28):
+        t=math.radians(tilt);return [(cx+math.cos(a)*rx*math.cos(t)-math.sin(a)*rz*math.sin(t),Z+cz+math.cos(a)*rx*math.sin(t)+math.sin(a)*rz*math.cos(t)) for a in [k/n*math.tau for k in range(n)]]
+    for sgn in (-1,1):
+        prism('WingUp%d'%sgn,wing(sgn*.24,.12,.24,.17,sgn*-25),egold);prism('WingLo%d'%sgn,wing(sgn*.18,-.17,.15,.12,sgn*30),egold)
+    prism('Body',wing(0,-.02,.045,.3,0,16),egold,depth=.07)
+    for sgn in (-1,1):hd.curve_twig('Antenna%d'%sgn,(sgn*.02,-.16,Z+.27),(sgn*.16,-.16,Z+.47),(sgn*.04,0,.05),.012,gold)
+    hd.cyl('Neck',.06,.3,Z+.98,gold,16);hd.blob('Firefly',(0,0,Z+1.2),(.15,.15,.15),glow)
+    for k,(x,y) in enumerate([(.55,-.35),(.72,.1),(-.6,-.2)]):
+        hd.cyl('Stem%d'%k,.05,.22,.42,stem,12).location=(x,y,.42);hd.blob('Cap%d'%k,(x,y,.55),(.15,.15,.08),cap)
+    for k,(x,y) in enumerate([(-.45,-.55),(.2,-.75),(-.75,.3)]):
+        for q in range(5):a=q/5*math.tau;hd.blob('P%d_%d'%(k,q),(x+math.cos(a)*.07,y+math.sin(a)*.07,.42),(.06,.03,.02),petal)
+        hd.blob('H%d'%k,(x,y,.43),(.035,.035,.03),heart)
     bpy.ops.object.empty_add(location=(0,0,0));turn=bpy.context.object
     for o in bpy.data.objects:
         if o is not turn and o.parent is None and o.type in ('MESH','CURVE'):o.parent=turn
-    turn.rotation_euler[2]=math.radians(-42)
-    for i in range(4):a=i/4*math.tau+.3;hd.leaf('GLeaf%d'%i,(math.cos(a)*.75,math.sin(a)*.75,.32),.5,a,math.radians(-15),leafm,roll=math.radians(25))
-    hd.stage(7.2,3.4,1.75,lens=50)
-    for state,col in ([('ready','#43D7C0')] if PREVIEW else [('ready','#43D7C0'),('visited','#AAA1CA')]):
-        hd.recolor('PostDisc',col,.6);hd.render(os.path.join(REPO,'.local','props','preview-post.png') if PREVIEW else os.path.join(ART,'post-'+state+'.png'))
-    if not PREVIEW:hd.recolor('PostDisc','#43D7C0',.6);hd.export_glb(os.path.join(GLB,'Post.glb'))
+    turn.rotation_euler[2]=math.radians(-30)
+    for i in range(4):a=i/4*math.tau+.3;hd.leaf('GLeaf%d'%i,(math.cos(a)*.85,math.sin(a)*.85,.34),.5,a,math.radians(-15),leafm,roll=math.radians(25))
+    hd.stage(7.6,3.3,1.95,lens=50)
+    for state,col in ([('ready','#1E6FE8')] if PREVIEW else [('ready','#1E6FE8'),('visited','#B65CF0')]):
+        hd.recolor('PostDisc',col,.45);hd.render(os.path.join(REPO,'.local','props','preview-post.png') if PREVIEW else os.path.join(ART,'post-'+state+'.png'))
+    if not PREVIEW:
+        # Map model stays light: drop tiny decor (petals, studs, mushrooms, ivy) and cap every part at 220 faces.
+        for o in [o for o in bpy.data.objects if re.match(r'(P\d|H\d|Stud|Cap|Stem|Ivy|GLeaf|Antenna)',o.name)]:bpy.data.objects.remove(o,do_unlink=True)
+        hd.recolor('PostDisc','#FFFFFF',0.);hd.export_glb(os.path.join(GLB,'Post.glb'),max_faces=220)
 
 if 'arena' in ONLY:  # D2: battle platform under the bugs (background painting is Codex')
     hd.reset()

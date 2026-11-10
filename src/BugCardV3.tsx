@@ -22,7 +22,7 @@ export function BugCardV3({bug,width}:{bug:Specimen;width:number}){
    {bug.shiny&&<View style={{position:'absolute',right:5,top:5}}><ShinyMarkV2 size={18}/></View>}
   </View>
   <View style={{paddingHorizontal:6,paddingTop:4,paddingBottom:6,gap:2,alignItems:'center',backgroundColor:'#0F2D2DF2'}}>
-   <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={.7} style={{fontFamily:font,fontSize:name.length>16?9.5:name.length>12?10.5:12.5,fontWeight:'800',color:'#EAF6F2',maxWidth:'100%'}}>{name}</Text>
+   <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={.7} style={{fontFamily:font,fontSize:Math.min(12.5,width*.108)*(name.length>16?.76:name.length>12?.86:1),fontWeight:'800',color:'#EAF6F2',maxWidth:'100%'}}>{name}</Text>
    <View style={{flexDirection:'row',alignItems:'center',gap:4}}><MainTypeEmblemV2 species={bug.species} size={15}/><Text style={{fontFamily:font,fontSize:10,letterSpacing:.5,color:rarity.color,fontWeight:'900'}}>{'★'.repeat(tier)}</Text></View>
   </View>
  </View>;

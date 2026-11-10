@@ -49,9 +49,11 @@ test('beetles use the intended steel pool instead of matching bee, without rewri
 test('only genuine collected specimens receive individual CP; old starters cannot enter PvP',()=>{const p=player();assert.ok(p.specimens.slice(0,10).filter(s=>s.source==='starter').every(s=>!s.go));assert.throws(()=>teamGo(p,p.specimens.filter(s=>s.source==='starter').slice(0,3).map(s=>s.id),'great'));assert.ok(p.specimens.filter(s=>s.go).every(s=>stats(s).cp>=10));});
 test('team previews and server saves reject the same invalid builds without changing the current team',()=>{
  const p=player(),team=[...p.go!.team],before=structuredClone(p.go);
- for(const [ids,league] of [[team.slice(0,2),'great'],[[team[0],team[0],team[2]],'great'],[[team[0],team[1],'absent'],'great'],[team,'ultra'],[team,'master']] as const){const issue=teamIssue(p,ids,league);assert.ok(issue);assert.throws(()=>teamGo(p,ids,league),e=>e instanceof Error&&e.message===issue);assert.deepEqual(p.go,before);}
+ for(const [ids,league] of [[team.slice(0,2),'great'],[[team[0],team[0],team[2]],'great'],[[team[0],team[1],'absent'],'great']] as const){const issue=teamIssue(p,ids,league);assert.ok(issue);assert.throws(()=>teamGo(p,ids,league),e=>e instanceof Error&&e.message===issue);assert.deepEqual(p.go,before);}
  const second={...structuredClone(p.specimens.find(s=>s.id===team[0])!),id:'duplicate-species'};p.specimens.push(second);assert.match(teamIssue(p,[team[0],second.id,team[2]],'great')!,/soorten/);
  const s=p.specimens.find(s=>s.id===team[0])!;s.go!.level=50;assert.match(teamIssue(p,team,'great')!,/CP-limiet/);s.go!.level=10;
+ // 11 Nov: no arena unlock rule any more; a team that fits a cap is valid in that arena and in every larger one.
+ assert.equal(teamIssue(p,team,'ultra'),null);assert.equal(teamIssue(p,team,'master'),null);
  assert.equal(teamIssue(p,[team[2],team[0],team[1]],'great'),null);teamGo(p,[team[2],team[0],team[1]],'great');assert.equal(p.go!.team[0],team[2]);
 });
 

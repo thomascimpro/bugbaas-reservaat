@@ -40,12 +40,13 @@ export function DetailBackdropV3({specimen}:{specimen:Specimen}){
 
 /** PoGO-style CP arc: thin white half circle over the bug, a dot at the current level (1–50). */
 export function CpArcV3({level,width,top}:{level:number;width:number;top:number}){
- const r=width/2-10,cx=width/2,cy=r+10,f=Math.max(0,Math.min(1,(level-1)/49)),a=Math.PI*(1-f),dx=cx+Math.cos(a)*r,dy=cy-Math.sin(a)*r;
+ // Flat arc (160°→20°) so both ends stay above the bug instead of hanging into it.
+ const r=width/2-10,cx=width/2,cy=r+10,A0=Math.PI-.35,A1=.35,f=Math.max(0,Math.min(1,(level-1)/49)),a=A0-f*(A0-A1),dx=cx+Math.cos(a)*r,dy=cy-Math.sin(a)*r,h=cy-Math.sin(A1)*r+10;
  const arc=(from:number,to:number)=>`M ${cx+Math.cos(from)*r} ${cy-Math.sin(from)*r} A ${r} ${r} 0 0 1 ${cx+Math.cos(to)*r} ${cy-Math.sin(to)*r}`;
- return <View pointerEvents="none" style={{position:'absolute',left:'50%',marginLeft:-width/2,top,width,height:cy+6}}>
-  <Svg width={width} height={cy+6}>
-   <Path d={arc(Math.PI,0)} stroke="#FFFFFF" strokeOpacity={.35} strokeWidth={3} fill="none" strokeLinecap="round"/>
-   {f>0&&<Path d={arc(Math.PI,a)} stroke="#FFFFFF" strokeOpacity={.95} strokeWidth={3.5} fill="none" strokeLinecap="round"/>}
+ return <View pointerEvents="none" style={{position:'absolute',left:'50%',marginLeft:-width/2,top,width,height:h}}>
+  <Svg width={width} height={h}>
+   <Path d={arc(A0,A1)} stroke="#FFFFFF" strokeOpacity={.35} strokeWidth={3} fill="none" strokeLinecap="round"/>
+   {f>0&&<Path d={arc(A0,a)} stroke="#FFFFFF" strokeOpacity={.95} strokeWidth={3.5} fill="none" strokeLinecap="round"/>}
    <Circle cx={dx} cy={dy} r={7} fill="#FFFFFF"/><Circle cx={dx} cy={dy} r={3.5} fill="#7FB8A8"/>
   </Svg>
  </View>;

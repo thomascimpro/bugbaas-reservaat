@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {freshV2} from '../game/safariV2';
-import {ensureGo,LEAGUES,rollGoBug,speciesTypes,stats,teamIssue} from '../game/goV2';
+import {ensureGo,LEAGUES,rollGoBug,speciesTypes,stats,teamIssue,teamLeague} from '../game/goV2';
 import {makeGoBattle} from '../game/goBattleV2';
 import {bugRarity} from '../game/rarityDisplayV2';
 import {CUP_THEMES,CUP_WIN_GOAL,RANKS,TRACK,cupBlock,cupNpc,cupSuggestion,cupTeamIssue,cupTheme,ensurePvp,makeCupBattle,npcWinPoints,rankOf,settlePvp,softReset,stageOnePool,suggestTeam} from '../game/pvpV2';
@@ -26,7 +26,8 @@ test('arenas have Dutch names everywhere and keep their internal ids',()=>{
  assert.deepEqual(Object.keys(LEAGUES),['great','ultra','master']);
  assert.deepEqual(Object.values(LEAGUES).map(l=>l.name),['Kleine Arena','Grote Arena','Meester-Arena']);
  assert.equal(LEAGUES.great.cap,1500);assert.equal(LEAGUES.ultra.cap,2500);assert.equal(LEAGUES.master.cap,Infinity);
- const p=player();assert.match(teamIssue(p,p.go!.team,'ultra')!,/Grote Arena/);assert.match(teamIssue(p,p.go!.team,'master')!,/Meester-Arena/);assert.doesNotMatch(teamIssue(p,[],'great')!,/League/);
+ const p=player();assert.equal(teamIssue(p,p.go!.team,'ultra'),null);assert.equal(teamIssue(p,p.go!.team,'master'),null);assert.doesNotMatch(teamIssue(p,[],'great')!,/League/);
+ assert.equal(teamLeague(p,p.go!.team),'great','arena follows the team: smallest cap that fits');
 });
 
 test('rank thresholds go Brons → Zilver → Goud → Platina → Kampioen and Zilver takes about two days of computer wins',()=>{

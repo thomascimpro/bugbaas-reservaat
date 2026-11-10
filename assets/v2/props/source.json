@@ -100,9 +100,9 @@
     768,
     768
    ],
-   "bytes": 417306,
-   "sha256": "6d6eb6affeb14bff570a00f69ad4d1d9bc290ad44baa09a6e3f0ed3cb578aad2",
-   "use": "Postpopup/onderzoek: post klaar (teal) of gebruikt (lila)",
+   "bytes": 435275,
+   "sha256": "b548a166e91e786410bb41bfdd39be1351c043ee0e401e41141272c3842ad2c7",
+   "use": "Post draaischerm (11 nov: blauw medaillon met gouden vlinder, gedraaid paars); kaartmodel public/models/props/Post.glb",
    "variant": "ready"
   },
   {
@@ -111,9 +111,9 @@
     768,
     768
    ],
-   "bytes": 414470,
-   "sha256": "5ab1f91ba7af477e0db6e077ae1e892c648e154d83c63a4151249d8e03f03476",
-   "use": "Postpopup/onderzoek: post klaar (teal) of gebruikt (lila)",
+   "bytes": 428335,
+   "sha256": "a7d43c89d1ac33e66c4fcc3bc7fdf95b0adf6ef29cbde1e26c0110e33174f642",
+   "use": "Post draaischerm (11 nov: blauw medaillon met gouden vlinder, gedraaid paars); kaartmodel public/models/props/Post.glb",
    "variant": "visited"
   },
   {

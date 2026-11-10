@@ -8,7 +8,7 @@ def lin(h):h=h.lstrip('#');return tuple((int(h[i:i+2],16)/255)**2.2 for i in (0,
 
 class HD:
     def __init__(self,repo,size=768,samples=96):
-        self.repo=repo;self.ph=os.path.join(repo,'.local','polyhaven');self.size=size;self.samples=samples
+        self.repo=repo;self.ph=os.environ.get('BB_POLYHAVEN') or os.path.join(repo,'.local','polyhaven');self.size=size;self.samples=samples
     # ---------- scene ----------
     def reset(self):
         bpy.ops.wm.read_factory_settings(use_empty=True);random.seed(7)
