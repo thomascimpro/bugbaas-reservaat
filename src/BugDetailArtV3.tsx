@@ -7,19 +7,22 @@ import type {Specimen} from '../game/typesV2';
 // Bug detail art (UX 10 Nov, PoGO-like): the photo behind a bug shows where it belongs (habitat by main type or how
 // it was obtained) and turns to night when it was caught in the evening; a thin CP arc shows its level progress.
 const ART={
- meadow:require('../assets/v2/worlds/meadow-v2.webp'),canopy:require('../assets/v3/arcade/canopy.webp'),
- trail:require('../assets/v3/arcade/trail.webp'),arena:require('../assets/v3/arcade/arena.webp'),
+ water:require('../assets/v2/habitats/habitat-water.webp'),lucht:require('../assets/v2/habitats/habitat-lucht.webp'),
+ grond:require('../assets/v2/habitats/habitat-grond.webp'),weide:require('../assets/v2/habitats/habitat-weide.webp'),
+ donker:require('../assets/v2/habitats/habitat-donker.webp'),vuur:require('../assets/v2/habitats/habitat-vuur.webp'),
+ arena:require('../assets/v3/arcade/arena.webp'),
 } as const;
-// Optional new habitat photos (assets/v2/habitats/*.webp) can be added to this map without code changes elsewhere.
+// Habitat photos: assets/v2/habitats (source.json). New ones only need an entry here and a rule in bugHabitat.
 type Habitat=keyof typeof ART;
 export function bugHabitat(s:Specimen):Habitat{
  if(s.source==='raid'||s.catchLocation?.boss)return 'arena';
  const t=movePool(s.species).types;
- if(t.includes('water'))return 'meadow';
- if(t.includes('flying'))return 'canopy';
- if(t.some(x=>x==='ground'||x==='rock'||x==='steel'))return 'trail';
- if(t.some(x=>x==='dark'||x==='poison'||x==='fire'))return 'arena';
- return 'meadow';
+ if(t.includes('water'))return 'water';
+ if(t.includes('fire'))return 'vuur';
+ if(t.some(x=>x==='dark'||x==='poison'))return 'donker';
+ if(t.includes('flying'))return 'lucht';
+ if(t.some(x=>x==='ground'||x==='rock'||x==='steel'))return 'grond';
+ return 'weide';
 }
 /** Local hour of the catch: 20:00–06:00 counts as night. */
 export const caughtAtNight=(s:Specimen)=>{const h=new Date(s.obtainedAt).getHours();return h>=20||h<6;};
