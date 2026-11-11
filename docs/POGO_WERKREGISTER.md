@@ -1,6 +1,6 @@
 # BugBaas — actuele voortgang
 
-**11 november — post draaien, dagbonus en cocon-barsten (lokaal op `main`, niet gecommit, geen release).** Basis 0.1.41 (`8fac36f`).
+**11 november — 0.1.42/code43: post draaien, dagbonus, kaartcamera, cocon-barsten, Arcade-beeld.** Uitgebracht, zie `docs/releases/0.1.42.md`. Basis 0.1.41 (`8fac36f`).
 - Post draaien (PoGO-schijf): veeg het medaillon; het draait mee met je vinger en loopt uit (16 Blender-frames, vlinder ook op de achterkant, `assets/v2/props/post-spin.webp`). Tik en de knop ‘Draai post’ blijven werken; minder beweging = geen uitloop. Items komen één voor één in bubbels uit de post. `src/PostSpinV3.tsx`, `src/WorldSitesV2.tsx`.
 - Nieuw spelregel, server: eerste post van de UTC-dag geeft +2 veldnetten, +1 bosnet, +150 XP; dag 7 op rij +5 veldnetten, +2 bosnetten, +1 zijdenet, +1000 XP, daarna begint de reeks opnieuw; gemiste dag = dag 1. `sites.spinDay/spinStreak`, `lastLoot.daily/xp`; `postDailyNext` in `game/worldSitesV2.ts`. Zeven stippen op het draaischerm.
 - Cocon uitkomen: gerenderde cocon met drie barststadia (`hatch-0..3.webp`) en ‘Oh?’ in plaats van getekende streepjes; raidcocons ongewijzigd. `src/CocoonHatchFxV3.tsx`.
