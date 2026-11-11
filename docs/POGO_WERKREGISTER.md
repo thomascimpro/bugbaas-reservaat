@@ -1,5 +1,24 @@
 # BugBaas — actuele voortgang
 
+**11 november — post draaien, dagbonus en cocon-barsten (lokaal op `main`, niet gecommit, geen release).** Basis 0.1.41 (`8fac36f`).
+- Post draaien (PoGO-schijf): veeg het medaillon; het draait mee met je vinger en loopt uit (16 Blender-frames, vlinder ook op de achterkant, `assets/v2/props/post-spin.webp`). Tik en de knop ‘Draai post’ blijven werken; minder beweging = geen uitloop. Items komen één voor één in bubbels uit de post. `src/PostSpinV3.tsx`, `src/WorldSitesV2.tsx`.
+- Nieuw spelregel, server: eerste post van de UTC-dag geeft +2 veldnetten, +1 bosnet, +150 XP; dag 7 op rij +5 veldnetten, +2 bosnetten, +1 zijdenet, +1000 XP, daarna begint de reeks opnieuw; gemiste dag = dag 1. `sites.spinDay/spinStreak`, `lastLoot.daily/xp`; `postDailyNext` in `game/worldSitesV2.ts`. Zeven stippen op het draaischerm.
+- Cocon uitkomen: gerenderde cocon met drie barststadia (`hatch-0..3.webp`) en ‘Oh?’ in plaats van getekende streepjes; raidcocons ongewijzigd. `src/CocoonHatchFxV3.tsx`.
+- Renders: `build_props.py -- <repo> hatch postspin`, daarna `node scripts/pack-interact-art.mjs`. Bestaande `post-ready/visited` en `Post.glb` niet opnieuw gemaakt.
+- Getest: 741/741 tests (nieuwe reekstest in `tests/worldSitesV2.test.ts`) en TypeScript. **Niet in de browser of op een toestel bekeken**: veeggevoel, bubbels en barstovergangen zijn nog ongezien in de app. `server/cloudRuntime.cjs` niet opnieuw gebouwd (gebeurt bij `web:build`).
+- **Kaart als PoGO (zelfde dag, na review van kaart/navigatie/Arcade in de browser):** de kaart was het zwakste scherm — trainer klein of onzichtbaar achter gebouwen, geen horizon. Nu: camera dichter en schuiner (`MAP_VIEW` zoom 18,4 / pitch 66, trainer op 30% onder het midden, `src/mapCameraV2.ts`), lucht en horizon in beeld; gebouwen als lage blokken (1,2–4,5 m, `buildingHeight`), deuren/ramen schalen mee, daken minder oranje. Bovenaanzicht-knop en opgeslagen camera werken ongewijzigd.
+- Getest kaart: TypeScript; 741 tests (de QA-recordtest ‘concurrent appends’ faalde één keer in de volledige run en slaagt los 2×). Browser 375×812 met gesimuleerde GPS in Utrecht (park en centrum): trainer en bugs groot in beeld, horizon zichtbaar, geen consolefouten van de kaart. Niet op een telefoon; prestaties met de dichtere camera niet gemeten.
+- Lokale webbuild vanuit deze werkboom: `node_modules` is een koppeling, daardoor vindt Expo `App` niet; tijdelijk `main` naar een eigen startbestand zetten werkt (package.json daarna teruggezet). `npm run web:build` heeft `dist` geleegd; de lokale kopie `dist/BugBaas-0.1.38.apk` is daarbij verdwenen (release staat op GitHub).
+- **Tikduel beeld (zelfde dag):** bugs 1,4× groter getekend (portretten hebben lege rand; het gesimuleerde raakvlak, punten en ranked-regels zijn **niet** gewijzigd), tikbalk hoger en breder, sterkere schaduw/zeldzaamheidsgloed. Raakfeedback: plet-en-rek met witte flits, dubbele ring, vingerrimpel op elke tik (ook mis), vonken en grotere burst/+punten bij een vangst. Alleen `src/arcade/original/TapDuelScene.tsx`. Arcade-/original-tests en TypeScript groen; in de browser een potje gespeeld (bugs duidelijk groter, tikken werkt, geen nieuwe consolefouten); de korte flits/ring-frames zelf niet op beeld vastgelegd. Overige zes spellen niet aangepast; alleen Nestwacht en Tikduel hebben eigen scènegeluid.
+- **Overige Arcade-spellen (zelfde dag), alle zeven gespeeld op 375×812; alleen beeld, geen regels/raakvlakken/scores gewijzigd:**
+  - Windvlucht (`BugGlideScene.tsx`): eigen squadbug i.p.v. vage pixelbij op donkere schijf; groene capsules en 'maan' boven de geschilderde boom weg; gevaar/pickups zachte rode/gouden gloed i.p.v. harde kaders; rustiger zones.
+  - Webrenner (`WebRunnerScene.tsx`): banen als zijden draden i.p.v. omlijnde vakken, actieve baan lichter, loper 88 px (was 70).
+  - Bladtoren (`BugTowerScene.tsx`): sprongkrachtmeter is een smalle balk op de onderrand en bedekt de bug niet meer.
+  - Vlinderjacht (`ButterflyWorld.ts`, `public/butterfly-viewer.js` opnieuw gebouwd): vleugelpatroon licht zelf op, zodat vleugels niet bijna zwart worden als ze van de zon af staan. Alleen één voorbijvlucht van dichtbij gezien; niet over een heel potje beoordeeld en niet in de Android-viewer.
+  - Bubbelzwerm en Nestwacht: bekeken, niet aangepast.
+  - Opgemerkt, niet aangepast: uitslagscherm gebruikt een ander woordmerk ('BUGBAAS' in schreefletter) dan het gouden logo.
+- Volgende stap: draaischerm en uitkomst bekijken op 390 px; daarna vangen (bug springt weg, Perfect-reeks) en gympost dezelfde schijf geven.
+
 Bijgewerkt: 9 november 2026. Houd dit kort: taak, resultaat, controle en wat nog openstaat. Bestaand ontwerp is geen nieuwe todo-lijst.
 
 ## ACTUELE CHECKPOINT

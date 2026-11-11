@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {buildWorldSites,createWorldSitesProvider} from '../server/worldSitesDataV2';
-import {spinPost,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute} from '../game/worldSitesV2';
+import {spinPost,postDailyNext,POST_DAILY_BONUS,POST_WEEK_BONUS,startRoute,advanceRoute,pauseRoute,resumeRoute,finishRoute} from '../game/worldSitesV2';
 import {freshV2} from '../game/safariV2';
 import {ensureField} from '../game/fieldV2';
 import {ensureGo} from '../game/goV2';
@@ -47,7 +47,7 @@ test('routes reject long geometry gaps and cap the full out-and-back distance at
  assert.equal(buildWorldSites([gap],FIX,()=>true).routes.length,0);
 });
 test('post supplies are bounded, require fresh nearby GPS and honor a persistent five-minute cooldown',()=>{
- const p=player(),before=p.field!.inventory.basic;const loot=spinPost(p,sites.posts[0].id,'seed',NOW);assert.ok(loot.basic!>=2&&loot.basic!<=4);assert.equal(p.field!.inventory.basic,before+loot.basic!);assert.throws(()=>spinPost(p,sites.posts[0].id,'new-seed',NOW+1),/laadt/);p.walking!.fix={...FIX,lng:FIX.lng+.01};assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW),/80 meter/);p.walking!.fix=FIX;assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW+31000),/GPS/);assert.throws(()=>spinPost(p,'fabricated','new',NOW),/niet beschikbaar/);
+ const p=player(),before=p.field!.inventory.basic;const loot=spinPost(p,sites.posts[0].id,'seed',NOW);assert.ok(loot.basic!>=4&&loot.basic!<=6);assert.equal(p.field!.inventory.basic,before+loot.basic!);assert.throws(()=>spinPost(p,sites.posts[0].id,'new-seed',NOW+1),/laadt/);p.walking!.fix={...FIX,lng:FIX.lng+.01};assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW),/80 meter/);p.walking!.fix=FIX;assert.throws(()=>spinPost(p,sites.posts[0].id,'new',NOW+31000),/GPS/);assert.throws(()=>spinPost(p,'fabricated','new',NOW),/niet beschikbaar/);
 });
 test('route rewards require ordered route points AND verified distance; pause excludes distance and claim pays once',()=>{
  const p=player(),r=sites.routes[0];startRoute(p,r.id,NOW);const run=p.go!.sites!.run!;assert.throws(()=>finishRoute(p,NOW),/Volg eerst/);
@@ -123,4 +123,17 @@ test('provider rejects oversized or truncated responses before publishing world 
   const provider=createWorldSitesProvider(async()=>response,()=>NOW),result=await provider(FIX,()=>true,true);
   assert.equal(result.available,false);assert.deepEqual(result.posts,[]);assert.equal(result.dataAt,0);
  }
+});
+
+test('first post of the UTC day pays a bonus once; seven days in a row pay the week bundle and a missed day restarts',()=>{
+ const p=player(),id=sites.posts[0].id,DAY=86400000,at=(t:number)=>{p.walking!.fix={...FIX,timestamp:t};p.walking!.at=t;return t;};
+ assert.equal(postDailyNext(p.go!.sites,NOW),1);
+ const xp0=p.go!.trainer!.xp;spinPost(p,id,'d1',NOW);let loot=p.go!.sites!.lastLoot!;
+ assert.equal(loot.daily,1);assert.equal(loot.xp,50+POST_DAILY_BONUS.xp);assert.ok(loot.items.blue!>=POST_DAILY_BONUS.items.blue);assert.ok(p.go!.trainer!.xp!==xp0);
+ assert.equal(postDailyNext(p.go!.sites,NOW+400000),0);
+ spinPost(p,id,'d1b',at(NOW+400000));loot=p.go!.sites!.lastLoot!;assert.equal(loot.daily,undefined);assert.equal(loot.xp,50);assert.ok(loot.items.basic!<=4);
+ for(let d=2;d<=7;d++){spinPost(p,id,'d'+d,at(NOW+(d-1)*DAY));assert.equal(p.go!.sites!.lastLoot!.daily,d);}
+ loot=p.go!.sites!.lastLoot!;assert.equal(loot.xp,50+POST_WEEK_BONUS.xp);assert.ok(loot.items.silk!>=POST_WEEK_BONUS.items.silk);assert.ok(loot.items.basic!>=2+POST_WEEK_BONUS.items.basic);
+ spinPost(p,id,'d8',at(NOW+7*DAY));assert.equal(p.go!.sites!.lastLoot!.daily,1);
+ spinPost(p,id,'gap',at(NOW+10*DAY));assert.equal(p.go!.sites!.lastLoot!.daily,1);
 });

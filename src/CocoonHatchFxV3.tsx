@@ -3,7 +3,6 @@ import {Animated,Easing,Modal,Platform,Pressable,Text,View,useWindowDimensions} 
 import {species} from '../game/catalogV2';
 import {RARITY_TIERS,bugRarity} from '../game/rarityDisplayV2';
 import {SpriteView} from './artV2';
-import {FieldActivityArt} from './FieldArtV2';
 import {playSound} from './audioV2';
 import {Button,MotionPrefs} from './uiV2';
 
@@ -20,6 +19,9 @@ const SWING_OUT=[0,-5,5,-4,0,0,-9,10,-8,0,0,-14,15,-16,17,-12,0];
 const CRACKS=[{at:.24,x:.52,y:.58,len:.2,rot:62},{at:.41,x:.6,y:.5,len:.16,rot:-48},{at:.47,x:.55,y:.7,len:.18,rot:-70},{at:.53,x:.48,y:.46,len:.13,rot:35}];
 const BITS=Array.from({length:18},(_,i)=>{const a=i/18*Math.PI*2+(i%3)*.17;return {a,d:.65+(i%4)*.14,leaf:i%3!==0,s:i%3?22:16,spin:(i%2?1:-1)*(180+i*25)};});
 
+// Walking cocoon: Blender renders of the same chrysalis whole, with a first crack, wide cracks and bursting with light
+// (build_props.py `hatch`); they fade in on top of each other at the wobble bursts.
+const HATCH_ART=[require('../assets/v2/props/hatch-0.webp'),require('../assets/v2/props/hatch-1.webp'),require('../assets/v2/props/hatch-2.webp'),require('../assets/v2/props/hatch-3.webp')],HATCH_AT=[0,.24,.41,.5];
 export type CocoonHatch={id:string;species:string;shiny:boolean;dust?:number;candy?:number;xp?:number};
 
 /** Raid cocoons reuse the same hatch with their own egg art, heading, tier and no rewards (the boss still has to be beaten). */
@@ -48,10 +50,13 @@ export function CocoonHatchFxV3({hatch,cp,onClose,onView,variant}:{hatch:CocoonH
    </Animated.View>
    {/* Cocoon: drops in, swings around its thread (pivot = top) while light cracks through, then pops. */}
    <Animated.View pointerEvents="none" style={{position:'absolute',width:S,height:S,opacity:at([.56,.61],[1,0]),transform:[{translateY:at([0,.08,.1,.12],[-420,14,-4,0])},{scale:at([.54,.6],[1,1.3])},{translateY:-S/2},{rotate:swing},{translateY:S/2}]}}>
-    {variant?.art??<FieldActivityArt id="cocoon" size={S}/>}
+    {variant?<>{variant.art}
     {CRACKS.map((c,i)=><Animated.View key={i} style={{position:'absolute',left:S*c.x-S*c.len/2,top:S*c.y,width:S*c.len,height:3.5,borderRadius:2,backgroundColor:'#FFF7D6',boxShadow:'0px 0px 8px #FFF2C4',opacity:at([c.at,c.at+.015],[0,1]),transform:[{rotate:c.rot+'deg'}]}}/>)}
-    <Animated.View style={{position:'absolute',left:S*.36,top:S*.38,width:S*.36,height:S*.46,borderRadius:S,backgroundColor:'#FFF7D6',opacity:at([.3,.55],[0,.45])}}/>
+    <Animated.View style={{position:'absolute',left:S*.36,top:S*.38,width:S*.36,height:S*.46,borderRadius:S,backgroundColor:'#FFF7D6',opacity:at([.3,.55],[0,.45])}}/></>
+    :HATCH_ART.map((source,i)=><Animated.Image key={i} source={source} accessibilityIgnoresInvertColors resizeMode="contain" style={{position:'absolute',left:0,top:0,width:S,height:S,opacity:i?at([HATCH_AT[i],HATCH_AT[i]+.02],[0,1]):1}}/>)}
    </Animated.View>
+   {/* PoGO opening line while the cocoon swings; gone before the burst. */}
+   {!variant&&<Animated.Text pointerEvents="none" style={{position:'absolute',top:'16%',color:'#EAF6F2',fontSize:44,fontWeight:'900',opacity:at([.1,.16,.5,.56],[0,1,1,0]),transform:[{scale:at([.1,.16,.2],[.6,1.15,1])}]}}>Oh?</Animated.Text>}
    {/* Burst: leaves and sparkles fly out and fall a little. */}
    {BITS.map((b,i)=><Animated.View key={i} pointerEvents="none" style={{position:'absolute',opacity:at([BURST,BURST+.02,.85,1],[0,1,1,0]),transform:[{translateX:at([BURST,1],[0,Math.cos(b.a)*S*b.d])},{translateY:at([BURST,.8,1],[0,Math.sin(b.a)*S*b.d,Math.sin(b.a)*S*b.d+S*.35])},{rotate:t.interpolate({inputRange:[BURST,1],outputRange:['0deg',b.spin+'deg'],extrapolate:'clamp'})},{scale:at([BURST,.66,1],[.3,1.15,.8])}]}}><Text style={{fontSize:b.s,color:i%2?'#FFF2C4':color}}>{b.leaf?'🍃':'✦'}</Text></Animated.View>)}
    <Animated.View pointerEvents="none" style={{position:'absolute',left:0,top:0,right:0,bottom:0,backgroundColor:'#FFFDF2',opacity:at([.55,BURST,.66],[0,.92,0])}}/>

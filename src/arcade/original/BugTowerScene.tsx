@@ -33,7 +33,7 @@ export function BugTowerScene({state:s,scale,onInput,reducedMotion}:OriginalScen
    {chain&&<View pointerEvents="none" testID="bug-tower-chain-window" style={styles.chainTiming}><Text style={styles.chainTimingText}>TIK → EXTRA SALTO</Text><View style={styles.chainTimingTrack}><View style={[styles.chainTimingFill,{width:`${towerChainProgress(s)*100}%`}]}/></View></View>}
    <View pointerEvents="none" style={[styles.player,percentPosition(s.player.x,s.player.y),{transform:[{rotate:`${reducedMotion?0:s.player.spinAngle}deg`},{scaleX:1+squash},{scaleY:1-squash}]}]}><BugTowerSprite frame={towerAnimationFrame(s)}/>{rocket&&<View style={styles.rocketFlame}/>}</View>
    {landAge<120&&<View pointerEvents="none" testID="tower-landing-effect" style={{position:'absolute',...percentPosition(s.player.x,s.player.y+5),width:50,height:10,marginLeft:-25,borderRadius:25,borderWidth:2,borderColor:'#BFF3EC',opacity:1-landAge/120,transform:[{scaleX:reducedMotion?1:1+landAge/100}]}}/>}
-   <View pointerEvents="none" style={styles.controls}><View style={styles.chargeMeter}><Text style={styles.chargeLabel}>{s.springReady?'SUPERSPRONG KLAAR':s.player.spinning?'SALTO!':charge>=58?'SALTO KLAAR':'SPRONGKRACHT'}</Text><View style={styles.chargeTrack}><View style={[styles.chargeFill,{width:`${charge}%`}]}/></View><Text style={styles.chargeValue}>{charge}%</Text></View></View>
+   <View pointerEvents="none" style={styles.controls}><View style={styles.chargeMeter}><Text style={styles.chargeLabel}>{s.springReady?'SUPERSPRONG KLAAR':s.player.spinning?'SALTO!':charge>=58?'SALTO KLAAR':'SPRONGKRACHT'}</Text><View style={[styles.chargeTrack,{flex:1,width:undefined}]}><View style={[styles.chargeFill,{width:`${charge}%`}]}/></View><Text style={styles.chargeValue}>{charge}%</Text></View></View>
   </ImageBackground></View>
  </View>;
 }
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   closeText: { color: "#0b1638", fontSize: 24, fontWeight: "900" },
   chargeFill: { backgroundColor: "#facc15", borderRadius: 999, height: "100%" },
   chargeLabel: { color: "#f8fbff", fontSize: 9, fontWeight: "900" },
-  chargeMeter: { alignItems: "center", backgroundColor: "rgba(7,17,50,0.78)", borderRadius: 12, gap: 3, paddingHorizontal: 8, paddingVertical: 7, width: 104 },
+  chargeMeter: { alignItems: "center", backgroundColor: "rgba(7,17,50,0.62)", borderRadius: 10, flexDirection: "row", gap: 6, paddingHorizontal: 9, paddingVertical: 3, width: 210 },
   chargeTrack: { backgroundColor: "rgba(255,255,255,0.18)", borderRadius: 999, height: 7, overflow: "hidden", width: "100%" },
   chargeValue: { color: "#bae6fd", fontSize: 10, fontWeight: "900" },
   chainPrompt: { alignItems: "center", height: 86, justifyContent: "center", marginLeft: -43, marginTop: -43, position: "absolute", width: 86, zIndex: 10 },
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   controlSideLabel: { color: "rgba(220,233,255,0.75)", fontSize: 10, fontWeight: "900", letterSpacing: 1.5 },
   controlHint: { alignSelf: "center", backgroundColor: "rgba(4,12,38,0.72)", borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6, position: "absolute", top: 8, zIndex: 8 },
   controlHintText: { color: "#dce9ff", fontSize: 11, fontWeight: "900" },
-  controls: { alignItems: "center", bottom: 14, left: "50%", marginLeft: -52, position: "absolute", zIndex: 12 },
+  controls: { alignItems: "center", bottom: 3, left: "50%", marginLeft: -105, position: "absolute", zIndex: 12 },
   difficultyChip: { backgroundColor: "rgba(103,65,217,0.28)", borderColor: "rgba(167,139,250,0.8)", borderRadius: 999, borderWidth: 1, color: "#ede9fe", fontSize: 11, fontWeight: "900", paddingHorizontal: 9, paddingVertical: 6 },
   difficultyRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, justifyContent: "center" },
   game: { flex: 1 },

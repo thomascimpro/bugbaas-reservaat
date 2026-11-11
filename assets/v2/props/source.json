@@ -4,7 +4,7 @@
  "style": "HD natuur zoals docs/concepts/combat-20261102 (Codex-beeld leidend): bemost gesteente, schors, goud, warm boslicht",
  "tools": "Blender 5.1.2 (Cycles, OptiX RTX 4050), eigen geometrie; scripts assets/3d/world-props/authoring/build_props.py + hd_lib.py",
  "license": "Eigen werk CC0; materialen en HDRI CC0 van Poly Haven (forest_slope, mossy_rock, bark_willow_02, forest_ground_04), lokaal in .local/polyhaven (niet in Git)",
- "rebuild": "blender --background --factory-startup --python assets/3d/world-props/authoring/build_props.py -- <repo> egg gym post   (toevoegen: preview = snelle 420px-proef)",
+ "rebuild": "blender --background --factory-startup --python assets/3d/world-props/authoring/build_props.py -- <repo> egg gym post   (toevoegen: preview = snelle 420px-proef). Draaischijf en cocon-uitkomst: ... -- <repo> hatch postspin, daarna node scripts/pack-interact-art.mjs (post-spin.webp 4x4 x 320px, hatch-0..3.webp 420px)",
  "renders": [
   {
    "file": "arena-platform.png",

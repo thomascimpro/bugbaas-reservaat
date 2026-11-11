@@ -25,7 +25,12 @@ export type WorldSites={available?:boolean;dataAt?:number;posts:FieldPost[];rout
 export const MAP_SITE_RADIUS=1200,MAP_SITE_LIMIT=60,MAP_GYM_TEAM_LIMIT=12;
 // Same FNV-1a rule as gymSites in gymsV2 (kept in sync by a test): a post is a gym candidate when hash%3===0.
 export function gymCandidate(id:string){let value=2166136261;for(const c of id)value=Math.imul(value^c.charCodeAt(0),16777619);return (value>>>0)%3===0;}
-export type SiteProgress={visits:Record<string,number>;firstDay:string;routeClaims:string[];run:RouteRun|null;own?:FieldRoute[];badges?:Record<string,number>;recording?:RouteRecording|null;lastRoute?:RouteResult;lastLoot?:{post:string;items:Partial<Record<FieldItem,number>>;at:number;cocoon?:CocoonKm;tm?:'fast'|'charged';held?:Held}};
+export type SiteProgress={visits:Record<string,number>;firstDay:string;routeClaims:string[];run:RouteRun|null;own?:FieldRoute[];badges?:Record<string,number>;recording?:RouteRecording|null;lastRoute?:RouteResult;lastLoot?:{post:string;items:Partial<Record<FieldItem,number>>;at:number;cocoon?:CocoonKm;tm?:'fast'|'charged';held?:Held;daily?:number;xp?:number};spinDay?:string;spinStreak?:number};
+/** First post of the UTC day (like the first PokéStop of the day): extra nets and XP; day 7 of an unbroken streak pays the big bundle, then the streak restarts. */
+export const POST_DAILY_BONUS={items:{basic:2,blue:1},xp:150} as const,POST_WEEK_BONUS={items:{basic:5,blue:2,silk:1},xp:1000} as const;
+const postDay=(now:number)=>new Date(now).toISOString().slice(0,10);
+/** Streak day (1–7) the next first spin of `now`'s day would pay, or 0 when today's bonus is already taken. */
+export function postDailyNext(s:Pick<SiteProgress,'spinDay'|'spinStreak'>|undefined,now:number){const day=postDay(now);if(s?.spinDay===day)return 0;return s?.spinDay===postDay(now-86400000)?(s.spinStreak??0)%7+1:1;}
 export const POST_RADIUS=80,POST_COOLDOWN=300000;
 export const HORIZON_LIMITS={low:16,normal:36,high:60} as const;
 export type HorizonSite=MapSite&{meters:number;icon:string};
@@ -38,11 +43,12 @@ export function ensureSites(p:PlayerV2){return p.go!.sites??={visits:{},firstDay
 export function spinPost(p:PlayerV2,id:unknown,seed:string,now:number){
  requireFieldLocation(p.walking,now);const post=p.walking!.posts?.find(x=>x.id===id);check(post,'Deze insectenpost is niet beschikbaar.');check(distance(p.walking!.fix,post)<=POST_RADIUS,'Loop binnen 80 meter van de post.');const s=ensureSites(p);check(now-(s.visits[post.id]??0)>=POST_COOLDOWN,'Deze post laadt nog op.');
  const random=rng(seed),items:Partial<Record<FieldItem,number>>={basic:2+Math.floor(random()*3)};if(random()<.35)items.blue=1;if(random()<.05)items.silk=1;if(random()<.25)items[(['pollen','fruit','dew'] as const)[Math.floor(random()*3)]]=1;if(random()<.02)items.gold=1;if(random()<.02)items.silver=1;
+ const daily=postDailyNext(s,now),bonus=daily===7?POST_WEEK_BONUS:POST_DAILY_BONUS;if(daily){for(const [kind,count] of Object.entries(bonus.items))items[kind as FieldItem]=(items[kind as FieldItem]??0)+count;s.spinDay=postDay(now);s.spinStreak=daily;}
  for(const [kind,count] of Object.entries(items))p.field!.inventory[kind as FieldItem]=Math.min(99999,(p.field!.inventory[kind as FieldItem]??0)+count!);s.visits[post.id]=now;
  const cocoon=awardPostCocoon(p,post.id,seed,now),tmRoll=random(),tm=tmRoll<.01?'fast':tmRoll<.02?'charged':undefined;
  if(tm==='fast')p.go!.fastTMs++;if(tm==='charged')p.go!.chargedTMs++;
  let held:Held|undefined;if(random()<.02){const types=Object.keys(HELD) as Held[];held=types[Math.floor(random()*types.length)];p.go!.items[held]++;}
- awardPostResearch(p,post.id,now);for(const [key,at] of Object.entries(s.visits))if(now-at>86400000)delete s.visits[key];s.lastLoot={post:post.id,items,at:now,...(cocoon?{cocoon:cocoon.km}:{}),...(tm?{tm}:{}),...(held?{held}:{})};grantXP(p,50);return items;
+ awardPostResearch(p,post.id,now);for(const [key,at] of Object.entries(s.visits))if(now-at>86400000)delete s.visits[key];s.lastLoot={post:post.id,items,at:now,...(cocoon?{cocoon:cocoon.km}:{}),...(tm?{tm}:{}),...(held?{held}:{}),...(daily?{daily}:{}),xp:50+(daily?bonus.xp:0)};grantXP(p,50+(daily?bonus.xp:0));return items;
 }
 const day=(now:number)=>new Date(now).toISOString().slice(0,10);
 export function startRoute(p:PlayerV2,id:unknown,now:number,seed?:string){

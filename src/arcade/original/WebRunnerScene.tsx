@@ -33,7 +33,7 @@ export function WebRunnerScene({state:s,ticket,scale,onInput,reducedMotion}:Orig
    <View pointerEvents="none" style={[styles.player,jumping&&styles.playerJump,{left:laneLeft(s.lane),transform:[{scale:jumping?playfieldScale*1.12:playfieldScale}]}]}>
     {s.elapsedMs<s.magnetUntil&&<View style={styles.magnetRing}/>}{s.elapsedMs<s.boostUntil&&<View style={styles.boostTrail}/>}
     {s.shield&&<Image resizeMode="contain" source={shieldEffectImage} style={styles.playerEffect}/>}
-    <SpriteView id={bug?.species??'midge'} shiny={bug?.shiny} size={70} animate/>
+    <SpriteView id={bug?.species??'midge'} shiny={bug?.shiny} size={88} animate/>
    </View>
   </View>
   <View style={styles.controls}>
@@ -82,7 +82,7 @@ function laneLeft(lane: 0 | 1 | 2): DimensionValue {
 
 
 const styles = StyleSheet.create({
-  activeLane: { backgroundColor: "rgba(31,195,211,0.10)" },
+  activeLane: { backgroundColor: "rgba(140,223,238,0.17)", borderColor: "rgba(170,240,250,0.7)" },
   activeLaneLabel: { backgroundColor: "#d7bd57", color: "#102018" },
   backgroundArt: { bottom: 0, left: 0, opacity: 0.95, position: "absolute", right: 0, top: 0 },
   body: { color: "#dfe9df", fontSize: 15, fontWeight: "700", lineHeight: 22, textAlign: "center" },
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   jumpButton: { backgroundColor: "#1FC3D3", borderColor: "#B2FCFF" },
   jumpButtonDisabled: { backgroundColor: "#0B8EA2", opacity: 0.7 },
   jumpCooldownFill: { backgroundColor: "rgba(16,32,24,0.2)", bottom: 0, left: 0, position: "absolute", top: 0 },
-  lane: { alignItems: "center", borderColor: "rgba(255,255,255,0.14)", borderRadius: 18, borderWidth: 1, flex: 1, justifyContent: "flex-start", paddingTop: 44 },
+  lane: { alignItems: "center", backgroundColor: "rgba(190,220,255,0.05)", borderColor: "rgba(214,232,255,0.34)", borderLeftWidth: 1.5, borderRightWidth: 1.5, flex: 1, justifyContent: "flex-start", paddingTop: 44 },
   laneLabel: { backgroundColor: "rgba(16,32,24,0.7)", borderRadius: 999, color: "rgba(255,255,255,0.78)", fontSize: 10, fontWeight: "900", overflow: "hidden", paddingHorizontal: 7, paddingVertical: 3 },
   lifePip: { backgroundColor: "#22c55e", borderColor: "#f9fbf7", borderRadius: 999, borderWidth: 1, height: 9, width: 20 },
   lifePipEmpty: { backgroundColor: "rgba(239,68,68,0.45)", borderColor: "rgba(249,251,247,0.45)" },
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   player: { alignItems: "center", bottom: 24, height: 74, justifyContent: "center", marginLeft: -37, position: "absolute", width: 74, zIndex: 6 },
   playerEffect: { height: 88, opacity: 0.58, position: "absolute", width: 88 },
   playerJump: { bottom: 118, shadowColor: "#6BEFF2", shadowOffset: { height: 0, width: 0 }, shadowOpacity: 0.75, shadowRadius: 14, transform: [{ scale: 1.12 }] },
-  playerShadow: { backgroundColor: "rgba(0,0,0,0.4)", borderRadius: 999, bottom: 20, height: 14, marginLeft: -25, position: "absolute", width: 50, zIndex: 4 },
+  playerShadow: { backgroundColor: "rgba(0,0,0,0.4)", borderRadius: 999, bottom: 18, height: 16, marginLeft: -31, position: "absolute", width: 62, zIndex: 4 },
   playerShadowJump: { opacity: 0.34, transform: [{ scale: 0.62 }] },
   playfield: { flex: 1, flexDirection: "row", gap: 10, overflow: "hidden", padding: 14, paddingBottom: 28 },
   primaryButton: { alignItems: "center", backgroundColor: "#168251", borderRadius: 8, justifyContent: "center", minHeight: 52, paddingHorizontal: 20, width: "100%" },

@@ -107,7 +107,7 @@ if 'gym' in ONLY:
         hd.render(os.path.join(REPO,'.local','props','preview-gym.png') if PREVIEW else os.path.join(ART,'gym-'+team+'.png'))
     if not PREVIEW:hd.recolor('TeamColor','#C6B98C');hd.recolor('Crystal','#E8F4FF',.4);hd.export_glb(os.path.join(GLB,'Gym.glb'))
 
-if 'post' in ONLY:  # Insect post (PoGO stop), 11 Nov: glass medallion blue (ready) / purple (spun) like the map, gold butterfly emblem
+if 'post' in ONLY or 'postspin' in ONLY:  # Insect post (PoGO stop), 11 Nov: glass medallion blue (ready) / purple (spun) like the map, gold butterfly emblem
     import bmesh
     hd.reset()
     rock=hd.pbr('Rock','mossy_rock',1.6);bark=hd.pbr('Wood','bark_willow_02',3.0,tint='#9C7550');gold=hd.solid('Gold','#E8B84A',.22,metal=1.)
@@ -137,18 +137,51 @@ if 'post' in ONLY:  # Insect post (PoGO stop), 11 Nov: glass medallion blue (rea
     for k,(x,y) in enumerate([(-.45,-.55),(.2,-.75),(-.75,.3)]):
         for q in range(5):a=q/5*math.tau;hd.blob('P%d_%d'%(k,q),(x+math.cos(a)*.07,y+math.sin(a)*.07,.42),(.06,.03,.02),petal)
         hd.blob('H%d'%k,(x,y,.43),(.035,.035,.03),heart)
-    bpy.ops.object.empty_add(location=(0,0,0));turn=bpy.context.object
+    # Swipe-to-spin frames: the medallion turns around its own vertical axis (parts hang under 'Spin').
+    from mathutils import Matrix
+    bpy.ops.object.empty_add(location=(0,0,Z));spin=bpy.context.object;spin.name='Spin'
+    for o in bpy.data.objects:
+        if o.parent is None and o.type in ('MESH','CURVE') and re.match(r'(Cylinder|InnerRim|DiscRim|Stud|Wing|Body|Antenna)',o.name):o.parent=spin;o.matrix_parent_inverse=Matrix.Translation((0,0,-Z))
+    if 'postspin' in ONLY:  # the turntable also shows the back: same gold butterfly there (not in the still renders or the map model)
+        for o in [o for o in spin.children if re.match(r'(Wing|Body|Antenna)',o.name)]:
+            d=o.copy();bpy.context.collection.objects.link(d);d.name='Back'+o.name;d.parent=spin;d.matrix_parent_inverse=Matrix.Rotation(math.pi,4,'Z')@Matrix.Translation((0,0,-Z))
+    bpy.ops.object.empty_add(location=(0,0,0));turn=bpy.context.object;spin.parent=turn
     for o in bpy.data.objects:
         if o is not turn and o.parent is None and o.type in ('MESH','CURVE'):o.parent=turn
     turn.rotation_euler[2]=math.radians(-30)
     for i in range(4):a=i/4*math.tau+.3;hd.leaf('GLeaf%d'%i,(math.cos(a)*.85,math.sin(a)*.85,.34),.5,a,math.radians(-15),leafm,roll=math.radians(25))
     hd.stage(7.6,3.3,1.95,lens=50)
-    for state,col in ([('ready','#1E6FE8')] if PREVIEW else [('ready','#1E6FE8'),('visited','#B65CF0')]):
+    if 'postspin' in ONLY:  # 16 frames of one full turn, packed into assets/v2/props/post-spin.webp by scripts/pack-interact-art.mjs
+        sc=bpy.context.scene;sc.render.resolution_x=sc.render.resolution_y=384;sc.cycles.samples=48;hd.recolor('PostDisc','#1E6FE8',.45)
+        for k in range(16):spin.rotation_euler[2]=k/16*math.tau;hd.render(os.path.join(REPO,'.local','props','postspin','f%02d.png'%k))
+        spin.rotation_euler[2]=0;sc.render.resolution_x=sc.render.resolution_y=hd.size;sc.cycles.samples=hd.samples
+    for state,col in ([] if 'post' not in ONLY else [('ready','#1E6FE8')] if PREVIEW else [('ready','#1E6FE8'),('visited','#B65CF0')]):
         hd.recolor('PostDisc',col,.45);hd.render(os.path.join(REPO,'.local','props','preview-post.png') if PREVIEW else os.path.join(ART,'post-'+state+'.png'))
-    if not PREVIEW:
+    if not PREVIEW and 'post' in ONLY:
         # Map model stays light: drop tiny decor (petals, studs, mushrooms, ivy) and cap every part at 220 faces.
         for o in [o for o in bpy.data.objects if re.match(r'(P\d|H\d|Stud|Cap|Stem|Ivy|GLeaf|Antenna)',o.name)]:bpy.data.objects.remove(o,do_unlink=True)
         hd.recolor('PostDisc','#FFFFFF',0.);hd.export_glb(os.path.join(GLB,'Post.glb'),max_faces=220)
+
+if 'hatch' in ONLY:  # Walking cocoon hatch: 4 stages (whole, first crack, wide cracks, bursting with light) for the tap-to-hatch moment
+    hd.reset()
+    silkm=hd.solid('Silk','#FBF4E2',.35,sheen=1.)
+    shell=cocoon_shell('HatchShell');tint_cocoon(shell,'#E9C46A');nt=shell.node_tree;b=nt.nodes['Principled BSDF']
+    tc=nt.nodes.new('ShaderNodeTexCoord');vor=nt.nodes.new('ShaderNodeTexVoronoi');vor.feature='DISTANCE_TO_EDGE';vor.inputs['Scale'].default_value=2.6;nt.links.new(tc.outputs['Object'],vor.inputs['Vector'])
+    width=nt.nodes.new('ShaderNodeMath');width.operation='LESS_THAN';nt.links.new(vor.outputs['Distance'],width.inputs[0])
+    dist=nt.nodes.new('ShaderNodeVectorMath');dist.operation='DISTANCE';nt.links.new(tc.outputs['Object'],dist.inputs[0]);dist.inputs[1].default_value=(-.3,-.33,1.3)
+    reach=nt.nodes.new('ShaderNodeMath');reach.operation='LESS_THAN';nt.links.new(dist.outputs['Value'],reach.inputs[0])
+    crack=nt.nodes.new('ShaderNodeMath');crack.operation='MULTIPLY';nt.links.new(width.outputs[0],crack.inputs[0]);nt.links.new(reach.outputs[0],crack.inputs[1])
+    boost=nt.nodes.new('ShaderNodeMath');boost.operation='MULTIPLY';nt.links.new(crack.outputs[0],boost.inputs[0])
+    old=b.inputs['Emission Strength'].links[0].from_socket;total=nt.nodes.new('ShaderNodeMath');total.operation='ADD';nt.links.new(old,total.inputs[0]);nt.links.new(boost.outputs[0],total.inputs[1]);nt.links.new(total.outputs[0],b.inputs['Emission Strength'])
+    ecol=nt.nodes.new('ShaderNodeMix');ecol.data_type='RGBA';ecol.inputs[6].default_value=b.inputs['Emission Color'].default_value;ecol.inputs[7].default_value=(*lin('#FFD98A'),1);nt.links.new(crack.outputs[0],ecol.inputs['Factor']);nt.links.new(ecol.outputs[2],b.inputs['Emission Color'])
+    # no branch: only the cocoon on its silk thread, so the app can swing it around the top of the picture
+    chrysalis('Cocoon',shell,top=2.32,length=1.95,r=.52)
+    hd.branch('Stalk',[(.05,0,2.46),(.04,0,2.36),(0,0,2.28)],.035,silkm,.6)
+    bpy.ops.object.light_add(type='POINT',location=(-.6,-.7,1.3));glow=bpy.context.object;glow.data.color=lin('#FFE9A8');glow.data.shadow_soft_size=.6
+    hd.stage(3.7,1.6,1.4,lens=50,ground=False);sc=bpy.context.scene;sc.render.resolution_x=sc.render.resolution_y=512;sc.cycles.samples=96
+    for stage,(w,r,e,light) in enumerate([(0,0,0,0),(.016,.5,7,12),(.03,1.0,10,45),(.07,9,16,160)]):
+        width.inputs[1].default_value=w;reach.inputs[1].default_value=r;boost.inputs[1].default_value=e;glow.data.energy=light
+        hd.render(os.path.join(REPO,'.local','props','hatch','s%d.png'%stage))
 
 if 'arena' in ONLY:  # D2: battle platform under the bugs (background painting is Codex')
     hd.reset()

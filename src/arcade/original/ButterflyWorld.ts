@@ -541,6 +541,10 @@ function createButterfly(index) {
       metalness: kind === "beetle" ? 0.24 : 0.02,
       clearcoat: kind === "beetle" ? 0.72 : 0.38,
       clearcoatRoughness: 0.45,
+      // Flat wings turn nearly black whenever they face away from the sun; let the wing pattern carry its own light.
+      emissive: 0xffffff,
+      emissiveMap: wingMaterialOptions.map,
+      emissiveIntensity: 0.5,
     });
 
   const bodyMaterial = new THREE.MeshStandardMaterial({

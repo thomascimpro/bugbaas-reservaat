@@ -6,14 +6,15 @@ import type {AreaFeature} from '../game/habitatsV2';
 import type {Fix} from '../game/walkingV2';
 import {mapPropBatch} from './mapPropBatchV3';
 
-export function buildingHeight(p:Record<string,unknown>){return Math.min(12,Math.max(2.5,(Number(p.render_height)||5)*.42));}
+// Low blocks like a game map (11 nov): with the close walking camera real heights hide the trainer, bugs and posts.
+export function buildingHeight(p:Record<string,unknown>){return Math.min(4.5,Math.max(1.2,(Number(p.render_height)||5)*.16));}
 function texture(r:number,g:number,b:number){const data=new Uint8Array(64*64*4);for(let y=0;y<64;y++)for(let x=0;x<64;x++){const i=(y*64+x)*4,n=Math.sin(x*Math.PI/16)*Math.cos(y*Math.PI/16)*3+Math.sin((x+y)*Math.PI/8)*1.5;data[i]=r+n;data[i+1]=g+n;data[i+2]=b+n;data[i+3]=255;}return {width:64,height:64,data};}
 export function applyNatureStyle(map:GameMap){
  if(!map.hasImage('bb-grass'))map.addImage('bb-grass',texture(184,211,132));if(!map.hasImage('bb-forest'))map.addImage('bb-forest',texture(100,153,105));
  for(const layer of map.getStyle().layers){const source='source-layer' in layer?layer['source-layer']:'';try{
   if(layer.type==='background')map.setPaintProperty(layer.id,'background-color','#BED58E');
   else if(layer.type==='symbol')map.setLayoutProperty(layer.id,'visibility','none');
-  else if(layer.type==='fill-extrusion'){map.setLayoutProperty(layer.id,'visibility','none');map.setPaintProperty(layer.id,'fill-extrusion-color',['interpolate',['linear'],['to-number',['get','render_height'],5],0,'#E5DDBE',10,'#D8CAAC',30,'#BAC6AC']);map.setPaintProperty(layer.id,'fill-extrusion-height',['min',12,['max',2.5,['*',.42,['to-number',['get','render_height'],5]]]]);map.setPaintProperty(layer.id,'fill-extrusion-base',0);map.setPaintProperty(layer.id,'fill-extrusion-opacity',1);}
+  else if(layer.type==='fill-extrusion'){map.setLayoutProperty(layer.id,'visibility','none');map.setPaintProperty(layer.id,'fill-extrusion-color',['interpolate',['linear'],['to-number',['get','render_height'],5],0,'#E5DDBE',10,'#D8CAAC',30,'#BAC6AC']);map.setPaintProperty(layer.id,'fill-extrusion-height',['min',4.5,['max',1.2,['*',.16,['to-number',['get','render_height'],5]]]]);map.setPaintProperty(layer.id,'fill-extrusion-base',0);map.setPaintProperty(layer.id,'fill-extrusion-opacity',1);}
   else if(layer.type==='fill'){
    if(source==='water'){map.setPaintProperty(layer.id,'fill-color','#73B6B3');map.setPaintProperty(layer.id,'fill-opacity',1);}
    else if(source==='landcover'){map.setPaintProperty(layer.id,'fill-color',['match',['get','class'],'wood','#63996C','grass','#B8D384','wetland','#94BEA1','sand','#E7D5A0','ice','#D9E5DF','#B5CD91']);if(/wood/.test(layer.id))map.setPaintProperty(layer.id,'fill-pattern','bb-forest');else if(/grass/.test(layer.id))map.setPaintProperty(layer.id,'fill-pattern','bb-grass');}
@@ -88,7 +89,7 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
  const doors=instanced('scenery-doors',new THREE.BoxGeometry(1.1,1.9,.16),0x94704e,SCENERY_LIMITS.doors);
  const trim=instanced('scenery-roof-trim',new THREE.BoxGeometry(1,.2,.24),0xe3cfaa,SCENERY_LIMITS.trim);
  const ridges=instanced('scenery-roof-ridges',new THREE.BoxGeometry(1,.2,.28),0x996a4e,SCENERY_LIMITS.buildings);
- const wallMaterials=[0xe7d4ad,0xd8c59d,0xf0e3c5,0xc9cfac].map(material),roofMaterials=[0xb97750,0xbe9164,0x89927a,0x9c795f].map(material);
+ const wallMaterials=[0xe7d4ad,0xd8c59d,0xf0e3c5,0xc9cfac].map(material),roofMaterials=[0xc79a78,0xcdb48c,0xa3b193,0xb49c82].map(material);
  roofMaterials.forEach(m=>{m.side=THREE.DoubleSide;});
  const shadowMaterial=new THREE.MeshBasicMaterial({color:0x3e543c,transparent:true,opacity:.1,depthWrite:false});resources.add(shadowMaterial);
  function place(mesh:THREE.InstancedMesh,pos:THREE.Vector3,scale:THREE.Vector3,rotation=0){
@@ -137,15 +138,15 @@ export function addMapNature(map:GameMap,scene:THREE.Scene,local:(lng:number,lat
    for(const ring of rings)for(let i=0;i<ring.length;i++){const a=ring[i],b=ring[(i+1)%ring.length],delta=b.clone().sub(a),length=delta.length();if(length<.5)continue;place(trim,a.clone().add(b).multiplyScalar(.5).setY(height),new THREE.Vector3(length,1,1),Math.atan2(-delta.z,delta.x));}
    // Facade details stay small and are capped across the entire visible town.
    if(center.distanceTo(origin)>190)continue;
-   const signed=pts.reduce((sum,p,i)=>sum+p.x*pts[(i+1)%pts.length].z-pts[(i+1)%pts.length].x*p.z,0)>=0?1:-1;let door=false;
+   const signed=pts.reduce((sum,p,i)=>sum+p.x*pts[(i+1)%pts.length].z-pts[(i+1)%pts.length].x*p.z,0)>=0?1:-1;let door=false;const low=Math.min(1,height/2.4);  // doors and ground-floor windows shrink with the low game-map blocks
    for(let i=0;i<pts.length;i++){
     const a=pts[i],b=pts[(i+1)%pts.length],delta=b.clone().sub(a),length=delta.length();if(length<4)continue;
     const tangent=delta.clone().divideScalar(length),outward=new THREE.Vector3(tangent.z*signed,0,-tangent.x*signed),yaw=Math.atan2(-delta.z,delta.x),columns=Math.min(5,Math.floor(length/3.5)),floors=Math.min(3,Math.max(1,Math.floor(height/2.8)));
-    if(!door&&length>5){place(doors,a.clone().lerp(b,.5).addScaledVector(outward,.1).setY(.95),new THREE.Vector3(1,1,1),yaw);door=true;}
+    if(!door&&length>5){place(doors,a.clone().lerp(b,.5).addScaledVector(outward,.1).setY(.95*low),new THREE.Vector3(1,low,1),yaw);door=true;}
     for(let floor=0;floor<floors;floor++)for(let col=0;col<columns;col++){
      if(floor===0&&door&&Math.abs((col+1)/(columns+1)-.5)<.13)continue;
-     const pos=a.clone().lerp(b,(col+1)/(columns+1)).addScaledVector(outward,.12).setY(1.5+floor*2.8);if(pos.y+.7>height)continue;
-     place(frames,pos,new THREE.Vector3(1,1,1),yaw);place(windows,pos.clone().addScaledVector(outward,.045),new THREE.Vector3(1,1,1),yaw);
+     const k=floor?1:low,pos=a.clone().lerp(b,(col+1)/(columns+1)).addScaledVector(outward,.12).setY(floor?1.5+floor*2.8:Math.min(1.5,height*.52));if(pos.y+.7*k>height)continue;
+     place(frames,pos,new THREE.Vector3(1,k,1),yaw);place(windows,pos.clone().addScaledVector(outward,.045),new THREE.Vector3(1,k,1),yaw);
     }
    }
   }
