@@ -31,6 +31,7 @@ export function GoAccountV2({view,busy,change,run}:{view:GameViewV2;busy:boolean
  return <View style={{gap:14}}>
   {view.player.onboarded&&<Panel><TrainerNameV2 player={view.player} run={run} busy={disabled}/></Panel>}
   <Panel><View style={{flexDirection:'row',alignItems:'center',gap:12}}><Glyph name="profile" size={54}/><View style={{flex:1,gap:4}}><Label bold>{account.guest?'Bewaar je avontuur':account.email}</Label><Label small>{account.guest?'Koppel je gastvoortgang voor een ander toestel.':account.verified?'E-mailadres bevestigd':'E-mailadres nog niet bevestigd'}</Label></View></View>
+   {googleSignInAvailable&&account.providers.includes('google.com')&&<Button disabled={disabled} onPress={()=>void action(()=>change(()=>googleLoginV2(false)))}>Opnieuw inloggen met Google</Button>}
    {googleSignInAvailable&&!account.providers.includes('google.com')&&<Button disabled={disabled} onPress={google}>{account.guest?'Verder met Google':'Koppel Google'}</Button>}
    {!credentials&&<Button small secondary disabled={disabled} onPress={()=>setEmailVisible(true)}>E-mailadres</Button>}
    {credentials&&<><TextInput accessibilityLabel="E-mailadres" autoCapitalize="none" keyboardType="email-address" autoComplete="email" editable={!disabled} value={email} onChangeText={setEmail} placeholder="E-mailadres" placeholderTextColor="#B7CAB6" style={v.input}/>

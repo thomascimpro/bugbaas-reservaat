@@ -10,6 +10,9 @@ import {googleSignInAvailable,signInGoogle} from './GoogleSignInV2';
 import {commandSerialV2} from './backgroundAutoSessionV2';
 import {retryCatchCommandV2} from './catchCommandRetryV2';
 export {googleSignInAvailable};
+import {ACCOUNT_MEMORY_KEY,readAccountMemoryV2,needsAccountRecoveryV2,AccountRecoveryErrorV2,type RememberedAccountV2} from './accountSessionV2';
+export {AccountRecoveryErrorV2};
+let rememberedAccountSignature='';
 
 const app = getApps()[0] ?? initializeApp(firebaseConfig);
 let auth: ReturnType<typeof getAuth>;
@@ -37,6 +40,7 @@ async function request<T>(path: string, body?: unknown, anonymous = false,backgr
     })()]);
   } catch (e) {
     if (e instanceof ApiError) throw e;
+    if(['auth/user-disabled','auth/user-token-expired','auth/invalid-user-token','auth/user-not-found'].includes((e as {code?:string})?.code??''))throw new ApiError('Log opnieuw in om je opgeslagen avontuur te openen.',401);
     throw new ApiError('Verbinding onderbroken. Vernieuw om je opgeslagen voortgang te zien.', 0);
   } finally { clearTimeout(timeout!); }
 }
@@ -79,10 +83,12 @@ export const serverMinClient=()=>requiredClient;
 export async function connectV2(){
  const info=await request<{mode:'local'|'cloud';minClient?:string}>('info',undefined,true);mode=info.mode;requiredClient=info.minClient;
  if(mode==='local'){localToken=await AsyncStorage.getItem('bugbaas-reservaat-local-token')??'';if(!localToken){localToken=(await request<{token:string}>('session',{},true)).token;await AsyncStorage.setItem('bugbaas-reservaat-local-token',localToken);}try{return await refreshV2();}catch(e){if(!(e instanceof ApiError)||e.status!==401)throw e;localToken=(await request<{token:string}>('session',{},true)).token;await AsyncStorage.setItem('bugbaas-reservaat-local-token',localToken);return refreshV2();}}
- await auth.authStateReady();if(!auth.currentUser)await signInAnonymously(auth);return refreshV2();
+ await auth.authStateReady();const saved=readAccountMemoryV2(await AsyncStorage.getItem(ACCOUNT_MEMORY_KEY));if(needsAccountRecoveryV2(saved,auth.currentUser?.uid??null))throw new AccountRecoveryErrorV2(saved!);if(!auth.currentUser)await signInAnonymously(auth);try{return await refreshV2();}catch(e){if(e instanceof ApiError&&e.status===401)throw new AccountRecoveryErrorV2(saved??{uid:auth.currentUser?.uid??'',name:'Je avontuur',email:auth.currentUser?.email??null,progress:true});throw e;}
 }
-export const refreshV2=()=>request<GameViewV2>('v2/state');
-export const commandV2=(command:CommandV2)=>serializeCommands(()=>retryCatchCommandV2(command,(same,retry)=>request<GameViewV2>('v2/command',same,false,undefined,retry?6000:undefined)));
+export async function refreshV2(){const view=await request<GameViewV2>('v2/state');await rememberAccountV2(view);return view;}
+async function rememberAccountV2(view:GameViewV2){const user=auth.currentUser,p=view.player;if(mode!=='cloud'||!user||user.uid!==p.uid||!p.onboarded&&user.isAnonymous)return;const saved:RememberedAccountV2={uid:p.uid,name:p.name,email:user.email,progress:p.onboarded},raw=JSON.stringify(saved);if(raw===rememberedAccountSignature)return;try{await AsyncStorage.setItem(ACCOUNT_MEMORY_KEY,raw);rememberedAccountSignature=raw;}catch{/* Account reminder failure must not block accepted gameplay. */}}
+export async function startNewGuestV2(){if(mode!=='cloud')throw new ApiError('Open de online versie voor je account.',400);await AsyncStorage.removeItem(ACCOUNT_MEMORY_KEY);rememberedAccountSignature='';await signOut(auth);await signInAnonymously(auth);return refreshV2();}
+export const commandV2=(command:CommandV2)=>serializeCommands(async()=>{const view=await retryCatchCommandV2(command,(same,retry)=>request<GameViewV2>('v2/command',same,false,undefined,retry?6000:undefined));await rememberAccountV2(view);return view;});
 /** Headless GPS may reuse only this device's existing account, never create another guest. */
 export function withBackgroundSessionV2<T>(uid:string,work:(api:{state:()=>Promise<GameViewV2>;command:(command:CommandV2)=>Promise<GameViewV2>})=>Promise<T>){
  return serializeCommands(async()=>{if(Platform.OS!=='android'||!base.startsWith('https://'))throw new ApiError('Achtergrondautovangst werkt in de online Android-app.',400);await ownBackgroundToken(uid);return work({state:()=>request<GameViewV2>('v2/state',undefined,false,uid),command:command=>{if(command.type!=='worldLocate'&&command.type!=='adventureSync')throw new ApiError('Alleen GPS- en wandelmetingen zijn toegestaan voor achtergrondautovangst.',400);return request<GameViewV2>('v2/command',command,false,uid);}});});

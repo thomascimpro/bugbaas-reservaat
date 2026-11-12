@@ -4,8 +4,8 @@ import type {PlayerV2} from '../game/typesV2';
 import {MotionPrefs,font} from './uiV2';
 
 // "Zo werkt Strijd" (UX 9 Nov): one illustrated row per play mode with what it is and what it gives, in the order a
-// new player should try them. Nothing is removed or locked: every row only opens the existing mode. Open by default
-// for players with fewer than 5 battles, then a single line that can be reopened (progressive disclosure).
+// new player should try them. Every row opens the existing mode; keep the guide collapsed so the team and play
+// button stay visible on a phone. New players still get the highlighted first step when they open it.
 export const MODE_ART={
  duel:require('../assets/v2/modes/mode-duel.webp'),cup:require('../assets/v2/modes/mode-beker.webp'),daily:require('../assets/v2/modes/mode-dag.webp'),
  live:require('../assets/v2/modes/mode-live.webp'),rank:require('../assets/v2/medals/medal-strijder-goud.webp'),
@@ -22,7 +22,7 @@ const ROWS:{id:StrijdMode;title:string;what:string;get:string}[]=[
 const native=Platform.OS!=='web';
 
 export function StrijdGuideV3({player,onOpen}:{player:PlayerV2;onOpen:(mode:StrijdMode)=>void}){
- const battles=(player.go?.wins??0)+(player.go?.losses??0),[open,setOpen]=useState(battles<5),reduced=useContext(MotionPrefs),t=useRef(new Animated.Value(open?1:0)).current;
+ const battles=(player.go?.wins??0)+(player.go?.losses??0),[open,setOpen]=useState(false),reduced=useContext(MotionPrefs),t=useRef(new Animated.Value(open?1:0)).current;
  useEffect(()=>{const a=Animated.timing(t,{toValue:open?1:0,duration:reduced?0:260,easing:Easing.out(Easing.cubic),useNativeDriver:native});a.start();return()=>a.stop();},[open,reduced]);
  return <View testID="strijd-guide" style={{borderRadius:20,backgroundColor:'#0E2828',borderWidth:1,borderColor:'#BFF3EC47',overflow:'hidden'}}>
   <Pressable accessibilityRole="button" accessibilityLabel={open?'Uitleg Strijd inklappen':'Zo werkt Strijd'} accessibilityState={{expanded:open}} onPress={()=>setOpen(!open)} style={{flexDirection:'row',alignItems:'center',gap:10,padding:12}}>

@@ -37,7 +37,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
  const affordable=(n:number)=>{const c=powerCost(go.level,n);return !!c&&g.dust>=c.dust&&candy>=c.candy&&xl>=c.xl;},maxAffordable=(()=>{let n=0;for(let i=1;i<=maxPowerSteps;i++)if(affordable(i))n=i;return n;})(),one=powerCost(go.level,1);
  const canPower=maxAffordable>0,canEvolve=!!evo&&candy>=evo.candy,deployed=!!g.gyms?.deployed.some(d=>d.specimen===s.id),second=secondCost(s.species),maxStats=stats(s,{...go,level:50});
  const trimmed=nickname.trim(),validNickname=Array.from(trimmed).length<=18&&/^[\p{L}\p{N} _'-]*$/u.test(trimmed);
- const estimate=380+(evo?68:0)+(renaming?70:0),photoH=Math.round(Math.max(240,Math.min(box.h*.56,box.h-estimate))),artW=Math.min(300,box.w-96);
+ const photoH=Math.round(Math.max(270,Math.min(430,box.h*.5))),artW=Math.min(320,box.w-72),artSize=Math.min(artW,photoH-88);
 
  useGoBack(active&&(!!sheet||renaming||powerOpen),()=>{if(powerOpen)setPowerOpen(false);else if(sheet)setSheet(null);else setRenaming(false);return true;},20);
 
@@ -50,17 +50,22 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
  const releaseBlocked=busy||s.favorite||s.shiny||s.id===p.buddy||g.team.includes(s.id)||deployed;
  const release=()=>info.show({title:'Vrijlaten?',icon:'leaf',body:'Dit exemplaar verdwijnt en geeft 1 '+familyName(key)+'-nectar. Dit kun je niet terugdraaien.',action:{label:'Laat vrij',onPress:()=>{void run('goTransfer',{id:s.id}).then(ok=>{if(ok)info.hide();});}}});
 
+ const powerButton=<PoPill height={54} icon={box.w>=360?'power':undefined} label={one?'Sterker':'Max!'} accessibilityLabel="Sterker maken" disabled={busy||!canPower} onPress={power} right={one?<>
+      <Glyph name="nectar" size={20}/><Text style={t(14,'800',PO.white)}>{short(one.dust)}</Text>
+      <CandyIconV2 family={key} size={20}/><Text style={t(14,'800',PO.white)}>{one.candy}</Text>
+      {one.xl>0&&<><CandyIconV2 family={key} size={20} xl/><Text style={t(14,'800',PO.white)}>{one.xl}</Text></>}
+     </>:undefined}/>;
  const edge=(style:object,child:React.ReactNode)=><View style={[{position:'absolute'},style]}>{child}</View>;
  const choices:{id:Section;icon:GameIconName;label:string}[]=[{id:'moves',icon:'attack',label:'Aanvallen'},{id:'items',icon:'bag',label:'Item'},{id:'iv',icon:'info',label:'Beoordelen'},...(evo?[{id:'evolve' as const,icon:'power' as const,label:'Evolutie'}]:[])];
 
  return <View testID={'go-detail-'+s.id} onLayout={e=>{const {width,height}=e.nativeEvent.layout;if(Math.abs(height-box.h)>1||Math.abs(width-box.w)>1)setBox({w:width,h:height});}} style={{flex:1,backgroundColor:PO.surface}}>
-  <ScrollView style={{flex:1,marginBottom:80}} contentContainerStyle={{flexGrow:1}}>
+  <ScrollView style={{flex:1,marginBottom:88}} contentContainerStyle={{flexGrow:1}}>
    <View style={{height:photoH,overflow:'hidden',backgroundColor:'#5E8C4A'}}>
     <DetailBackdropV3 specimen={s}/><CpArcV3 level={go.level} width={Math.min(box.w-40,artW*1.05)} top={66}/>
     {active&&s.shiny&&<View pointerEvents="none" style={{position:'absolute',inset:0,opacity:.5}}><ShinyBackdropV2/></View>}
     <View pointerEvents="none" style={{position:'absolute',left:0,right:0,top:14,alignItems:'center'}}><View accessibilityLabel={'CP '+st.cp} style={{flexDirection:'row',alignItems:'baseline',gap:6}}><Text style={[poText.onPhoto,{fontSize:18,fontWeight:'600'}]}>CP</Text><Text style={[poText.onPhoto,{fontSize:46,fontWeight:'300',letterSpacing:.5}]}>{st.cp}</Text>{s.shiny&&<ShinyMarkV2 size={26}/>}</View></View>
     <View pointerEvents="none" style={{position:'absolute',left:'50%',bottom:52,width:artW*.62,height:30,marginLeft:-artW*.31,borderRadius:artW,backgroundColor:'#1A2A1238',boxShadow:'0px 0px 18px 10px #1A2A1230'}}/>
-    <View style={{position:'absolute',left:'50%',marginLeft:-artW/2,width:artW,top:72,bottom:40,alignItems:'center',justifyContent:'center'}}><BugUpgradeFxV3 id={s.id} species={s.species} shiny={s.shiny} cp={st.cp} size={Math.min(artW,photoH-120)}><CollectionArtV2 visible={active} id={s.species} shiny={s.shiny} size={Math.min(artW,photoH-120)} mode={mode}/></BugUpgradeFxV3></View>
+    <View style={{position:'absolute',left:'50%',marginLeft:-artW/2,width:artW,top:76,bottom:12,alignItems:'center',justifyContent:'center'}}><BugUpgradeFxV3 id={s.id} species={s.species} shiny={s.shiny} cp={st.cp} size={artSize}><CollectionArtV2 visible={active} id={s.species} shiny={s.shiny} size={artSize} mode={mode}/></BugUpgradeFxV3></View>
     {edge({left:14,top:16,gap:10},<>
      <PoCircle size={44} label="Favoriet" ring={s.favorite?PO.gold:undefined} onPress={()=>action('favorite')}><Glyph name="star" size={28}/></PoCircle>
      <PoCircle size={44} label="Als buddy" ring={p.buddy===s.id?PO.raid:undefined} onPress={()=>{if(p.buddy!==s.id)action('buddy');else info.show({title:'Buddy',icon:'heart',body:'❤️ Dit is je buddy.'});}}><Glyph name="heart" size={28}/></PoCircle>
@@ -82,20 +87,12 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
     </Pressable>}
     <View testID="bug-identity" style={{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'center',gap:6}}><GoTypes species={s.species} compact/><RarityBadgeV2 species={s.species} compact/></View>
     <View accessibilityLabel={'HP buiten gevecht: '+st.hp} style={{width:'68%',alignItems:'center',gap:5}}><PoBar value={st.hp} max={st.hp} color="#8FD1A6"/><Text style={t(13,'600',PO.muted)}>{st.hp+' / '+st.hp+' HP'}</Text></View>
-    <View testID="bug-resources" accessibilityLabel={g.dust+' stof, '+candy+' '+familyName(key)+'-nectar'+(xl>0?', '+xl+' XL-nectar':'')} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:34}}>
-     <View style={{flexDirection:'row',alignItems:'center',gap:8}}><Glyph name="nectar" size={34}/><Text style={t(20)}>{g.dust.toLocaleString('nl-NL')}</Text></View>
+    <View testID="bug-resources" accessibilityLabel={g.dust+' stof, '+candy+' '+familyName(key)+'-nectar'+(xl>0?', '+xl+' XL-nectar':'')} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:box.w<360?12:24}}>
+     <View style={{flexDirection:'row',alignItems:'center',gap:8}}><Glyph name="nectar" size={34}/><Text style={t(20)}>{short(g.dust)}</Text></View>
      <View style={{flexDirection:'row',alignItems:'center',gap:8}}><CandyIconV2 family={key} size={34}/><Text style={t(20)}>{candy}</Text></View>
      {xl>0&&<View style={{flexDirection:'row',alignItems:'center',gap:8}}><CandyIconV2 family={key} size={30} xl/><Text style={t(20)}>{xl}</Text></View>}
     </View>
     <View testID="bug-quick-actions" style={{alignSelf:'stretch',flexDirection:'row',gap:8}}>{([{id:'iv',icon:'info',label:'Beoordeel'},{id:'moves',icon:'attack',label:'Aanvallen'},{id:'items',icon:'bag',label:'Item'}] as const).map(c=><Pressable key={c.id} accessibilityRole="button" accessibilityLabel={c.id==='moves'?'Aanvallen en TM':c.label} onPress={()=>setSheet(c.id)} style={{flex:1,minHeight:64,alignItems:'center',justifyContent:'center',gap:4,borderRadius:16,borderWidth:1,borderColor:PO.rim,backgroundColor:PO.bg}}><Glyph name={c.icon} size={25}/><Text style={t(12)}>{c.label}</Text></Pressable>)}</View>
-    <View testID="power-block" style={{alignSelf:'stretch',gap:8}}>
-     <PoPill height={62} icon="power" label={one?'Sterker':'Max!'} accessibilityLabel="Sterker maken" disabled={busy||!canPower} onPress={power} right={one?<>
-      <Glyph name="nectar" size={20}/><Text style={t(14,'800',PO.white)}>{short(one.dust)}</Text>
-      <CandyIconV2 family={key} size={20}/><Text style={t(14,'800',PO.white)}>{one.candy}</Text>
-      {one.xl>0&&<><CandyIconV2 family={key} size={20} xl/><Text style={t(14,'800',PO.white)}>{one.xl}</Text></>}
-     </>:undefined}/>
-     {maxAffordable>1&&<Text style={[t(13,'600',PO.muted),{textAlign:'center'}]}>{'Tot '+maxAffordable+'× in één keer'}</Text>}
-    </View>
     {evo&&<View style={{alignSelf:'stretch'}}><PoPill variant="ghost" height={54} icon="power" label="Evolueer" disabled={busy} onPress={()=>setSheet('evolve')} right={<><CandyIconV2 family={key} size={20}/><Text style={t(14,'800',canEvolve?PO.tealText:PO.muted)}>{candy+' / '+evo.candy}</Text></>}/></View>}
    </PoSheet>
   </ScrollView>
@@ -122,7 +119,7 @@ export function BugDetailV2({view,run,busy,bug:s,open,onClose,onPrevious,onNext,
     <PoClose label="Annuleren" onPress={()=>setPowerOpen(false)}/>
    </PoSheet>
   </Modal>
-  <View pointerEvents="box-none" style={{position:'absolute',left:0,right:0,bottom:16,alignItems:'center'}}><PoClose label="Sluit bug" onPress={onClose}/></View>
+  <View testID="bug-action-dock" style={{position:'absolute',left:0,right:0,bottom:0,height:88,paddingHorizontal:12,paddingVertical:12,flexDirection:'row',alignItems:'center',gap:10,backgroundColor:PO.surface,borderTopWidth:1,borderTopColor:PO.rim}}><View style={{flex:1,minWidth:0}}>{powerButton}</View><PoClose label="Sluit bug" onPress={onClose}/></View>
 
   {sheet&&<View style={{position:'absolute',left:0,right:0,top:0,bottom:0}}>
    <Pressable accessibilityRole="button" accessibilityLabel="Sluit menu" onPress={()=>setSheet(null)} style={{position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'#1E3C3247'}}/>

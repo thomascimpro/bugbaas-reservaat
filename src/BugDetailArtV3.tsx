@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image,StyleSheet,View} from 'react-native';
-import Svg,{Circle,Path} from 'react-native-svg';
+import Svg,{Circle,Path,Defs,LinearGradient,Rect,Stop} from 'react-native-svg';
 import {movePool} from '../game/goV2';
 import type {Specimen} from '../game/typesV2';
 
@@ -34,7 +34,7 @@ export function DetailBackdropV3({specimen}:{specimen:Specimen}){
   <Image source={ART[bugHabitat(specimen)]} resizeMode="cover" style={{width:'100%',height:'100%'}}/>
   {night&&<View style={[StyleSheet.absoluteFill,{backgroundColor:'#0A1838',opacity:.45}]}/>}
   {/* Soft bottom fade so the sheet joins the photo calmly. */}
-  <View style={{position:'absolute',left:0,right:0,bottom:0,height:'35%',backgroundColor:'#0B1F1C',opacity:.25}}/>
+  <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" preserveAspectRatio="none"><Defs><LinearGradient id="detail-shade" x1="0" y1="0" x2="0" y2="1"><Stop offset="0" stopColor="#061A18" stopOpacity={.5}/><Stop offset=".28" stopColor="#061A18" stopOpacity={0}/><Stop offset=".65" stopColor="#0B2224" stopOpacity={.05}/><Stop offset="1" stopColor="#0B2224" stopOpacity={.85}/></LinearGradient></Defs><Rect width="100%" height="100%" fill="url(#detail-shade)"/></Svg>
  </View>;
 }
 
